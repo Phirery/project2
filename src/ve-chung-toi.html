@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Về Chúng Tôi - Eden Health</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <link rel="stylesheet" href="../../assets/css/common.css">
+
+    <style>
+        /* === ANIMATIONS SYSTEM === */
+        /* 1. Hiệu ứng trồi lên (Mặc định) */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        /* 2. Hiệu ứng trượt từ trái sang (Cho Timeline trái) */
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.8s ease-out;
+        }
+
+        /* 3. Hiệu ứng trượt từ phải sang (Cho Timeline phải) */
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.8s ease-out;
+        }
+
+        /* Trạng thái hiện (Chung cho tất cả) */
+        .reveal.visible, 
+        .reveal-left.visible, 
+        .reveal-right.visible {
+            opacity: 1;
+            transform: translate(0, 0);
+        }
+
+        /* === CSS RIÊNG CỦA TRANG VỀ CHÚNG TÔI === */
+
+        /* HERO SECTION */
+        .hero-section {
+            background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%);
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+            margin-top: -1px;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.05), transparent 50%);
+        }
+
+        .hero-content { position: relative; z-index: 2; }
+
+        .hero-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            color: var(--primary-purple);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .hero-content h1 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero-content .highlight {
+            background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-content p {
+            font-size: 1.1rem;
+            color: #64748b;
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item { text-align: center; }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-top: 5px;
+        }
+
+        .hero-illustration { position: relative; }
+
+        .hero-illustration img {
+            width: 100%;
+            max-width: 700px;
+            height: auto;
+            border-radius: 20px;
+            filter: drop-shadow(0 20px 60px rgba(102, 126, 234, 0.2));
+        }
+
+        .floating-element {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .floating-element i {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .element-1 { top: 10%; right: 10%; animation-delay: 0s; }
+        .element-2 { bottom: 20%; left: 10%; animation-delay: 1s; }
+        .element-3 { top: 50%; right: 5%; animation-delay: 2s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* ABOUT SECTION */
+        .about-section { padding: 100px 0; background: white; }
+        .about-image-wrapper { position: relative; }
+
+        .main-image img {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.15);
+        }
+
+        .image-badge {
+            position: absolute;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: floatBadge 3s ease-in-out infinite;
+        }
+
+        .badge-1 { top: 30px; right: -20px; }
+        .badge-2 { bottom: 30px; left: -20px; animation-delay: 1.5s; }
+
+        @keyframes floatBadge {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .image-badge i {
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .image-badge strong { font-size: 1.3rem; color: #1e293b; display: block; }
+        .image-badge span { font-size: 0.85rem; color: #64748b; }
+
+        .section-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+            color: white;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .about-content h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 20px;
+        }
+
+        .about-content .lead {
+            font-size: 1.2rem;
+            color: #475569;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .about-content p { color: #64748b; line-height: 1.8; margin-bottom: 30px; }
+
+        .about-features { display: flex; flex-direction: column; gap: 20px; }
+
+        .feature-item { display: flex; align-items: flex-start; gap: 15px; }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .feature-icon i { font-size: 1.3rem; color: var(--primary-purple); }
+        .feature-text h5 { font-size: 1.1rem; font-weight: 700; color: #1e293b; margin-bottom: 5px; }
+        .feature-text p { color: #64748b; font-size: 0.95rem; margin: 0; }
+
+        /* MISSION VISION SECTION */
+        .mission-vision-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%);
+        }
+
+        .mission-card, .vision-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            height: 100%;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mission-card::before, .vision-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 5px;
+            background: linear-gradient(90deg, var(--primary-purple), var(--secondary-purple));
+            transform: scaleX(0);
+            transition: transform 0.4s;
+        }
+
+        .mission-card:hover, .vision-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.2);
+        }
+
+        .mission-card:hover::before, .vision-card:hover::before { transform: scaleX(1); }
+
+        .card-icon {
+            width: 80px; height: 80px;
+            background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+            border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .card-icon i { font-size: 2.5rem; color: white; }
+        .mission-card h3, .vision-card h3 { font-size: 1.8rem; font-weight: 700; color: #1e293b; margin-bottom: 15px; }
+        .mission-card p, .vision-card p { color: #64748b; line-height: 1.8; margin-bottom: 25px; }
+
+        .mission-list, .vision-list { list-style: none; padding: 0; }
+        .mission-list li, .vision-list li { padding: 10px 0; color: #475569; display: flex; align-items: center; gap: 12px; }
+        .mission-list i { color: #10b981; font-size: 1.1rem; }
+        .vision-list i { color: #f59e0b; font-size: 1.1rem; }
+
+        /* VALUES SECTION */
+        .values-section { padding: 80px 0; background: white; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-header h2 { font-size: 2.5rem; font-weight: 800; color: #1e293b; margin-bottom: 15px; }
+        .section-header p { color: #64748b; font-size: 1.05rem; }
+
+        .value-card {
+            background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%);
+            padding: 35px 25px;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.4s;
+            height: 100%;
+            border: 2px solid transparent;
+        }
+
+        .value-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.15);
+            border-color: var(--primary-purple);
+            background: white;
+        }
+
+        .value-icon {
+            width: 80px; height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.1);
+            transition: all 0.3s;
+        }
+
+        .value-card:hover .value-icon { transform: scale(1.1) rotate(10deg); }
+        .value-icon i { font-size: 2.2rem; background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .value-card h4 { font-size: 1.3rem; font-weight: 700; color: #1e293b; margin-bottom: 12px; }
+        .value-card p { color: #64748b; font-size: 0.95rem; line-height: 1.6; }
+
+        /* TIMELINE SECTION */
+        .timeline-section { padding: 80px 0; background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%); }
+        .timeline { position: relative; max-width: 1000px; margin: 0 auto; padding: 40px 0; }
+        .timeline::before { content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 4px; height: 100%; background: linear-gradient(180deg, var(--primary-purple), var(--secondary-purple)); border-radius: 2px; }
+
+        .timeline-item { position: relative; width: 50%; padding: 0 40px; margin-bottom: 50px; }
+        .timeline-item.left { left: 0; text-align: right; }
+        .timeline-item.right { left: 50%; text-align: left; }
+
+        .timeline-content {
+            background: white; padding: 30px; border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            position: relative; transition: all 0.4s;
+        }
+
+        .timeline-item.left .timeline-content::before {
+            content: ''; position: absolute; right: -15px; top: 30px; width: 0; height: 0;
+            border-style: solid; border-width: 10px 0 10px 15px; border-color: transparent transparent transparent white;
+        }
+
+        .timeline-item.right .timeline-content::before {
+            content: ''; position: absolute; left: -15px; top: 30px; width: 0; height: 0;
+            border-style: solid; border-width: 10px 15px 10px 0; border-color: transparent white transparent transparent;
+        }
+
+        .timeline-content:hover { transform: scale(1.05); box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2); }
+        .timeline-year { display: inline-block; padding: 8px 20px; background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple)); color: white; border-radius: 50px; font-weight: 700; font-size: 1.1rem; margin-bottom: 15px; }
+        .timeline-content h4 { font-size: 1.3rem; font-weight: 700; color: #1e293b; margin-bottom: 10px; }
+        .timeline-content p { color: #64748b; line-height: 1.7; margin: 0; }
+
+        /* TEAM SECTION */
+        .team-section { padding: 80px 0; background: white; }
+        .team-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08); transition: all 0.4s; }
+        .team-card:hover { transform: translateY(-10px); box-shadow: 0 20px 60px rgba(102, 126, 234, 0.2); }
+
+        .team-image { position: relative; overflow: hidden; height: 300px; background: linear-gradient(135deg, #f8faff, #f0f4ff); }
+        .team-image img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.5s; }
+        .team-card:hover .team-image img { transform: scale(1.05); }
+
+        .team-social {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 10px; opacity: 0; transition: opacity 0.3s;
+        }
+        .team-card:hover .team-social { opacity: 1; }
+        .team-social a { width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary-purple); transition: all 0.3s; }
+        .team-social a:hover { background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple)); color: white; }
+
+        .team-info { padding: 25px; text-align: center; }
+        .team-info h4 { font-size: 1.3rem; font-weight: 700; color: #1e293b; margin-bottom: 5px; }
+        .team-role { color: var(--primary-purple); font-weight: 600; font-size: 0.95rem; margin-bottom: 10px; }
+        .team-desc { color: #64748b; font-size: 0.9rem; line-height: 1.6; }
+
+        /* CTA SECTION */
+        .cta-section { padding: 80px 0; background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple)); position: relative; overflow: hidden; }
+        .cta-section::before { content: ''; position: absolute; top: -50%; right: -10%; width: 500px; height: 500px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; }
+        .cta-content { position: relative; z-index: 2; }
+        .cta-content h2 { font-size: 2.5rem; font-weight: 800; color: white; margin-bottom: 15px; }
+        .cta-content p { font-size: 1.1rem; color: rgba(255, 255, 255, 0.9); margin: 0; }
+
+        .btn-cta { display: inline-flex; align-items: center; padding: 14px 35px; background: white; color: var(--primary-purple); border-radius: 30px; font-weight: 600; font-size: 1rem; text-decoration: none; transition: all 0.3s; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); }
+        .btn-cta:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3); color: var(--primary-purple); }
+
+        /* RESPONSIVE */
+        @media (max-width: 992px) {
+            .hero-content h1 { font-size: 2.5rem; }
+            .hero-stats { gap: 30px; }
+            .timeline::before { left: 30px; }
+            .timeline-item { width: 100%; padding-left: 80px; padding-right: 20px; text-align: left !important; }
+            .timeline-item.left, .timeline-item.right { left: 0; }
+            .timeline-item.left .timeline-content::before, .timeline-item.right .timeline-content::before { left: -15px; right: auto; border-width: 10px 15px 10px 0; border-color: transparent white transparent transparent; }
+            .about-image-wrapper { margin-bottom: 40px; }
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 { font-size: 2rem; }
+            .hero-content p { font-size: 1rem; }
+            .hero-stats { gap: 20px; justify-content: center; }
+            .stat-number { font-size: 2rem; }
+            .section-header h2 { font-size: 1.8rem; }
+            .about-content h2 { font-size: 2rem; }
+            .about-section, .mission-vision-section, .values-section, .timeline-section, .team-section, .cta-section { padding: 60px 0; }
+            .floating-element { display: none; }
+            .image-badge { display: none; }
+            .timeline-item { padding-left: 60px; }
+            .cta-content h2 { font-size: 1.8rem; margin-bottom: 20px; }
+            .cta-content p { font-size: 1rem; margin-bottom: 25px; }
+            .btn-cta { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div id="pageLoader" style="
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: white;
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    ">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div>
+    </div>
+
+    <div id="header-placeholder" class="sticky-top" style="z-index: 1020;"></div>
+
+    <div class="breadcrumb-section">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="index.html"><i class="fas fa-home"></i> Trang chủ</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        Về chúng tôi
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <section class="hero-section reveal">
+        <div class="hero-overlay"></div>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                        <span class="hero-badge">
+                            <i class="fas fa-hospital-alt me-2"></i>Câu chuyện của chúng tôi
+                        </span>
+                        <h1>Chăm Sóc Sức Khỏe <span class="highlight">Với Trái Tim</span></h1>
+                        <p>Eden Health - Nơi đặt sức khỏe và niềm tin của bạn lên hàng đầu. Chúng tôi cam kết mang đến dịch vụ y tế chất lượng cao với sự tận tâm và chuyên nghiệp.</p>
+                        <div class="hero-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">5+</div>
+                                <div class="stat-label">Tháng kinh nghiệm</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">50+</div>
+                                <div class="stat-label">Bác sĩ chuyên môn</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">0K+</div>
+                                <div class="stat-label">Bệnh nhân tin tưởng</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-illustration">
+                        <img src="../../assets/images/image2.jpg" alt="Healthcare Illustration">
+                        <div class="floating-element element-1">
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <div class="floating-element element-2">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <div class="floating-element element-3">
+                            <i class="fas fa-hospital"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section reveal">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <div class="about-image-wrapper">
+                        <div class="main-image">
+                            <img src="../../assets/images/image3.jpg" alt="Healthcare Team">
+                        </div>
+                        <div class="image-badge badge-1">
+                            <i class="fas fa-shield-alt"></i>
+                            <div>
+                                <span>An toàn</span>                                
+                                <strong>100%</strong>
+                            </div>
+                        </div>
+                        <div class="image-badge badge-2">
+                            <i class="far fa-clock"></i>
+                            <div>
+                                <span>Làm việc</span>                                
+                                <strong>24/7</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="about-content">
+                        <span class="section-badge">
+                            <i class="fas fa-info-circle me-2"></i>Về Eden Health
+                        </span>
+                        <h2>Chúng Tôi Là Ai?</h2>
+                        <p class="lead">Eden Health là hệ thống y tế tiên phong tại Việt Nam, cung cấp dịch vụ đặt lịch khám bệnh trực tuyến tiện lợi, nhanh chóng và an toàn.</p>
+                        <p>Với đội ngũ bác sĩ giàu kinh nghiệm, được đào tạo bài bản từ các trường y khoa hàng đầu, chúng tôi cam kết mang đến dịch vụ chăm sóc sức khỏe toàn diện, chất lượng cao nhất.</p>
+                        
+                        <div class="about-features">
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="feature-text">
+                                    <h5>Đội ngũ chuyên gia</h5>
+                                    <p>Bác sĩ giàu kinh nghiệm, tận tâm</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="feature-text">
+                                    <h5>Công nghệ hiện đại</h5>
+                                    <p>Trang thiết bị y tế tiên tiến</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="feature-text">
+                                    <h5>Dịch vụ tận tâm</h5>
+                                    <p>Chăm sóc chu đáo 24/7</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mission-vision-section reveal">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="mission-card">
+                        <div class="card-icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <h3>Sứ Mệnh</h3>
+                        <p>Mang đến dịch vụ chăm sóc sức khỏe chất lượng cao, tiện lợi và dễ tiếp cận cho mọi người. Chúng tôi cam kết đặt sức khỏe và hạnh phúc của bệnh nhân lên hàng đầu.</p>
+                        <ul class="mission-list">
+                            <li><i class="fas fa-check"></i> Cung cấp dịch vụ y tế chất lượng quốc tế</li>
+                            <li><i class="fas fa-check"></i> Ứng dụng công nghệ hiện đại trong chăm sóc sức khỏe</li>
+                            <li><i class="fas fa-check"></i> Đào tạo và phát triển đội ngũ y tế chuyên nghiệp</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="vision-card">
+                        <div class="card-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h3>Tầm Nhìn</h3>
+                        <p>Trở thành hệ thống y tế hàng đầu Việt Nam, được tin tưởng và lựa chọn bởi hàng triệu người dân. Tiên phong trong việc số hóa và hiện đại hóa ngành y tế.</p>
+                        <ul class="vision-list">
+                            <li><i class="fas fa-star"></i> Hệ thống đặt lịch khám #? tại Việt Nam</li>
+                            <li><i class="fas fa-star"></i> Mở rộng mạng lưới bác sĩ và chuyên khoa</li>
+                            <li><i class="fas fa-star"></i> Phát triển nền tảng chăm sóc sức khỏe toàn diện</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="timeline-section">
+        <div class="container">
+            <div class="section-header text-center reveal">
+                <span class="section-badge">
+                    <i class="fas fa-history me-2"></i>Hành trình
+                </span>
+                <h2>Lịch Sử Hình Thành & Phát Triển 2025</h2>
+                <p>Từng bước phát triển của Eden Health</p>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item left reveal-left">
+                    <div class="timeline-content">
+                        <div class="timeline-year">Tháng 9</div>
+                        <h4>Khởi Đầu</h4>
+                        <p>Ý tưởng về một nền tảng đặt lịch khám bệnh trực tuyến được hình thành với mục tiêu giúp người dân dễ dàng tiếp cận dịch vụ y tế chất lượng.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item right reveal-right">
+                    <div class="timeline-content">
+                        <div class="timeline-year">Tháng 10</div>
+                        <h4>Ra Mắt Chính Thức</h4>
+                        <p>Eden Health chính thức ra mắt với 20 bác sĩ đầu tiên và 5 chuyên khoa cơ bản. Tiếp đón hơn 1,000 bệnh nhân trong tháng đầu tiên.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item left reveal-left">
+                    <div class="timeline-content">
+                        <div class="timeline-year">Tháng 11</div>
+                        <h4>Dẫn Đầu Thị Trường</h4>
+                        <p>Trở thành nền tảng đặt lịch khám hàng đầu với 100+ bác sĩ, 20+ chuyên khoa. Ra mắt ứng dụng mobile và tính năng tư vấn trực tuyến.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item right reveal-right">
+                    <div class="timeline-content">
+                        <div class="timeline-year">Tháng 12</div>
+                        <h4>Tương Lai Sáng</h4>
+                        <p>Tiếp tục đổi mới và phát triển với mục tiêu phục vụ 1 triệu bệnh nhân. Mở rộng sang các dịch vụ chăm sóc sức khỏe toàn diện.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="values-section reveal">
+        <div class="container">
+            <div class="section-header text-center">
+                <span class="section-badge">
+                    <i class="fas fa-gem me-2"></i>Giá trị cốt lõi
+                </span>
+                <h2>Những Giá Trị Chúng Tôi Theo Đuổi</h2>
+                <p>Giá trị cốt lõi định hướng mọi hoạt động của Eden Health</p>
+            </div>
+            <div class="row g-4"> 
+                <div class="col-lg-3 col-md-6"> <div class="value-card">
+                        <div class="value-icon">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <h4>Chất Lượng</h4>
+                        <p>Luôn đặt chất lượng dịch vụ và sự hài lòng của khách hàng lên hàng đầu trong mọi hoạt động.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="value-card">
+                        <div class="value-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h4>Tận Tâm</h4>
+                        <p>Phục vụ với sự thấu hiểu, chia sẻ và trách nhiệm cao nhất với từng bệnh nhân.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="value-card">
+                        <div class="value-icon">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <h4>Chuyên Nghiệp</h4>
+                        <p>Đội ngũ y bác sĩ được đào tạo chuyên sâu, làm việc theo chuẩn mực quốc tế.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="value-card">
+                        <div class="value-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h4>Đổi Mới</h4>
+                        <p>Không ngừng cải tiến và áp dụng công nghệ hiện đại nhất trong y học.</p>
+                    </div>
+                </div>
+            </div> 
+        </div>
+    </section>
+
+    <section class="cta-section reveal">
+        <div class="container">
+            <div class="cta-content">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h2>Sẵn Sàng Trải Nghiệm Dịch Vụ?</h2>
+                        <p>Đặt lịch khám ngay hôm nay và trải nghiệm dịch vụ chăm sóc sức khỏe chuyên nghiệp từ Eden Health</p>
+                    </div>
+                    <div class="col-lg-4 text-lg-end">
+                        <a href="dat-lich.html" class="btn-cta">
+                            <i class="fas fa-calendar-check me-2"></i>Đặt Lịch Ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    
+<script src="../../assets/js/common.js"></script>
+<script>
+    // Load Header và Footer (nếu chưa có)
+    loadComponents();
+
+    // === PHẦN BẠN CẦN THÊM VÀO ĐỂ HIỆN NỘI DUNG ===
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // 1. Kích hoạt Animation khi cuộn trang (QUAN TRỌNG NHẤT)
+        const observerOptions = {
+            threshold: 0.15 // Kích hoạt khi 15% phần tử xuất hiện
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); // Chỉ chạy 1 lần
+                }
+            });
+        }, observerOptions);
+
+        // Chọn tất cả các phần tử cần hiệu ứng
+        const animatedElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+        animatedElements.forEach(el => observer.observe(el));
+
+        // 2. Các hiệu ứng khác (Số nhảy, Parallax, v.v.)
+        initCounterAnimation();
+        setupParallaxEffect();
+        setupTeamCardEffect();
+    });
+
+    // Hàm hiệu ứng số nhảy (Counter)
+    function initCounterAnimation() {
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const stats = [
+                        { target: 5, suffix: '+' },   // Kinh nghiệm
+                        { target: 50, suffix: '+' },  // Bác sĩ
+                        { target: 20, suffix: 'K+' }  // Bệnh nhân (Sửa lại target tùy ý)
+                    ];
+                    
+                    const numberElements = entry.target.querySelectorAll('.stat-number');
+                    numberElements.forEach((el, index) => {
+                        if (stats[index]) {
+                            animateNumber(el, stats[index].target, stats[index].suffix);
+                        }
+                    });
+                    statsObserver.disconnect();
+                }
+            });
+        }, { threshold: 0.5 });
+
+        const heroStats = document.querySelector('.hero-stats');
+        if (heroStats) statsObserver.observe(heroStats);
+    }
+
+    function animateNumber(element, target, suffix) {
+        let current = 0;
+        const duration = 2000; // 2 giây
+        const stepTime = 20;
+        const steps = duration / stepTime;
+        const increment = target / steps;
+
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                element.textContent = target + suffix;
+                clearInterval(timer);
+            } else {
+                element.textContent = Math.ceil(current) + suffix;
+            }
+        }, stepTime);
+    }
+
+    // Hàm hiệu ứng Parallax (Trôi hình ảnh)
+    function setupParallaxEffect() {
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const heroIllustration = document.querySelector('.hero-illustration');
+            
+            if (heroIllustration && scrolled < 600) {
+                heroIllustration.style.transform = `translateY(${scrolled * 0.1}px)`; // Giảm tốc độ trôi xuống 0.1 cho mượt
+            }
+        });
+    }
+
+    // Hàm hiệu ứng 3D cho thẻ Team (nếu có)
+    function setupTeamCardEffect() {
+        document.querySelectorAll('.team-card').forEach(card => {
+            card.addEventListener('mousemove', function(e) {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = (y - centerY) / 20;
+                const rotateY = (centerX - x) / 20;
+                
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+            });
+        });
+    }
+</script>
+</body>
+</html>
