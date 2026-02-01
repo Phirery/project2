@@ -1,30 +1,11 @@
-const API_BASE_PATIENT = 'http://localhost/DO_AN/src/backend/api/patient';
-const API_BASE_AUTH = 'http://localhost/DO_AN/src/backend/api/auth';
+const API_BASE_PATIENT = 'http://localhost/DO_AN/src/api/patient';
+const API_BASE_AUTH = 'http://localhost/DO_AN/src/api/auth';
 
 // Load Header và Footer vào trang
 async function loadComponents() {
     try {
-        // Determine correct path based on current location
-        const currentPath = window.location.pathname;
-        let componentPath = '../../components/';
-        
-        // If we're in patient folder, use this path
-        if (currentPath.includes('/pages/patient/')) {
-            componentPath = '../../components/';
-        }
-        // If we're in other folders (doctor, admin, auth), adjust accordingly
-        else if (currentPath.includes('/pages/doctor/')) {
-            componentPath = '../../components/';
-        }
-        else if (currentPath.includes('/pages/admin/')) {
-            componentPath = '../../components/';
-        }
-        else if (currentPath.includes('/pages/auth/')) {
-            componentPath = '../../components/';
-        }
-        
         // Load Header
-        const headerResponse = await fetch(componentPath + 'header.html');
+        const headerResponse = await fetch('components/header.html');
         if (!headerResponse.ok) {
             throw new Error(`HTTP error! status: ${headerResponse.status}`);
         }
@@ -35,7 +16,7 @@ async function loadComponents() {
         }
 
         // Load Footer
-        const footerResponse = await fetch(componentPath + 'footer.html');
+        const footerResponse = await fetch('components/footer.html');
         if (!footerResponse.ok) {
             console.warn('Footer not found, skipping...');
         } else {

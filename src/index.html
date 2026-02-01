@@ -13,15 +13,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="../../assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/common.css">
 
     <style>
-        /* ===================================================================
-           REDESIGNED HOME PAGE - PROFESSIONAL MEDICAL STYLE
-           Inspired by: Alison.com (color scheme) + Vinmec.com (layout)
-           =================================================================== */
-        
-        /* === ROOT VARIABLES === */
         :root {
             /* Primary Colors - Soft Blue Medical */
             --primary-blue: #4A90E2;
@@ -775,7 +769,7 @@
                 </div>
                 <div class="col-lg-6 mt-5 mt-lg-0">
                     <div class="banner-image-wrapper">
-                        <img src="../../assets/images/image3.jpg" class="img-fluid banner-image" alt="Eden Health - Chăm sóc sức khỏe chuyên nghiệp">
+                        <img src="assets/images/image3.jpg" class="img-fluid banner-image" alt="Eden Health - Chăm sóc sức khỏe chuyên nghiệp">
                     </div>
                 </div>
             </div>
@@ -960,7 +954,7 @@
     <div id="footer-placeholder"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../assets/js/common.js"></script>
+    <script src="assets/js/common.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -1025,10 +1019,10 @@
             
             container.innerHTML = doctors.map(doc => {
                 const experience = doc.namLamViec ? currentYear - doc.namLamViec : 'N/A';
-                const imgSrc = doc.gioiTinh === 'nu' ? '../../assets/images/doctor_female.png' : '../../assets/images/doctor_male.png';
+                const imgSrc = doc.gioiTinh === 'nu' ? 'assets/images/doctor_female.png' : 'assets/images/doctor_male.png';
                 
                 // Xử lý ảnh lỗi
-                const defaultImg = '../../assets/images/doctor_male.png';
+                const defaultImg = 'assets/images/doctor_male.png';
                 
                 return `
                 <div class="col-lg-4 col-md-6">
