@@ -111,22 +111,6 @@
             max-height: calc(100vh - 100px);
         }
 
-        .login-header {
-            margin-bottom: 25px;
-        }
-
-        .login-header h2 {
-            color: var(--text-primary);
-            font-weight: 800;
-            font-size: 1.75rem;
-            margin-bottom: 6px;
-        }
-
-        .login-header p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
         .form-group {
             margin-bottom: 18px;
             position: relative;
@@ -158,7 +142,7 @@
         .form-group .input-icon {
             position: absolute;
             right: 12px;
-            top: 37px;
+            top: 41px;
             color: var(--text-light);
             cursor: pointer;
             transition: color 0.25s;
@@ -206,7 +190,7 @@
             text-decoration: underline;
         }
 
-        .btn-login {
+        .btn-login-main {
             width: 100%;
             padding: 12px;
             background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-green) 100%);
@@ -220,12 +204,13 @@
             margin-bottom: 15px;
         }
 
-        .btn-login:hover {
+        .btn-login-main:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
+            background: linear-gradient(135deg, var(--secondary-green) 0%);
         }
 
-        .btn-login:disabled {
+        .btn-login-main:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
@@ -481,6 +466,10 @@
                 font-size: 1.3rem;
             }
         }
+        #header-placeholder .navbar a[href*="login.html"],
+        #header-placeholder .navbar .btn-login-header { 
+            display: none !important; 
+        }
     </style>
 </head>
 <body>
@@ -502,7 +491,7 @@
             <div class="login-right">
                 <div class="login-header">
                     <h2>Đăng Nhập</h2>
-                    <p>Nhập thông tin đăng nhập của bạn</p>
+                    <p></p>
                 </div>
 
                 <form id="loginForm">
@@ -528,7 +517,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn-login" id="btnLogin">
+                    <button type="submit" class="btn-login-main" id="btnLogin">
                         <i class="fas fa-sign-in-alt me-2"></i>Đăng Nhập
                     </button>
                 </form>
@@ -615,7 +604,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/common.js"></script>
     <script>
-        const API_BASE = 'http://localhost/DO_AN/src/api/auth';
         let resetEmail = '';
         let countdownInterval = null;
         let resendCooldownInterval = null;
@@ -653,7 +641,7 @@
             btnLogin.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xử lý...';
             
             try {
-                const response = await fetch(`${API_BASE}/login.php`, {
+                const response = await fetch(`${API_BASE_AUTH}/login.php`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -725,7 +713,7 @@
             btnRequestOtp.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang gửi...';
             
             try {
-                const response = await fetch(`${API_BASE}/forgot-password.php`, {
+                const response = await fetch(`${API_BASE_AUTH}/forgot-password.php`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -789,7 +777,7 @@
             btnResend.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang gửi lại...';
             
             try {
-                const response = await fetch(`${API_BASE}/forgot-password.php`, {
+                const response = await fetch(`${API_BASE_AUTH}/forgot-password.php`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -866,7 +854,7 @@
             btnVerifyOtp.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xử lý...';
             
             try {
-                const response = await fetch(`${API_BASE}/reset-password.php`, {
+                const response = await fetch(`${API_BASE_AUTH}/reset-password.php`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',

@@ -1,7 +1,7 @@
 <?php
 require_once '../../config/cors.php';
 require_once '../../config/dp.php';
-require_once '../includes/send-email.php';
+require_once '../../includes/send-mail.php';
 
 // Start session
 session_start();
