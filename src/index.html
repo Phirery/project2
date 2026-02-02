@@ -769,7 +769,7 @@
                 </div>
                 <div class="col-lg-6 mt-5 mt-lg-0">
                     <div class="banner-image-wrapper">
-                        <img src="assets/images/image3.jpg" class="img-fluid banner-image" alt="Eden Health - Chăm sóc sức khỏe chuyên nghiệp">
+                        <img src="https://res.cloudinary.com/dlnevod7e/image/upload/v1769964723/3d1cceee-b035-4a7d-b6fc-3_b9a331.png" class="img-fluid banner-image" alt="Ảnh Banner trang chủ">
                     </div>
                 </div>
             </div>
@@ -1019,10 +1019,10 @@
             
             container.innerHTML = doctors.map(doc => {
                 const experience = doc.namLamViec ? currentYear - doc.namLamViec : 'N/A';
-                const imgSrc = doc.gioiTinh === 'nu' ? 'assets/images/doctor_female.png' : 'assets/images/doctor_male.png';
+                const imgSrc = doc.gioiTinh === 'nu' ? 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962514/doctor_female_zvmhtg.png' : 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962515/doctor_male_pna01s.png';
                 
                 // Xử lý ảnh lỗi
-                const defaultImg = 'assets/images/doctor_male.png';
+                const defaultImg = 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962515/doctor_male_pna01s.png';
                 
                 return `
                 <div class="col-lg-4 col-md-6">

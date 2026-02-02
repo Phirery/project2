@@ -7,40 +7,33 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
-    <link rel="stylesheet" href="../../assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/common.css">
 
     <style>
-        /* === ANIMATIONS SYSTEM === */
-        /* 1. Hiệu ứng trồi lên (Mặc định) */
         .reveal {
             opacity: 0;
             transform: translateY(30px);
             transition: all 0.8s ease-out;
         }
 
-        /* 2. Hiệu ứng trượt từ trái sang (Cho Timeline trái) */
         .reveal-left {
             opacity: 0;
             transform: translateX(-50px);
             transition: all 0.8s ease-out;
         }
 
-        /* 3. Hiệu ứng trượt từ phải sang (Cho Timeline phải) */
         .reveal-right {
             opacity: 0;
             transform: translateX(50px);
             transition: all 0.8s ease-out;
         }
 
-        /* Trạng thái hiện (Chung cho tất cả) */
         .reveal.visible, 
         .reveal-left.visible, 
         .reveal-right.visible {
             opacity: 1;
             transform: translate(0, 0);
         }
-
-        /* === CSS RIÊNG CỦA TRANG VỀ CHÚNG TÔI === */
 
         /* HERO SECTION */
         .hero-section {
@@ -480,7 +473,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="hero-illustration">
-                        <img src="../../assets/images/image2.jpg" alt="Healthcare Illustration">
+                        <img src="https://res.cloudinary.com/dlnevod7e/image/upload/v1769962598/banner2_a7egwb.jpg" alt="Healthcare Illustration">
                         <div class="floating-element element-1">
                             <i class="fas fa-heartbeat"></i>
                         </div>
@@ -502,7 +495,7 @@
                 <div class="col-lg-6">
                     <div class="about-image-wrapper">
                         <div class="main-image">
-                            <img src="../../assets/images/image3.jpg" alt="Healthcare Team">
+                            <img src="https://res.cloudinary.com/dlnevod7e/image/upload/v1769962586/banner3_fyeisl.jpg" alt="Healthcare Team">
                         </div>
                         <div class="image-badge badge-1">
                             <i class="fas fa-shield-alt"></i>
@@ -719,7 +712,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     
-<script src="../../assets/js/common.js"></script>
+<script src="assets/js/common.js"></script>
 <script>
     // Load Header và Footer (nếu chưa có)
     loadComponents();

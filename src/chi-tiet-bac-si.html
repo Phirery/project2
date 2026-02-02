@@ -903,8 +903,8 @@
             document.getElementById('breadcrumbName').textContent = doctor.tenBacSi;
             
             const imageSrc = doctor.gioiTinh === 'nu' 
-                ? '../../assets/images/doctor_female.png' 
-                : '../../assets/images/doctor_male.png';
+                ? 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962514/doctor_female_zvmhtg.png' 
+                : 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962515/doctor_male_pna01s.png';
             
             const avatarEl = document.getElementById('doctorAvatar');
             avatarEl.src = doctor.anhDaiDien || imageSrc;

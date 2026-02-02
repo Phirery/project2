@@ -7,47 +7,21 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="assets/css/common.css">
 
     <style>
-        /* === CSS HIỆU ỨNG CHUYỂN ĐỘNG (FADE UP) === */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.6s ease-out;
-        }
-
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* === CSS RIÊNG CỦA TRANG CHUYÊN KHOA === */
-        
         /* Header Section */
         .header-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
             padding: 40px 0 60px;
             position: relative;
             overflow: hidden;
             margin-bottom: -30px;
-        }
-
-        .header-section::before {
-            content: '';
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            top: -150px;
-            right: -100px;
-            animation: float 8s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-30px); }
         }
 
         .header-badge {
@@ -80,65 +54,64 @@
             line-height: 1.6;
         }
 
-        /* Container */
         .specialties-container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 0 20px 40px;
         }
 
-        /* Filter Box */
         .filter-box {
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
             padding: 25px;
             margin-bottom: 10px;
             position: relative;
             z-index: 10;
+            border: 1px solid var(--border-color);
         }
 
         .filter-box h5 {
-            color: var(--primary-purple);
+            color: var(--primary-blue);
             font-weight: 700;
             margin-bottom: 20px;
             font-size: 1.1rem;
         }
 
         .form-control, .form-select {
-            border: 2px solid #e8eef5;
-            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
             padding: 10px 14px;
             font-size: 0.9rem;
-            transition: all 0.3s;
+            transition: all 0.25s;
         }
 
         .form-control:focus, .form-select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
         }
 
         .form-label {
             font-weight: 600;
-            color: #333;
+            color: var(--text-primary);
             font-size: 0.9rem;
             margin-bottom: 8px;
         }
 
         .btn-filter {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: var(--primary-blue);
             color: white;
             border: none;
             padding: 10px 28px;
-            border-radius: 12px;
+            border-radius: 6px;
             font-weight: 600;
-            transition: all 0.3s;
+            transition: all 0.25s;
             font-size: 0.9rem;
         }
 
         .btn-filter:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            background: var(--primary-blue-dark);
+            box-shadow: var(--shadow-sm);
         }
 
         .btn-reset {
@@ -146,9 +119,9 @@
             color: #666;
             border: none;
             padding: 10px 28px;
-            border-radius: 12px;
+            border-radius: 6px;
             font-weight: 600;
-            transition: all 0.3s;
+            transition: all 0.25s;
             font-size: 0.9rem;
         }
 
@@ -156,13 +129,13 @@
             background: #d0d0d0;
         }
 
-        /* Table */
         .table-container {
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
             overflow: hidden;
             margin-bottom: 10px;
+            border: 1px solid var(--border-color);
         }
 
         .table-responsive {
@@ -175,11 +148,11 @@
         }
 
         .specialty-table thead {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: var(--primary-blue);
         }
 
         .specialty-table thead th {
-            color: white; /* Đã sửa màu chữ tiêu đề thành trắng cho dễ đọc trên nền tím */
+            color: white;
             font-weight: 600;
             padding: 16px;
             border: none;
@@ -189,39 +162,39 @@
         }
 
         .specialty-table tbody tr {
-            transition: all 0.3s;
-            border-bottom: 1px solid #e8eef5;
+            transition: all 0.25s;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .specialty-table tbody tr:hover {
-            background: #f8f9fa;
+            background: var(--light-bg);
         }
 
         .specialty-table tbody td {
             padding: 16px;
             vertical-align: middle;
-            color: #333;
+            color: var(--text-primary);
             font-size: 0.9rem;
         }
 
         .specialty-name {
             font-weight: 600;
-            color: var(--primary-purple);
+            color: var(--primary-blue);
         }
 
         .department-badge {
             display: inline-block;
-            background: rgba(102, 126, 234, 0.1);
-            color: var(--primary-purple);
+            background: var(--primary-blue-light);
+            color: var(--primary-blue);
             padding: 4px 12px;
-            border-radius: 12px;
+            border-radius: 6px;
             font-size: 0.8rem;
             font-weight: 600;
-            border: 1px solid rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(74, 144, 226, 0.2);
         }
 
         .specialty-description {
-            color: #64748b;
+            color: var(--text-secondary);
             line-height: 1.5;
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -230,87 +203,107 @@
         }
 
         .btn-view-detail {
-            background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+            background: var(--primary-blue);
             color: white;
             border: none;
             padding: 6px 16px;
-            border-radius: 8px;
+            border-radius: 6px;
             font-size: 0.85rem;
             font-weight: 600;
-            transition: all 0.3s;
+            transition: all 0.25s;
             cursor: pointer;
         }
 
         .btn-view-detail:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            background: var(--primary-blue-dark);
+            box-shadow: var(--shadow-sm);
             color: white;
         }
 
-        /* UI States */
-        .loading { text-align: center; padding: 60px 20px; }
-        .spinner-border { width: 2.5rem; height: 2.5rem; border-width: 0.3rem; color: var(--primary-purple); }
-        .empty-state { text-align: center; padding: 60px 20px; color: #999; }
-        .empty-state i { font-size: 3.5rem; margin-bottom: 15px; color: #ddd; }
-        .empty-state h4 { color: #64748b; margin-bottom: 8px; }
+        .loading { 
+            text-align: center; 
+            padding: 60px 20px; 
+        }
+        
+        .spinner-border { 
+            width: 2.5rem; 
+            height: 2.5rem; 
+            border-width: 0.3rem; 
+            color: var(--primary-blue); 
+        }
+        
+        .empty-state { 
+            text-align: center; 
+            padding: 60px 20px; 
+            color: var(--text-light); 
+        }
+        
+        .empty-state i { 
+            font-size: 3.5rem; 
+            margin-bottom: 15px; 
+            color: #ddd; 
+        }
+        
+        .empty-state h4 { 
+            color: var(--text-secondary); 
+            margin-bottom: 8px; 
+        }
 
-        /* Pagination */
         .pagination-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: white;
             padding: 20px 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
         }
-        .pagination { margin: 0; gap: 5px; }
+        
+        .pagination { 
+            margin: 0; 
+            gap: 5px; 
+        }
+        
         .page-link {
-            color: var(--primary-purple);
-            border: 2px solid #e8eef5;
-            border-radius: 8px;
+            color: var(--primary-blue);
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
             padding: 6px 14px;
             font-weight: 600;
-            transition: all 0.3s;
+            transition: all 0.25s;
             font-size: 0.9rem;
         }
+        
         .page-link:hover {
-            background: var(--primary-purple);
+            background: var(--primary-blue);
             color: white;
-            border-color: var(--primary-purple);
+            border-color: var(--primary-blue);
         }
+        
         .page-item.active .page-link {
-            background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
-            border-color: var(--primary-purple);
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
         }
+        
         .page-item.disabled .page-link {
-            background: #f8f9fa;
-            border-color: #e8eef5;
+            background: var(--light-bg);
+            border-color: var(--border-color);
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .section-title { font-size: 1.6rem; }
             .header-section { padding: 30px 0 50px; }
             .filter-box { padding: 20px; }
             .pagination-container { flex-direction: column; gap: 15px; }
             .pagination { flex-wrap: wrap; justify-content: center; }
-            .table-responsive { border-radius: 20px; }
+            .table-responsive { border-radius: 12px; }
             .specialty-table thead th, .specialty-table tbody td { padding: 12px 10px; font-size: 0.85rem; }
         }
     </style>
 </head>
 <body>
-    <div id="pageLoader" style="
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background: white;
-        z-index: 99999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    ">
+    <div id="pageLoader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 99999; display: flex; align-items: center; justify-content: center;">
         <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div>
     </div>
 
@@ -329,7 +322,7 @@
         </div>
     </div>
 
-    <div class="header-section text-center reveal">
+    <div class="header-section text-center">
         <div class="container position-relative">
             <span class="header-badge">
                 <i class="fas fa-stethoscope me-2"></i>Chuyên khoa y tế
@@ -343,7 +336,7 @@
     </div>
 
     <div class="specialties-container">
-        <div class="filter-box reveal">
+        <div class="filter-box">
             <h5><i class="fas fa-filter me-2"></i>Bộ lọc tìm kiếm</h5>
             <div class="row g-3 mb-3">
                 <div class="col-md-4">
@@ -373,7 +366,7 @@
             <p class="mt-3">Đang tải dữ liệu...</p>
         </div>
 
-        <div id="specialtiesTable" class="table-container reveal" style="display: none;">
+        <div id="specialtiesTable" class="table-container" style="display: none;">
             <div class="table-responsive">
                 <table class="table specialty-table">
                     <thead>
@@ -385,8 +378,7 @@
                             <th style="width: 10%;" class="text-center">Thao tác</th>
                         </tr>
                     </thead>
-                    <tbody id="specialtiesTableBody">
-                        </tbody>
+                    <tbody id="specialtiesTableBody"></tbody>
                 </table>
             </div>
         </div>
@@ -397,7 +389,7 @@
             <p>Vui lòng thử lại với bộ lọc khác</p>
         </div>
 
-        <div id="paginationContainer" class="pagination-container reveal" style="display: none;">
+        <div id="paginationContainer" class="pagination-container" style="display: none;">
             <div class="text-muted" id="recordInfo">Hiển thị 0 - 0 của 0 chuyên khoa</div>
             <nav>
                 <ul class="pagination" id="paginationList"></ul>
@@ -408,39 +400,19 @@
     <div id="footer-placeholder"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script src="assets/js/common.js"></script>
 
     <script>
         const API_BASE_PATIENT_CK = 'http://localhost/DO_AN/src/api/patient';
-
-        // State management
         let currentPage = 1;
         const itemsPerPage = 10;
         let allKhoa = [];
 
-        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadKhoa();
             loadSpecialties();
             setupFilterListeners();
-            setupScrollAnimations();
         });
-
-        function setupScrollAnimations() {
-            const observer = new IntersectionObserver(entries => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.1 });
-
-            document.querySelectorAll('.reveal').forEach(el => {
-                observer.observe(el);
-            });
-        }
 
         function setupFilterListeners() {
             const searchInput = document.getElementById('filterSearch');
@@ -455,7 +427,6 @@
             try {
                 const response = await fetch(`${API_BASE_PATIENT_CK}/get-departments.php`);
                 const data = await response.json();
-                
                 if (data.success) {
                     allKhoa = data.data;
                     const select = document.getElementById('filterKhoa');
@@ -471,20 +442,16 @@
 
         async function loadSpecialties() {
             showLoading(true);
-            
             const maKhoa = document.getElementById('filterKhoa')?.value || '';
             const search = document.getElementById('filterSearch')?.value || '';
-            
             const params = new URLSearchParams();
             if (maKhoa) params.append('maKhoa', maKhoa);
             if (search) params.append('search', search);
             params.append('page', currentPage);
             params.append('limit', itemsPerPage);
-            
             try {
                 const response = await fetch(`${API_BASE_PATIENT_CK}/get-all-specialties.php?${params.toString()}`);
                 const data = await response.json();
-                
                 if (data.success && data.data.length > 0) {
                     displaySpecialties(data.data);
                     updatePagination(data.pagination);
@@ -496,36 +463,23 @@
                 showEmptyState();
             } finally {
                 showLoading(false);
-                // Ẩn PageLoader khi dữ liệu đã sẵn sàng
                 const pageLoader = document.getElementById('pageLoader');
                 if (pageLoader) pageLoader.style.display = 'none';
             }
         }
 
-        // 5. Display Table
         function displaySpecialties(specialties) {
             const tbody = document.getElementById('specialtiesTableBody');
             const table = document.getElementById('specialtiesTable');
             const emptyState = document.getElementById('emptyState');
-            
             if (!tbody) return;
-            
             const start = (currentPage - 1) * itemsPerPage;
-            
             tbody.innerHTML = specialties.map((specialty, index) => `
                 <tr>
                     <td class="text-center">${start + index + 1}</td>
-                    <td>
-                        <div class="specialty-name">${specialty.tenChuyenKhoa}</div>
-                    </td>
-                    <td>
-                        <span class="department-badge">
-                            <i class="fas fa-hospital me-1"></i>${specialty.tenKhoa || 'N/A'}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="specialty-description">${specialty.moTa || 'Chưa có mô tả'}</div>
-                    </td>
+                    <td><div class="specialty-name">${specialty.tenChuyenKhoa}</div></td>
+                    <td><span class="department-badge"><i class="fas fa-hospital me-1"></i>${specialty.tenKhoa || 'N/A'}</span></td>
+                    <td><div class="specialty-description">${specialty.moTa || 'Chưa có mô tả'}</div></td>
                     <td class="text-center">
                         <button class="btn-view-detail" onclick="viewSpecialtyDetail('${specialty.maChuyenKhoa}')">
                             <i class="fas fa-eye me-1"></i>Chi tiết
@@ -533,66 +487,45 @@
                     </td>
                 </tr>
             `).join('');
-            
             table.style.display = 'block';
             emptyState.style.display = 'none';
-
-            // Kích hoạt animation cho table nếu nó vừa hiện ra
-            if (!table.classList.contains('visible')) {
-                setTimeout(() => table.classList.add('visible'), 100); 
-            }
         }
 
-        // 6. View Detail
         function viewSpecialtyDetail(maChuyenKhoa) {
             window.location.href = `chi-tiet-chuyen-khoa.html?id=${maChuyenKhoa}`;
         }
 
-        // 7. Pagination
         function updatePagination(pagination) {
             const container = document.getElementById('paginationContainer');
             const list = document.getElementById('paginationList');
             const recordInfo = document.getElementById('recordInfo');
-            
             if (!pagination || pagination.totalPages <= 1) {
                 container.style.display = 'none';
                 return;
             }
-            
             container.style.display = 'flex';
-            
             const start = (pagination.page - 1) * pagination.limit + 1;
             const end = Math.min(pagination.page * pagination.limit, pagination.total);
             recordInfo.textContent = `Hiển thị ${start} - ${end} của ${pagination.total} chuyên khoa`;
-            
-            let html = `
-                <li class="page-item ${pagination.page === 1 ? 'disabled' : ''}">
+            let html = `<li class="page-item ${pagination.page === 1 ? 'disabled' : ''}">
                     <a class="page-link" href="#" onclick="changePage(${pagination.page - 1}); return false;">
                         <i class="fas fa-chevron-left"></i>
                     </a>
-                </li>
-            `;
-            
+                </li>`;
             for (let i = 1; i <= pagination.totalPages; i++) {
                 if (i === 1 || i === pagination.totalPages || (i >= pagination.page - 1 && i <= pagination.page + 1)) {
-                    html += `
-                        <li class="page-item ${i === pagination.page ? 'active' : ''}">
+                    html += `<li class="page-item ${i === pagination.page ? 'active' : ''}">
                             <a class="page-link" href="#" onclick="changePage(${i}); return false;">${i}</a>
-                        </li>
-                    `;
+                        </li>`;
                 } else if (i === pagination.page - 2 || i === pagination.page + 2) {
                     html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
                 }
             }
-            
-            html += `
-                <li class="page-item ${pagination.page === pagination.totalPages ? 'disabled' : ''}">
+            html += `<li class="page-item ${pagination.page === pagination.totalPages ? 'disabled' : ''}">
                     <a class="page-link" href="#" onclick="changePage(${pagination.page + 1}); return false;">
                         <i class="fas fa-chevron-right"></i>
                     </a>
-                </li>
-            `;
-            
+                </li>`;
             list.innerHTML = html;
         }
 
@@ -602,7 +535,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // 8. Filters
         function applyFilters() {
             currentPage = 1;
             loadSpecialties();
@@ -615,12 +547,10 @@
             loadSpecialties();
         }
 
-        // 9. Loading State
         function showLoading(show) {
             const loading = document.getElementById('loadingIndicator');
             const table = document.getElementById('specialtiesTable');
             const pagination = document.getElementById('paginationContainer');
-            
             if (loading) loading.style.display = show ? 'block' : 'none';
             if (table) table.style.display = show ? 'none' : 'block';
             if (pagination) pagination.style.display = show ? 'none' : 'flex';
@@ -631,7 +561,6 @@
             const table = document.getElementById('specialtiesTable');
             const pagination = document.getElementById('paginationContainer');
             const emptyState = document.getElementById('emptyState');
-            
             if (loading) loading.style.display = 'none';
             if (table) table.style.display = 'none';
             if (pagination) pagination.style.display = 'none';
