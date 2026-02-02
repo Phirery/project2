@@ -1,11 +1,19 @@
 <?php
-require_once 'send-mail.php';
+require 'send-mail.php';
 
-$tieuDe = "Thông báo từ Đồ án Phòng khám";
-$noiDung = "<h1>Chào bạn!</h1><p>Đây là mail thử nghiệm từ hệ thống quản lý phòng khám của bạn.</p>";
+// Email nhận (đổi thành email của bạn)
+$toEmail = 'dat123456789fa@gmail.com';
 
-if (sendMail('dat123456789fa@gmail.com', $tieuDe, $noiDung)) {
-    echo "Gửi mail thành công! Hãy kiểm tra hộp thư đến (hoặc Spam).";
+// Test OTP
+$otp = rand(100000, 999999);
+$subject = 'Test gửi OTP';
+$html = getOTPEmailTemplate($otp);
+$text = "Ma OTP cua ban la: $otp";
+
+$result = sendEmail($toEmail, $subject, $html, $text);
+
+if ($result) {
+    echo "✅ Gửi email OTP thành công!";
 } else {
-    echo "Gửi mail thất bại. Hãy kiểm tra lại cấu hình.";
+    echo "❌ Gửi email thất bại. Kiểm tra log.";
 }

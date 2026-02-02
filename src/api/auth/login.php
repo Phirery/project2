@@ -19,14 +19,14 @@ $username = trim($input['username']);
 $password = $input['password'];
 
 try {
-
+    // Tìm user bằng username HOẶC soDienThoai HOẶC email
     $stmt = $conn->prepare("
         SELECT id, tenDangNhap, matKhau, vaiTro, trangThai 
         FROM nguoidung 
-        WHERE (tenDangNhap = ? OR soDienThoai = ?)
+        WHERE (tenDangNhap = ? OR soDienThoai = ? OR email = ?)
     ");
     
-    $stmt->bind_param("ss", $username, $username);
+    $stmt->bind_param("sss", $username, $username, $username);
     $stmt->execute();
     $result = $stmt->get_result();
     
@@ -42,6 +42,7 @@ try {
     
     $user = $result->fetch_assoc();
 
+    // Kiểm tra trạng thái tài khoản
     if ($user['trangThai'] === 'Khóa') {
         echo json_encode([
             'success' => false,
@@ -52,27 +53,28 @@ try {
         exit;
     }
 
+    // Kiểm tra mật khẩu
     $dbPassword = $user['matKhau'];
     $isHashVerified = password_verify($password, $dbPassword);
 
     if ($isHashVerified) {
+        // Mật khẩu đã được hash - OK
     } else {
+        // Thử so sánh plaintext (để tương thích ngược)
         $isPlaintextVerified = hash_equals($dbPassword, $password);
 
         if ($isPlaintextVerified) {
+            // Hash lại mật khẩu plaintext thành bcrypt
             $newHash = password_hash($password, PASSWORD_DEFAULT);
 
-            $update = $conn->prepare("
-                UPDATE nguoidung SET matKhau = ? WHERE id = ?
-            ");
+            $update = $conn->prepare("UPDATE nguoidung SET matKhau = ? WHERE id = ?");
             $update->bind_param("si", $newHash, $user['id']);
             $update->execute();
             $update->close();
-
         } else {
             echo json_encode([
                 'success' => false,
-                'message' => 'Tên đăng nhập hoặc mật khẩu không đúng',
+                'message' => 'Tên đăng nhập/Email/SĐT hoặc mật khẩu không đúng',
             ]);
             $stmt->close();
             $conn->close();
@@ -80,6 +82,7 @@ try {
         }
     }
 
+    // Lưu session
     $_SESSION['id'] = $user['id'];
     $_SESSION['vaiTro'] = $user['vaiTro'];
     $_SESSION['tenDangNhap'] = $user['tenDangNhap'];

@@ -1,14 +1,15 @@
 <?php
 require_once '../../config/cors.php';
 require_once '../../config/dp.php';
+require_once '../includes/send-email.php';
 
-// Start session để kiểm tra OTP
+// Start session
 session_start();
 
 // Get JSON input
 $input = json_decode(file_get_contents("php://input"), true);
 
-if (!isset($input['username'], $input['otp'], $input['newPassword'])) {
+if (!isset($input['email'], $input['otp'], $input['newPassword'])) {
     echo json_encode([
         'success' => false,
         'message' => 'Thiếu thông tin cần thiết'
@@ -16,12 +17,12 @@ if (!isset($input['username'], $input['otp'], $input['newPassword'])) {
     exit;
 }
 
-$username = trim($input['username']);
+$email = trim($input['email']);
 $otp = trim($input['otp']);
 $newPassword = $input['newPassword'];
 
 try {
-    // Validate OTP from session
+    // === Validate OTP từ session ===
     if (!isset($_SESSION['forgot_otp']) || !isset($_SESSION['forgot_otp_user']) || !isset($_SESSION['forgot_otp_expiry'])) {
         echo json_encode([
             'success' => false,
@@ -30,9 +31,9 @@ try {
         exit;
     }
     
-    // Check OTP expiry
+    // === Kiểm tra OTP đã hết hạn chưa ===
     if (time() > $_SESSION['forgot_otp_expiry']) {
-        unset($_SESSION['forgot_otp'], $_SESSION['forgot_otp_user'], $_SESSION['forgot_otp_expiry']);
+        unset($_SESSION['forgot_otp'], $_SESSION['forgot_otp_user'], $_SESSION['forgot_otp_expiry'], $_SESSION['forgot_otp_email']);
         echo json_encode([
             'success' => false,
             'message' => 'Mã OTP đã hết hạn. Vui lòng yêu cầu mã mới.'
@@ -40,7 +41,7 @@ try {
         exit;
     }
     
-    // Verify OTP
+    // === Verify OTP ===
     if ($otp !== $_SESSION['forgot_otp']) {
         echo json_encode([
             'success' => false,
@@ -49,7 +50,7 @@ try {
         exit;
     }
     
-    // Validate password length
+    // === Validate password length ===
     if (strlen($newPassword) < 6) {
         echo json_encode([
             'success' => false,
@@ -60,12 +61,12 @@ try {
     
     $userId = $_SESSION['forgot_otp_user'];
     
-    // Verify username matches the OTP session
+    // === Verify email matches ===
     $stmt = $conn->prepare("
-        SELECT id FROM nguoidung 
-        WHERE id = ? AND (tenDangNhap = ? OR soDienThoai = ?)
+        SELECT id, tenDangNhap, email FROM nguoidung 
+        WHERE id = ? AND email = ?
     ");
-    $stmt->bind_param("iss", $userId, $username, $username);
+    $stmt->bind_param("is", $userId, $email);
     $stmt->execute();
     $result = $stmt->get_result();
     
@@ -77,27 +78,36 @@ try {
         $stmt->close();
         exit;
     }
+    
+    $user = $result->fetch_assoc();
     $stmt->close();
     
-    // Hash new password
+    // === Hash new password ===
     $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
     
-    // Update password and reset ngayCapNhatMatKhau to allow immediate login
+    // === Update password ===
     $stmt = $conn->prepare("
         UPDATE nguoidung 
-        SET matKhau = ?, ngayCapNhatMatKhau = NULL 
+        SET matKhau = ?, ngayCapNhatMatKhau = NOW() 
         WHERE id = ?
     ");
     $stmt->bind_param("si", $hashedPassword, $userId);
     $stmt->execute();
     $stmt->close();
     
-    // Clear OTP from session
-    unset($_SESSION['forgot_otp'], $_SESSION['forgot_otp_user'], $_SESSION['forgot_otp_expiry']);
+    // === Gửi email xác nhận đổi mật khẩu ===
+    $changeTime = date('d/m/Y H:i:s');
+    $emailSubject = "Mật khẩu đã được thay đổi - Eden Health";
+    $emailBody = getPasswordChangedEmailTemplate($user['tenDangNhap'], $changeTime);
+    
+    sendEmail($email, $emailSubject, $emailBody);
+    
+    // === Clear OTP from session ===
+    unset($_SESSION['forgot_otp'], $_SESSION['forgot_otp_user'], $_SESSION['forgot_otp_expiry'], $_SESSION['forgot_otp_email'], $_SESSION['last_otp_request_time']);
     
     echo json_encode([
         'success' => true,
-        'message' => 'Đổi mật khẩu thành công!'
+        'message' => 'Đổi mật khẩu thành công! Email xác nhận đã được gửi.'
     ]);
     
 } catch (Exception $e) {
@@ -108,4 +118,3 @@ try {
 }
 
 $conn->close();
-?>
