@@ -635,7 +635,7 @@
     <script src="../../assets/js/common.js"></script>
 
     <script>
-        const API_BASE = 'http://localhost/DO_AN_1/code_doan1/src/backend/api/patient';
+        const API_BASE = 'http://localhost/DO_AN/src/api/patient';
 
         // State quản lý booking
         const bookingState = {
@@ -674,7 +674,7 @@
                 
                 if (!data.success || data.role !== 'benhnhan') {
                     alert('Vui lòng đăng nhập với tài khoản bệnh nhân để đặt lịch!');
-                    window.location.href = '../auth/login.html';
+                    window.location.href = 'login.html';
                     return;
                 }
                 
@@ -683,7 +683,7 @@
             } catch (error) {
                 console.error('Auth error:', error);
                 alert('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại!');
-                window.location.href = '../auth/login.html';
+                window.location.href = 'login.html';
             }
         }
 

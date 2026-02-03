@@ -3,17 +3,15 @@ require_once '../../config/cors.php';
 require_once '../../config/dp.php';
 require_once '../../config/session.php';
 
-global $conn; // Lấy biến kết nối DB từ dp.php (Đảm bảo dp.php đã được require_once)
+global $conn;
 
 if (isset($_SESSION['id']) && isset($_SESSION['vaiTro'])) {
     $userId = $_SESSION['id'];
     $userRole = $_SESSION['vaiTro'];
     $tenDangNhap = $_SESSION['tenDangNhap'];
     
-    // Mặc định tên hiển thị ban đầu là tên đăng nhập
     $hoTenHienThi = $tenDangNhap; 
 
-    // Logic ĐẶC BIỆT để lấy Tên đầy đủ (hoTen) cho Bệnh nhân
     if ($userRole === 'benhnhan') {
         try {
             $stmt = $conn->prepare("SELECT tenBenhNhan FROM benhnhan WHERE nguoiDungId = ?");
@@ -31,7 +29,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['vaiTro'])) {
             // error_log("Lỗi truy vấn tên bệnh nhân: " . $e->getMessage()); 
         }
     } 
-    // Bạn có thể thêm logic tương tự cho vai trò 'bacsi' và 'quantri' nếu muốn hiển thị tên thật của họ
 
     echo json_encode([
         'success' => true,

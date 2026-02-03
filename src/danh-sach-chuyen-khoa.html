@@ -17,11 +17,23 @@
     <style>
         /* Header Section */
         .header-section {
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+            background: linear-gradient(135deg, #667eea 0%, #4cac87 100%);
             padding: 40px 0 60px;
             position: relative;
             overflow: hidden;
             margin-bottom: -30px;
+        }
+
+        .header-section::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -150px;
+            right: -100px;
+            animation: float 8s ease-in-out infinite;
         }
 
         .header-badge {

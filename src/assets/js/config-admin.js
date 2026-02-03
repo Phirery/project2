@@ -91,7 +91,7 @@ function handleSessionExpired(msg) {
         msg.includes('Chưa đăng nhập')
     ) {
         showAlert('error', 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
-        setTimeout(() => window.location.href = '../auth/login.html', 1500);
+        setTimeout(() => window.location.href = '../login.html', 1500);
     }
 }
 

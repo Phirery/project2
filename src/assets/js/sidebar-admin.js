@@ -224,7 +224,7 @@
             if (data.success) {
                 showAlert('success', 'Đăng xuất thành công!');
                 setTimeout(() => {
-                    window.location.href = '../auth/login.html';
+                    window.location.href = '../login.html';
                 }, 1000);
             } else {
                 showAlert('error', 'Không thể đăng xuất. Vui lòng thử lại.');

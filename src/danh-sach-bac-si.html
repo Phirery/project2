@@ -7,10 +7,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
-    <link rel="stylesheet" href="../../assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/common.css">
 
     <style>
-        /* === ANIMATION FADE UP === */
         .reveal {
             opacity: 0;
             transform: translateY(30px);
@@ -22,11 +21,9 @@
             transform: translateY(0);
         }
 
-        /* === CSS RIÊNG CỦA TRANG DANH SÁCH BÁC SĨ === */
-
         /* Header Section */
         .header-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #667eea 0%, #4cac87 100%);
             padding: 40px 0 60px;
             position: relative;
             overflow: hidden;
@@ -451,13 +448,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     
-    <script src="../../assets/js/common.js"></script>
+    <script src="assets/js/common.js"></script>
 
     <script>
-        // API Configuration
-        // Sử dụng API_BASE_PATIENT từ common.js (nếu có) hoặc khai báo local để tránh lỗi
-        const API_BASE_PATIENT_LIST = 'http://localhost/DO_AN_1/code_doan1/src/backend/api/patient';
-
         // State management
         let allDoctors = [];
         let filteredDoctors = [];
@@ -468,7 +461,6 @@
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            // Common.js tự động load Header/Footer
             
             loadKhoa();
             loadChuyenKhoa();
@@ -477,7 +469,6 @@
             setupScrollAnimations(); // Kích hoạt hiệu ứng Fade Up
         });
 
-        // === ANIMATION ===
         function setupScrollAnimations() {
             const observer = new IntersectionObserver(entries => {
                 entries.forEach(entry => {
@@ -493,7 +484,6 @@
             }, 300);
         }
 
-        // === FILTER LISTENERS ===
         function setupFilterListeners() {
             const khoaSelect = document.getElementById('filterKhoa');
             const searchInput = document.getElementById('filterSearch');
@@ -511,10 +501,9 @@
             }
         }
 
-        // === LOAD DATA ===
         async function loadKhoa() {
             try {
-                const response = await fetch(`${API_BASE_PATIENT_LIST}/get-departments.php`);
+                const response = await fetch(`${API_BASE_PATIENT}/get-departments.php`);
                 const data = await response.json();
                 
                 if (data.success) {
@@ -532,13 +521,13 @@
 
         async function loadChuyenKhoa() {
             try {
-                const response = await fetch(`${API_BASE_PATIENT_LIST}/get-departments.php`);
+                const response = await fetch(`${API_BASE_PATIENT}/get-departments.php`);
                 const deptData = await response.json();
                 
                 if (!deptData.success) return;
                 
                 const specialtyPromises = deptData.data.map(dept => 
-                    fetch(`${API_BASE_PATIENT_LIST}/get-specialties.php?maKhoa=${dept.maKhoa}`)
+                    fetch(`${API_BASE_PATIENT}/get-specialties.php?maKhoa=${dept.maKhoa}`)
                         .then(r => r.json())
                 );
                 
@@ -584,7 +573,7 @@
             if (search) params.append('search', search);
             
             try {
-                const response = await fetch(`${API_BASE_PATIENT_LIST}/get_doctors.php?${params.toString()}`);
+                const response = await fetch(`${API_BASE_PATIENT}/get_doctors.php?${params.toString()}`);
                 const data = await response.json();
                 
                 if (data.success) {
@@ -606,7 +595,6 @@
             }
         }
 
-        // === RENDER ===
         function displayDoctors() {
             const grid = document.getElementById('doctorsGrid');
             const emptyState = document.getElementById('emptyState');
@@ -640,7 +628,9 @@
             const currentYear = new Date().getFullYear();
             const experience = doctor.namLamViec ? currentYear - parseInt(doctor.namLamViec) : 0;
             const experienceText = experience > 0 ? `${experience} năm kinh nghiệm` : 'Mới tham gia';
-            const defaultImg = 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962515/doctor_male_pna01s.png';
+            const defaultImg = doctor.gioiTinh === 'nu' ? 
+            'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962514/doctor_female_zvmhtg.png' : 
+            'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962515/doctor_male_pna01s.png';
 
             return `
                 <div class="doctor-card">

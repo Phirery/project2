@@ -7,10 +7,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
-    <link rel="stylesheet" href="../../assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/common.css">
 
     <style>
-        /* === CSS HIỆU ỨNG CHUYỂN ĐỘNG (FADE UP) === */
         .reveal {
             opacity: 0;
             transform: translateY(30px);
@@ -21,12 +20,10 @@
             opacity: 1;
             transform: translateY(0);
         }
-
-        /* === CSS RIÊNG CỦA TRANG LỊCH KHÁM === */
         
         /* Header Section */
         .header-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #667eea 0%, #4cac87 100%);
             padding: 40px 0 60px;
             position: relative;
             overflow: hidden;
@@ -496,13 +493,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     
-    <script src="../../assets/js/common.js"></script>
+    <script src="assets/js/common.js"></script>
 
     <script>
-        // Sử dụng biến API_BASE local để dễ code, map nó vào biến global của common.js
-        const API_BASE = 'http://localhost/DO_AN_1/code_doan1/src/backend/api/patient';
-        // const API_BASE_AUTH đã có trong common.js
-        
         let currentAppointmentId = null;
         let appointments = {
             upcoming: [],
@@ -518,14 +511,14 @@
         async function checkStrictAuth() {
             try {
                 // Chúng ta gọi API check-auth riêng để đảm bảo user là bệnh nhân và đang login
-                const response = await fetch(`${API_BASE}/check-auth.php`, {
+                const response = await fetch(`${API_BASE_PATIENT}/check-auth.php`, {
                     credentials: 'include'
                 });
                 const data = await response.json();
                 
                 if (!data.success || data.role !== 'benhnhan') {
                     alert('Vui lòng đăng nhập tài khoản bệnh nhân để xem lịch khám!');
-                    window.location.href = '../auth/login.html';
+                    window.location.href = 'login.html';
                     return;
                 }
                 
@@ -538,7 +531,7 @@
 
             } catch (error) {
                 console.error('Auth error:', error);
-                window.location.href = '../auth/login.html';
+                window.location.href = 'login.html';
             }
         }
 
@@ -561,7 +554,7 @@
         // Load appointments
         async function loadAppointments() {
             try {
-                const response = await fetch(`${API_BASE}/get-appointments.php`, {
+                const response = await fetch(`${API_BASE_PATIENT}/get-appointments.php`, {
                     credentials: 'include'
                 });
                 const data = await response.json();
@@ -789,7 +782,7 @@
             }
             
             try {
-                const response = await fetch(`${API_BASE}/cancel-appointment.php`, {
+                const response = await fetch(`${API_BASE_PATIENT}/cancel-appointment.php`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
