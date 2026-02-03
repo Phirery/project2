@@ -1,6 +1,7 @@
 <?php
 require_once '../../config/cors.php';
 require_once '../../config/dp.php';
+require_once '../../includes/send-mail.php';
 
 session_start();
 
@@ -8,7 +9,7 @@ session_start();
 $input = json_decode(file_get_contents("php://input"), true);
 
 // Validate required fields
-if (!isset($input['fullname'], $input['phone'], $input['gender'], $input['birthdate'], $input['username'], $input['password'])) {
+if (!isset($input['fullname'], $input['phone'], $input['email'], $input['gender'], $input['birthdate'], $input['username'], $input['password'])) {
     echo json_encode([
         'success' => false,
         'message' => 'Thiếu thông tin đăng ký'
@@ -18,11 +19,21 @@ if (!isset($input['fullname'], $input['phone'], $input['gender'], $input['birthd
 
 $fullname = trim($input['fullname']);
 $phone = trim($input['phone']);
+$email = trim($input['email']);
 $gender = $input['gender'];
 $birthdate = $input['birthdate'];
 $bhyt = isset($input['bhyt']) && !empty($input['bhyt']) ? trim($input['bhyt']) : null;
 $username = trim($input['username']);
 $password = $input['password'];
+
+// Validate email
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Định dạng email không hợp lệ'
+    ]);
+    exit;
+}
 
 // Validate username
 if (strlen($username) < 4) {
@@ -111,6 +122,21 @@ try {
     }
     $stmt->close();
     
+    // Check if email already exists
+    $stmt = $conn->prepare("SELECT id FROM nguoidung WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    if ($stmt->get_result()->num_rows > 0) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Email đã được đăng ký'
+        ]);
+        $stmt->close();
+        $conn->close();
+        exit;
+    }
+    $stmt->close();
+    
     // Check if BHYT already exists (if provided)
     if ($bhyt !== null) {
         $stmt = $conn->prepare("SELECT maBenhNhan FROM benhnhan WHERE soTheBHYT = ?");
@@ -137,10 +163,10 @@ try {
     try {
         // Insert into nguoidung table
         $stmt = $conn->prepare("
-            INSERT INTO nguoidung (tenDangNhap, matKhau, soDienThoai, vaiTro, trangThai, ngayCapNhatTaiKhoan) 
-            VALUES (?, ?, ?, 'benhnhan', 'Hoạt Động', NOW())
+            INSERT INTO nguoidung (tenDangNhap, matKhau, soDienThoai, email, vaiTro, trangThai, ngayCapNhatTaiKhoan) 
+            VALUES (?, ?, ?, ?, 'benhnhan', 'Hoạt Động', NOW())
         ");
-        $stmt->bind_param("sss", $username, $hashedPassword, $phone);
+        $stmt->bind_param("ssss", $username, $hashedPassword, $phone, $email);
         $stmt->execute();
         $nguoiDungId = $conn->insert_id;
         $stmt->close();
@@ -168,9 +194,14 @@ try {
         // Commit transaction
         $conn->commit();
         
+        // Gửi email chào mừng
+        $emailSubject = "Chào mừng đến với Eden Health!";
+        $emailBody = getWelcomeEmailTemplate($fullname, $username);
+        sendEmail($email, $emailSubject, $emailBody);
+        
         echo json_encode([
             'success' => true,
-            'message' => 'Đăng ký thành công'
+            'message' => 'Đăng ký thành công! Email chào mừng đã được gửi.'
         ]);
         
     } catch (Exception $e) {

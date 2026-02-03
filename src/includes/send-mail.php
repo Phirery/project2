@@ -7,9 +7,9 @@ require __DIR__ . '/../PHPMailer/src/Exception.php';
 require __DIR__ . '/../PHPMailer/src/PHPMailer.php';
 require __DIR__ . '/../PHPMailer/src/SMTP.php';
 
+$mailConfig = require __DIR__ . '/../config/mail.php';
+
 /**
- * Hàm gửi email tổng quát cho hệ thống
- * 
  * @param string $toEmail Email người nhận
  * @param string $subject Tiêu đề email
  * @param string $htmlContent Nội dung HTML
@@ -17,6 +17,9 @@ require __DIR__ . '/../PHPMailer/src/SMTP.php';
  * @return bool Trả về true nếu gửi thành công, false nếu thất bại
  */
 function sendEmail($toEmail, $subject, $htmlContent, $textContent = '') {
+
+    global $mailConfig; //Sau này sửa lại sau.
+
     $mail = new PHPMailer(true);
 
     try {
@@ -24,14 +27,13 @@ function sendEmail($toEmail, $subject, $htmlContent, $textContent = '') {
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'ntdatcntt2311055@student.ctuet.edu.vn'; // Email của bạn
-        $mail->Password   = 'vrkg lqmq tfyp scsz';
+        $mail->Username   = $mailConfig['username'];
+        $mail->Password   = $mailConfig['password'];
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
         $mail->CharSet    = 'UTF-8';
 
-        // === Người gửi & Người nhận ===
-        $mail->setFrom('ntdatcntt2311055@student.ctuet.edu.vn', 'Eden Health - Phòng Khám');
+        $mail->setFrom($mailConfig['username'], 'Eden Health - Phòng Khám');
         $mail->addAddress($toEmail);
 
         // === Nội dung email ===
