@@ -2,6 +2,7 @@
 require_once '../../config/cors.php';
 require_once '../../config/session.php';
 require_once '../../config/dp.php';
+require_once '../../includes/mail-events.php';
 
 // Kiểm tra quyền admin
 require_role('quantri');
@@ -68,6 +69,12 @@ try {
     $updateQuery .= " WHERE maLienHe = '$maLienHe'";
     
     if ($conn->query($updateQuery)) {
+        try {
+            sendContactProcessedEmail($conn, (int)$maLienHe);
+        } catch (Throwable $mailError) {
+            error_log('Contact processed mail error: ' . $mailError->getMessage());
+        }
+
         echo json_encode([
             'success' => true,
             'message' => 'Xử lý liên hệ thành công'

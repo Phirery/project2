@@ -1,6 +1,7 @@
 <?php
 require_once '../../config/cors.php';
 require_once '../../config/dp.php';
+require_once '../../includes/mail-events.php';
 
 // Lấy dữ liệu từ request
 $data = json_decode(file_get_contents('php://input'), true);
@@ -49,6 +50,12 @@ try {
     
     if ($stmt->execute()) {
         $maLienHe = $conn->insert_id;
+
+        try {
+            sendContactReceivedEmail($conn, (int)$maLienHe, $email, $hoTen, $chuDe);
+        } catch (Throwable $mailError) {
+            error_log('Contact received mail error: ' . $mailError->getMessage());
+        }
         
         echo json_encode([
             'success' => true,

@@ -2,6 +2,7 @@
 require_once '../../config/cors.php';
 require_once '../../config/dp.php';
 require_once '../../config/session.php';
+require_once '../../includes/mail-events.php';
 
 require_role('benhnhan');
 
@@ -123,8 +124,45 @@ try {
     
     $maLichKham = $conn->insert_id;
     $stmt->close();
+
+    // 5. Tạo hóa đơn mặc định (nếu lịch khám có gói và chưa có hóa đơn)
+    if (!empty($maGoi)) {
+        $priceStmt = $conn->prepare("SELECT gia FROM goikham WHERE maGoi = ? LIMIT 1");
+        $priceStmt->bind_param("i", $maGoi);
+        $priceStmt->execute();
+        $priceRow = $priceStmt->get_result()->fetch_assoc();
+        $priceStmt->close();
+
+        if ($priceRow) {
+            $checkInvoiceStmt = $conn->prepare("SELECT maHoaDon FROM hoadon WHERE maLichKham = ? LIMIT 1");
+            $checkInvoiceStmt->bind_param("i", $maLichKham);
+            $checkInvoiceStmt->execute();
+            $invoiceExists = $checkInvoiceStmt->get_result()->num_rows > 0;
+            $checkInvoiceStmt->close();
+
+            if (!$invoiceExists) {
+                $amount = (float)$priceRow['gia'];
+                $invoiceStmt = $conn->prepare("
+                    INSERT INTO hoadon (maLichKham, soTien, trangThai)
+                    VALUES (?, ?, 'Chưa thanh toán')
+                ");
+                $invoiceStmt->bind_param("id", $maLichKham, $amount);
+                if (!$invoiceStmt->execute()) {
+                    throw new Exception('Không thể tạo hóa đơn: ' . $invoiceStmt->error);
+                }
+                $invoiceStmt->close();
+            }
+        }
+    }
     
     $conn->commit();
+
+    // 6. Gửi mail giao dịch (không chặn luồng chính nếu gửi thất bại)
+    try {
+        sendAppointmentBookedEmails($conn, (int)$maLichKham);
+    } catch (Throwable $mailError) {
+        error_log('Appointment booked mail error: ' . $mailError->getMessage());
+    }
     
     echo json_encode([
         'success' => true,

@@ -2,6 +2,7 @@
 require_once '../../config/cors.php';
 require_once '../../config/dp.php';
 require_once '../../includes/send-mail.php';
+require_once '../../includes/mail-events.php';
 
 // Start session
 session_start();
@@ -100,7 +101,14 @@ try {
     $emailSubject = "Mật khẩu đã được thay đổi - Eden Health";
     $emailBody = getPasswordChangedEmailTemplate($user['tenDangNhap'], $changeTime);
     
-    sendEmail($email, $emailSubject, $emailBody);
+    sendTransactionalMail(
+        $conn,
+        'auth_password_changed',
+        'password_changed:' . $userId . ':' . time(),
+        $email,
+        $emailSubject,
+        $emailBody
+    );
     
     // === Clear OTP from session ===
     unset($_SESSION['forgot_otp'], $_SESSION['forgot_otp_user'], $_SESSION['forgot_otp_expiry'], $_SESSION['forgot_otp_email'], $_SESSION['last_otp_request_time']);

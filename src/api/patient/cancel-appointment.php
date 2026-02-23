@@ -2,6 +2,7 @@
 require_once '../../config/cors.php';
 require_once '../../config/dp.php';
 require_once '../../config/session.php';
+require_once '../../includes/mail-events.php';
 
 require_role('benhnhan');
 
@@ -104,6 +105,13 @@ try {
     }
     
     $conn->commit();
+
+    // Gửi mail thông báo hủy lịch (không ảnh hưởng kết quả hủy nếu gửi mail lỗi)
+    try {
+        sendAppointmentCancelledEmails($conn, (int)$maLichKham, 'benhnhan', $lyDo);
+    } catch (Throwable $mailError) {
+        error_log('Patient cancel mail error: ' . $mailError->getMessage());
+    }
     
     echo json_encode([
         'success' => true,

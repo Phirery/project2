@@ -388,6 +388,7 @@ CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW B
     DECLARE shiftName VARCHAR(50);
     DECLARE slotTime VARCHAR(50);
     DECLARE cancelSource VARCHAR(50);
+    DECLARE cancelActor VARCHAR(20);
     DECLARE reason TEXT DEFAULT ''; -- Biến chứa lý do trích xuất
     
     -- Chỉ chạy khi trạng thái chuyển sang 'Hủy'
@@ -410,9 +411,10 @@ CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW B
         END IF;
 
         -- 3. GỬI THÔNG BÁO (Dựa vào người hủy)
+        SET cancelActor = LOWER(TRIM(COALESCE(NEW.nguoiHuy, '')));
         
         -- === TRƯỜNG HỢP A: BỆNH NHÂN HỦY (Gửi cho Bác sĩ) ===
-        IF NEW.nguoiHuy = 'benhnhan' THEN
+        IF cancelActor = 'benhnhan' THEN
             IF NOT EXISTS (SELECT 1 FROM thongbaolichkham WHERE maLichKham = NEW.maLichKham AND loai = 'Hủy lịch' AND thoiGian >= DATE_SUB(NOW(), INTERVAL 5 SECOND)) THEN
                 INSERT INTO thongbaolichkham (
                     maBacSi, maLichKham, loai, tieuDe, noiDung, thoiGian, daXem
@@ -433,30 +435,32 @@ CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW B
             END IF;
 
         -- === TRƯỜNG HỢP B: NGƯỜI KHÁC HỦY (Gửi cho Bệnh nhân) ===
-        ELSE
+        ELSEIF cancelActor IN ('bacsi', 'quantri', 'hethong') THEN
             SET cancelSource = CASE 
-                WHEN NEW.nguoiHuy = 'bacsi' THEN 'Bác sĩ'
-                WHEN NEW.nguoiHuy = 'quantri' THEN 'Quản trị viên'
-                WHEN NEW.nguoiHuy = 'hethong' THEN 'Hệ thống'
+                WHEN cancelActor = 'bacsi' THEN 'Bác sĩ'
+                WHEN cancelActor = 'quantri' THEN 'Quản trị viên'
+                WHEN cancelActor = 'hethong' THEN 'Hệ thống'
                 ELSE 'Bệnh viện'
             END;
 
-            INSERT INTO thongbaobenhnhan (
-                maBenhNhan, loai, tieuDe, noiDung, thoiGian, daXem
-            )
-            VALUES (
-                NEW.maBenhNhan,
-                'Lịch khám',
-                'Lịch khám bị hủy',
-                CONCAT(
-                    'Lịch khám ngày ', appointmentDate, 
-                    ' đã bị hủy bởi ', cancelSource, 
-                    '. Lý do: ', reason, -- Đã thêm lý do vào đây
-                    '. Vui lòng đặt lịch mới.'
-                ),
-                NOW(),
-                0
-            );
+            IF NOT EXISTS (SELECT 1 FROM thongbaobenhnhan WHERE maBenhNhan = NEW.maBenhNhan AND loai = 'Lịch khám' AND tieuDe = 'Lịch khám bị hủy' AND thoiGian >= DATE_SUB(NOW(), INTERVAL 5 SECOND)) THEN
+                INSERT INTO thongbaobenhnhan (
+                    maBenhNhan, loai, tieuDe, noiDung, thoiGian, daXem
+                )
+                VALUES (
+                    NEW.maBenhNhan,
+                    'Lịch khám',
+                    'Lịch khám bị hủy',
+                    CONCAT(
+                        'Lịch khám ngày ', appointmentDate, 
+                        ' đã bị hủy bởi ', cancelSource, 
+                        '. Lý do: ', reason, -- Đã thêm lý do vào đây
+                        '. Vui lòng đặt lịch mới.'
+                    ),
+                    NOW(),
+                    0
+                );
+            END IF;
         END IF;
         
     END IF;

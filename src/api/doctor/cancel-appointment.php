@@ -2,6 +2,7 @@
 require_once '../../config/cors.php';
 require_once '../../config/dp.php';
 require_once '../../config/session.php';
+require_once '../../includes/mail-events.php';
 
 require_role('bacsi');
 
@@ -16,6 +17,7 @@ if (!isset($input['maLichKham'])) {
     exit;
 }
 $maLichKham = $input['maLichKham'];
+$lyDo = trim($input['lyDo'] ?? '');
 
 try {
     // 3. Lấy maBacSi của bác sĩ đang đăng nhập (để bảo mật)
@@ -33,18 +35,32 @@ try {
     $maBacSi = $bacsi['maBacSi']; // Đây là mã bác sĩ đã được xác thực
     $stmt_bs->close();
 
-    $stmt = $conn->prepare("
-        UPDATE lichkham 
-        SET trangThai = 'Hủy',
-            nguoiHuy = 'bacsi'
-        WHERE maLichKham = ? AND maBacSi = ? AND trangThai = 'Đã đặt'
-    ");
-    
-    // Giả sử maLichKham là kiểu chuỗi (string), nếu là số thì dùng "is"
-    $stmt->bind_param("is", $maLichKham, $maBacSi); 
+    if ($lyDo !== '') {
+        $stmt = $conn->prepare("
+            UPDATE lichkham 
+            SET trangThai = 'Hủy',
+                nguoiHuy = 'bacsi',
+                ghiChu = CONCAT(COALESCE(ghiChu, ''), '\n[Lý do hủy]: ', ?)
+            WHERE maLichKham = ? AND maBacSi = ? AND trangThai = 'Đã đặt'
+        ");
+        $stmt->bind_param("sis", $lyDo, $maLichKham, $maBacSi);
+    } else {
+        $stmt = $conn->prepare("
+            UPDATE lichkham 
+            SET trangThai = 'Hủy',
+                nguoiHuy = 'bacsi'
+            WHERE maLichKham = ? AND maBacSi = ? AND trangThai = 'Đã đặt'
+        ");
+        $stmt->bind_param("is", $maLichKham, $maBacSi);
+    }
     
     if ($stmt->execute()) {
         if ($stmt->affected_rows > 0) {
+            try {
+                sendAppointmentCancelledEmails($conn, (int)$maLichKham, 'bacsi', $lyDo);
+            } catch (Throwable $mailError) {
+                error_log('Doctor cancel mail error: ' . $mailError->getMessage());
+            }
             echo json_encode(['success' => true, 'message' => 'Đã hủy lịch khám thành công.']);
         } else {
             // Không có dòng nào bị ảnh hưởng

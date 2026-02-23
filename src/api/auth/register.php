@@ -2,6 +2,7 @@
 require_once '../../config/cors.php';
 require_once '../../config/dp.php';
 require_once '../../includes/send-mail.php';
+require_once '../../includes/mail-events.php';
 
 session_start();
 
@@ -197,7 +198,14 @@ try {
         // Gửi email chào mừng
         $emailSubject = "Chào mừng đến với Eden Health!";
         $emailBody = getWelcomeEmailTemplate($fullname, $username);
-        sendEmail($email, $emailSubject, $emailBody);
+        sendTransactionalMail(
+            $conn,
+            'auth_register_success',
+            'register:' . $nguoiDungId,
+            $email,
+            $emailSubject,
+            $emailBody
+        );
         
         echo json_encode([
             'success' => true,

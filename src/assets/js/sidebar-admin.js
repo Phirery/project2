@@ -207,9 +207,6 @@
         pageTitle.innerHTML = pageTitles[currentPage] || '<i class="fas fa-chart-line me-2"></i>Dashboard';
     }
 
-    // ============================================
-    // LOGOUT HANDLER
-    // ============================================
     window.handleLogout = async function() {
         if (!confirm('Bạn có chắc chắn muốn đăng xuất?')) return;
 
@@ -224,7 +221,7 @@
             if (data.success) {
                 showAlert('success', 'Đăng xuất thành công!');
                 setTimeout(() => {
-                    window.location.href = '../login.html';
+                    window.location.href = 'login.html';
                 }, 1000);
             } else {
                 showAlert('error', 'Không thể đăng xuất. Vui lòng thử lại.');

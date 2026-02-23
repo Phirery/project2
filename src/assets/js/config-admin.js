@@ -1,9 +1,9 @@
 // API Endpoints
-const API_BASE_ADMIN = 'http://localhost/DO_AN/src/backend/api/admin';
-const API_BASE_AUTH = 'http://localhost/DO_AN/src/backend/api/auth';
+const API_BASE_ADMIN = 'http://localhost/DO_AN/src/api/admin';
+const API_BASE_AUTH = 'http://localhost/DO_AN/src/api/auth';
 
 // Component Paths (relative to admin pages)
-const COMPONENT_PATH = '../../components/';
+const COMPONENT_PATH = 'components/';
 
 // Admin Info Storage
 let ADMIN_INFO = {
@@ -91,7 +91,7 @@ function handleSessionExpired(msg) {
         msg.includes('Chưa đăng nhập')
     ) {
         showAlert('error', 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
-        setTimeout(() => window.location.href = '../login.html', 1500);
+        setTimeout(() => window.location.href = 'login.html', 1500);
     }
 }
 

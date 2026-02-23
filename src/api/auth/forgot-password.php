@@ -2,6 +2,7 @@
 require_once '../../config/cors.php';
 require_once '../../config/dp.php';
 require_once '../../includes/send-mail.php';
+require_once '../../includes/mail-events.php';
 
 // Start session
 session_start();
@@ -84,7 +85,15 @@ try {
     $emailSubject = "Mã OTP đặt lại mật khẩu - Eden Health";
     $emailBody = getOTPEmailTemplate($otp, 3); // 3 phút
     
-    $emailSent = sendEmail($email, $emailSubject, $emailBody);
+    $emailResult = sendTransactionalMail(
+        $conn,
+        'auth_forgot_otp',
+        'forgot_otp:' . $user['id'] . ':' . $otp,
+        $email,
+        $emailSubject,
+        $emailBody
+    );
+    $emailSent = !empty($emailResult['success']);
     
     if (!$emailSent) {
         echo json_encode([

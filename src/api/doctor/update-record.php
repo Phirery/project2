@@ -2,6 +2,7 @@
 require_once '../../config/cors.php';
 require_once '../../config/dp.php';
 require_once '../../config/session.php';
+require_once '../../includes/mail-events.php';
 
 require_role('bacsi');
 
@@ -33,6 +34,11 @@ try {
     $stmt->bind_param("sssss", $chanDoan, $dieuTri, $ghiChu, $maHoSo, $maBacSi);
     
     if ($stmt->execute() && $stmt->affected_rows > 0) {
+        try {
+            sendMedicalRecordCompletedEmail($conn, $maHoSo);
+        } catch (Throwable $mailError) {
+            error_log('Medical record mail error: ' . $mailError->getMessage());
+        }
         echo json_encode(['success' => true, 'message' => 'Cập nhật thành công']);
     } else {
         if ($stmt->affected_rows === 0) {
