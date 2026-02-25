@@ -1,1 +1,3 @@
-mail.php
+# Sensitive local config
+src/config/mail.php
+src/config/cloudinary.php
