@@ -10,7 +10,22 @@ if (isset($_SESSION['id']) && isset($_SESSION['vaiTro'])) {
     $userRole = $_SESSION['vaiTro'];
     $tenDangNhap = $_SESSION['tenDangNhap'];
     
-    $hoTenHienThi = $tenDangNhap; 
+    $hoTenHienThi = $tenDangNhap;
+    $avatar = '';
+
+    try {
+        $avatarStmt = $conn->prepare("SELECT avatar FROM nguoidung WHERE id = ?");
+        $avatarStmt->bind_param("i", $userId);
+        $avatarStmt->execute();
+        $avatarResult = $avatarStmt->get_result();
+        if ($avatarResult->num_rows > 0) {
+            $avatarRow = $avatarResult->fetch_assoc();
+            $avatar = $avatarRow['avatar'] ?? '';
+        }
+        $avatarStmt->close();
+    } catch (Exception $e) {
+        $avatar = '';
+    }
 
     if ($userRole === 'benhnhan') {
         try {
@@ -36,7 +51,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['vaiTro'])) {
             'id' => $userId,
             'username' => $tenDangNhap, 
             'role' => $userRole,
-            'fullName' => $hoTenHienThi
+            'fullName' => $hoTenHienThi,
+            'avatar' => $avatar
         ]
     ]);
 } else {

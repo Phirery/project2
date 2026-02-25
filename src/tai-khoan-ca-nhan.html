@@ -8,1005 +8,1434 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
-            --primary-purple: #667eea;
-            --secondary-purple: #764ba2;
-            --primary-blue: #00AEEF;
+            --primary: #4A90E2;
+            --primary-dark: #357ABD;
+            --secondary: #52c41a;
+            --gradient: linear-gradient(135deg, #4A90E2, #52c41a);
+            --gradient-header: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+            --shadow: 0 4px 16px rgba(74,144,226,0.15);
+            --radius: 12px;
+            --border: #e9ecef;
         }
+
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 10%, #f8f9fa 100%);
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e8f5 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 20px 15px 40px;
         }
 
+        /* ── Container ── */
         .account-container {
-            max-width: 1000px;
+            max-width: 960px;
             margin: 0 auto;
         }
 
-        .back-button {
-            margin-bottom: 20px;
-        }
-
-        .back-button a {
+        /* ── Back button ── */
+        .back-btn {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 10px 20px;
+            padding: 8px 18px;
             background: white;
-            color: var(--primary-purple);
+            color: var(--primary);
             text-decoration: none;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: all 0.3s;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.25s;
+            margin-bottom: 18px;
+            border: none;
+            cursor: pointer;
+        }
+        .back-btn:hover {
+            transform: translateX(-4px);
+            box-shadow: 0 4px 14px rgba(74,144,226,0.25);
+            color: var(--primary-dark);
         }
 
-        .back-button a:hover {
-            transform: translateX(-5px);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-
+        /* ── Profile Header ── */
         .profile-header {
-            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
-            border-radius: 15px;
-            padding: 30px;
+            background: var(--gradient-header);
+            border-radius: var(--radius);
+            padding: 22px 28px;
             color: white;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            margin-bottom: 20px;
+            box-shadow: 0 8px 24px rgba(74,144,226,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            width: 160px; height: 160px;
+            background: rgba(255,255,255,0.07);
+            border-radius: 50%;
+            top: -50px; right: -40px;
+            pointer-events: none;
         }
 
         .profile-header-content {
             display: flex;
             align-items: center;
-            gap: 25px;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
         }
 
         .profile-avatar {
-            width: 100px;
-            height: 100px;
+            width: 72px; height: 72px;
             border-radius: 50%;
             background: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
+            font-size: 1.6rem;
             font-weight: 700;
-            color: var(--primary-purple);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            color: var(--primary);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+            overflow: hidden;
+            position: relative;
+        }
+        .profile-avatar img {
+            width: 100%; height: 100%;
+            object-fit: cover;
         }
 
+        /* Avatar edit overlay (doctor only, edit mode) */
+        .avatar-edit-wrap {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .avatar-edit-wrap .avatar-overlay {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .avatar-edit-wrap:hover .avatar-overlay,
+        .avatar-edit-wrap.show-overlay .avatar-overlay {
+            opacity: 1;
+        }
+        .avatar-overlay i { color: white; font-size: 1.1rem; }
+
+        .profile-info { flex: 1; min-width: 0; }
         .profile-info h2 {
-            margin: 0 0 10px 0;
-            font-size: 1.8rem;
+            margin: 0 0 6px;
+            font-size: 1.35rem;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-
         .profile-role {
             display: inline-block;
-            padding: 5px 15px;
-            background: rgba(255,255,255,0.2);
+            padding: 3px 12px;
+            background: rgba(255,255,255,0.22);
             border-radius: 20px;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
+            font-weight: 600;
         }
 
+        /* Avatar upload mini-button (edit mode, doctor only) */
+        .btn-change-avatar {
+            display: none;
+            margin-top: 8px;
+            background: rgba(255,255,255,0.18);
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            border-radius: 6px;
+            padding: 4px 12px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-change-avatar:hover { background: rgba(255,255,255,0.3); }
+        .avatar-hint {
+            display: none;
+            color: rgba(255,255,255,0.75);
+            font-size: 0.72rem;
+            margin-top: 3px;
+        }
+
+        /* ── Tabs ── */
         .tabs-container {
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-radius: var(--radius);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
             overflow: hidden;
         }
 
         .custom-tabs {
             display: flex;
             background: #f8f9fa;
-            border-bottom: 2px solid #e9ecef;
+            border-bottom: 2px solid var(--border);
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
+        .custom-tabs::-webkit-scrollbar { display: none; }
 
         .custom-tab {
             flex: 1;
-            padding: 15px 20px;
+            min-width: 100px;
+            padding: 14px 10px;
             text-align: center;
             cursor: pointer;
             border: none;
             background: none;
             font-weight: 600;
+            font-size: 0.82rem;
             color: #6c757d;
-            transition: all 0.3s;
+            white-space: nowrap;
+            transition: all 0.25s;
             position: relative;
         }
-
-        .custom-tab:hover {
-            background: rgba(102, 126, 234, 0.05);
-            color: var(--primary-purple);
-        }
-
-        .custom-tab.active {
-            color: var(--primary-purple);
-            background: white;
-        }
-
+        .custom-tab i { display: block; font-size: 1.1rem; margin-bottom: 4px; }
+        .custom-tab:hover { background: rgba(74,144,226,0.05); color: var(--primary); }
+        .custom-tab.active { color: var(--primary); background: white; }
         .custom-tab.active::after {
             content: '';
             position: absolute;
-            bottom: -2px;
-            left: 0;
-            right: 0;
+            bottom: -2px; left: 0; right: 0;
             height: 3px;
-            background: var(--primary-purple);
+            background: var(--primary);
+            border-radius: 2px 2px 0 0;
         }
 
-        .tab-content-custom {
-            padding: 30px;
-        }
+        /* ── Tab Content ── */
+        .tab-content-area { padding: 28px; }
 
-        .tab-pane-custom {
-            display: none;
-        }
-
-        .tab-pane-custom.active {
+        .tab-pane { display: none; }
+        .tab-pane.active {
             display: block;
-            animation: fadeIn 0.3s;
+            animation: fadeUp 0.3s ease;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        /* ── Info display ── */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
-        .info-group {
-            margin-bottom: 25px;
-        }
-
+        .info-group { margin-bottom: 0; }
         .info-label {
             font-weight: 600;
-            color: #495057;
-            margin-bottom: 8px;
+            font-size: 0.8rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 5px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
-
         .info-value {
-            padding: 12px 15px;
+            padding: 10px 14px;
             background: #f8f9fa;
             border-radius: 8px;
             color: #212529;
+            font-size: 0.92rem;
+            border: 1px solid transparent;
         }
-
-        .info-value.editable {
-            border: 2px dashed #dee2e6;
-            cursor: pointer;
-            transition: all 0.3s;
+        .info-value.readonly {
+            color: #6c757d;
+            font-style: italic;
         }
+        .info-full { grid-column: 1 / -1; }
 
-        .info-value.editable:hover {
-            border-color: var(--primary-purple);
-            background: rgba(102, 126, 234, 0.05);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
+        /* ── Edit form ── */
         .form-label {
             font-weight: 600;
+            font-size: 0.82rem;
             color: #495057;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
-
         .form-control {
             border-radius: 8px;
-            border: 1px solid #dee2e6;
-            padding: 10px 15px;
+            border: 1.5px solid var(--border);
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-
         .form-control:focus {
-            border-color: var(--primary-purple);
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74,144,226,0.12);
+            outline: none;
+        }
+        .form-control[disabled], .form-control:disabled {
+            background: #f1f3f5;
+            color: #6c757d;
         }
 
-        .btn-primary-custom {
-            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+        /* ── Buttons ── */
+        .btn-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+        .btn-primary-c {
+            background: var(--gradient);
             border: none;
-            padding: 12px 30px;
-            border-radius: 10px;
+            padding: 11px 26px;
+            border-radius: 8px;
             font-weight: 600;
             color: white;
-            transition: all 0.3s;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
         }
-
-        .btn-primary-custom:hover {
+        .btn-primary-c:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 6px 18px rgba(74,144,226,0.35);
         }
+        .btn-primary-c:disabled { opacity: 0.55; cursor: not-allowed; }
 
-        .btn-secondary-custom {
+        .btn-secondary-c {
             background: #6c757d;
             border: none;
-            padding: 12px 30px;
-            border-radius: 10px;
+            padding: 11px 26px;
+            border-radius: 8px;
             font-weight: 600;
             color: white;
-            transition: all 0.3s;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
         }
+        .btn-secondary-c:hover { background: #5a6268; transform: translateY(-1px); }
 
-        .cooldown-notice {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .cooldown-notice i {
-            color: #ffc107;
-            margin-right: 10px;
-        }
-
-        .password-strength {
+        /* ── Password tab ── */
+        .password-strength-bar {
             height: 5px;
             border-radius: 3px;
-            margin-top: 5px;
+            margin-top: 6px;
             transition: all 0.3s;
+            background: #e9ecef;
+        }
+        .password-strength-bar.weak   { background: #dc3545; width: 33%; }
+        .password-strength-bar.medium { background: #ffc107; width: 66%; }
+        .password-strength-bar.strong { background: #28a745; width: 100%; }
+
+        /* ── Cooldown notice ── */
+        .cooldown-notice {
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #7a5c00;
         }
 
-        .password-strength.weak { background: #dc3545; width: 33%; }
-        .password-strength.medium { background: #ffc107; width: 66%; }
-        .password-strength.strong { background: #28a745; width: 100%; }
-
-        .forgot-password-options {
+        /* ── Security tab ── */
+        .security-options {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
-            margin-top: 20px;
+            margin-top: 8px;
+        }
+        .security-options.single-option {
+            grid-template-columns: 1fr;
+            max-width: 320px;
+            margin: 8px auto 0;
         }
 
         .option-card {
-            border: 2px solid #dee2e6;
+            border: 2px solid var(--border);
             border-radius: 10px;
-            padding: 20px;
+            padding: 22px 16px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.25s;
         }
-
         .option-card:hover {
-            border-color: var(--primary-purple);
-            background: rgba(102, 126, 234, 0.05);
+            border-color: var(--primary);
+            background: rgba(74,144,226,0.04);
             transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(74,144,226,0.15);
         }
-
         .option-card i {
             font-size: 2rem;
-            color: var(--primary-purple);
+            color: var(--primary);
             margin-bottom: 10px;
+            display: block;
         }
+        .option-card h6 { font-weight: 700; margin-bottom: 5px; color: #212529; }
+        .option-card p { font-size: 0.8rem; color: #6c757d; margin: 0; }
 
-        .otp-modal, .request-modal {
+        .security-tips {
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .security-tips h6 { font-weight: 700; color: #495057; margin-bottom: 10px; }
+        .security-tips ul { padding-left: 18px; margin: 0; }
+        .security-tips ul li { font-size: 0.85rem; color: #6c757d; margin-bottom: 5px; }
+
+        /* ── Modals ── */
+        .modal-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: rgba(0,0,0,0.5);
             z-index: 9999;
             align-items: center;
             justify-content: center;
-        }
-
-        .otp-modal.active, .request-modal.active {
-            display: flex;
-        }
-
-        .modal-content-custom {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
-
-        .otp-display {
-            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
-            color: white;
             padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            font-size: 2rem;
-            letter-spacing: 5px;
-            font-weight: 700;
-            margin: 20px 0;
+            backdrop-filter: blur(2px);
+        }
+        .modal-overlay.active { display: flex; }
+
+        .modal-box {
+            background: white;
+            border-radius: 16px;
+            padding: 32px 28px;
+            max-width: 480px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+            animation: modalIn 0.3s ease;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.94); }
+            to   { opacity: 1; transform: scale(1); }
         }
 
-        @media (max-width: 768px) {
-            .profile-header-content {
-                flex-direction: column;
-                text-align: center;
-            }
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #212529;
+            margin-bottom: 6px;
+        }
+        .modal-subtitle {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-bottom: 22px;
+        }
 
-            .custom-tabs {
-                flex-direction: column;
-            }
+        .otp-info-box {
+            background: #e8f5e9;
+            border: 1px solid #a5d6a7;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 18px;
+            font-size: 0.875rem;
+            color: #2e7d32;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-            .forgot-password-options {
-                grid-template-columns: 1fr;
-            }
+        .timer-display {
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 10px 14px;
+            border-radius: 6px;
+            margin-bottom: 18px;
+            font-size: 0.85rem;
+            color: #7a5c00;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .timer-display strong { font-size: 1rem; }
 
-            .tab-content-custom {
-                padding: 20px 15px;
-            }
+        .btn-resend {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            margin-top: 8px;
+            font-size: 0.875rem;
+        }
+        .btn-resend:hover:not(:disabled) { background: var(--primary); color: white; }
+        .btn-resend:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .btn-full {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.25s;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-full.primary { background: var(--gradient); color: white; }
+        .btn-full.primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(74,144,226,0.35); }
+        .btn-full.secondary { background: #6c757d; color: white; }
+        .btn-full.secondary:hover { background: #5a6268; }
+        .btn-full:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* ── Avatar preview in modal/section ── */
+        #avatarPreviewBadge {
+            display: none;
+            margin-top: 6px;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* ── Alert toast ── */
+        .toast-alert {
+            position: fixed;
+            top: 80px; right: 20px;
+            z-index: 99999;
+            min-width: 300px;
+            max-width: 400px;
+            padding: 14px 18px;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            animation: slideInRight 0.3s ease;
+        }
+        .toast-alert.success { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
+        .toast-alert.error   { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
+        @keyframes slideInRight {
+            from { transform: translateX(420px); opacity: 0; }
+            to   { transform: translateX(0); opacity: 1; }
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 576px) {
+            body { padding: 12px 10px 30px; }
+
+            .profile-header { padding: 16px 18px; }
+            .profile-avatar { width: 58px; height: 58px; font-size: 1.3rem; }
+            .profile-info h2 { font-size: 1.1rem; }
+            .profile-role { font-size: 0.75rem; }
+
+            .custom-tab { padding: 11px 8px; font-size: 0.75rem; min-width: 80px; }
+            .custom-tab i { font-size: 1rem; }
+
+            .tab-content-area { padding: 18px 14px; }
+
+            .info-grid { grid-template-columns: 1fr; }
+            .info-full { grid-column: 1; }
+
+            .security-options { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .option-card { padding: 16px 10px; }
+            .option-card i { font-size: 1.6rem; }
+
+            .modal-box { padding: 24px 18px; }
         }
     </style>
 </head>
 <body>
-    <div class="account-container">
-        <div class="back-button" onclick="history.back()">
-            <a href="#" id="backBtn">
-                <i class="fas fa-arrow-left"></i>
-                <span>Quay lại</span>
-            </a>
-        </div>
+<div id="header-placeholder" class="sticky-top" style="z-index:1020;"></div>
 
-        <div class="profile-header">
-            <div class="profile-header-content">
-                <div class="profile-avatar" id="avatarDisplay">U</div>
-                <div class="profile-info">
-                    <h2 id="profileName">Đang tải...</h2>
-                    <span class="profile-role" id="profileRole">Người dùng</span>
-                </div>
-            </div>
-        </div>
+<div class="account-container">
+    <!-- Back button -->
+    <button class="back-btn" id="backBtn" onclick="history.back()">
+        <i class="fas fa-arrow-left"></i> Quay lại
+    </button>
 
-        <div class="tabs-container">
-            <div class="custom-tabs">
-                <button class="custom-tab active" data-tab="info">
-                    <i class="fas fa-user-circle"></i> Thông tin cá nhân
-                </button>
-                <button class="custom-tab" data-tab="password">
-                    <i class="fas fa-key"></i> Đổi mật khẩu
-                </button>
-                <button class="custom-tab" data-tab="security">
-                    <i class="fas fa-shield-alt"></i> Bảo mật
-                </button>
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="profile-header-content">
+            <!-- Avatar (bác sĩ: có overlay khi edit mode) -->
+            <div id="avatarWrap" class="profile-avatar">
+                <span id="avatarInitials">U</span>
             </div>
 
-            <div class="tab-content-custom">
-                <!-- TAB THÔNG TIN -->
-                <div class="tab-pane-custom active" id="info">
-                    <div id="cooldownNotice" style="display:none;"></div>
-                    
-                    <div id="profileDisplay"></div>
-                    
-                    <div id="profileEditForm" style="display:none;">
-                        <form id="updateProfileForm"></form>
-                    </div>
-
-                    <div class="mt-4">
-                        <button class="btn btn-primary-custom" id="editProfileBtn" onclick="toggleEditMode()">
-                            <i class="fas fa-edit"></i> Chỉnh sửa thông tin
-                        </button>
-                        <button class="btn btn-primary-custom" id="saveProfileBtn" onclick="saveProfile()" style="display:none;">
-                            <i class="fas fa-save"></i> Lưu thay đổi
-                        </button>
-                        <button class="btn btn-secondary-custom" id="cancelEditBtn" onclick="cancelEdit()" style="display:none;">
-                            <i class="fas fa-times"></i> Hủy
-                        </button>
-                    </div>
-                </div>
-
-                <!-- TAB ĐỔI MẬT KHẨU -->
-                <div class="tab-pane-custom" id="password">
-                    <div id="passwordCooldownNotice" style="display:none;"></div>
-
-                    <form id="changePasswordForm" onsubmit="changePassword(event)">
-                        <div class="form-group">
-                            <label class="form-label">Mật khẩu hiện tại *</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="currentPassword" required>
-                                <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('currentPassword')">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Mật khẩu mới *</label>
-                            <input type="password" class="form-control" id="newPassword" required minlength="6" oninput="checkPasswordStrength()">
-                            <div class="password-strength" id="passwordStrength"></div>
-                            <small class="text-muted">Mật khẩu phải có ít nhất 6 ký tự</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Xác nhận mật khẩu mới *</label>
-                            <input type="password" class="form-control" id="confirmPassword" required>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary-custom" id="changePasswordBtn">
-                            <i class="fas fa-key"></i> Đổi mật khẩu
-                        </button>
-                    </form>
-                </div>
-
-                <!-- TAB BẢO MẬT -->
-                <div class="tab-pane-custom" id="security">
-                    <h5 class="mb-4"><i class="fas fa-lock"></i> Quên mật khẩu?</h5>
-                    <p class="text-muted mb-4">Chọn phương thức để khôi phục mật khẩu:</p>
-
-                    <div class="forgot-password-options">
-                        <div class="option-card" onclick="requestOTP()">
-                            <i class="fas fa-mobile-alt"></i>
-                            <h6>Nhận mã OTP</h6>
-                            <p class="text-muted small mb-0">Nhận mã xác thực để đặt lại mật khẩu</p>
-                        </div>
-
-                        <div class="option-card" id="requestAdminCard" onclick="requestAdminReset()">
-                            <i class="fas fa-user-shield"></i>
-                            <h6>Yêu cầu Admin</h6>
-                            <p class="text-muted small mb-0">Gửi yêu cầu đến quản trị viên</p>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 pt-4 border-top">
-                        <h6><i class="fas fa-info-circle"></i> Lưu ý bảo mật</h6>
-                        <ul class="text-muted small">
-                            <li>Không chia sẻ mật khẩu với bất kỳ ai</li>
-                            <li>Đổi mật khẩu định kỳ để bảo mật tài khoản</li>
-                            <li>Sử dụng mật khẩu mạnh kết hợp chữ, số và ký tự đặc biệt</li>
-                            <li>Đăng xuất sau khi sử dụng trên thiết bị chung</li>
-                        </ul>
-                    </div>
+            <div class="profile-info">
+                <h2 id="profileName">Đang tải...</h2>
+                <span class="profile-role" id="profileRole">—</span>
+                <!-- Nút thay ảnh (chỉ bác sĩ, chỉ hiện khi edit mode) -->
+                <div>
+                    <button class="btn-change-avatar" id="btnChangeAvatar" onclick="triggerAvatarPicker()">
+                        <i class="fas fa-camera me-1"></i> Thay đổi ảnh
+                    </button>
+                    <div class="avatar-hint" id="avatarHint">JPG, PNG, WEBP · tối đa 5MB</div>
+                    <div id="avatarPreviewBadge">✓ Đã chọn ảnh mới</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- OTP Modal -->
-    <div class="otp-modal" id="otpModal">
-        <div class="modal-content-custom">
-            <h5 class="mb-4">Xác thực OTP</h5>
-            <p class="text-muted">Mã OTP của bạn là:</p>
-            <div class="otp-display" id="otpDisplay">000000</div>
-            <p class="text-muted small">Mã có hiệu lực trong 5 phút</p>
+    <!-- Hidden file input for avatar (doctor) -->
+    <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="previewAvatar(event)">
 
-            <form onsubmit="verifyOTP(event)">
-                <div class="form-group">
-                    <label class="form-label">Nhập mã OTP</label>
-                    <input type="text" class="form-control text-center" id="otpInput" maxlength="6" required pattern="[0-9]{6}">
+    <!-- Tabs -->
+    <div class="tabs-container">
+        <div class="custom-tabs" role="tablist">
+            <button class="custom-tab active" data-tab="info">
+                <i class="fas fa-user-circle"></i>
+                <span>Thông tin</span>
+            </button>
+            <button class="custom-tab" data-tab="password">
+                <i class="fas fa-key"></i>
+                <span>Mật khẩu</span>
+            </button>
+            <button class="custom-tab" data-tab="security">
+                <i class="fas fa-shield-alt"></i>
+                <span>Bảo mật</span>
+            </button>
+        </div>
+
+        <div class="tab-content-area">
+
+            <!-- ═══════════════ TAB THÔNG TIN ═══════════════ -->
+            <div class="tab-pane active" id="info">
+                <div id="infoCooldown"></div>
+
+                <!-- View mode -->
+                <div id="profileView"></div>
+
+                <!-- Edit mode (hidden initially) -->
+                <div id="profileEditWrap" style="display:none;">
+                    <form id="profileForm"></form>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Mật khẩu mới</label>
-                    <input type="password" class="form-control" id="otpNewPassword" required minlength="6">
+                <div class="btn-actions">
+                    <button class="btn-primary-c" id="btnEdit" onclick="enterEditMode()">
+                        <i class="fas fa-edit"></i> Chỉnh sửa thông tin
+                    </button>
+                    <button class="btn-primary-c" id="btnSave" onclick="saveProfile()" style="display:none;">
+                        <i class="fas fa-save"></i> Lưu thay đổi
+                    </button>
+                    <button class="btn-secondary-c" id="btnCancel" onclick="cancelEdit()" style="display:none;">
+                        <i class="fas fa-times"></i> Hủy
+                    </button>
+                </div>
+            </div>
+
+            <!-- ═══════════════ TAB MẬT KHẨU ═══════════════ -->
+            <div class="tab-pane" id="password">
+                <div id="pwdCooldown"></div>
+
+                <form id="changePasswordForm" onsubmit="changePassword(event)">
+                    <div class="mb-3">
+                        <label class="form-label">Mật khẩu hiện tại *</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="currentPassword" required>
+                            <button class="btn btn-outline-secondary" type="button"
+                                onclick="togglePwd('currentPassword', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mật khẩu mới * <small class="text-muted">(ít nhất 6 ký tự)</small></label>
+                        <input type="password" class="form-control" id="newPwd" required minlength="6"
+                            oninput="checkStrength(this.value)">
+                        <div class="password-strength-bar" id="strengthBar"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Xác nhận mật khẩu mới *</label>
+                        <input type="password" class="form-control" id="confirmPwd" required>
+                    </div>
+                    <div class="btn-actions" style="margin-top:10px;">
+                        <button type="submit" class="btn-primary-c" id="btnChangePwd">
+                            <i class="fas fa-key"></i> Đổi mật khẩu
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ═══════════════ TAB BẢO MẬT ═══════════════ -->
+            <div class="tab-pane" id="security">
+                <h6 class="fw-bold mb-1"><i class="fas fa-lock me-2 text-primary"></i>Khôi phục mật khẩu</h6>
+                <p class="text-muted mb-3" style="font-size:0.875rem;">
+                    Chọn phương thức để đặt lại mật khẩu của bạn:
+                </p>
+
+                <div class="security-options" id="securityOptions">
+                    <!-- OTP card -->
+                    <div class="option-card" onclick="openOtpModal()">
+                        <i class="fas fa-envelope-open-text"></i>
+                        <h6>Xác thực qua Email</h6>
+                        <p>Nhận mã OTP vào email đã đăng ký để đặt lại mật khẩu</p>
+                    </div>
+                    <!-- Admin request card (ẩn với quantri) -->
+                    <div class="option-card" id="adminResetCard" onclick="openAdminModal()">
+                        <i class="fas fa-user-shield"></i>
+                        <h6>Yêu cầu Admin</h6>
+                        <p>Gửi yêu cầu cấp lại mật khẩu đến quản trị viên</p>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Xác nhận mật khẩu</label>
-                    <input type="password" class="form-control" id="otpConfirmPassword" required>
+                <div class="security-tips">
+                    <h6><i class="fas fa-info-circle me-2"></i>Lưu ý bảo mật</h6>
+                    <ul>
+                        <li>Không chia sẻ mật khẩu với bất kỳ ai</li>
+                        <li>Đổi mật khẩu định kỳ để bảo mật tài khoản</li>
+                        <li>Sử dụng mật khẩu mạnh: kết hợp chữ, số và ký tự đặc biệt</li>
+                        <li>Đăng xuất sau khi sử dụng trên thiết bị chung</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div><!-- end tab-content-area -->
+    </div><!-- end tabs-container -->
+</div>
+
+<!-- ══════════ MODAL OTP QUA EMAIL ══════════ -->
+<div class="modal-overlay" id="otpModal">
+    <div class="modal-box">
+        <!-- Step 1: Xác nhận gửi -->
+        <div id="otpStep1">
+            <div class="modal-title"><i class="fas fa-envelope me-2" style="color:var(--primary);"></i>Xác thực qua Email</div>
+            <div class="modal-subtitle">Hệ thống sẽ gửi mã OTP đến email đã đăng ký của bạn.</div>
+
+            <div class="otp-info-box">
+                <i class="fas fa-info-circle"></i>
+                <span>Mã OTP sẽ có hiệu lực trong <strong>5 phút</strong>.</span>
+            </div>
+
+            <button class="btn-full primary" id="btnSendOtp" onclick="sendOtpToEmail()">
+                <i class="fas fa-paper-plane"></i> Gửi mã OTP vào Email
+            </button>
+            <button class="btn-full secondary" onclick="closeOtpModal()">
+                <i class="fas fa-times"></i> Hủy
+            </button>
+        </div>
+
+        <!-- Step 2: Nhập OTP + mật khẩu mới -->
+        <div id="otpStep2" style="display:none;">
+            <div class="modal-title"><i class="fas fa-shield-alt me-2" style="color:var(--secondary);"></i>Nhập mã OTP</div>
+            <div class="modal-subtitle">Kiểm tra email của bạn và nhập mã xác thực.</div>
+
+            <div class="otp-info-box">
+                <i class="fas fa-check-circle"></i>
+                <span>Mã OTP đã gửi đến <strong id="maskedEmailDisplay">—</strong></span>
+            </div>
+
+            <div class="timer-display" id="otpTimerBox">
+                <i class="fas fa-clock"></i>
+                Mã còn hiệu lực: <strong id="otpCountdown">05:00</strong>
+            </div>
+
+            <form onsubmit="verifyOtpAndReset(event)">
+                <div class="mb-3">
+                    <label class="form-label">Mã OTP (6 chữ số)</label>
+                    <input type="text" class="form-control text-center fw-bold fs-5"
+                        id="otpInputField" maxlength="6" pattern="[0-9]{6}"
+                        placeholder="••••••" required autocomplete="one-time-code">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Mật khẩu mới *</label>
+                    <input type="password" class="form-control" id="otpNewPwd" minlength="6" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Xác nhận mật khẩu mới *</label>
+                    <input type="password" class="form-control" id="otpConfirmPwd" required>
                 </div>
 
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary-custom flex-fill">Xác nhận</button>
-                    <button type="button" class="btn btn-secondary-custom" onclick="closeOTPModal()">Hủy</button>
-                </div>
+                <button type="submit" class="btn-full primary" id="btnVerifyOtp">
+                    <i class="fas fa-check"></i> Xác nhận đổi mật khẩu
+                </button>
+                <button type="button" class="btn-resend" id="btnResendOtp" disabled onclick="resendOtp()">
+                    <i class="fas fa-redo me-1"></i> Gửi lại mã OTP <span id="resendTimer"></span>
+                </button>
+                <button type="button" class="btn-full secondary" style="margin-top:8px;" onclick="backToOtpStep1()">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </button>
             </form>
         </div>
     </div>
+</div>
 
-    <!-- Request Admin Modal -->
-    <div class="request-modal" id="requestModal">
-        <div class="modal-content-custom">
-            <h5 class="mb-4">Yêu cầu cấp lại mật khẩu</h5>
-            <p class="text-muted">Bạn muốn gửi yêu cầu cấp lại mật khẩu đến quản trị viên?</p>
-            <p class="text-muted small">Mật khẩu mặc định sẽ được gửi qua thông báo sau khi admin xử lý.</p>
+<!-- ══════════ MODAL YÊU CẦU ADMIN ══════════ -->
+<div class="modal-overlay" id="adminModal">
+    <div class="modal-box">
+        <div class="modal-title"><i class="fas fa-user-shield me-2" style="color:var(--primary);"></i>Yêu cầu Admin cấp lại mật khẩu</div>
+        <div class="modal-subtitle">Quản trị viên sẽ xử lý và gửi thông báo đến tài khoản của bạn.</div>
 
-            <div class="d-flex gap-2 mt-4">
-                <button class="btn btn-primary-custom flex-fill" onclick="confirmRequestAdmin()">
-                    <i class="fas fa-paper-plane"></i> Gửi yêu cầu
-                </button>
-                <button class="btn btn-secondary-custom" onclick="closeRequestModal()">Hủy</button>
-            </div>
+        <div class="otp-info-box" style="background:#e3f2fd;border-color:#90caf9;color:#1565c0;">
+            <i class="fas fa-info-circle"></i>
+            <span>Mật khẩu tạm thời sẽ được gửi qua <strong>thông báo hệ thống</strong> sau khi admin xử lý.</span>
         </div>
+
+        <button class="btn-full primary" id="btnConfirmAdmin" onclick="confirmAdminRequest()">
+            <i class="fas fa-paper-plane"></i> Gửi yêu cầu
+        </button>
+        <button class="btn-full secondary" onclick="closeAdminModal()">
+            <i class="fas fa-times"></i> Hủy
+        </button>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/api-config.js"></script>
-    <script>
-        const API_BASE_AUTH = window.API_ENDPOINTS.auth;
-        const API_BASE_USER = window.API_ENDPOINTS.user;
-        
-        let userData = {};
-        let currentOTP = '';
-        let editMode = false;
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/api-config.js"></script>
+<script>
+    const endpointConfig = window.API_ENDPOINTS || {
+        user: 'http://localhost/DO_AN/src/api/user',
+        auth: 'http://localhost/DO_AN/src/api/auth'
+    };
+    const API_USER = endpointConfig.user;
+    const API_AUTH = endpointConfig.auth;
 
-        document.addEventListener('DOMContentLoaded', function() {
-            loadUserProfile();
-            setupTabs();
-            setupBackButton();
-        });
+    let userData    = {};
+    let pendingAvatarFile = null;   // File ảnh đại diện chờ upload (bác sĩ)
+    let otpCountdownInterval  = null;
+    let resendCooldownInterval = null;
 
-        function setupBackButton() {
-            const role = localStorage.getItem('userRole') || sessionStorage.getItem('userRole');
-            const backBtn = document.getElementById('backBtn');
-            
-            if (role === 'benhnhan') {
-                backBtn.href = 'index.html';
-            } else if (role === 'bacsi') {
-                backBtn.href = 'dashboard-doctor.html';
-            } else if (role === 'quantri') {
-                backBtn.href = 'dashboard-admin.html';
-            }
-        }
+    // ══════════════════════════════════════════
+    //  INIT
+    // ══════════════════════════════════════════
+    document.addEventListener('DOMContentLoaded', () => {
+        initTabs();
+        loadProfile();
+        setupBackBtn();
+    });
 
-        function setupTabs() {
-            const tabs = document.querySelectorAll('.custom-tab');
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const target = this.dataset.tab;
-                    
-                    tabs.forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    document.querySelectorAll('.tab-pane-custom').forEach(pane => {
-                        pane.classList.remove('active');
-                    });
-                    document.getElementById(target).classList.add('active');
-                });
+    function setupBackBtn() {
+        const role = localStorage.getItem('userRole') || sessionStorage.getItem('userRole');
+        const btn  = document.getElementById('backBtn');
+        if (role === 'bacsi')   btn.onclick = () => location.href = 'dashboard-doctor.html';
+        else if (role === 'quantri') btn.onclick = () => location.href = 'dashboard-admin.html';
+        else btn.onclick = () => location.href = 'index.html';
+    }
+
+    function initTabs() {
+        document.querySelectorAll('.custom-tab').forEach(tab => {
+            tab.addEventListener('click', function () {
+                document.querySelectorAll('.custom-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById(this.dataset.tab).classList.add('active');
             });
-        }
+        });
+    }
 
-        async function loadUserProfile() {
-            try {
-                const response = await fetch(`${API_BASE_USER}/get-user-profile.php`, {
-                    credentials: 'include'
-                });
-                const data = await response.json();
-                
-                if (data.success) {
-                    userData = data.data;
-                    displayUserProfile();
-                    checkUpdateCooldown();
-                    checkPasswordCooldown();
-                    
-                    // Hide admin request option for admin
-                    if (userData.vaiTro === 'quantri') {
-                        document.getElementById('requestAdminCard').style.display = 'none';
-                    }
-                } else {
-                    showAlert('error', data.message || 'Không thể tải thông tin');
-                    setTimeout(() => window.location.href = 'login.html', 1500);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showAlert('error', 'Lỗi kết nối server');
-            }
-        }
+    // ══════════════════════════════════════════
+    //  LOAD PROFILE
+    // ══════════════════════════════════════════
+    async function loadProfile() {
+        try {
+            const res  = await fetch(`${API_USER}/get-user-profile.php`, { credentials: 'include' });
+            const data = await res.json();
+            if (!data.success) { showToast('error', data.message || 'Không tải được thông tin'); return; }
 
-        function displayUserProfile() {
-            // Header
-            document.getElementById('profileName').textContent = userData.hoTen;
-            document.getElementById('profileRole').textContent = getRoleText(userData.vaiTro);
-            
-            const initials = userData.hoTen.split(' ').slice(-2).map(w => w[0]).join('').toUpperCase();
-            document.getElementById('avatarDisplay').textContent = initials;
-
-            // Profile display
-            let html = '<div class="row">';
-
-            // Common fields
-            html += `
-                ${userData.vaiTro !== 'quantri' ? `
-                <div class="col-md-6">
-                    <div class="info-group">
-                        <div class="info-label"><i class="fas fa-user"></i> Họ và tên</div>
-                        <div class="info-value">${userData.hoTen}</div>
-                    </div>
-                </div>
-                ` : ''}
-                <div class="col-md-6">
-                    <div class="info-group">
-                        <div class="info-label"><i class="fas fa-id-card"></i> Tên đăng nhập</div>
-                        <div class="info-value">${userData.tenDangNhap}</div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="info-group">
-                        <div class="info-label"><i class="fas fa-phone"></i> Số điện thoại</div>
-                        <div class="info-value editable">${userData.soDienThoai || 'Chưa cập nhật'}</div>
-                    </div>
-                </div>
-            `;
-
-            // Role-specific fields
-            if (userData.vaiTro === 'benhnhan') {
-                html += `
-                    <div class="col-md-6">
-                        <div class="info-group">
-                            <div class="info-label"><i class="fas fa-birthday-cake"></i> Ngày sinh</div>
-                            <div class="info-value editable">${formatDate(userData.ngaySinh)}</div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="info-group">
-                            <div class="info-label"><i class="fas fa-venus-mars"></i> Giới tính</div>
-                            <div class="info-value editable">${getGenderText(userData.gioiTinh)}</div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="info-group">
-                            <div class="info-label"><i class="fas fa-id-card-alt"></i> Số thẻ BHYT</div>
-                            <div class="info-value editable">${userData.soTheBHYT || 'Chưa có'}</div>
-                        </div>
-                    </div>
-                `;
-            } else if (userData.vaiTro === 'bacsi') {
-                html += `
-                    <div class="col-md-6">
-                        <div class="info-group">
-                            <div class="info-label"><i class="fas fa-hospital"></i> Chuyên khoa</div>
-                            <div class="info-value">${userData.tenChuyenKhoa || 'Chưa có'}</div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="info-group">
-                            <div class="info-label"><i class="fas fa-building"></i> Khoa</div>
-                            <div class="info-value">${userData.tenKhoa || 'Chưa có'}</div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="info-group">
-                            <div class="info-label"><i class="fas fa-file-alt"></i> Mô tả</div>
-                            <div class="info-value editable">${userData.moTa || 'Chưa có mô tả'}</div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            html += '</div>';
-            document.getElementById('profileDisplay').innerHTML = html;
-
-            // Edit form
+            userData = data.data;
+            renderHeader();
+            renderView();
             buildEditForm();
+            applyRoleUI();
+            await Promise.all([checkUpdateCooldown(), checkPasswordCooldown()]);
+        } catch (e) {
+            showToast('error', 'Lỗi kết nối server');
+        }
+    }
+
+    function renderHeader() {
+        document.getElementById('profileName').textContent = userData.hoTen;
+        document.getElementById('profileRole').textContent = getRoleLabel(userData.vaiTro);
+        renderAvatarEl(document.getElementById('avatarWrap'), userData.hoTen, userData.avatar, false);
+    }
+
+    /** Renders avatar — either <img> or initials. editMode adds overlay for bacsi. */
+    function renderAvatarEl(wrap, name, avatarUrl, editMode) {
+        const isDefault = !avatarUrl || avatarUrl.includes('samples/paper.png');
+        if (!isDefault) {
+            wrap.innerHTML = `<img src="${avatarUrl}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+        } else {
+            const initials = (name || 'U').split(' ').slice(-2).map(w => w[0]).join('').toUpperCase();
+            wrap.innerHTML = `<span>${initials}</span>`;
         }
 
-        function buildEditForm() {
-            let html = '<div class="row">';
+        if (editMode && userData.vaiTro === 'bacsi') {
+            const overlay = document.createElement('div');
+            overlay.className = 'avatar-overlay';
+            overlay.innerHTML = '<i class="fas fa-camera"></i>';
+            wrap.style.cursor = 'pointer';
+            wrap.appendChild(overlay);
+            wrap.onclick = triggerAvatarPicker;
+        } else {
+            wrap.style.cursor = 'default';
+            wrap.onclick = null;
+        }
+    }
 
-            html += `
-                ${userData.vaiTro !== 'quantri' ? `
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label class="form-label">Họ và tên *</label>
-                        <input type="text" class="form-control" name="hoTen" value="${userData.hoTen}" required>
-                    </div>
-                </div>
-                ` : ''}
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label class="form-label">Số điện thoại</label>
-                        <input type="text" class="form-control" name="soDienThoai" value="${userData.soDienThoai || ''}" pattern="[0-9]{10,11}">
-                    </div>
-                </div>
-            `;
+    // ══════════════════════════════════════════
+    //  VIEW MODE
+    // ══════════════════════════════════════════
+    function renderView() {
+        const d = userData;
+        let rows = '';
 
-            if (userData.vaiTro === 'benhnhan') {
-                html += `
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label">Ngày sinh</label>
-                            <input type="date" class="form-control" name="ngaySinh" value="${userData.ngaySinh}" max="${new Date().toISOString().split('T')[0]}">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label">Giới tính</label>
-                            <select class="form-control" name="gioiTinh">
-                                <option value="nam" ${userData.gioiTinh === 'nam' ? 'selected' : ''}>Nam</option>
-                                <option value="nu" ${userData.gioiTinh === 'nu' ? 'selected' : ''}>Nữ</option>
-                                <option value="khac" ${userData.gioiTinh === 'khac' ? 'selected' : ''}>Khác</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label">Số thẻ BHYT</label>
-                            <input type="text" class="form-control" name="soTheBHYT" value="${userData.soTheBHYT || ''}">
-                        </div>
-                    </div>
-                `;
-            } else if (userData.vaiTro === 'bacsi') {
-                html += `
-                    <div class="col-12">
-                        <div class="form-group">
-                            <label class="form-label">Mô tả</label>
-                            <textarea class="form-control" name="moTa" rows="4">${userData.moTa || ''}</textarea>
-                        </div>
-                    </div>
-                `;
+        // Tên đăng nhập
+        rows += infoItem('fas fa-id-card', 'Tên đăng nhập', d.tenDangNhap, true);
+        // Email (luôn readonly)
+        rows += infoItem('fas fa-envelope', 'Email', d.email || '(chưa có)', true);
+        // SĐT
+        rows += infoItem('fas fa-phone', 'Số điện thoại', d.soDienThoai || 'Chưa cập nhật');
+
+        if (d.vaiTro === 'benhnhan') {
+            rows += infoItem('fas fa-birthday-cake', 'Ngày sinh', formatDate(d.ngaySinh) || 'Chưa cập nhật');
+            rows += infoItem('fas fa-venus-mars', 'Giới tính', genderLabel(d.gioiTinh) || 'Chưa cập nhật');
+            rows += infoItem('fas fa-id-card-alt', 'Số thẻ BHYT', d.soTheBHYT || 'Chưa có');
+        } else if (d.vaiTro === 'bacsi') {
+            rows += infoItem('fas fa-hospital', 'Chuyên khoa', d.tenChuyenKhoa || 'Chưa có');
+            rows += infoItem('fas fa-building', 'Khoa', d.tenKhoa || 'Chưa có');
+            rows += infoItem('fas fa-file-alt', 'Mô tả', d.moTa || 'Chưa có mô tả', false, true);
+        } else {
+            // quantri chỉ có tên đăng nhập, email, sđt (đã render ở trên)
+        }
+
+        document.getElementById('profileView').innerHTML = `<div class="info-grid">${rows}</div>`;
+    }
+
+    function infoItem(icon, label, value, readonly = false, fullWidth = false) {
+        return `
+            <div class="info-group${fullWidth ? ' info-full' : ''}">
+                <div class="info-label"><i class="${icon}"></i> ${label}</div>
+                <div class="info-value${readonly ? ' readonly' : ''}">${escapeHtml(String(value))}</div>
+            </div>`;
+    }
+
+    // ══════════════════════════════════════════
+    //  EDIT FORM
+    // ══════════════════════════════════════════
+    function buildEditForm() {
+        const d = userData;
+        let html = '<div class="row g-3">';
+
+        // Tên đăng nhập (disabled)
+        html += field6('Tên đăng nhập', `<input class="form-control" value="${escapeHtml(d.tenDangNhap)}" disabled>`);
+        // Email (disabled)
+        html += field6('Email', `<input class="form-control" value="${escapeHtml(d.email || '')}" disabled>`);
+        // SĐT
+        html += field6('Số điện thoại',
+            `<input type="tel" class="form-control" name="soDienThoai" value="${escapeHtml(d.soDienThoai || '')}" placeholder="0xxxxxxxxx" pattern="[0-9]{10,11}">`);
+
+        if (d.vaiTro === 'benhnhan') {
+            html += field6('Họ và tên *',
+                `<input type="text" class="form-control" name="hoTen" value="${escapeHtml(d.hoTen)}" required>`);
+            html += field6('Ngày sinh',
+                `<input type="date" class="form-control" name="ngaySinh" value="${d.ngaySinh || ''}" max="${new Date().toISOString().split('T')[0]}">`);
+            html += field6('Giới tính',
+                `<select class="form-control" name="gioiTinh">
+                    <option value="nam" ${d.gioiTinh==='nam'?'selected':''}>Nam</option>
+                    <option value="nu"  ${d.gioiTinh==='nu'?'selected':''}>Nữ</option>
+                    <option value="khac" ${d.gioiTinh==='khac'?'selected':''}>Khác</option>
+                </select>`);
+            html += field12('Số thẻ BHYT',
+                `<input type="text" class="form-control" name="soTheBHYT" value="${escapeHtml(d.soTheBHYT || '')}">`);
+
+        } else if (d.vaiTro === 'bacsi') {
+            html += field6('Họ và tên *',
+                `<input type="text" class="form-control" name="hoTen" value="${escapeHtml(d.hoTen)}" required>`);
+            // Chuyên khoa và khoa: readonly
+            html += field6('Chuyên khoa', `<input class="form-control" value="${escapeHtml(d.tenChuyenKhoa||'')}" disabled>`);
+            html += field6('Khoa', `<input class="form-control" value="${escapeHtml(d.tenKhoa||'')}" disabled>`);
+            html += field12('Mô tả / Giới thiệu',
+                `<textarea class="form-control" name="moTa" rows="3">${escapeHtml(d.moTa||'')}</textarea>`);
+        }
+        // quantri: chỉ sđt (đã render ở trên)
+
+        html += '</div>';
+        document.getElementById('profileForm').innerHTML = html;
+    }
+
+    function field6(label, input) {
+        return `<div class="col-12 col-sm-6"><label class="form-label">${label}</label>${input}</div>`;
+    }
+    function field12(label, input) {
+        return `<div class="col-12"><label class="form-label">${label}</label>${input}</div>`;
+    }
+
+    // ══════════════════════════════════════════
+    //  EDIT MODE TOGGLE
+    // ══════════════════════════════════════════
+    function enterEditMode() {
+        document.getElementById('profileView').style.display     = 'none';
+        document.getElementById('profileEditWrap').style.display = 'block';
+        document.getElementById('btnEdit').style.display   = 'none';
+        document.getElementById('btnSave').style.display   = 'inline-flex';
+        document.getElementById('btnCancel').style.display = 'inline-flex';
+
+        // Nếu là bác sĩ: hiện nút thay ảnh, thêm overlay avatar
+        if (userData.vaiTro === 'bacsi') {
+            document.getElementById('btnChangeAvatar').style.display = 'inline-block';
+            document.getElementById('avatarHint').style.display = 'block';
+            renderAvatarEl(document.getElementById('avatarWrap'), userData.hoTen, userData.avatar, true);
+        }
+    }
+
+    function cancelEdit() {
+        pendingAvatarFile = null;
+        document.getElementById('profileView').style.display     = 'block';
+        document.getElementById('profileEditWrap').style.display = 'none';
+        document.getElementById('btnEdit').style.display   = 'inline-flex';
+        document.getElementById('btnSave').style.display   = 'none';
+        document.getElementById('btnCancel').style.display = 'none';
+        document.getElementById('btnChangeAvatar').style.display = 'none';
+        document.getElementById('avatarHint').style.display = 'none';
+        document.getElementById('avatarPreviewBadge').style.display = 'none';
+        // Restore avatar
+        renderAvatarEl(document.getElementById('avatarWrap'), userData.hoTen, userData.avatar, false);
+        buildEditForm();
+    }
+
+    async function saveProfile() {
+        const form = document.getElementById('profileForm');
+        const fd   = new FormData(form);
+        const body = Object.fromEntries(fd);
+
+        const btn = document.getElementById('btnSave');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang lưu...';
+
+        try {
+            // Nếu bác sĩ có chọn ảnh mới → upload trước
+            if (userData.vaiTro === 'bacsi' && pendingAvatarFile) {
+                await uploadAvatar();
             }
 
-            html += '</div>';
-            document.getElementById('updateProfileForm').innerHTML = html;
+            const res  = await fetch(`${API_USER}/update-profile.php`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                showToast('success', 'Cập nhật thông tin thành công!');
+                await loadProfile();
+                cancelEdit();
+            } else {
+                showToast('error', data.message || 'Cập nhật thất bại');
+            }
+        } catch (e) {
+            showToast('error', 'Lỗi kết nối server');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-save"></i> Lưu thay đổi';
+        }
+    }
+
+    // ══════════════════════════════════════════
+    //  AVATAR (BÁC SĨ)
+    // ══════════════════════════════════════════
+    function triggerAvatarPicker() {
+        document.getElementById('avatarFileInput').click();
+    }
+
+    function previewAvatar(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        if (file.size > 5 * 1024 * 1024) {
+            showToast('error', 'File ảnh không được vượt quá 5MB!');
+            return;
         }
 
-        async function checkUpdateCooldown() {
-            try {
-                const response = await fetch(`${API_BASE_USER}/get-update-cooldown.php`, {
-                    credentials: 'include'
-                });
-                const data = await response.json();
-                
-                if (data.success && !data.canUpdate) {
-                    const notice = document.getElementById('cooldownNotice');
-                    notice.innerHTML = `
-                        <div class="cooldown-notice">
-                            <i class="fas fa-clock"></i>
-                            <strong>Thông báo:</strong> Bạn chỉ có thể cập nhật thông tin sau ${data.remainingTime}.
-                        </div>
-                    `;
-                    notice.style.display = 'block';
-                    document.getElementById('editProfileBtn').disabled = true;
+        pendingAvatarFile = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const wrap = document.getElementById('avatarWrap');
+            // Show preview
+            wrap.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+            // Re-add overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'avatar-overlay';
+            overlay.innerHTML = '<i class="fas fa-camera"></i>';
+            wrap.style.cursor = 'pointer';
+            wrap.appendChild(overlay);
+            wrap.onclick = triggerAvatarPicker;
+
+            document.getElementById('avatarPreviewBadge').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    async function uploadAvatar() {
+        /**
+         * TODO: Khi Cloudinary đã được cấu hình, thay thế phần này:
+         *   - Tạo FormData với pendingAvatarFile
+         *   - POST đến API_USER/update-avatar.php
+         *   - Cập nhật userData.avatar với URL mới
+         */
+        const formData = new FormData();
+        formData.append('avatar', pendingAvatarFile);
+
+        try {
+            const res  = await fetch(`${API_USER}/update-avatar.php`, {
+                method: 'POST',
+                credentials: 'include',
+                body: formData
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                userData.avatar = data.avatarUrl;
+                showToast('success', 'Cập nhật ảnh đại diện thành công!');
+            } else {
+                showToast('error', data.message || 'Không thể upload ảnh');
+            }
+        } catch (e) {
+            showToast('error', 'Lỗi upload ảnh: ' + e.message);
+        } finally {
+            pendingAvatarFile = null;
+        }
+    }
+
+    // ══════════════════════════════════════════
+    //  ROLE UI
+    // ══════════════════════════════════════════
+    function applyRoleUI() {
+        if (userData.vaiTro === 'quantri') {
+            // Ẩn card yêu cầu admin và căn giữa ô OTP
+            document.getElementById('adminResetCard').style.display = 'none';
+            const opts = document.getElementById('securityOptions');
+            opts.classList.add('single-option');
+        }
+    }
+
+    // ══════════════════════════════════════════
+    //  COOLDOWN
+    // ══════════════════════════════════════════
+    async function checkUpdateCooldown() {
+        try {
+            const res  = await fetch(`${API_USER}/get-update-cooldown.php`, { credentials: 'include' });
+            const data = await res.json();
+            if (data.success && !data.canUpdate) {
+                document.getElementById('infoCooldown').innerHTML =
+                    `<div class="cooldown-notice"><i class="fas fa-clock"></i>
+                     Bạn chỉ có thể cập nhật thông tin sau <strong>${data.remainingTime}</strong>.</div>`;
+                document.getElementById('btnEdit').disabled = true;
+            }
+        } catch {}
+    }
+
+    async function checkPasswordCooldown() {
+        try {
+            const res  = await fetch(`${API_USER}/get-password-cooldown.php`, { credentials: 'include' });
+            const data = await res.json();
+            if (data.success && !data.canChange) {
+                document.getElementById('pwdCooldown').innerHTML =
+                    `<div class="cooldown-notice"><i class="fas fa-clock"></i>
+                     Bạn chỉ có thể đổi mật khẩu sau <strong>${data.remainingTime}</strong>.</div>`;
+                document.getElementById('btnChangePwd').disabled = true;
+            }
+        } catch {}
+    }
+
+    // ══════════════════════════════════════════
+    //  ĐỔI MẬT KHẨU (Tab mật khẩu)
+    // ══════════════════════════════════════════
+    function checkStrength(val) {
+        const bar = document.getElementById('strengthBar');
+        let score = 0;
+        if (val.length >= 8) score++;
+        if (/[a-z]/.test(val) && /[A-Z]/.test(val)) score++;
+        if (/\d/.test(val)) score++;
+        if (/[^a-zA-Z\d]/.test(val)) score++;
+        bar.className = 'password-strength-bar';
+        if (val.length === 0) return;
+        bar.classList.add(score <= 1 ? 'weak' : score <= 3 ? 'medium' : 'strong');
+    }
+
+    function togglePwd(id, btn) {
+        const inp = document.getElementById(id);
+        inp.type = inp.type === 'password' ? 'text' : 'password';
+        btn.innerHTML = `<i class="fas fa-eye${inp.type === 'text' ? '-slash' : ''}"></i>`;
+    }
+
+    async function changePassword(e) {
+        e.preventDefault();
+        const cur  = document.getElementById('currentPassword').value;
+        const np   = document.getElementById('newPwd').value;
+        const conf = document.getElementById('confirmPwd').value;
+        const btn  = document.getElementById('btnChangePwd');
+
+        if (np !== conf) { showToast('error', 'Mật khẩu xác nhận không khớp!'); return; }
+        if (np.length < 6) { showToast('error', 'Mật khẩu mới phải có ít nhất 6 ký tự!'); return; }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+
+        try {
+            const res  = await fetch(`${API_USER}/change-password.php`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ currentPassword: cur, newPassword: np })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                showToast('success', 'Đổi mật khẩu thành công!');
+                document.getElementById('changePasswordForm').reset();
+                document.getElementById('strengthBar').className = 'password-strength-bar';
+                await checkPasswordCooldown();
+            } else {
+                showToast('error', data.message || 'Đổi mật khẩu thất bại');
+            }
+        } catch { showToast('error', 'Lỗi kết nối server'); }
+        finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-key"></i> Đổi mật khẩu';
+        }
+    }
+
+    // ══════════════════════════════════════════
+    //  OTP QUA EMAIL (Tab bảo mật)
+    // ══════════════════════════════════════════
+    function openOtpModal() {
+        document.getElementById('otpModal').classList.add('active');
+        document.getElementById('otpStep1').style.display = 'block';
+        document.getElementById('otpStep2').style.display = 'none';
+        document.getElementById('btnSendOtp').disabled = false;
+        document.getElementById('btnSendOtp').innerHTML = '<i class="fas fa-paper-plane"></i> Gửi mã OTP vào Email';
+    }
+
+    function closeOtpModal() {
+        document.getElementById('otpModal').classList.remove('active');
+        clearInterval(otpCountdownInterval);
+        clearInterval(resendCooldownInterval);
+        // Reset form
+        ['otpInputField','otpNewPwd','otpConfirmPwd'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+    }
+
+    function backToOtpStep1() {
+        document.getElementById('otpStep1').style.display = 'block';
+        document.getElementById('otpStep2').style.display = 'none';
+        clearInterval(otpCountdownInterval);
+        clearInterval(resendCooldownInterval);
+    }
+
+    async function sendOtpToEmail() {
+        const btn = document.getElementById('btnSendOtp');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+
+        try {
+            const res  = await fetch(`${API_USER}/request-otp-email.php`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                document.getElementById('maskedEmailDisplay').textContent = data.maskedEmail;
+                document.getElementById('otpStep1').style.display = 'none';
+                document.getElementById('otpStep2').style.display = 'block';
+                startOtpCountdown(data.expirySeconds || 300);
+                startResendCooldown(60);
+                showToast('success', 'Mã OTP đã gửi vào email của bạn!');
+            } else {
+                showToast('error', data.message || 'Không thể gửi OTP');
+                if (data.cooldown) {
+                    startResendCooldown(data.cooldown);
+                    // Go to step 2 anyway if there's existing OTP in session
+                    document.getElementById('otpStep1').style.display = 'none';
+                    document.getElementById('otpStep2').style.display = 'block';
                 }
-            } catch (error) {
-                console.error('Error:', error);
             }
+        } catch { showToast('error', 'Lỗi kết nối server'); }
+        finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Gửi mã OTP vào Email';
         }
+    }
 
-        async function checkPasswordCooldown() {
-            try {
-                const response = await fetch(`${API_BASE_USER}/get-password-cooldown.php`, {
-                    credentials: 'include'
-                });
-                const data = await response.json();
-                
-                if (data.success && !data.canChange) {
-                    const notice = document.getElementById('passwordCooldownNotice');
-                    notice.innerHTML = `
-                        <div class="cooldown-notice">
-                            <i class="fas fa-clock"></i>
-                            <strong>Thông báo:</strong> Bạn chỉ có thể đổi mật khẩu sau ${data.remainingTime}.
-                        </div>
-                    `;
-                    notice.style.display = 'block';
-                    document.getElementById('changePasswordBtn').disabled = true;
+    async function resendOtp() {
+        const btn = document.getElementById('btnResendOtp');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+
+        try {
+            const res  = await fetch(`${API_USER}/request-otp-email.php`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                showToast('success', 'Đã gửi lại mã OTP vào email!');
+                startOtpCountdown(data.expirySeconds || 300);
+                startResendCooldown(60);
+            } else {
+                showToast('error', data.message || 'Không thể gửi lại OTP');
+                if (data.cooldown) startResendCooldown(data.cooldown);
+                else {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-redo me-1"></i> Gửi lại mã OTP';
                 }
-            } catch (error) {
-                console.error('Error:', error);
             }
-        }
+        } catch { showToast('error', 'Lỗi kết nối server'); }
+    }
 
-        function toggleEditMode() {
-            editMode = true;
-            document.getElementById('profileDisplay').style.display = 'none';
-            document.getElementById('profileEditForm').style.display = 'block';
-            document.getElementById('editProfileBtn').style.display = 'none';
-            document.getElementById('saveProfileBtn').style.display = 'inline-block';
-            document.getElementById('cancelEditBtn').style.display = 'inline-block';
-        }
+    function startOtpCountdown(seconds) {
+        clearInterval(otpCountdownInterval);
+        let rem = seconds;
+        const el = document.getElementById('otpCountdown');
+        const box = document.getElementById('otpTimerBox');
 
-        function cancelEdit() {
-            editMode = false;
-            document.getElementById('profileDisplay').style.display = 'block';
-            document.getElementById('profileEditForm').style.display = 'none';
-            document.getElementById('editProfileBtn').style.display = 'inline-block';
-            document.getElementById('saveProfileBtn').style.display = 'none';
-            document.getElementById('cancelEditBtn').style.display = 'none';
-        }
-
-        async function saveProfile() {
-            const form = document.getElementById('updateProfileForm');
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData);
-
-            try {
-                const response = await fetch(`${API_BASE_USER}/update-profile.php`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    credentials: 'include',
-                    body: JSON.stringify(data)
-                });
-
-                const result = await response.json();
-                
-                if (result.success) {
-                    showAlert('success', 'Cập nhật thông tin thành công!');
-                    await loadUserProfile();
-                    cancelEdit();
-                } else {
-                    showAlert('error', result.message || 'Cập nhật thất bại');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showAlert('error', 'Lỗi kết nối server');
+        const tick = () => {
+            const m = Math.floor(rem / 60), s = rem % 60;
+            el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+            if (rem <= 0) {
+                clearInterval(otpCountdownInterval);
+                box.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#dc3545;"></i> <strong style="color:#dc3545;">Mã OTP đã hết hạn! Vui lòng gửi lại.</strong>';
             }
-        }
+            rem--;
+        };
+        tick();
+        otpCountdownInterval = setInterval(tick, 1000);
+    }
 
-        function checkPasswordStrength() {
-            const password = document.getElementById('newPassword').value;
-            const strength = document.getElementById('passwordStrength');
-            
-            let score = 0;
-            if (password.length >= 8) score++;
-            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score++;
-            if (/\d/.test(password)) score++;
-            if (/[^a-zA-Z\d]/.test(password)) score++;
+    function startResendCooldown(seconds) {
+        clearInterval(resendCooldownInterval);
+        const btn   = document.getElementById('btnResendOtp');
+        const timer = document.getElementById('resendTimer');
+        let rem = seconds;
 
-            strength.className = 'password-strength';
-            if (score <= 1) strength.classList.add('weak');
-            else if (score <= 3) strength.classList.add('medium');
-            else strength.classList.add('strong');
-        }
-
-        function togglePasswordVisibility(inputId) {
-            const input = document.getElementById(inputId);
-            input.type = input.type === 'password' ? 'text' : 'password';
-        }
-
-        async function changePassword(event) {
-            event.preventDefault();
-
-            const currentPassword = document.getElementById('currentPassword').value;
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-
-            if (newPassword !== confirmPassword) {
-                showAlert('error', 'Mật khẩu xác nhận không khớp!');
-                return;
+        const tick = () => {
+            if (rem > 0) {
+                btn.disabled = true;
+                timer.textContent = `(${rem}s)`;
+                btn.innerHTML = `<i class="fas fa-redo me-1"></i> Gửi lại mã OTP <span id="resendTimer">(${rem}s)</span>`;
+                rem--;
+            } else {
+                clearInterval(resendCooldownInterval);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-redo me-1"></i> Gửi lại mã OTP';
             }
+        };
+        tick();
+        resendCooldownInterval = setInterval(tick, 1000);
+    }
 
-            if (newPassword.length < 6) {
-                showAlert('error', 'Mật khẩu mới phải có ít nhất 6 ký tự!');
-                return;
+    async function verifyOtpAndReset(e) {
+        e.preventDefault();
+        const otp  = document.getElementById('otpInputField').value.trim();
+        const np   = document.getElementById('otpNewPwd').value;
+        const conf = document.getElementById('otpConfirmPwd').value;
+        const btn  = document.getElementById('btnVerifyOtp');
+
+        if (np !== conf) { showToast('error', 'Mật khẩu xác nhận không khớp!'); return; }
+        if (np.length < 6) { showToast('error', 'Mật khẩu mới phải có ít nhất 6 ký tự!'); return; }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xác thực...';
+
+        try {
+            const res  = await fetch(`${API_USER}/verify-otp-email-reset.php`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ otp, newPassword: np })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                showToast('success', 'Đổi mật khẩu thành công!');
+                closeOtpModal();
+                await checkPasswordCooldown();
+            } else {
+                showToast('error', data.message || 'Xác thực thất bại');
             }
+        } catch { showToast('error', 'Lỗi kết nối server'); }
+        finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check"></i> Xác nhận đổi mật khẩu';
+        }
+    }
 
-            try {
-                const response = await fetch(`${API_BASE_USER}/change-password.php`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    credentials: 'include',
-                    body: JSON.stringify({currentPassword, newPassword})
-                });
+    // ══════════════════════════════════════════
+    //  ADMIN RESET MODAL
+    // ══════════════════════════════════════════
+    function openAdminModal()  { document.getElementById('adminModal').classList.add('active'); }
+    function closeAdminModal() { document.getElementById('adminModal').classList.remove('active'); }
 
-                const data = await response.json();
-                
-                if (data.success) {
-                    showAlert('success', 'Đổi mật khẩu thành công!');
-                    document.getElementById('changePasswordForm').reset();
-                    document.getElementById('passwordStrength').className = 'password-strength';
-                } else {
-                    showAlert('error', data.message || 'Đổi mật khẩu thất bại');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showAlert('error', 'Lỗi kết nối server');
+    async function confirmAdminRequest() {
+        const btn = document.getElementById('btnConfirmAdmin');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+
+        try {
+            const res  = await fetch(`${API_USER}/request-password-reset.php`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                showToast('success', 'Yêu cầu đã được gửi! Admin sẽ xử lý sớm nhất.');
+                closeAdminModal();
+            } else {
+                showToast('error', data.message || 'Không thể gửi yêu cầu');
             }
+        } catch { showToast('error', 'Lỗi kết nối server'); }
+        finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Gửi yêu cầu';
         }
+    }
 
-        async function requestOTP() {
-            try {
-                const response = await fetch(`${API_BASE_USER}/request-otp.php`, {
-                    method: 'POST',
-                    credentials: 'include'
-                });
+    // ══════════════════════════════════════════
+    //  HELPERS
+    // ══════════════════════════════════════════
+    function getRoleLabel(r) {
+        return { benhnhan: 'Bệnh nhân', bacsi: 'Bác sĩ', quantri: 'Quản trị viên' }[r] || r;
+    }
+    function genderLabel(g) {
+        return { nam: 'Nam', nu: 'Nữ', khac: 'Khác' }[g] || '';
+    }
+    function formatDate(s) {
+        if (!s) return '';
+        return new Date(s).toLocaleDateString('vi-VN');
+    }
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+            .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
 
-                const data = await response.json();
-                
-                if (data.success) {
-                    currentOTP = data.otp;
-                    document.getElementById('otpDisplay').textContent = data.otp;
-                    document.getElementById('otpModal').classList.add('active');
-                } else {
-                    showAlert('error', data.message || 'Không thể tạo mã OTP');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showAlert('error', 'Lỗi kết nối server');
-            }
-        }
-
-        async function verifyOTP(event) {
-            event.preventDefault();
-
-            const otp = document.getElementById('otpInput').value;
-            const newPassword = document.getElementById('otpNewPassword').value;
-            const confirmPassword = document.getElementById('otpConfirmPassword').value;
-
-            if (newPassword !== confirmPassword) {
-                showAlert('error', 'Mật khẩu xác nhận không khớp!');
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_BASE_USER}/verify-otp-reset.php`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    credentials: 'include',
-                    body: JSON.stringify({otp, newPassword})
-                });
-
-                const data = await response.json();
-                
-                if (data.success) {
-                    showAlert('success', 'Đổi mật khẩu thành công!');
-                    closeOTPModal();
-                } else {
-                    showAlert('error', data.message || 'Xác thực thất bại');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showAlert('error', 'Lỗi kết nối server');
-            }
-        }
-
-        function closeOTPModal() {
-            document.getElementById('otpModal').classList.remove('active');
-            document.getElementById('otpInput').value = '';
-            document.getElementById('otpNewPassword').value = '';
-            document.getElementById('otpConfirmPassword').value = '';
-        }
-
-        function requestAdminReset() {
-            document.getElementById('requestModal').classList.add('active');
-        }
-
-        async function confirmRequestAdmin() {
-            try {
-                const response = await fetch(`${API_BASE_USER}/request-password-reset.php`, {
-                    method: 'POST',
-                    credentials: 'include'
-                });
-
-                const data = await response.json();
-                
-                if (data.success) {
-                    showAlert('success', 'Yêu cầu đã được gửi! Vui lòng chờ admin xử lý.');
-                    closeRequestModal();
-                } else {
-                    showAlert('error', data.message || 'Không thể gửi yêu cầu');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showAlert('error', 'Lỗi kết nối server');
-            }
-        }
-
-        function closeRequestModal() {
-            document.getElementById('requestModal').classList.remove('active');
-        }
-
-        function getRoleText(role) {
-            const roles = {
-                'benhnhan': 'Bệnh nhân',
-                'bacsi': 'Bác sĩ',
-                'quantri': 'Quản trị viên'
-            };
-            return roles[role] || role;
-        }
-
-        function getGenderText(gender) {
-            const genders = {
-                'nam': 'Nam',
-                'nu': 'Nữ',
-                'khac': 'Khác'
-            };
-            return genders[gender] || gender;
-        }
-
-        function formatDate(dateStr) {
-            if (!dateStr) return 'Chưa cập nhật';
-            const date = new Date(dateStr);
-            return date.toLocaleDateString('vi-VN');
-        }
-
-        function showAlert(type, message) {
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
-            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 99999; min-width: 300px;';
-            alertDiv.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
-            document.body.appendChild(alertDiv);
-            setTimeout(() => alertDiv.remove(), 5000);
-        }
-    </script>
+    function showToast(type, msg) {
+        const div = document.createElement('div');
+        div.className = `toast-alert ${type}`;
+        div.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':'exclamation-circle'}"></i><span>${msg}</span>`;
+        document.body.appendChild(div);
+        setTimeout(() => {
+            div.style.animation = 'slideInRight 0.3s ease reverse';
+            setTimeout(() => div.remove(), 300);
+        }, 4000);
+    }
+</script>
 </body>
 </html>

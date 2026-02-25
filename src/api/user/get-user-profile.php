@@ -9,7 +9,7 @@ $vaiTro = $_SESSION['vaiTro'];
 try {
     if ($vaiTro === 'benhnhan') {
         $stmt = $conn->prepare("
-            SELECT nd.tenDangNhap, nd.soDienThoai, nd.vaiTro,
+            SELECT nd.tenDangNhap, nd.soDienThoai, nd.email, nd.vaiTro, nd.avatar,
                    bn.tenBenhNhan as hoTen, bn.ngaySinh, bn.gioiTinh, bn.soTheBHYT,
                    nd.ngayCapNhatTaiKhoan
             FROM nguoidung nd
@@ -18,7 +18,7 @@ try {
         ");
     } elseif ($vaiTro === 'bacsi') {
         $stmt = $conn->prepare("
-            SELECT nd.tenDangNhap, nd.soDienThoai, nd.vaiTro,
+            SELECT nd.tenDangNhap, nd.soDienThoai, nd.email, nd.vaiTro, nd.avatar,
                    bs.tenBacSi as hoTen, bs.moTa,
                    ck.tenChuyenKhoa, k.tenKhoa,
                    nd.ngayCapNhatTaiKhoan
@@ -30,17 +30,18 @@ try {
         ");
     } else {
         $stmt = $conn->prepare("
-            SELECT nd.tenDangNhap, nd.soDienThoai, nd.vaiTro,
-                   nd.tenDangNhap as hoTen
+            SELECT nd.tenDangNhap, nd.soDienThoai, nd.email, nd.vaiTro, nd.avatar,
+                   nd.tenDangNhap as hoTen,
+                   nd.ngayCapNhatTaiKhoan
             FROM nguoidung nd
             WHERE nd.id = ?
         ");
     }
-    
+
     $stmt->bind_param("i", $nguoiDungId);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     if ($row = $result->fetch_assoc()) {
         echo json_encode(['success' => true, 'data' => $row]);
     } else {

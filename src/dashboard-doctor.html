@@ -897,11 +897,42 @@
     <script src="assets/js/api-config.js"></script>
     <script>
         const API_BASE = window.API_ENDPOINTS.doctor;
+        const DEFAULT_DB_AVATAR_KEY = 'samples/paper.png';
 
         let currentPage = 1;
         const itemsPerPage = 10;
         let allAppointments = [];
         let filteredAppointments = [];
+
+        function hasCustomAvatar(avatarUrl) {
+            return typeof avatarUrl === 'string'
+                && avatarUrl.trim() !== ''
+                && !avatarUrl.includes(DEFAULT_DB_AVATAR_KEY);
+        }
+
+        function renderDoctorHeaderAvatars(avatarUrl, fallbackText) {
+            document.querySelectorAll('.user-avatar').forEach(el => {
+                el.innerHTML = '';
+                el.style.overflow = 'hidden';
+
+                if (hasCustomAvatar(avatarUrl)) {
+                    const img = document.createElement('img');
+                    img.src = avatarUrl;
+                    img.alt = 'Avatar bác sĩ';
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '50%';
+                    img.onerror = () => {
+                        el.innerHTML = '';
+                        el.textContent = fallbackText;
+                    };
+                    el.appendChild(img);
+                } else {
+                    el.textContent = fallbackText;
+                }
+            });
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
             loadDoctorInfo();
@@ -955,10 +986,8 @@
                     document.getElementById('doctorName').textContent = doctorName;
                     document.getElementById('sidebarDoctorName').textContent = doctorName;
                     
-                    const firstLetters = doctorName.split(' ').slice(-2).map(w => w[0]).join('').toUpperCase();
-                    document.querySelectorAll('.user-avatar').forEach(el => {
-                        el.textContent = firstLetters;
-                    });
+                    const firstLetters = doctorName.split(' ').slice(-2).map(w => w[0]).join('').toUpperCase() || 'BS';
+                    renderDoctorHeaderAvatars(data.data.avatar, firstLetters);
                 } else {
                     handleSessionExpired(data.message);
                 }

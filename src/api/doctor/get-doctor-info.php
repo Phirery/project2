@@ -7,8 +7,9 @@ require_role('bacsi');
 
 try {
     $stmt = $conn->prepare("
-        SELECT bs.tenBacSi, bs.maBacSi, ck.tenChuyenKhoa, k.tenKhoa
+        SELECT bs.tenBacSi, bs.maBacSi, ck.tenChuyenKhoa, k.tenKhoa, nd.avatar
         FROM bacsi bs
+        LEFT JOIN nguoidung nd ON bs.nguoiDungId = nd.id
         LEFT JOIN chuyenkhoa ck ON bs.maChuyenKhoa = ck.maChuyenKhoa
         LEFT JOIN khoa k ON ck.maKhoa = k.maKhoa
         WHERE bs.nguoiDungId = ?

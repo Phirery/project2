@@ -19,8 +19,10 @@ try {
             ck.maChuyenKhoa,
             ck.tenChuyenKhoa,
             ck.maKhoa,
-            k.tenKhoa
+            k.tenKhoa,
+            nd.avatar
         FROM bacsi bs
+        LEFT JOIN nguoidung nd ON bs.nguoiDungId = nd.id
         LEFT JOIN chuyenkhoa ck ON bs.maChuyenKhoa = ck.maChuyenKhoa
         LEFT JOIN khoa k ON ck.maKhoa = k.maKhoa
         WHERE 1=1
@@ -72,9 +74,14 @@ try {
             $experience = $currentYear - (int)$row['namLamViec'];
         }
         
-        // Determine image based on gender
-        $imageName = ($row['gioiTinh'] === 'nu') ? 'doctor_female.png' : 'doctor_male.png';
-        $imageUrl = "http://localhost/DO_AN_1/code_doan1/src/frontend/assets/images/{$imageName}";
+        $maleDefault = 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962515/doctor_male_pna01s.png';
+        $femaleDefault = 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962514/doctor_female_zvmhtg.png';
+        $gender = strtolower((string)($row['gioiTinh'] ?? ''));
+        $fallbackAvatar = ($gender === 'nu') ? $femaleDefault : $maleDefault;
+
+        $avatar = trim((string)($row['avatar'] ?? ''));
+        $hasCustomAvatar = $avatar !== '' && stripos($avatar, 'samples/paper.png') === false;
+        $imageUrl = $hasCustomAvatar ? $avatar : $fallbackAvatar;
         
         $doctors[] = [
             'maBacSi' => $row['maBacSi'],

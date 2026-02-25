@@ -1020,10 +1020,16 @@
             
             container.innerHTML = doctors.map(doc => {
                 const experience = doc.namLamViec ? currentYear - doc.namLamViec : 'N/A';
-                const imgSrc = doc.gioiTinh === 'nu' ? 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962514/doctor_female_zvmhtg.png' : 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962515/doctor_male_pna01s.png';
+                const genderDefault = doc.gioiTinh === 'nu'
+                    ? 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962514/doctor_female_zvmhtg.png'
+                    : 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962515/doctor_male_pna01s.png';
+                const hasCustomAvatar = typeof doc.anhDaiDien === 'string'
+                    && doc.anhDaiDien.trim() !== ''
+                    && !doc.anhDaiDien.includes('samples/paper.png');
+                const imgSrc = hasCustomAvatar ? doc.anhDaiDien : genderDefault;
                 
                 // Xử lý ảnh lỗi
-                const defaultImg = 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962515/doctor_male_pna01s.png';
+                const defaultImg = genderDefault;
                 
                 return `
                 <div class="col-lg-4 col-md-6">

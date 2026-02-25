@@ -4,6 +4,41 @@ if (!window.API_ENDPOINTS) {
 
 const API_BASE_PATIENT = window.API_ENDPOINTS?.patient || 'http://localhost/DO_AN/src/api/patient';
 const API_BASE_AUTH = window.API_ENDPOINTS?.auth || 'http://localhost/DO_AN/src/api/auth';
+const DEFAULT_DB_AVATAR_KEY = 'samples/paper.png';
+
+function hasCustomAvatar(avatarUrl) {
+    return typeof avatarUrl === 'string'
+        && avatarUrl.trim() !== ''
+        && !avatarUrl.includes(DEFAULT_DB_AVATAR_KEY);
+}
+
+function renderCircleAvatar(element, fullName, avatarUrl) {
+    if (!element) return;
+
+    const displayName = (fullName || '').trim();
+    const firstLetter = (displayName.charAt(0) || 'U').toUpperCase();
+
+    element.innerHTML = '';
+    element.style.overflow = 'hidden';
+
+    if (hasCustomAvatar(avatarUrl)) {
+        const img = document.createElement('img');
+        img.src = avatarUrl;
+        img.alt = displayName || 'Avatar';
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'cover';
+        img.style.borderRadius = '50%';
+        img.onerror = () => {
+            element.innerHTML = '';
+            element.textContent = firstLetter;
+        };
+        element.appendChild(img);
+        return;
+    }
+
+    element.textContent = firstLetter;
+}
 
 // Load Header và Footer vào trang
 async function loadComponents() {
@@ -78,15 +113,14 @@ async function checkLoginStatus() {
         const mobileUserName = document.getElementById('mobileUserName');
 
         if (data.success) {
-            const fullName = data.data.fullName;
-            const firstLetter = fullName.charAt(0).toUpperCase();
+            const fullName = data.data.fullName || data.data.username || 'Người dùng';
 
             // Desktop
             if (authButtons) authButtons.style.display = 'none';
             if (logoutHeader) logoutHeader.classList.add('active');
-            navLoggedInItems.forEach(item => item.style.display = 'block');
+            navLoggedInItems.forEach(item => item.style.display = '');
             
-            if (userAvatar) userAvatar.textContent = firstLetter;
+            renderCircleAvatar(userAvatar, fullName, data.data.avatar);
             if (headerUserName) headerUserName.textContent = fullName;
 
             // Show notification icon (chỉ cho bệnh nhân)
@@ -98,11 +132,12 @@ async function checkLoginStatus() {
             // Mobile
             if (mobileAuthButtons) mobileAuthButtons.style.display = 'none';
             if (mobileUserInfo) mobileUserInfo.classList.add('active');
-            mobileMenuLoggedIn.forEach(item => item.style.display = 'block');
+            mobileMenuLoggedIn.forEach(item => item.style.display = '');
             
-            if (mobileUserAvatar) mobileUserAvatar.textContent = firstLetter;
+            renderCircleAvatar(mobileUserAvatar, fullName, data.data.avatar);
             if (mobileUserName) mobileUserName.textContent = fullName;
 
+            applyRoleNavigation(data.data.role);
             updateProfileLink(data.data.role);
 
         } else {
@@ -115,6 +150,7 @@ async function checkLoginStatus() {
             if (mobileAuthButtons) mobileAuthButtons.style.display = 'flex';
             if (mobileUserInfo) mobileUserInfo.classList.remove('active');
             mobileMenuLoggedIn.forEach(item => item.style.display = 'none');
+            applyRoleNavigation(null);
         }
 
     } catch (error) {
@@ -146,6 +182,43 @@ function updateProfileLink(role) {
     } else if (role === 'quantri') {
         profileLinks.forEach(link => link.href = 'dashboard-admin.html');
     }
+}
+
+function applyRoleNavigation(role) {
+    const isPatient = role === 'benhnhan';
+    const isDoctor = role === 'bacsi';
+    const isAdmin = role === 'quantri';
+    const isStaff = isDoctor || isAdmin;
+
+    const patientDesktopItems = document.querySelectorAll('.nav-item-patient-only');
+    const patientMobileItems = document.querySelectorAll('.mobile-menu-patient-only');
+    const dashboardDesktopItems = document.querySelectorAll('.nav-item-dashboard');
+    const dashboardMobileItems = document.querySelectorAll('.mobile-menu-dashboard');
+
+    patientDesktopItems.forEach(item => {
+        item.style.display = isPatient ? '' : 'none';
+    });
+    patientMobileItems.forEach(item => {
+        item.style.display = isPatient ? '' : 'none';
+    });
+
+    const dashboardHref = isDoctor ? 'dashboard-doctor.html' : (isAdmin ? 'dashboard-admin.html' : '');
+
+    dashboardDesktopItems.forEach(item => {
+        item.style.display = isStaff ? '' : 'none';
+        const link = item.querySelector('a');
+        if (link && dashboardHref) {
+            link.href = dashboardHref;
+        }
+    });
+
+    dashboardMobileItems.forEach(item => {
+        item.style.display = isStaff ? '' : 'none';
+        const link = item.querySelector('a');
+        if (link && dashboardHref) {
+            link.href = dashboardHref;
+        }
+    });
 }
 
 // Logout

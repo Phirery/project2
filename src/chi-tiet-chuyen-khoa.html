@@ -577,12 +577,16 @@
             const defaultImg = doctor.gioiTinh === 'nu' ?
             'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962514/doctor_female_zvmhtg.png' : 
             'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962515/doctor_male_pna01s.png';
+            const hasCustomAvatar = typeof doctor.anhDaiDien === 'string'
+                && doctor.anhDaiDien.trim() !== ''
+                && !doctor.anhDaiDien.includes('samples/paper.png');
+            const avatarUrl = hasCustomAvatar ? doctor.anhDaiDien : defaultImg;
 
             return `
                 <tr>
                     <td data-label="STT" class="text-center"><strong>${stt}</strong></td>
                     <td data-label="Ảnh">
-                        <img src="${doctor.anhDaiDien}" alt="${doctor.tenBacSi}" class="doctor-avatar-small" 
+                        <img src="${avatarUrl}" alt="${doctor.tenBacSi}" class="doctor-avatar-small" 
                              onerror="this.src='${defaultImg}'">
                     </td>
                     <td data-label="Tên bác sĩ">

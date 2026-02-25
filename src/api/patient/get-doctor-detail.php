@@ -26,7 +26,8 @@ try {
             ck.moTa as moTaChuyenKhoa,
             k.maKhoa,
             k.tenKhoa,
-            nd.soDienThoai
+            nd.soDienThoai,
+            nd.avatar
         FROM bacsi bs
         LEFT JOIN chuyenkhoa ck ON bs.maChuyenKhoa = ck.maChuyenKhoa
         LEFT JOIN khoa k ON ck.maKhoa = k.maKhoa
@@ -70,9 +71,14 @@ try {
         $experience = $currentYear - (int)$doctor['namLamViec'];
     }
     
-    // Xác định ảnh đại diện theo giới tính
-    $imageName = ($doctor['gioiTinh'] === 'nu') ? 'doctor_female.png' : 'doctor_male.png';
-    $imageUrl = "http://localhost/DO_AN_1/code_doan1/src/frontend/assets/images/{$imageName}";
+    $maleDefault = 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962515/doctor_male_pna01s.png';
+    $femaleDefault = 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962514/doctor_female_zvmhtg.png';
+    $gender = strtolower((string)($doctor['gioiTinh'] ?? ''));
+    $fallbackAvatar = ($gender === 'nu') ? $femaleDefault : $maleDefault;
+
+    $avatar = trim((string)($doctor['avatar'] ?? ''));
+    $hasCustomAvatar = $avatar !== '' && stripos($avatar, 'samples/paper.png') === false;
+    $imageUrl = $hasCustomAvatar ? $avatar : $fallbackAvatar;
     
     $responseData = [
         'maBacSi' => $doctor['maBacSi'],
