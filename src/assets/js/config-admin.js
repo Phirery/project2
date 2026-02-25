@@ -1,6 +1,10 @@
 // API Endpoints
-const API_BASE_ADMIN = 'http://localhost/DO_AN/src/api/admin';
-const API_BASE_AUTH = 'http://localhost/DO_AN/src/api/auth';
+if (!window.API_ENDPOINTS) {
+    console.error('Missing API config. Please include assets/js/api-config.js before config-admin.js');
+}
+
+const API_BASE_ADMIN = window.API_ENDPOINTS?.admin || 'http://localhost/DO_AN/src/api/admin';
+const API_BASE_AUTH = window.API_ENDPOINTS?.auth || 'http://localhost/DO_AN/src/api/auth';
 
 // Component Paths (relative to admin pages)
 const COMPONENT_PATH = 'components/';

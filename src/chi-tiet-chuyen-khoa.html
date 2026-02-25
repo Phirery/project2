@@ -449,12 +449,13 @@
     <div id="footer-placeholder"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/api-config.js"></script>
     
     <script src="assets/js/common.js"></script>
 
     <script>
         // API Configuration
-        const API_BASE_PATIENT_DETAIL = 'http://localhost/DO_AN/src/api/patient';
+        const API_BASE_PATIENT_DETAIL = window.API_ENDPOINTS.patient;
 
         let allDoctors = [];
         let currentPage = 1;

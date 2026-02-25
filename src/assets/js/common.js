@@ -1,5 +1,9 @@
-const API_BASE_PATIENT = 'http://localhost/DO_AN/src/api/patient';
-const API_BASE_AUTH = 'http://localhost/DO_AN/src/api/auth';
+if (!window.API_ENDPOINTS) {
+    console.error('Missing API config. Please include assets/js/api-config.js before common.js');
+}
+
+const API_BASE_PATIENT = window.API_ENDPOINTS?.patient || 'http://localhost/DO_AN/src/api/patient';
+const API_BASE_AUTH = window.API_ENDPOINTS?.auth || 'http://localhost/DO_AN/src/api/auth';
 
 // Load Header và Footer vào trang
 async function loadComponents() {
