@@ -17,11 +17,12 @@ try {
         exit;
     }
     
-    $hoursSinceUpdate = (time() - strtotime($lastUpdate)) / 3600;
-    $canUpdate = $hoursSinceUpdate >= 24;
-    
-    $remainingHours = max(0, 24 - $hoursSinceUpdate);
-    $remainingTime = sprintf('%d giờ %d phút', floor($remainingHours), ($remainingHours - floor($remainingHours)) * 60);
+    $secondsSinceUpdate = time() - strtotime($lastUpdate);
+    $canUpdate = $secondsSinceUpdate >= 60;
+
+    $remainingSeconds = max(0, 60 - $secondsSinceUpdate);
+
+    $remainingTime = sprintf('%d giây', $remainingSeconds);
     
     echo json_encode([
         'success' => true,

@@ -19,9 +19,9 @@ try {
     $checkStmt->close();
     
     if ($lastUpdate) {
-        $hoursSinceUpdate = (time() - strtotime($lastUpdate)) / 3600;
-        if ($hoursSinceUpdate < 24) {
-            throw new Exception('Bạn chỉ có thể cập nhật thông tin sau 24 giờ!');
+        $hoursSinceUpdate = (time() - strtotime($lastUpdate));
+        if ($hoursSinceUpdate < 60) {
+            throw new Exception('Bạn chỉ có thể cập nhật thông tin sau 1 phút!');
         }
     }
     
