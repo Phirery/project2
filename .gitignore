@@ -1,3 +1,5 @@
 # Sensitive local config
 src/config/mail.php
 src/config/cloudinary.php
+src/config/db-config.php
+src/DEPLOY_CHECKLIST.md

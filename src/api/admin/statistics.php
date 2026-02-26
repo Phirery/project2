@@ -1,20 +1,7 @@
 <?php
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
+require_once __DIR__ . '/../../config/cors.php';
+require_once __DIR__ . '/../../config/dp.php';
 
-// Kết nối database
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "datlichkham";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die(json_encode(['error' => 'Connection failed']));
-}
-
-// Lấy thống kê
 $stats = [
     'appointments' => 0,
     'patients' => 0,
@@ -22,22 +9,24 @@ $stats = [
     'departments' => 0
 ];
 
-// Đếm lịch khám
-$result = $conn->query("SELECT COUNT(*) as count FROM lichkham");
-$stats['appointments'] = $result->fetch_assoc()['count'];
+try {
+    $result = $conn->query("SELECT COUNT(*) as count FROM lichkham");
+    $stats['appointments'] = (int)($result->fetch_assoc()['count'] ?? 0);
 
-// Đếm bệnh nhân
-$result = $conn->query("SELECT COUNT(*) as count FROM benhnhan");
-$stats['patients'] = $result->fetch_assoc()['count'];
+    $result = $conn->query("SELECT COUNT(*) as count FROM benhnhan");
+    $stats['patients'] = (int)($result->fetch_assoc()['count'] ?? 0);
 
-// Đếm bác sĩ
-$result = $conn->query("SELECT COUNT(*) as count FROM bacsi");
-$stats['doctors'] = $result->fetch_assoc()['count'];
+    $result = $conn->query("SELECT COUNT(*) as count FROM bacsi");
+    $stats['doctors'] = (int)($result->fetch_assoc()['count'] ?? 0);
 
-// Đếm khoa
-$result = $conn->query("SELECT COUNT(*) as count FROM khoa");
-$stats['departments'] = $result->fetch_assoc()['count'];
+    $result = $conn->query("SELECT COUNT(*) as count FROM khoa");
+    $stats['departments'] = (int)($result->fetch_assoc()['count'] ?? 0);
+} catch (Throwable $e) {
+    http_response_code(500);
+}
 
-echo json_encode($stats);
-$conn->close();
-?>
+echo json_encode($stats, JSON_UNESCAPED_UNICODE);
+
+if (isset($conn) && $conn instanceof mysqli) {
+    $conn->close();
+}

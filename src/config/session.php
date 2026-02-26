@@ -1,12 +1,18 @@
 <?php
+require_once __DIR__ . '/app-env.php';
+
 if (session_status() === PHP_SESSION_NONE) {
+
+    // Host thì bật Secure (HTTPS), local thì không
+    $isSecure = (APP_ENV === 'host');
+
     session_set_cookie_params([
-        'lifetime' => 0,
-        'path' => '/',
-        'domain' => '',
-        'secure' => false,
-        'httponly' => true,
-        'samesite' => 'None',
+        'lifetime' => 0,            // Hết hạn khi đóng browser
+        'path'     => '/',          // Dùng toàn site
+        'domain'   => '',           // Không set domain (an toàn nhất)
+        'secure'   => $isSecure,    // Host = true, Local = false
+        'httponly' => true,         // JS không đọc được cookie
+        'samesite' => 'Lax',        // Phù hợp cho web cùng domain
     ]);
 
     session_start();

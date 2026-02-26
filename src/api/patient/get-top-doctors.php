@@ -1,29 +1,9 @@
 <?php
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit(0);
-}
-
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "datlichkham";
+require_once __DIR__ . '/../../config/cors.php';
+require_once __DIR__ . '/../../config/dp.php';
 
 try {
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    $conn->set_charset("utf8mb4");
-
-    if ($conn->connect_error) {
-        throw new Exception("Connection failed: " . $conn->connect_error);
-    }
-
-    // Get top 3 doctors with most appointments
-    $sql = "SELECT 
+    $sql = "SELECT
                 bs.maBacSi,
                 bs.tenBacSi,
                 bs.gioiTinh,
@@ -39,7 +19,7 @@ try {
             LEFT JOIN chuyenkhoa ck ON bs.maChuyenKhoa = ck.maChuyenKhoa
             LEFT JOIN khoa k ON ck.maKhoa = k.maKhoa
             LEFT JOIN lichkham lk ON bs.maBacSi = lk.maBacSi
-            GROUP BY bs.maBacSi, bs.tenBacSi, bs.gioiTinh, bs.namLamViec, 
+            GROUP BY bs.maBacSi, bs.tenBacSi, bs.gioiTinh, bs.namLamViec,
                      bs.moTa, ck.tenChuyenKhoa, k.tenKhoa, nd.avatar
             ORDER BY totalAppointments DESC, totalPatients DESC
             LIMIT 3";
@@ -76,14 +56,15 @@ try {
         'data' => $doctors,
         'total' => count($doctors)
     ], JSON_UNESCAPED_UNICODE);
-
-    $conn->close();
-
-} catch (Exception $e) {
+} catch (Throwable $e) {
+    http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'Error: ' . $e->getMessage(),
+        'message' => 'Không thể tải danh sách bác sĩ nổi bật.',
         'data' => []
     ], JSON_UNESCAPED_UNICODE);
+} finally {
+    if (isset($conn) && $conn instanceof mysqli) {
+        $conn->close();
+    }
 }
-?>

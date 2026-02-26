@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/send-mail.php';
+require_once __DIR__ . '/../config/app-env.php';
 
 function getMailNotificationConfig(): array {
     static $config = null;
@@ -19,7 +20,7 @@ function getMailNotificationConfig(): array {
     $config = [
         'enabled' => true,
         'site_name' => 'Eden Health',
-        'site_url' => 'http://localhost/DO_AN/src',
+        'site_url' => APP_BASE_URL,
         'events' => [],
     ];
     return $config;
@@ -46,7 +47,7 @@ function mailSiteName(): string {
 
 function mailSiteUrl(): string {
     $cfg = getMailNotificationConfig();
-    return rtrim(($cfg['site_url'] ?? 'http://localhost/DO_AN/src'), '/');
+    return rtrim(($cfg['site_url'] ?? APP_BASE_URL), '/');
 }
 
 function ensureMailNotificationLogTable(mysqli $conn): void {

@@ -6,8 +6,13 @@ use PHPMailer\PHPMailer\SMTP;
 require __DIR__ . '/../PHPMailer/src/Exception.php';
 require __DIR__ . '/../PHPMailer/src/PHPMailer.php';
 require __DIR__ . '/../PHPMailer/src/SMTP.php';
+require_once __DIR__ . '/../config/app-env.php';
 
 $mailConfig = require __DIR__ . '/../config/mail.php';
+
+function getAppLoginUrl(): string {
+    return rtrim(APP_BASE_URL, '/') . '/login.html';
+}
 
 /**
  * @param string $toEmail Email người nhận
@@ -173,6 +178,8 @@ function getPasswordChangedEmailTemplate($username, $changeTime) {
  * Template cho email chào mừng (đăng ký thành công)
  */
 function getWelcomeEmailTemplate($fullName, $username) {
+    $loginUrl = getAppLoginUrl();
+
     return "
     <!DOCTYPE html>
     <html>
@@ -214,7 +221,7 @@ function getWelcomeEmailTemplate($fullName, $username) {
                 <div class='feature-item'>✅ Nhận thông báo nhắc nhở lịch hẹn</div>
                 
                 <div style='text-align: center;'>
-                    <a href='http://localhost/DO_AN/src/login.html' class='cta-button'>Đăng nhập ngay</a>
+                    <a href='{$loginUrl}' class='cta-button'>Đăng nhập ngay</a>
                 </div>
                 
                 <p style='color: #666; margin-top: 30px;'>Nếu bạn có bất kỳ câu hỏi nào, đừng ngần ngại liên hệ với chúng tôi!</p>

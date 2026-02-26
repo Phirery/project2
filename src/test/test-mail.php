@@ -1,5 +1,5 @@
 <?php
-require 'send-mail.php';
+require '../includes/send-mail.php';
 
 // Email nhận (đổi thành email của bạn)
 $toEmail = 'dat123456789fa@gmail.com';

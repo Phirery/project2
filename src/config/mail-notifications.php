@@ -1,8 +1,10 @@
 <?php
+require_once __DIR__ . '/app-env.php';
+
 return [
     'enabled' => true,
     'site_name' => 'Eden Health',
-    'site_url' => 'http://localhost/DO_AN/src',
+    'site_url' => APP_BASE_URL,
     'events' => [
         'auth_register_success' => true,
         'auth_forgot_otp' => true,

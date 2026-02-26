@@ -1,27 +1,8 @@
 <?php
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit(0);
-}
-
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "datlichkham";
+require_once __DIR__ . '/../../config/cors.php';
+require_once __DIR__ . '/../../config/dp.php';
 
 try {
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    $conn->set_charset("utf8mb4");
-
-    if ($conn->connect_error) {
-        throw new Exception("Connection failed: " . $conn->connect_error);
-    }
-
     $stats = [
         'patients' => 0,
         'doctors' => 0,
@@ -29,25 +10,21 @@ try {
         'appointments' => 0
     ];
 
-    // Count patients
     $result = $conn->query("SELECT COUNT(*) as count FROM benhnhan");
     if ($result) {
         $stats['patients'] = (int)$result->fetch_assoc()['count'];
     }
 
-    // Count doctors
     $result = $conn->query("SELECT COUNT(*) as count FROM bacsi");
     if ($result) {
         $stats['doctors'] = (int)$result->fetch_assoc()['count'];
     }
 
-    // Count specialties
     $result = $conn->query("SELECT COUNT(*) as count FROM chuyenkhoa");
     if ($result) {
         $stats['specialties'] = (int)$result->fetch_assoc()['count'];
     }
 
-    // Count appointments
     $result = $conn->query("SELECT COUNT(*) as count FROM lichkham");
     if ($result) {
         $stats['appointments'] = (int)$result->fetch_assoc()['count'];
@@ -57,13 +34,14 @@ try {
         'success' => true,
         'data' => $stats
     ], JSON_UNESCAPED_UNICODE);
-
-    $conn->close();
-
-} catch (Exception $e) {
+} catch (Throwable $e) {
+    http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'Error: ' . $e->getMessage()
+        'message' => 'Không thể tải thống kê.'
     ], JSON_UNESCAPED_UNICODE);
+} finally {
+    if (isset($conn) && $conn instanceof mysqli) {
+        $conn->close();
+    }
 }
-?>
