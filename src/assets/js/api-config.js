@@ -8,19 +8,18 @@
         return String(url || '').replace(/\/+$/, '');
     }
 
-    function readStoredEnv() {
-        var env = localStorage.getItem('APP_ENV');
-        return ENV_CONFIG[env] ? env : 'local';
-    }
-
-    function readCustomBaseUrl() {
-        var value = localStorage.getItem('APP_BASE_URL');
-        return value ? trimTrailingSlash(value) : '';
+    // TỰ ĐỘNG NHẬN DIỆN MÔI TRƯỜNG
+    function detectEnv() {
+        var hostname = window.location.hostname;
+        if (hostname === 'localhost' || hostname === 'localhost:5500') {
+            return 'local';
+        }
+        return 'host';
     }
 
     function buildConfig() {
-        var activeEnv = readStoredEnv();
-        var configuredBaseUrl = readCustomBaseUrl() || trimTrailingSlash(ENV_CONFIG[activeEnv]);
+        var activeEnv = localStorage.getItem('APP_ENV') || detectEnv();
+        var configuredBaseUrl = trimTrailingSlash(ENV_CONFIG[activeEnv]);
         var apiRoot = configuredBaseUrl + '/api';
 
         return {
@@ -45,38 +44,9 @@
     }
 
     global.setAppEnvironment = function (envName) {
-        if (!ENV_CONFIG[envName]) {
-            throw new Error('Invalid APP_ENV value. Use "local" or "host".');
-        }
-
         localStorage.setItem('APP_ENV', envName);
-        localStorage.removeItem('APP_BASE_URL');
-        applyConfig();
-    };
-
-    global.setAppBaseUrl = function (baseUrl) {
-        var normalized = trimTrailingSlash(baseUrl);
-        if (!normalized) {
-            throw new Error('Base URL must not be empty.');
-        }
-
-        localStorage.setItem('APP_BASE_URL', normalized);
-        applyConfig();
-    };
-
-    global.clearAppBaseUrl = function () {
-        localStorage.removeItem('APP_BASE_URL');
-        applyConfig();
-    };
-
-    global.getApiConfig = function () {
-        return {
-            appEnv: global.APP_ENV,
-            baseUrl: global.APP_BASE_URL,
-            endpoints: global.API_ENDPOINTS
-        };
+        location.reload();
     };
 
     applyConfig();
 })(window);
-

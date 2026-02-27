@@ -1,9 +1,16 @@
-if (!window.API_ENDPOINTS) {
-    console.error('Missing API config. Please include assets/js/api-config.js before common.js');
-}
+// Lấy thông tin cơ bản từ URL hiện tại của trình duyệt
+const currentOrigin = window.location.origin; // Ví dụ: http://localhost:5500 hoặc https://domainex.id.vn
+const pathSegments = window.location.pathname.split('/');
+const projectPath = pathSegments.includes('DO_AN') ? '/DO_AN/src' : '';
+const FALLBACK_API_ROOT = `${currentOrigin}${projectPath}/api`;
 
-const API_BASE_PATIENT = window.API_ENDPOINTS?.patient || 'http://localhost/DO_AN/src/api/patient';
-const API_BASE_AUTH = window.API_ENDPOINTS?.auth || 'http://localhost/DO_AN/src/api/auth';
+if (!window.API_ENDPOINTS) {
+    console.warn('API config missing! Using automatic fallback.');
+}
+const API_BASE = window.API_ENDPOINTS || {};
+
+const API_BASE_PATIENT = API_BASE.patient || `${FALLBACK_API_ROOT}/patient`;
+const API_BASE_AUTH    = API_BASE.auth    || `${FALLBACK_API_ROOT}/auth`;
 const DEFAULT_DB_AVATAR_KEY = 'samples/paper.png';
 
 function hasCustomAvatar(avatarUrl) {

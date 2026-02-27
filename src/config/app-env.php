@@ -1,23 +1,18 @@
 <?php
-$appEnv = getenv('APP_ENV') ?: 'local';
-if (!in_array($appEnv, ['local', 'host'], true)) {
+$host = $_SERVER['HTTP_HOST'] ?? '';
+
+if (strpos($host, 'localhost') !== false || $host === 'localhost:5500') {
     $appEnv = 'local';
+} else {
+    $appEnv = 'host';
 }
 
 $baseUrlByEnv = [
     'local' => 'http://localhost/DO_AN/src',
-    'host' => 'https://domainex.id.vn',
+    'host'  => 'https://domainex.id.vn',
 ];
 
-$baseUrl = getenv('APP_BASE_URL');
-if (!$baseUrl) {
-    $baseUrl = $baseUrlByEnv[$appEnv];
-}
+$baseUrl = $baseUrlByEnv[$appEnv];
 
-if (!defined('APP_ENV')) {
-    define('APP_ENV', $appEnv);
-}
-
-if (!defined('APP_BASE_URL')) {
-    define('APP_BASE_URL', rtrim($baseUrl, '/'));
-}
+if (!defined('APP_ENV')) define('APP_ENV', $appEnv);
+if (!defined('APP_BASE_URL')) define('APP_BASE_URL', rtrim($baseUrl, '/'));
