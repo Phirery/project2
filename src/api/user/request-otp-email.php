@@ -71,10 +71,18 @@ try {
     );
 
     if (!($emailResult['success'] ?? false)) {
-        echo json_encode([
+        $response = [
             'success' => false,
             'message' => 'Không thể gửi email. Vui lòng thử lại sau.'
-        ]);
+        ];
+        if (!empty($emailResult['reason'])) {
+            $response['reason'] = $emailResult['reason'];
+        }
+        if (!empty($emailResult['mail_error'])) {
+            $response['mailError'] = $emailResult['mail_error'];
+        }
+
+        echo json_encode($response);
         exit;
     }
 

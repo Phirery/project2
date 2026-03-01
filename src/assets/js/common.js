@@ -1,5 +1,4 @@
-// Lấy thông tin cơ bản từ URL hiện tại của trình duyệt
-const currentOrigin = window.location.origin; // Ví dụ: http://localhost:5500 hoặc https://domainex.id.vn
+const currentOrigin = window.location.origin;
 const pathSegments = window.location.pathname.split('/');
 const projectPath = pathSegments.includes('DO_AN') ? '/DO_AN/src' : '';
 const FALLBACK_API_ROOT = `${currentOrigin}${projectPath}/api`;

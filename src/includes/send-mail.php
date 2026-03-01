@@ -9,6 +9,22 @@ require __DIR__ . '/../PHPMailer/src/SMTP.php';
 require_once __DIR__ . '/../config/app-env.php';
 
 $mailConfig = require __DIR__ . '/../config/mail.php';
+$lastMailError = null;
+
+function isMailDebugEnabled(): bool {
+    global $mailConfig;
+    return !empty($mailConfig['debug']);
+}
+
+function setLastMailError(?string $error): void {
+    global $lastMailError;
+    $lastMailError = $error;
+}
+
+function getLastMailError(): ?string {
+    global $lastMailError;
+    return $lastMailError;
+}
 
 function getAppLoginUrl(): string {
     return rtrim(APP_BASE_URL, '/') . '/login.html';
@@ -24,6 +40,7 @@ function getAppLoginUrl(): string {
 function sendEmail($toEmail, $subject, $htmlContent, $textContent = '') {
 
     global $mailConfig; //Sau này sửa lại sau.
+    setLastMailError(null);
 
     $mail = new PHPMailer(true);
 
@@ -56,7 +73,16 @@ function sendEmail($toEmail, $subject, $htmlContent, $textContent = '') {
         
     } catch (Exception $e) {
         // Ghi log lỗi
-        error_log("Email Error: {$mail->ErrorInfo}");
+        $errorDetail = trim((string)$mail->ErrorInfo);
+        if ($errorDetail === '') {
+            $errorDetail = trim((string)$e->getMessage());
+        }
+        if ($errorDetail === '') {
+            $errorDetail = 'Unknown SMTP error';
+        }
+
+        setLastMailError($errorDetail);
+        error_log("Email Error: {$errorDetail}");
         return false;
     }
 }

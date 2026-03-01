@@ -157,8 +157,20 @@ function sendTransactionalMail(
         return ['success' => true];
     }
 
-    logMailNotification($conn, $eventCode, $eventKey, $recipientEmail, 'failed', 'send_failed', ['subject' => $subject]);
-    return ['success' => false, 'reason' => 'send_failed'];
+    $mailError = getLastMailError();
+    $errorMessage = $mailError ?: 'send_failed';
+    $payload = ['subject' => $subject];
+    if ($mailError) {
+        $payload['mail_error'] = $mailError;
+    }
+
+    logMailNotification($conn, $eventCode, $eventKey, $recipientEmail, 'failed', $errorMessage, $payload);
+
+    $response = ['success' => false, 'reason' => 'send_failed'];
+    if (isMailDebugEnabled() && $mailError) {
+        $response['mail_error'] = $mailError;
+    }
+    return $response;
 }
 
 function formatVNDate(?string $date): string {
