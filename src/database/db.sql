@@ -68,7 +68,8 @@ INSERT INTO benhnhan (nguoiDungId, maBenhNhan, tenBenhNhan, ngaySinh, gioiTinh, 
 (11, 'BN202511101515250', 'Đinh Quốc Thịnh', '1999-11-09', 'khac', 'BH189318214111'),
 (15, 'BN2025111712142915', 'Trần Văn Hoàng', '2000-12-31', 'nam', NULL),
 (58, 'BN2025112200000058', 'Võ Quốc Thái', '2000-11-21', 'nam', NULL),
-(59, 'BN2025112200000059', 'Lê Minh Tuyền', '2005-11-21', 'nam', NULL);
+(59, 'BN2025112200000059', 'Lê Minh Tuyền', '2005-11-21', 'nam', NULL),
+(60, 'BN2026020300000060', 'tester', '2005-10-09', 'khac', NULL);
 DELIMITER $$
 CREATE TRIGGER `validate_birthdate_before_insert` BEFORE INSERT ON `benhnhan` FOR EACH ROW BEGIN
     IF NEW.ngaySinh > CURDATE() THEN
@@ -236,6 +237,10 @@ CREATE TABLE hoadon (
   vnp_TransactionNo varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO hoadon (maHoaDon, maLichKham, soTien, ngayTao, trangThai, phuongThuc, vnp_TransactionNo) VALUES
+(1, 77, 150000.00, '2026-02-23 22:55:04', 'Chưa thanh toán', NULL, NULL),
+(2, 78, 250000.00, '2026-02-23 22:55:43', 'Chưa thanh toán', NULL, NULL);
+
 CREATE TABLE hosobenhan (
   maHoSo varchar(20) NOT NULL,
   maBenhNhan varchar(20) DEFAULT NULL,
@@ -329,22 +334,24 @@ INSERT INTO lichkham (maLichKham, maBacSi, maBenhNhan, ngayKham, maCa, maSuat, m
 (58, 'BS20251121022', 'bn1', '2025-12-01', 1, 6, 2, 'Hủy', '\n[Lý do hủy]: a', 'benhnhan'),
 (59, 'BS20251121022', 'bn1', '2025-12-01', 1, 4, 1, 'Hủy', '1', 'bacsi'),
 (60, 'BS20251121022', 'bn1', '2025-12-03', 1, 3, 1, 'Hủy', '12121\n[Lý do hủy]: adsdada', 'benhnhan'),
-(61, 'BS20251121022', 'bn1', '2025-12-02', 1, 6, 2, 'Đã đặt', 'test', NULL),
+(61, 'BS20251121022', 'bn1', '2025-12-02', 1, 6, 2, 'Hủy', 'test\n[Lý do hủy]: bận việc', 'benhnhan'),
 (62, 'bs1', 'bn1', '2025-12-01', 1, 4, 1, 'Hủy', '\n[Lý do hủy]: 1', 'benhnhan'),
-(63, 'BS20251121028', 'bn1', '2025-12-05', 1, 4, 2, 'Đã đặt', '', NULL),
+(63, 'BS20251121028', 'bn1', '2025-12-05', 1, 4, 2, 'Hủy', '\n[Lý do hủy]: 1', 'benhnhan'),
 (64, 'bs1', 'bn1', '2025-11-30', 1, 1, 2, 'Hoàn thành', '', NULL),
 (65, 'bs1', 'BN2025112200000058', '2025-11-30', 2, 8, 2, 'Hoàn thành', '', NULL),
 (66, 'bs1', 'bn1', '2025-12-03', 1, 1, 1, 'Hoàn thành', 'Bệnh nhân tái khám, sức khỏe tốt.', NULL),
 (67, 'bs1', 'BN2025112200000058', '2025-12-03', 1, 2, 2, 'Đã đặt', 'Đau đầu nhẹ, cần kiểm tra huyết áp.', NULL),
 (68, 'bs1', 'BN2025111712142915', '2025-12-03', 1, 3, 1, 'Hủy', 'Bận việc đột xuất\n[Lý do hủy]: Bệnh nhân yêu cầu hủy', NULL),
 (69, 'bs1', 'BN202511082304701', '2025-12-03', 2, 7, 2, 'Đã đặt', NULL, NULL),
-(70, 'bs1', 'bn1', '2025-12-04', 1, 1, 1, 'Đã đặt', 'Khám tổng quát', NULL),
+(70, 'bs1', 'bn1', '2025-12-04', 1, 1, 1, 'Hủy', 'Khám tổng quát\n[Lý do hủy]: 1', 'benhnhan'),
 (71, 'bs1', 'BN2025112200000059', '2025-12-04', 1, 2, 1, 'Đã đặt', NULL, NULL),
 (72, 'bs1', 'BN202511101515250', '2025-12-04', 1, 3, 2, 'Đã đặt', 'Có triệu chứng sốt nhẹ', NULL),
 (73, 'bs1', 'BN2025111712142915', '2025-12-05', 2, 10, 2, 'Đã đặt', 'Tái khám theo hẹn', NULL),
-(74, 'bs1', 'bn1', '2025-12-02', 2, 11, 2, 'Đã đặt', 'không', NULL),
-(75, 'BS20251121022', 'bn1', '2025-12-05', 1, 1, 1, 'Đã đặt', '', NULL),
-(76, 'BS20251121027', 'BN2025112200000058', '2025-12-05', 1, 1, 1, 'Đã đặt', '', NULL);
+(74, 'bs1', 'bn1', '2025-12-02', 2, 11, 2, 'Hủy', 'không\n[Lý do hủy]: 1', 'benhnhan'),
+(75, 'BS20251121022', 'bn1', '2025-12-05', 1, 1, 1, 'Hủy', '\n[Lý do hủy]: 1', 'benhnhan'),
+(76, 'BS20251121027', 'BN2025112200000058', '2025-12-05', 1, 1, 1, 'Đã đặt', '', NULL),
+(77, 'BS20251121022', 'bn1', '2026-02-24', 1, 3, 1, 'Hủy', 'Không!', 'bacsi'),
+(78, 'BS20251121022', 'bn1', '2026-02-24', 1, 4, 2, 'Hủy', '', 'bacsi');
 DELIMITER $$
 CREATE TRIGGER `after_lichkham_insert` AFTER INSERT ON `lichkham` FOR EACH ROW BEGIN
     DECLARE patientName VARCHAR(100);
@@ -389,33 +396,32 @@ CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW B
     DECLARE slotTime VARCHAR(50);
     DECLARE cancelSource VARCHAR(50);
     DECLARE cancelActor VARCHAR(20);
-    DECLARE reason TEXT DEFAULT ''; -- Biến chứa lý do trích xuất
-    
-    -- Chỉ chạy khi trạng thái chuyển sang 'Hủy'
+    DECLARE reason TEXT DEFAULT '';
+
     IF NEW.trangThai = 'Hủy' AND OLD.trangThai != 'Hủy' THEN
-        
-        -- 1. Lấy thông tin cơ bản
         SELECT tenBenhNhan INTO patientName FROM benhnhan WHERE maBenhNhan = NEW.maBenhNhan;
         SELECT tenBacSi INTO doctorName FROM bacsi WHERE maBacSi = NEW.maBacSi;
         SELECT tenCa INTO shiftName FROM calamviec WHERE maCa = NEW.maCa;
-        SELECT CONCAT(SUBSTRING(gioBatDau, 1, 5), ' - ', SUBSTRING(gioKetThuc, 1, 5)) 
+        SELECT CONCAT(SUBSTRING(gioBatDau, 1, 5), ' - ', SUBSTRING(gioKetThuc, 1, 5))
         INTO slotTime FROM suatkham WHERE maSuat = NEW.maSuat;
         SET appointmentDate = DATE_FORMAT(NEW.ngayKham, '%d/%m/%Y');
-        
-        -- 2. TRÍCH XUẤT LÝ DO TỪ GHICHU
-        -- Logic: Tìm chuỗi "[Lý do hủy]: " và lấy phần text phía sau nó
+
         IF NEW.ghiChu LIKE '%[Lý do hủy]:%' THEN
             SET reason = SUBSTRING_INDEX(NEW.ghiChu, '[Lý do hủy]: ', -1);
         ELSE
             SET reason = 'Không có lý do cụ thể';
         END IF;
 
-        -- 3. GỬI THÔNG BÁO (Dựa vào người hủy)
         SET cancelActor = LOWER(TRIM(COALESCE(NEW.nguoiHuy, '')));
-        
-        -- === TRƯỜNG HỢP A: BỆNH NHÂN HỦY (Gửi cho Bác sĩ) ===
+
         IF cancelActor = 'benhnhan' THEN
-            IF NOT EXISTS (SELECT 1 FROM thongbaolichkham WHERE maLichKham = NEW.maLichKham AND loai = 'Hủy lịch' AND thoiGian >= DATE_SUB(NOW(), INTERVAL 5 SECOND)) THEN
+            IF NOT EXISTS (
+                SELECT 1
+                FROM thongbaolichkham
+                WHERE maLichKham = NEW.maLichKham
+                  AND loai = 'Hủy lịch'
+                  AND thoiGian >= DATE_SUB(NOW(), INTERVAL 5 SECOND)
+            ) THEN
                 INSERT INTO thongbaolichkham (
                     maBacSi, maLichKham, loai, tieuDe, noiDung, thoiGian, daXem
                 )
@@ -425,25 +431,30 @@ CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW B
                     'Hủy lịch',
                     'Lịch khám đã hủy',
                     CONCAT(
-                        'Bệnh nhân ', patientName, 
-                        ' đã hủy lịch khám ngày ', appointmentDate, ' - ', shiftName, 
-                        '. Lý do: ', reason -- Đã thêm lý do vào đây
+                        'Bệnh nhân ', patientName,
+                        ' đã hủy lịch khám ngày ', appointmentDate, ' - ', shiftName,
+                        '. Lý do: ', reason
                     ),
                     NOW(),
                     0
                 );
             END IF;
-
-        -- === TRƯỜNG HỢP B: NGƯỜI KHÁC HỦY (Gửi cho Bệnh nhân) ===
         ELSEIF cancelActor IN ('bacsi', 'quantri', 'hethong') THEN
-            SET cancelSource = CASE 
+            SET cancelSource = CASE
                 WHEN cancelActor = 'bacsi' THEN 'Bác sĩ'
                 WHEN cancelActor = 'quantri' THEN 'Quản trị viên'
                 WHEN cancelActor = 'hethong' THEN 'Hệ thống'
                 ELSE 'Bệnh viện'
             END;
 
-            IF NOT EXISTS (SELECT 1 FROM thongbaobenhnhan WHERE maBenhNhan = NEW.maBenhNhan AND loai = 'Lịch khám' AND tieuDe = 'Lịch khám bị hủy' AND thoiGian >= DATE_SUB(NOW(), INTERVAL 5 SECOND)) THEN
+            IF NOT EXISTS (
+                SELECT 1
+                FROM thongbaobenhnhan
+                WHERE maBenhNhan = NEW.maBenhNhan
+                  AND loai = 'Lịch khám'
+                  AND tieuDe = 'Lịch khám bị hủy'
+                  AND thoiGian >= DATE_SUB(NOW(), INTERVAL 5 SECOND)
+            ) THEN
                 INSERT INTO thongbaobenhnhan (
                     maBenhNhan, loai, tieuDe, noiDung, thoiGian, daXem
                 )
@@ -452,9 +463,9 @@ CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW B
                     'Lịch khám',
                     'Lịch khám bị hủy',
                     CONCAT(
-                        'Lịch khám ngày ', appointmentDate, 
-                        ' đã bị hủy bởi ', cancelSource, 
-                        '. Lý do: ', reason, -- Đã thêm lý do vào đây
+                        'Lịch khám ngày ', appointmentDate,
+                        ' đã bị hủy bởi ', cancelSource,
+                        '. Lý do: ', reason,
                         '. Vui lòng đặt lịch mới.'
                     ),
                     NOW(),
@@ -462,7 +473,6 @@ CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW B
                 );
             END IF;
         END IF;
-        
     END IF;
 END
 $$
@@ -486,6 +496,30 @@ INSERT INTO lienhe (maLienHe, hoTen, email, soDienThoai, chuDe, noiDung, trangTh
 (1, 'Test', 'test@gmail.com', '0123456789', 'Khác', 'test', 'Đã xử lý', '2025-11-23 19:21:51', 3, '2025-11-26 09:50:39', NULL),
 (2, 'testtwo', 'two@gmail.vn', '0987654321', 'Khác', 'a', 'Đã xử lý', '2025-11-23 19:42:29', 3, '2025-11-26 09:50:35', NULL),
 (3, 'hovaten', 'example@gamil.com', '0123456789', 'Khác', 'test n', 'Đã xử lý', '2025-11-24 17:10:15', 3, '2025-11-26 09:50:31', NULL);
+
+CREATE TABLE mail_notification_log (
+  id int(11) NOT NULL,
+  event_code varchar(64) NOT NULL,
+  event_key varchar(191) NOT NULL,
+  recipient_email varchar(150) NOT NULL,
+  status enum('sent','failed','skipped') NOT NULL DEFAULT 'sent',
+  error_message text DEFAULT NULL,
+  payload longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(payload)),
+  sent_at datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO mail_notification_log (id, event_code, event_key, recipient_email, status, error_message, payload, sent_at) VALUES
+(1, 'appointment_cancelled_patient', '61:cancel:2025-12-02:4caa2073cbd316a4c37de3eacd5ddb36', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thong bao huy lich kham #61\"}', '2026-02-23 22:47:46'),
+(2, 'appointment_booked_patient', '77:booked:2026-02-24:3', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Xac nhan dat lich kham #77\"}', '2026-02-23 22:55:08'),
+(3, 'appointment_booked_patient', '78:booked:2026-02-24:4', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Xac nhan dat lich kham #78\"}', '2026-02-23 22:55:48'),
+(4, 'appointment_cancelled_patient', '74:cancel:2025-12-02:67a00db4b3fa1c075abba10fd1f0c708', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thong bao huy lich kham #74\"}', '2026-02-23 22:56:13'),
+(5, 'appointment_cancelled_doctor', '74:cancel:2025-12-02:67a00db4b3fa1c075abba10fd1f0c708', 'nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thong bao huy lich kham benh nhan #74\"}', '2026-02-23 22:56:18'),
+(6, 'appointment_cancelled_patient', '70:cancel:2025-12-04:67a00db4b3fa1c075abba10fd1f0c708', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thong bao huy lich kham #70\"}', '2026-02-23 22:56:31'),
+(7, 'appointment_cancelled_doctor', '70:cancel:2025-12-04:67a00db4b3fa1c075abba10fd1f0c708', 'nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thong bao huy lich kham benh nhan #70\"}', '2026-02-23 22:56:35'),
+(8, 'appointment_cancelled_patient', '75:cancel:2025-12-05:67a00db4b3fa1c075abba10fd1f0c708', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thong bao huy lich kham #75\"}', '2026-02-23 22:56:52'),
+(9, 'appointment_cancelled_patient', '63:cancel:2025-12-05:67a00db4b3fa1c075abba10fd1f0c708', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thong bao huy lich kham #63\"}', '2026-02-23 22:57:12'),
+(10, 'appointment_cancelled_patient', '77:cancel:2026-02-24:e85cb88eb47badfeb0819053c9d72568', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thong bao huy lich kham #77\"}', '2026-02-23 22:57:57'),
+(11, 'appointment_cancelled_patient', '78:cancel:2026-02-24:e85cb88eb47badfeb0819053c9d72568', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thong bao huy lich kham #78\"}', '2026-02-25 23:19:33');
 
 CREATE TABLE ngaynghi (
   maNghi int(11) NOT NULL,
@@ -609,8 +643,8 @@ CREATE TABLE nguoidung (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO nguoidung (id, tenDangNhap, matKhau, soDienThoai, email, vaiTro, trangThai, ngayCapNhatTaiKhoan, ngayCapNhatMatKhau, avatar) VALUES
-(1, 'nguoidung1', '$2y$10$tyTtczKOcjka/X8HKwa2lerCOhW5VmtUDbbxTGA4DdvZB65AsjZuq', '0987654322', 'nguoidung1@gmail.com', 'benhnhan', 'Hoạt Động', '2025-11-21 15:25:43', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
-(2, 'nguoidung2', '$2y$10$7G5Z78wzljUpOrRM0rS3zeDIGO3PNEao6/RbvbqvbYwRdqQtZ1kYq', '0987654323', 'nguoidung2@gmail.com', 'bacsi', 'Hoạt Động', '2025-11-19 10:30:38', '2025-12-02 12:15:59', 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
+(1, 'nguoidung1', '$2y$10$iOVfEQff2dDcJBNsl7OFYeabc.x4qViG4QhWD5nl74O97KK87DwHW', '0987654322', 'dat123456789fa@gmail.com', 'benhnhan', 'Hoạt Động', '2025-11-21 15:25:43', '2026-02-02 23:40:26', 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
+(2, 'nguoidung2', '$2y$10$7G5Z78wzljUpOrRM0rS3zeDIGO3PNEao6/RbvbqvbYwRdqQtZ1kYq', '0987654323', 'nguoidung2@gmail.com', 'bacsi', 'Hoạt Động', '2026-02-24 00:46:34', '2025-12-02 12:15:59', 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
 (3, 'nguoidung3', '$2y$10$/0FrHldUcP41w29..ISGO.rhD3NHA.YBmYWzOoxe9jnZBnpm97v1G', '0987654321', 'nguoidung3@gmail.com', 'quantri', 'Hoạt Động', NULL, '2025-12-02 12:16:42', 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
 (8, 'ABCD', 'passwork', '0936846244', 'abcd@gmail.com', 'benhnhan', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
 (11, '0000000000', 'passwork', '0000000000', NULL, 'benhnhan', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
@@ -628,7 +662,7 @@ INSERT INTO nguoidung (id, tenDangNhap, matKhau, soDienThoai, email, vaiTro, tra
 (26, 'nguyenquangdung', 'nguyenquangdung1988', '0912006001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
 (27, 'tranthihuonggiang', 'tranthihuonggiang1998', '0912006002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
 (28, 'vuminhduc', 'vuminhduc1992', '0912007001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
-(29, 'nguyenhoanganh', 'nguyenhoanganh1993', '0912007002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
+(29, 'nguyenhoanganh', '$2y$10$seSDYzDxzCvikcVpg6kdLu9Z64wDg1iZMNSOIy1yZ3aNuOyIuY/lq', '0912007002', NULL, 'bacsi', 'Hoạt Động', '2026-02-26 18:46:11', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1772106371/Images/bacsi_29.png'),
 (30, 'letrungkien', 'letrungkien1995', '0912008001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
 (31, 'tranthikimhue', 'tranthikimhue1997', '0912008002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
 (32, 'phamthanhhai', 'phamthanhhai1990', '0912009001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
@@ -658,7 +692,8 @@ INSERT INTO nguoidung (id, tenDangNhap, matKhau, soDienThoai, email, vaiTro, tra
 (56, 'trinhquocthai', 'trinhquocthai2024', '0933004001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
 (57, 'buithixuan', 'buithixuan2004', '0933004002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
 (58, 'test1', '$2y$10$QRCJtDF7COPA8NViycczmOk.0srx9hql/gbe97mzpr5CQxI2q9/Di', '0111111111', NULL, 'benhnhan', 'Hoạt Động', '2025-11-22 23:31:28', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
-(59, 'test2', 'Eden24112025', '0222222222', NULL, 'benhnhan', 'Hoạt Động', '2025-11-22 23:33:27', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png');
+(59, 'test2', 'Eden24112025', '0222222222', NULL, 'benhnhan', 'Hoạt Động', '2025-11-22 23:33:27', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
+(60, 'tester', '$2y$10$qQMXcOo5TpctMAZ4iSm8UezazFy.WuT.6Dfhm5tiXldT/wWWjocMG', '0387856540', 'nguyendat992005@gmail.com', 'benhnhan', 'Hoạt Động', '2026-02-03 01:26:45', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png');
 
 CREATE TABLE quantrivien (
   nguoiDungId int(11) NOT NULL,
@@ -730,7 +765,9 @@ INSERT INTO thongbaobenhnhan (maThongBao, maBenhNhan, loai, tieuDe, noiDung, tho
 (5, 'bn1', 'Lịch khám', 'Lịch khám đã bị hủy', 'Lịch khám của bạn với bác sĩ Nguyễn Hoàng Anh vào ngày 22/11/2025 - Ca sáng (07:00 - 07:40) đã bị hủy.', '2025-11-30 10:38:05', 1),
 (6, 'bn1', 'Lịch khám', 'Lịch khám đã bị hủy', 'Lịch khám của bạn với bác sĩ Trần Văn BBD vào ngày 01/12/2025 - Ca sáng (08:20 - 09:00) đã bị hủy.', '2025-11-30 10:38:29', 1),
 (7, 'bn1', 'Lịch khám', 'Lịch khám đã bị hủy', 'Lịch khám của bạn với bác sĩ Nguyễn Hoàng Anh vào ngày 01/12/2025 - Ca sáng (07:40 - 08:20) đã bị hủy.', '2025-11-30 10:39:37', 1),
-(8, 'bn1', 'Lịch khám', 'Lịch khám bị hủy', 'Lịch khám ngày 01/12/2025 với bác sĩ Nguyễn Hoàng Anh đã bị hủy bởi Bác sĩ. Vui lòng kiểm tra lại hoặc đặt lịch mới.', '2025-11-30 12:43:47', 1);
+(8, 'bn1', 'Lịch khám', 'Lịch khám bị hủy', 'Lịch khám ngày 01/12/2025 với bác sĩ Nguyễn Hoàng Anh đã bị hủy bởi Bác sĩ. Vui lòng kiểm tra lại hoặc đặt lịch mới.', '2025-11-30 12:43:47', 1),
+(9, 'bn1', 'Lịch khám', 'Lịch khám bị hủy', 'Lịch khám ngày 24/02/2026 đã bị hủy bởi Bác sĩ. Lý do: Không có lý do cụ thể. Vui lòng đặt lịch mới.', '2026-02-23 22:57:53', 1),
+(10, 'bn1', 'Lịch khám', 'Lịch khám bị hủy', 'Lịch khám ngày 24/02/2026 đã bị hủy bởi Bác sĩ. Lý do: Không có lý do cụ thể. Vui lòng đặt lịch mới.', '2026-02-25 23:19:29', 0);
 
 CREATE TABLE thongbaolichkham (
   maThongBao int(11) NOT NULL,
@@ -812,9 +849,16 @@ INSERT INTO thongbaolichkham (maThongBao, maBacSi, maLichKham, loai, tieuDe, noi
 (86, 'bs1', 72, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Đinh Quốc Thịnh đã đặt lịch khám vào ngày 04/12/2025 - Ca sáng. Ghi chú: Có triệu chứng sốt nhẹ', '2025-12-02 12:57:19', 1),
 (87, 'bs1', 73, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Trần Văn Hoàng đã đặt lịch khám vào ngày 05/12/2025 - Ca chiều. Ghi chú: Tái khám theo hẹn', '2025-12-02 12:57:19', 1),
 (88, 'bs1', 74, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 02/12/2025 - Ca chiều. Ghi chú: không', '2025-12-02 12:59:21', 1),
-(89, 'BS20251121022', 75, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 05/12/2025 - Ca sáng', '2025-12-04 20:07:55', 0),
+(89, 'BS20251121022', 75, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 05/12/2025 - Ca sáng', '2025-12-04 20:07:55', 1),
 (90, 'BS20251121027', 76, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Võ Quốc Thái đã đặt lịch khám vào ngày 05/12/2025 - Ca sáng', '2025-12-04 20:22:28', 0),
-(91, 'bs1', 62, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 01/12/2025 - Ca sáng. Lý do: 1', '2025-12-04 20:25:47', 0);
+(91, 'bs1', 62, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 01/12/2025 - Ca sáng. Lý do: 1', '2025-12-04 20:25:47', 1),
+(92, 'BS20251121022', 61, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 02/12/2025 - Ca sáng. Lý do: bận việc', '2026-02-23 22:47:41', 1),
+(93, 'BS20251121022', 77, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 24/02/2026 - Ca sáng. Ghi chú: Không!', '2026-02-23 22:55:04', 1),
+(94, 'BS20251121022', 78, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 24/02/2026 - Ca sáng', '2026-02-23 22:55:43', 1),
+(95, 'bs1', 74, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 02/12/2025 - Ca chiều. Lý do: 1', '2026-02-23 22:56:10', 1),
+(96, 'bs1', 70, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 04/12/2025 - Ca sáng. Lý do: 1', '2026-02-23 22:56:27', 1),
+(97, 'BS20251121022', 75, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 05/12/2025 - Ca sáng. Lý do: 1', '2026-02-23 22:56:48', 1),
+(98, 'BS20251121028', 63, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 05/12/2025 - Ca sáng. Lý do: 1', '2026-02-23 22:57:08', 0);
 
 CREATE TABLE thuoc (
   maThuoc int(11) NOT NULL,
@@ -829,7 +873,9 @@ CREATE TABLE thuoc (
 ALTER TABLE bacsi
   ADD PRIMARY KEY (maBacSi),
   ADD UNIQUE KEY nguoiDungId (nguoiDungId),
-  ADD KEY maChuyenKhoa (maChuyenKhoa);
+  ADD KEY maChuyenKhoa (maChuyenKhoa),
+  ADD KEY idx_bacsi_ten_ma (tenBacSi,maBacSi),
+  ADD KEY idx_bacsi_chuyenkhoa_ten_ma (maChuyenKhoa,tenBacSi,maBacSi);
 
 ALTER TABLE benhnhan
   ADD PRIMARY KEY (maBenhNhan),
@@ -845,7 +891,8 @@ ALTER TABLE chitietdonthuoc
 
 ALTER TABLE chuyenkhoa
   ADD PRIMARY KEY (maChuyenKhoa),
-  ADD KEY maKhoa (maKhoa);
+  ADD KEY maKhoa (maKhoa),
+  ADD KEY idx_chuyenkhoa_makhoa_mack (maKhoa,maChuyenKhoa);
 
 ALTER TABLE doimatkhau
   ADD PRIMARY KEY (id),
@@ -885,6 +932,11 @@ ALTER TABLE lienhe
   ADD KEY fk_lienhe_nguoixuly (nguoiXuLy),
   ADD KEY idx_trangThai (trangThai),
   ADD KEY idx_thoiGianGui (thoiGianGui);
+
+ALTER TABLE mail_notification_log
+  ADD PRIMARY KEY (id),
+  ADD UNIQUE KEY uq_mail_event_recipient (event_code,event_key,recipient_email),
+  ADD KEY idx_mail_sent_at (sent_at);
 
 ALTER TABLE ngaynghi
   ADD PRIMARY KEY (maNghi),
@@ -944,19 +996,22 @@ ALTER TABLE goikham
   MODIFY maGoi int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 ALTER TABLE hoadon
-  MODIFY maHoaDon int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY maHoaDon int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 ALTER TABLE lichkham
-  MODIFY maLichKham int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
+  MODIFY maLichKham int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
 
 ALTER TABLE lienhe
   MODIFY maLienHe int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+ALTER TABLE mail_notification_log
+  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 ALTER TABLE ngaynghi
   MODIFY maNghi int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 ALTER TABLE nguoidung
-  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 ALTER TABLE suatkham
   MODIFY maSuat int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
@@ -965,10 +1020,10 @@ ALTER TABLE thongbaoadmin
   MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 ALTER TABLE thongbaobenhnhan
-  MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 ALTER TABLE thongbaolichkham
-  MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=92;
+  MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=99;
 
 ALTER TABLE thuoc
   MODIFY maThuoc int(11) NOT NULL AUTO_INCREMENT;

@@ -420,10 +420,15 @@
         let currentPage = 1;
         const itemsPerPage = 10;
         let allKhoa = [];
+        let currentCursor = '';
+        let nextCursor = null;
+        let previousCursors = [];
+        let lastKnownTotal = null;
 
         document.addEventListener('DOMContentLoaded', function() {
             loadKhoa();
-            loadSpecialties();
+            resetPaginationState();
+            loadSpecialties({ includeTotal: true });
             setupFilterListeners();
         });
 
@@ -434,6 +439,14 @@
                     if (e.key === 'Enter') applyFilters();
                 });
             }
+        }
+
+        function resetPaginationState() {
+            currentPage = 1;
+            currentCursor = '';
+            nextCursor = null;
+            previousCursors = [];
+            lastKnownTotal = null;
         }
 
         async function loadKhoa() {
@@ -453,21 +466,33 @@
             }
         }
 
-        async function loadSpecialties() {
+        async function loadSpecialties(options = {}) {
+            const { includeTotal = false } = options;
             showLoading(true);
             const maKhoa = document.getElementById('filterKhoa')?.value || '';
             const search = document.getElementById('filterSearch')?.value || '';
             const params = new URLSearchParams();
             if (maKhoa) params.append('maKhoa', maKhoa);
             if (search) params.append('search', search);
-            params.append('page', currentPage);
+            params.append('mode', 'cursor');
             params.append('limit', itemsPerPage);
+            if (currentCursor) params.append('cursor', currentCursor);
+            if (includeTotal) params.append('includeTotal', '1');
             try {
                 const response = await fetch(`${API_BASE_PATIENT_CK}/get-all-specialties.php?${params.toString()}`);
                 const data = await response.json();
-                if (data.success && data.data.length > 0) {
-                    displaySpecialties(data.data);
-                    updatePagination(data.pagination);
+                const specialties = Array.isArray(data.data) ? data.data : [];
+                const pagination = data.pagination || {};
+
+                if (typeof pagination.total === 'number') {
+                    lastKnownTotal = pagination.total;
+                }
+
+                nextCursor = pagination.nextCursor || null;
+
+                if (data.success && specialties.length > 0) {
+                    displaySpecialties(specialties);
+                    updatePagination(Boolean(pagination.hasNext), specialties.length);
                 } else {
                     showEmptyState();
                 }
@@ -508,65 +533,86 @@
             window.location.href = `chi-tiet-chuyen-khoa.html?id=${maChuyenKhoa}`;
         }
 
-        function updatePagination(pagination) {
+        function updatePagination(hasNext, recordsOnPage) {
             const container = document.getElementById('paginationContainer');
             const list = document.getElementById('paginationList');
             const recordInfo = document.getElementById('recordInfo');
-            if (!pagination || pagination.totalPages <= 1) {
+
+            if (recordsOnPage <= 0) {
                 container.style.display = 'none';
                 return;
             }
+
             container.style.display = 'flex';
-            const start = (pagination.page - 1) * pagination.limit + 1;
-            const end = Math.min(pagination.page * pagination.limit, pagination.total);
-            recordInfo.textContent = `Hiển thị ${start} - ${end} của ${pagination.total} chuyên khoa`;
-            let html = `<li class="page-item ${pagination.page === 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="#" onclick="changePage(${pagination.page - 1}); return false;">
+
+            const start = (currentPage - 1) * itemsPerPage + 1;
+            const end = start + recordsOnPage - 1;
+            if (typeof lastKnownTotal === 'number') {
+                recordInfo.textContent = `Hiển thị ${start} - ${end} của ${lastKnownTotal} chuyên khoa`;
+            } else {
+                recordInfo.textContent = `Hiển thị ${start} - ${end} (Trang ${currentPage})`;
+            }
+
+            const hasPrev = previousCursors.length > 0;
+
+            const html = `
+                <li class="page-item ${hasPrev ? '' : 'disabled'}">
+                    <a class="page-link" href="#" onclick="changePage('prev'); return false;">
                         <i class="fas fa-chevron-left"></i>
                     </a>
-                </li>`;
-            for (let i = 1; i <= pagination.totalPages; i++) {
-                if (i === 1 || i === pagination.totalPages || (i >= pagination.page - 1 && i <= pagination.page + 1)) {
-                    html += `<li class="page-item ${i === pagination.page ? 'active' : ''}">
-                            <a class="page-link" href="#" onclick="changePage(${i}); return false;">${i}</a>
-                        </li>`;
-                } else if (i === pagination.page - 2 || i === pagination.page + 2) {
-                    html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-                }
-            }
-            html += `<li class="page-item ${pagination.page === pagination.totalPages ? 'disabled' : ''}">
-                    <a class="page-link" href="#" onclick="changePage(${pagination.page + 1}); return false;">
+                </li>
+                <li class="page-item active">
+                    <span class="page-link">Trang ${currentPage}</span>
+                </li>
+                <li class="page-item ${hasNext ? '' : 'disabled'}">
+                    <a class="page-link" href="#" onclick="changePage('next'); return false;">
                         <i class="fas fa-chevron-right"></i>
                     </a>
-                </li>`;
+                </li>
+            `;
+
             list.innerHTML = html;
         }
 
-        function changePage(page) {
-            currentPage = page;
+        function changePage(direction) {
+            if (direction === 'next') {
+                if (!nextCursor) return;
+                previousCursors.push(currentCursor);
+                currentCursor = nextCursor;
+                currentPage += 1;
+            } else if (direction === 'prev') {
+                if (previousCursors.length === 0) return;
+                currentCursor = previousCursors.pop();
+                currentPage = Math.max(1, currentPage - 1);
+            }
+
             loadSpecialties();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function applyFilters() {
-            currentPage = 1;
-            loadSpecialties();
+            resetPaginationState();
+            loadSpecialties({ includeTotal: true });
         }
 
         function resetFilters() {
             const k = document.getElementById('filterKhoa'); if(k) k.value = '';
             const s = document.getElementById('filterSearch'); if(s) s.value = '';
-            currentPage = 1;
-            loadSpecialties();
+            resetPaginationState();
+            loadSpecialties({ includeTotal: true });
         }
 
         function showLoading(show) {
             const loading = document.getElementById('loadingIndicator');
             const table = document.getElementById('specialtiesTable');
             const pagination = document.getElementById('paginationContainer');
+            const emptyState = document.getElementById('emptyState');
             if (loading) loading.style.display = show ? 'block' : 'none';
-            if (table) table.style.display = show ? 'none' : 'block';
-            if (pagination) pagination.style.display = show ? 'none' : 'flex';
+            if (show) {
+                if (table) table.style.display = 'none';
+                if (pagination) pagination.style.display = 'none';
+                if (emptyState) emptyState.style.display = 'none';
+            }
         }
 
         function showEmptyState() {

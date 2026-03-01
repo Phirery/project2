@@ -453,12 +453,12 @@
 
     <script>
         // State management
-        let allDoctors = [];
-        let filteredDoctors = [];
         let allKhoa = [];
         let allChuyenKhoa = [];
         let currentPage = 1;
         const itemsPerPage = 12;
+        let totalDoctors = 0;
+        let totalPages = 0;
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -487,10 +487,17 @@
 
         function setupFilterListeners() {
             const khoaSelect = document.getElementById('filterKhoa');
+            const chuyenKhoaSelect = document.getElementById('filterChuyenKhoa');
             const searchInput = document.getElementById('filterSearch');
             
             if (khoaSelect) {
                 khoaSelect.addEventListener('change', handleKhoaChange);
+            }
+
+            if (chuyenKhoaSelect) {
+                chuyenKhoaSelect.addEventListener('change', function() {
+                    applyFilters();
+                });
             }
             
             if (searchInput) {
@@ -569,6 +576,9 @@
             const search = document.getElementById('filterSearch')?.value || '';
             
             const params = new URLSearchParams();
+            params.append('mode', 'deferred');
+            params.append('page', currentPage);
+            params.append('limit', itemsPerPage);
             if (maKhoa) params.append('maKhoa', maKhoa);
             if (maChuyenKhoa) params.append('maChuyenKhoa', maChuyenKhoa);
             if (search) params.append('search', search);
@@ -578,10 +588,18 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    allDoctors = data.data;
-                    filteredDoctors = [...allDoctors];
-                    currentPage = 1;
-                    displayDoctors();
+                    const doctors = Array.isArray(data.data) ? data.data : [];
+                    const pagination = data.pagination || {};
+                    totalDoctors = Number(pagination.total || 0);
+                    totalPages = Number(pagination.totalPages || 0);
+
+                    if (totalPages > 0 && currentPage > totalPages) {
+                        currentPage = totalPages;
+                        loadDoctors();
+                        return;
+                    }
+
+                    displayDoctors(doctors, pagination);
                 } else {
                     showEmptyState();
                 }
@@ -596,28 +614,23 @@
             }
         }
 
-        function displayDoctors() {
+        function displayDoctors(doctors, paginationData) {
             const grid = document.getElementById('doctorsGrid');
             const emptyState = document.getElementById('emptyState');
-            const pagination = document.getElementById('paginationContainer');
+            const paginationEl = document.getElementById('paginationContainer');
             
-            if (filteredDoctors.length === 0) {
+            if (!Array.isArray(doctors) || doctors.length === 0) {
                 grid.style.display = 'none';
-                pagination.style.display = 'none';
+                paginationEl.style.display = 'none';
                 emptyState.style.display = 'block';
                 return;
             }
-            
-            const totalPages = Math.ceil(filteredDoctors.length / itemsPerPage);
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const pageData = filteredDoctors.slice(start, end);
-            
-            grid.innerHTML = pageData.map(doctor => createDoctorCard(doctor)).join('');
+
+            grid.innerHTML = doctors.map(doctor => createDoctorCard(doctor)).join('');
             grid.style.display = 'grid';
             emptyState.style.display = 'none';
             
-            updatePagination(totalPages);
+            updatePagination(paginationData, doctors.length);
             
             // Kích hoạt animation cho Grid nếu nó vừa hiện ra
             setTimeout(() => {
@@ -665,45 +678,49 @@
             `;
         }
 
-        function updatePagination(totalPages) {
+        function updatePagination(paginationData, recordsOnPage) {
             const container = document.getElementById('paginationContainer');
             const list = document.getElementById('paginationList');
             const recordInfo = document.getElementById('recordInfo');
-            
-            if (totalPages <= 1) {
+
+            const totalPageCount = Number(paginationData?.totalPages || 0);
+            const page = Number(paginationData?.page || currentPage);
+            const limit = Number(paginationData?.limit || itemsPerPage);
+
+            if (totalPageCount <= 1) {
                 container.style.display = 'none';
                 return;
             }
             
             container.style.display = 'flex';
             
-            const start = (currentPage - 1) * itemsPerPage + 1;
-            const end = Math.min(currentPage * itemsPerPage, filteredDoctors.length);
-            recordInfo.textContent = `Hiển thị ${start} - ${end} của ${filteredDoctors.length} bác sĩ`;
+            const start = (page - 1) * limit + 1;
+            const end = Math.min(start + recordsOnPage - 1, totalDoctors);
+            recordInfo.textContent = `Hiển thị ${start} - ${end} của ${totalDoctors} bác sĩ`;
             
             let html = `
-                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="#" onclick="changePage(${currentPage - 1}); return false;">
+                <li class="page-item ${page === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="changePage(${page - 1}); return false;">
                         <i class="fas fa-chevron-left"></i>
                     </a>
                 </li>
             `;
             
-            for (let i = 1; i <= totalPages; i++) {
-                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+            for (let i = 1; i <= totalPageCount; i++) {
+                if (i === 1 || i === totalPageCount || (i >= page - 1 && i <= page + 1)) {
                     html += `
-                        <li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <li class="page-item ${i === page ? 'active' : ''}">
                             <a class="page-link" href="#" onclick="changePage(${i}); return false;">${i}</a>
                         </li>
                     `;
-                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                } else if (i === page - 2 || i === page + 2) {
                     html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
                 }
             }
             
             html += `
-                <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                    <a class="page-link" href="#" onclick="changePage(${currentPage + 1}); return false;">
+                <li class="page-item ${page === totalPageCount ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="changePage(${page + 1}); return false;">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 </li>
@@ -713,10 +730,9 @@
         }
 
         function changePage(page) {
-            const totalPages = Math.ceil(filteredDoctors.length / itemsPerPage);
-            if (page >= 1 && page <= totalPages) {
+            if (page >= 1 && page <= totalPages && page !== currentPage) {
                 currentPage = page;
-                displayDoctors();
+                loadDoctors();
                 // Smooth scroll to top of grid
                 document.querySelector('.doctors-container').scrollIntoView({behavior: 'smooth'});
             }
@@ -740,10 +756,14 @@
             const loading = document.getElementById('loadingIndicator');
             const grid = document.getElementById('doctorsGrid');
             const pagination = document.getElementById('paginationContainer');
+            const emptyState = document.getElementById('emptyState');
             
             if (loading) loading.style.display = show ? 'block' : 'none';
-            if (grid) grid.style.display = show ? 'none' : 'grid';
-            if (pagination) pagination.style.display = show ? 'none' : 'flex';
+            if (show) {
+                if (grid) grid.style.display = 'none';
+                if (pagination) pagination.style.display = 'none';
+                if (emptyState) emptyState.style.display = 'none';
+            }
         }
 
         function showEmptyState() {
