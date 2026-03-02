@@ -181,6 +181,67 @@ function hidePageLoader() {
     }, 300);
 }
 
+function ensureShowAlertStyles() {
+    if (document.getElementById('showAlertLoginStyle')) return;
+
+    const style = document.createElement('style');
+    style.id = 'showAlertLoginStyle';
+    style.textContent = `
+        .alert-custom {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+        .alert-custom.alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+        .alert-custom.alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        @keyframes showAlertSlideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes showAlertSlideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(400px); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+function showAlert(type, message) {
+    ensureShowAlertStyles();
+
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert-custom alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
+    alertDiv.style.cssText = 'top: 80px; right: 20px; z-index: 99999; min-width: 320px; max-width: 420px; animation: showAlertSlideIn 0.3s;';
+
+    const icon = document.createElement('i');
+    icon.className = `fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}`;
+
+    const content = document.createElement('span');
+    content.textContent = message;
+
+    alertDiv.appendChild(icon);
+    alertDiv.appendChild(content);
+    document.body.appendChild(alertDiv);
+
+    setTimeout(() => {
+        alertDiv.style.animation = 'showAlertSlideOut 0.3s';
+        setTimeout(() => alertDiv.remove(), 300);
+    }, 4000);
+}
+
 function updateProfileLink(role) {
     const profileLinks = document.querySelectorAll('a[href="tai-khoan-ca-nhan.html"]');
     if (role === 'bacsi') {
@@ -242,7 +303,7 @@ async function logout() {
         }
     } catch (error) {
         console.error('Logout error:', error);
-        alert('Có lỗi xảy ra khi đăng xuất');
+        showAlert('error', 'Có lỗi xảy ra khi đăng xuất');
     }
 }
 

@@ -439,8 +439,10 @@
                 const data = await response.json();
                 
                 if (!data.success || data.role !== 'benhnhan') {
-                    alert('Vui lòng đăng nhập với tài khoản bệnh nhân!');
-                    window.location.href = 'login.html';
+                    showAlert('error', 'Vui lòng đăng nhập với tài khoản bệnh nhân!');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 500);
                     return;
                 }
                 

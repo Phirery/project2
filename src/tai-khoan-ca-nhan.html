@@ -842,7 +842,7 @@
         try {
             const res  = await fetch(`${API_USER}/get-user-profile.php`, { credentials: 'include' });
             const data = await res.json();
-            if (!data.success) { showToast('error', data.message || 'Không tải được thông tin'); return; }
+            if (!data.success) { showAlert('error', data.message || 'Không tải được thông tin'); return; }
 
             userData = data.data;
             renderHeader();
@@ -851,7 +851,7 @@
             applyRoleUI();
             await Promise.all([checkUpdateCooldown(), checkPasswordCooldown()]);
         } catch (e) {
-            showToast('error', 'Lỗi kết nối server');
+            showAlert('error', 'Lỗi kết nối server');
         }
     }
 
@@ -1029,14 +1029,14 @@
             const data = await res.json();
 
             if (data.success) {
-                showToast('success', 'Cập nhật thông tin thành công!');
+                showAlert('success', 'Cập nhật thông tin thành công!');
                 await loadProfile();
                 cancelEdit();
             } else {
-                showToast('error', data.message || 'Cập nhật thất bại');
+                showAlert('error', data.message || 'Cập nhật thất bại');
             }
         } catch (e) {
-            showToast('error', 'Lỗi kết nối server');
+            showAlert('error', 'Lỗi kết nối server');
         } finally {
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-save"></i> Lưu thay đổi';
@@ -1055,7 +1055,7 @@
         if (!file) return;
 
         if (file.size > 5 * 1024 * 1024) {
-            showToast('error', 'File ảnh không được vượt quá 5MB!');
+            showAlert('error', 'File ảnh không được vượt quá 5MB!');
             return;
         }
 
@@ -1098,12 +1098,12 @@
 
             if (data.success) {
                 userData.avatar = data.avatarUrl;
-                showToast('success', 'Cập nhật ảnh đại diện thành công!');
+                showAlert('success', 'Cập nhật ảnh đại diện thành công!');
             } else {
-                showToast('error', data.message || 'Không thể upload ảnh');
+                showAlert('error', data.message || 'Không thể upload ảnh');
             }
         } catch (e) {
-            showToast('error', 'Lỗi upload ảnh: ' + e.message);
+            showAlert('error', 'Lỗi upload ảnh: ' + e.message);
         } finally {
             pendingAvatarFile = null;
         }
@@ -1178,8 +1178,8 @@
         const conf = document.getElementById('confirmPwd').value;
         const btn  = document.getElementById('btnChangePwd');
 
-        if (np !== conf) { showToast('error', 'Mật khẩu xác nhận không khớp!'); return; }
-        if (np.length < 6) { showToast('error', 'Mật khẩu mới phải có ít nhất 6 ký tự!'); return; }
+        if (np !== conf) { showAlert('error', 'Mật khẩu xác nhận không khớp!'); return; }
+        if (np.length < 6) { showAlert('error', 'Mật khẩu mới phải có ít nhất 6 ký tự!'); return; }
 
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
@@ -1194,14 +1194,14 @@
             const data = await res.json();
 
             if (data.success) {
-                showToast('success', 'Đổi mật khẩu thành công!');
+                showAlert('success', 'Đổi mật khẩu thành công!');
                 document.getElementById('changePasswordForm').reset();
                 document.getElementById('strengthBar').className = 'password-strength-bar';
                 await checkPasswordCooldown();
             } else {
-                showToast('error', data.message || 'Đổi mật khẩu thất bại');
+                showAlert('error', data.message || 'Đổi mật khẩu thất bại');
             }
-        } catch { showToast('error', 'Lỗi kết nối server'); }
+        } catch { showAlert('error', 'Lỗi kết nối server'); }
         finally {
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-key"></i> Đổi mật khẩu';
@@ -1255,9 +1255,9 @@
                 document.getElementById('otpStep2').style.display = 'block';
                 startOtpCountdown(data.expirySeconds || 300);
                 startResendCooldown(60);
-                showToast('success', 'Mã OTP đã gửi vào email của bạn!');
+                showAlert('success', 'Mã OTP đã gửi vào email của bạn!');
             } else {
-                showToast('error', data.message || 'Không thể gửi OTP');
+                showAlert('error', data.message || 'Không thể gửi OTP');
                 if (data.cooldown) {
                     startResendCooldown(data.cooldown);
                     // Go to step 2 anyway if there's existing OTP in session
@@ -1265,7 +1265,7 @@
                     document.getElementById('otpStep2').style.display = 'block';
                 }
             }
-        } catch { showToast('error', 'Lỗi kết nối server'); }
+        } catch { showAlert('error', 'Lỗi kết nối server'); }
         finally {
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-paper-plane"></i> Gửi mã OTP vào Email';
@@ -1285,18 +1285,18 @@
             const data = await res.json();
 
             if (data.success) {
-                showToast('success', 'Đã gửi lại mã OTP vào email!');
+                showAlert('success', 'Đã gửi lại mã OTP vào email!');
                 startOtpCountdown(data.expirySeconds || 300);
                 startResendCooldown(60);
             } else {
-                showToast('error', data.message || 'Không thể gửi lại OTP');
+                showAlert('error', data.message || 'Không thể gửi lại OTP');
                 if (data.cooldown) startResendCooldown(data.cooldown);
                 else {
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fas fa-redo me-1"></i> Gửi lại mã OTP';
                 }
             }
-        } catch { showToast('error', 'Lỗi kết nối server'); }
+        } catch { showAlert('error', 'Lỗi kết nối server'); }
     }
 
     function startOtpCountdown(seconds) {
@@ -1347,8 +1347,8 @@
         const conf = document.getElementById('otpConfirmPwd').value;
         const btn  = document.getElementById('btnVerifyOtp');
 
-        if (np !== conf) { showToast('error', 'Mật khẩu xác nhận không khớp!'); return; }
-        if (np.length < 6) { showToast('error', 'Mật khẩu mới phải có ít nhất 6 ký tự!'); return; }
+        if (np !== conf) { showAlert('error', 'Mật khẩu xác nhận không khớp!'); return; }
+        if (np.length < 6) { showAlert('error', 'Mật khẩu mới phải có ít nhất 6 ký tự!'); return; }
 
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xác thực...';
@@ -1363,13 +1363,13 @@
             const data = await res.json();
 
             if (data.success) {
-                showToast('success', 'Đổi mật khẩu thành công!');
+                showAlert('success', 'Đổi mật khẩu thành công!');
                 closeOtpModal();
                 await checkPasswordCooldown();
             } else {
-                showToast('error', data.message || 'Xác thực thất bại');
+                showAlert('error', data.message || 'Xác thực thất bại');
             }
-        } catch { showToast('error', 'Lỗi kết nối server'); }
+        } catch { showAlert('error', 'Lỗi kết nối server'); }
         finally {
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-check"></i> Xác nhận đổi mật khẩu';
@@ -1395,12 +1395,12 @@
             const data = await res.json();
 
             if (data.success) {
-                showToast('success', 'Yêu cầu đã được gửi! Admin sẽ xử lý sớm nhất.');
+                showAlert('success', 'Yêu cầu đã được gửi! Admin sẽ xử lý sớm nhất.');
                 closeAdminModal();
             } else {
-                showToast('error', data.message || 'Không thể gửi yêu cầu');
+                showAlert('error', data.message || 'Không thể gửi yêu cầu');
             }
-        } catch { showToast('error', 'Lỗi kết nối server'); }
+        } catch { showAlert('error', 'Lỗi kết nối server'); }
         finally {
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-paper-plane"></i> Gửi yêu cầu';
@@ -1426,14 +1426,64 @@
             .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
     }
 
-    function showToast(type, msg) {
-        const div = document.createElement('div');
-        div.className = `toast-alert ${type}`;
-        div.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':'exclamation-circle'}"></i><span>${msg}</span>`;
-        document.body.appendChild(div);
+    function ensureShowAlertStyles() {
+        if (document.getElementById('showAlertLoginStyle')) return;
+
+        const style = document.createElement('style');
+        style.id = 'showAlertLoginStyle';
+        style.textContent = `
+            .alert-custom {
+                padding: 12px 15px;
+                border-radius: 8px;
+                margin-bottom: 15px;
+                font-size: 0.85rem;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            }
+            .alert-custom.alert-success {
+                background: #d1fae5;
+                color: #065f46;
+                border-left: 4px solid #10b981;
+            }
+            .alert-custom.alert-danger {
+                background: #f8d7da;
+                color: #721c24;
+                border-left: 4px solid #dc3545;
+            }
+            @keyframes showAlertSlideIn {
+                from { transform: translateX(400px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes showAlertSlideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(400px); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    function showAlert(type, msg) {
+        ensureShowAlertStyles();
+
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert-custom alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
+        alertDiv.style.cssText = 'top: 80px; right: 20px; z-index: 99999; min-width: 320px; max-width: 420px; animation: showAlertSlideIn 0.3s;';
+
+        const icon = document.createElement('i');
+        icon.className = `fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}`;
+
+        const content = document.createElement('span');
+        content.textContent = msg;
+
+        alertDiv.appendChild(icon);
+        alertDiv.appendChild(content);
+        document.body.appendChild(alertDiv);
+
         setTimeout(() => {
-            div.style.animation = 'slideInRight 0.3s ease reverse';
-            setTimeout(() => div.remove(), 300);
+            alertDiv.style.animation = 'showAlertSlideOut 0.3s';
+            setTimeout(() => alertDiv.remove(), 300);
         }, 4000);
     }
 </script>

@@ -518,8 +518,10 @@
                 const data = await response.json();
                 
                 if (!data.success || data.role !== 'benhnhan') {
-                    alert('Vui lòng đăng nhập tài khoản bệnh nhân để xem lịch khám!');
-                    window.location.href = 'login.html';
+                    showAlert('error', 'Vui lòng đăng nhập tài khoản bệnh nhân để xem lịch khám!');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 500);
                     return;
                 }
                 
@@ -778,7 +780,7 @@
             const reason = document.getElementById('cancelReason').value.trim();
             
             if (!reason) {
-                alert('Vui lòng nhập lý do hủy lịch!');
+                showAlert('error', 'Vui lòng nhập lý do hủy lịch!');
                 return;
             }
             
@@ -796,16 +798,16 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    alert(data.message);
+                    showAlert('success', data.message);
                     const modal = bootstrap.Modal.getInstance(document.getElementById('cancelModal'));
                     modal.hide();
                     loadAppointments(); // Reload lại dữ liệu
                 } else {
-                    alert('Lỗi: ' + data.message);
+                    showAlert('error', 'Lỗi: ' + data.message);
                 }
             } catch (error) {
                 console.error('Cancel error:', error);
-                alert('Có lỗi xảy ra. Vui lòng thử lại!');
+                showAlert('error', 'Có lỗi xảy ra. Vui lòng thử lại!');
             }
         }
 
