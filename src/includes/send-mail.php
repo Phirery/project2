@@ -26,43 +26,191 @@ function getLastMailError(): ?string {
     return $lastMailError;
 }
 
-function getAppLoginUrl(): string {
-    return rtrim(APP_BASE_URL, '/') . '/login.html';
+function getMailConfigValue(string $key, $default = null) {
+    global $mailConfig;
+    return array_key_exists($key, $mailConfig) ? $mailConfig[$key] : $default;
 }
 
-/**
- * @param string $toEmail Email người nhận
- * @param string $subject Tiêu đề email
- * @param string $htmlContent Nội dung HTML
- * @param string $textContent Nội dung văn bản thuần (fallback)
- * @return bool Trả về true nếu gửi thành công, false nếu thất bại
- */
-function sendEmail($toEmail, $subject, $htmlContent, $textContent = '') {
+function resolveSmtpHost(string $host, bool $forceIpv4): string {
+    $host = trim($host);
+    if ($host === '' || !$forceIpv4) {
+        return $host;
+    }
 
-    global $mailConfig; //Sau này sửa lại sau.
-    setLastMailError(null);
+    if (filter_var($host, FILTER_VALIDATE_IP)) {
+        return $host;
+    }
 
+    $ipv4 = gethostbyname($host);
+    if ($ipv4 !== $host && filter_var($ipv4, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+        return $ipv4;
+    }
+
+    return $host;
+}
+
+function parseHttpStatusFromHeaders(array $headers): int {
+    foreach ($headers as $line) {
+        if (preg_match('/^HTTP\/\d+\.\d+\s+(\d{3})/i', (string)$line, $matches)) {
+            return (int)$matches[1];
+        }
+    }
+    return 0;
+}
+
+function sendEmailViaBrevoApi(string $toEmail, string $subject, string $htmlContent, string $textContent = ''): bool {
+    $apiKey = trim((string)getMailConfigValue('brevo_api_key', ''));
+    if ($apiKey === '') {
+        $errorDetail = 'Brevo API key is missing';
+        setLastMailError($errorDetail);
+        error_log("Email Error: {$errorDetail}");
+        return false;
+    }
+
+    $username = (string)getMailConfigValue('username', '');
+    $fromName = (string)getMailConfigValue('from_name', 'Eden Health - Phong Kham');
+    $fromEmail = (string)getMailConfigValue('from_email', $username);
+    $timeout = (int)getMailConfigValue('timeout', 20);
+
+    $payload = [
+        'sender' => [
+            'name' => $fromName,
+            'email' => $fromEmail
+        ],
+        'to' => [
+            ['email' => $toEmail]
+        ],
+        'subject' => $subject,
+        'htmlContent' => $htmlContent
+    ];
+
+    if ($textContent !== '') {
+        $payload['textContent'] = $textContent;
+    }
+
+    $url = 'https://api.brevo.com/v3/smtp/email';
+    $body = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    if ($body === false) {
+        $errorDetail = 'Failed to encode Brevo payload';
+        setLastMailError($errorDetail);
+        error_log("Email Error: {$errorDetail}");
+        return false;
+    }
+
+    if (function_exists('curl_init')) {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_POST => true,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => [
+                'Accept: application/json',
+                'Content-Type: application/json',
+                'api-key: ' . $apiKey
+            ],
+            CURLOPT_POSTFIELDS => $body,
+            CURLOPT_TIMEOUT => $timeout
+        ]);
+
+        $response = curl_exec($ch);
+        $curlError = curl_error($ch);
+        $status = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($response === false) {
+            $errorDetail = 'Brevo API curl error: ' . ($curlError ?: 'unknown');
+            setLastMailError($errorDetail);
+            error_log("Email Error: {$errorDetail}");
+            return false;
+        }
+
+        if ($status >= 200 && $status < 300) {
+            return true;
+        }
+
+        $errorDetail = "Brevo API error (HTTP {$status}): " . trim((string)$response);
+        setLastMailError($errorDetail);
+        error_log("Email Error: {$errorDetail}");
+        return false;
+    }
+
+    $context = stream_context_create([
+        'http' => [
+            'method' => 'POST',
+            'header' => "Accept: application/json\r\n"
+                . "Content-Type: application/json\r\n"
+                . "api-key: {$apiKey}\r\n",
+            'content' => $body,
+            'timeout' => $timeout,
+            'ignore_errors' => true
+        ]
+    ]);
+
+    $response = @file_get_contents($url, false, $context);
+    $headers = isset($http_response_header) && is_array($http_response_header) ? $http_response_header : [];
+    $status = parseHttpStatusFromHeaders($headers);
+
+    if ($response === false) {
+        $errorDetail = 'Brevo API request failed via stream context';
+        setLastMailError($errorDetail);
+        error_log("Email Error: {$errorDetail}");
+        return false;
+    }
+
+    if ($status >= 200 && $status < 300) {
+        return true;
+    }
+
+    $errorDetail = "Brevo API error (HTTP {$status}): " . trim((string)$response);
+    setLastMailError($errorDetail);
+    error_log("Email Error: {$errorDetail}");
+    return false;
+}
+
+function sendEmailViaSmtp(string $toEmail, string $subject, string $htmlContent, string $textContent = ''): bool {
     $mail = new PHPMailer(true);
 
     try {
+        $host = (string)getMailConfigValue('host', 'smtp.gmail.com');
+        $port = (int)getMailConfigValue('port', 587);
+        $username = (string)getMailConfigValue('username', '');
+        $password = (string)getMailConfigValue('password', '');
+        $smtpAuth = (bool)getMailConfigValue('smtp_auth', true);
+        $timeout = (int)getMailConfigValue('timeout', 20);
+        $forceIpv4 = (bool)getMailConfigValue('force_ipv4', true);
+        $fromName = (string)getMailConfigValue('from_name', 'Eden Health - Phong Kham');
+        $fromEmail = (string)getMailConfigValue('from_email', $username);
+        $encryption = strtolower((string)getMailConfigValue('encryption', 'tls'));
+
+        $smtpHost = resolveSmtpHost($host, $forceIpv4);
+
         // === Cấu hình Server ===
         $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com';
-        $mail->SMTPAuth   = true;
-        $mail->Username   = $mailConfig['username'];
-        $mail->Password   = $mailConfig['password'];
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+        $mail->Host       = $smtpHost;
+        $mail->SMTPAuth   = $smtpAuth;
+        $mail->Username   = $username;
+        $mail->Password   = $password;
+        $mail->Port       = $port;
+        $mail->Timeout    = $timeout;
+
+        if ($encryption === 'ssl') {
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        } elseif ($encryption === 'none') {
+            $mail->SMTPSecure = '';
+            $mail->SMTPAutoTLS = false;
+        } else {
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        }
+
         $mail->CharSet    = 'UTF-8';
 
-        $mail->setFrom($mailConfig['username'], 'Eden Health - Phòng Khám');
+        $mail->setFrom($fromEmail, $fromName);
         $mail->addAddress($toEmail);
 
         // === Nội dung email ===
         $mail->isHTML(true);
         $mail->Subject = $subject;
         $mail->Body    = $htmlContent;
-        
+
         // Nội dung văn bản thuần (cho email client không hỗ trợ HTML)
         if ($textContent) {
             $mail->AltBody = $textContent;
@@ -70,9 +218,7 @@ function sendEmail($toEmail, $subject, $htmlContent, $textContent = '') {
 
         $mail->send();
         return true;
-        
     } catch (Exception $e) {
-        // Ghi log lỗi
         $errorDetail = trim((string)$mail->ErrorInfo);
         if ($errorDetail === '') {
             $errorDetail = trim((string)$e->getMessage());
@@ -85,6 +231,28 @@ function sendEmail($toEmail, $subject, $htmlContent, $textContent = '') {
         error_log("Email Error: {$errorDetail}");
         return false;
     }
+}
+
+function getAppLoginUrl(): string {
+    return rtrim(APP_BASE_URL, '/') . '/login.html';
+}
+
+/**
+ * @param string $toEmail Email người nhận
+ * @param string $subject Tiêu đề email
+ * @param string $htmlContent Nội dung HTML
+ * @param string $textContent Nội dung văn bản thuần (fallback)
+ * @return bool Trả về true nếu gửi thành công, false nếu thất bại
+ */
+function sendEmail($toEmail, $subject, $htmlContent, $textContent = '') {
+    setLastMailError(null);
+    $transport = strtolower((string)getMailConfigValue('transport', 'smtp'));
+
+    if ($transport === 'brevo_api') {
+        return sendEmailViaBrevoApi($toEmail, $subject, $htmlContent, $textContent);
+    }
+
+    return sendEmailViaSmtp($toEmail, $subject, $htmlContent, $textContent);
 }
 
 /**

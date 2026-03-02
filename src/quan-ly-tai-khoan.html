@@ -6,281 +6,9 @@
     <title>Quản Lý Tài Khoản</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link id="sidebar-admin-css" rel="stylesheet" href="assets/css/sidebar-admin.css">
     <style>
-        :root {
-            --primary-purple: #667eea;
-            --secondary-purple: #764ba2;
-            --primary-blue: #00AEEF;
-            --light-bg: #f8f9fa;
-            --sidebar-width: 260px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 10%, #f8f9fa 100%);
-            min-height: 100vh;
-        }
-
-        .mobile-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .mobile-overlay.active {
-            display: block;
-            opacity: 1;
-        }
-
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 1000%;
-            width: var(--sidebar-width);
-            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px 0;
-            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            overflow-y: auto;
-            transition: transform 0.3s;
-        }
-
-        .sidebar::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .sidebar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 3px;
-        }
-
-        .sidebar-header {
-            padding: 0 20px 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            margin-bottom: 20px;
-            cursor: pointer;
-        }
-
-        .sidebar-header h4 {
-            font-weight: 700;
-            font-size: 1.3rem;
-            margin-bottom: 5px;
-        }
-
-        .sidebar-menu {
-            list-style: none;
-            padding: 0;
-        }
-
-        .sidebar-menu li {
-            margin: 5px 0;
-        }
-
-        .sidebar-menu a {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .sidebar-menu a:hover,
-        .sidebar-menu a.active {
-            background: rgba(255, 255, 255, 0.15);
-            border-left: 4px solid white;
-            padding-left: 16px;
-        }
-
-        .sidebar-menu a i {
-            width: 25px;
-            margin-right: 12px;
-            font-size: 1.1rem;
-        }
-
-        .notification-badge {
-            position: absolute;
-            right: 20px;
-            background: #ff3b3b;
-            color: white;
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 10px;
-            min-width: 18px;
-            text-align: center;
-        }
-
-        .user-logout-item {
-            display: none;
-        }
-
-        .user-info-sidebar {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: none;
-            padding: 0;
-            border-radius: 0;
-            margin-bottom: 0;
-        }
-
-        .logout-btn-sidebar {
-            width: auto;
-            padding: 8px 15px;
-            background: #00b3ff;
-            color: white;
-            border: 1px solid #1f79ae;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: all 0.3s;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-        }
-
-        .logout-btn-sidebar:hover {
-            background: #0a95d0;
-            border-color: #0096ec;
-        }
-
-        .main-content {
-            margin-left: var(--sidebar-width);
-            min-height: 100vh;
-            transition: margin-left 0.3s;
-        }
-
-        .top-bar {
-            background: white;
-            padding: 15px 30px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 998;
-        }
-
-        .top-bar-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .top-bar-right {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .top-bar h5 {
-            margin: 0;
-            color: #333;
-            font-weight: 600;
-        }
-
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--primary-purple);
-            cursor: pointer;
-            padding: 5px;
-        }
-
-        .notification-icon {
-            position: relative;
-            cursor: pointer;
-            font-size: 1.3rem;
-            color: var(--primary-purple);
-            padding: 5px 10px;
-            text-decoration: none;
-        }
-
-        .notification-icon .badge {
-            position: absolute;
-            top: 0;
-            right: 5px;
-            background: #ff3b3b;
-            color: white;
-            font-size: 0.65rem;
-            padding: 2px 5px;
-            border-radius: 10px;
-            min-width: 16px;
-        }
-
-        .logout-header {    
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-left: auto;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-        }
-
-        .user-details {
-            text-align: right;
-        }
-
-        .user-name {
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .user-role {
-            font-size: 0.8rem;
-            color: #666;
-        }
-
-        .logout-btn-desktop {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 25px;
-            font-weight: 600;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .logout-btn-desktop:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .content-area {
-            padding: 30px;
-        }
-
-        .stats-row {
+.stats-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
@@ -636,92 +364,9 @@
             border-color: var(--primary-purple);
         }
 
-        #scrollTopBtn {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: #667eea;
-            color: white;
-            border: none;
-            font-size: 26px;
-            font-weight: bold;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            transition: transform 0.3s ease, background-color 0.3s ease;
-            z-index: 997;
-        }
+@media (max-width: 768px) {
 
-        #scrollTopBtn:hover {
-            background-color: #0056b3;
-            transform: scale(1.1);
-        }
-
-        #scrollTopBtn span {
-            transform: translateY(-2px);
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                right: 0;
-                left: auto;
-                transform: translateX(100%);
-            }
-
-            .sidebar.active {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .menu-toggle {
-                display: block;
-            }
-
-            .top-bar {
-                padding: 12px 15px;
-            }
-
-            .top-bar h5 {
-                font-size: 1rem;
-            }
-
-            .user-details,
-            .logout-btn-desktop {
-                display: none;
-            }
-
-            .user-avatar {
-                width: 35px;
-                height: 35px;
-                font-size: 0.9rem;
-            }
-
-            .logout-header {
-                display: none;
-            }
-
-            .user-logout-item {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 12px 20px;
-                margin: 5px 0;
-                transition: all 0.3s;
-            }
-
-            .content-area {
-                padding: 20px 15px;
-            }
-
-            .stats-row {
+.stats-row {
                 grid-template-columns: 1fr;
                 gap: 15px;
             }
@@ -756,174 +401,111 @@
                 padding: 10px 8px;
             }
 
-            #scrollTopBtn {
-                width: 45px;
-                height: 45px;
-                font-size: 22px;
-                bottom: 20px;
-                right: 20px;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <div id="sidebar-placeholder"></div>
 
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header" onclick="window.location.href='../patient/index.html'">
-            <h4><i class="fas fa-hospital-alt"></i> Eden Admin</h4>
-            <p>Hệ thống quản trị</p>
-        </div>
-        <ul class="sidebar-menu">
-            <li><a href="dashboard-admin.html"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-            <li><a href="quan-ly-lich-kham.html"><i class="fas fa-calendar-check"></i> Quản lý lịch khám</a></li>
-            <li><a href="quan-ly-khoa.html"><i class="fas fa-hospital"></i> Quản lý khoa</a></li>
-            <li><a href="quan-ly-benh-nhan.html"><i class="fas fa-user-injured"></i> Quản lý bệnh nhân</a></li>
-            <li><a href="quan-ly-bac-si.html"><i class="fas fa-user-md"></i> Quản lý bác sĩ</a></li>
-            <li><a href="quan-ly-tai-khoan.html" class="active"><i class="fas fa-users-cog"></i> Quản lý tài khoản</a></li>
-            <li><a href="quan-ly-lien-he.html"><i class="fas fa-envelope"></i> Quản lý liên hệ</a></li>
-            <li><a href="thong-ke.html"><i class="fas fa-chart-bar"></i> Thống kê</a></li> 
-            <li><a href="thong-bao-admin.html"><i class="fas fa-bell"></i><span>Thông báo</span><span class="notification-badge" id="sidebarNotifBadge" style="display:none;">0</span></a></li>
-            <li class="user-logout-item">
-                <div class="user-info-sidebar">
-                    <div class="user-avatar">A</div>                
-                    <div class="user-details">
-                        <div class="user-name" id="sidebarUserName">Admin</div>
-                    </div>
-                </div>
-                <button class="logout-btn-sidebar" onclick="logout()">
-                    <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
-                </button>
-            </li>
-        </ul>
-    </div>
-
-    <div class="main-content">
-        <div class="top-bar">
-            <div class="top-bar-left">
-                <h5><i class="fas fa-users-cog me-2"></i>Quản Lý Tài Khoản</h5>
+    <div id="page-content" style="display:none;">
+        <div class="stats-row">
+            <div class="stat-card all">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-number" id="totalAccounts">0</div>
+                <div class="stat-label">Tổng tài khoản</div>
             </div>
-            <div class="top-bar-right">
-                <a href="thong-bao-admin.html" class="notification-icon">
-                    <i class="fas fa-bell"></i>
-                    <span class="badge" id="topNotifBadge" style="display:none;">0</span>
-                </a>
-                <button class="menu-toggle" id="menuToggle">
-                    <i class="fas fa-bars"></i>
-                </button>
+            <div class="stat-card patients">
+                <div class="stat-icon"><i class="fas fa-user-injured"></i></div>
+                <div class="stat-number" id="totalPatients">0</div>
+                <div class="stat-label">Bệnh nhân</div>
             </div>
-            <div class="logout-header">
-                <div class="user-avatar" onclick="window.location.href='tai-khoan-ca-nhan.html'" style="cursor: pointer;">A</div>
-                <div class="user-details" onclick="window.location.href='tai-khoan-ca-nhan.html'" style="cursor: pointer;">
-                    <div class="user-name" id="adminName">Đang tải...</div>
-                    <div class="user-role">Quản trị viên</div>
-                </div>
-                <button class="logout-btn-desktop" onclick="logout()">
-                    <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
-                </button>
+            <div class="stat-card doctors">
+                <div class="stat-icon"><i class="fas fa-user-md"></i></div>
+                <div class="stat-number" id="totalDoctors">0</div>
+                <div class="stat-label">Bác sĩ</div>
+            </div>
+            <div class="stat-card admins">
+                <div class="stat-icon"><i class="fas fa-user-shield"></i></div>
+                <div class="stat-number" id="totalAdmins">0</div>
+                <div class="stat-label">Quản trị viên</div>
             </div>
         </div>
 
-        <div class="content-area">
-            <div class="stats-row">
-                <div class="stat-card all">
-                    <div class="stat-icon"><i class="fas fa-users"></i></div>
-                    <div class="stat-number" id="totalAccounts">0</div>
-                    <div class="stat-label">Tổng tài khoản</div>
-                </div>
-                <div class="stat-card patients">
-                    <div class="stat-icon"><i class="fas fa-user-injured"></i></div>
-                    <div class="stat-number" id="totalPatients">0</div>
-                    <div class="stat-label">Bệnh nhân</div>
-                </div>
-                <div class="stat-card doctors">
-                    <div class="stat-icon"><i class="fas fa-user-md"></i></div>
-                    <div class="stat-number" id="totalDoctors">0</div>
-                    <div class="stat-label">Bác sĩ</div>
-                </div>
-                <div class="stat-card admins">
-                    <div class="stat-icon"><i class="fas fa-user-shield"></i></div>
-                    <div class="stat-number" id="totalAdmins">0</div>
-                    <div class="stat-label">Quản trị viên</div>
-                </div>
+        <div class="filter-section">
+            <h6 class="fw-bold mb-3"><i class="fas fa-filter me-2"></i>Lọc theo vai trò</h6>
+            <div class="role-tabs">
+                <button class="role-tab active" onclick="filterByRole('all')">
+                    <i class="fas fa-users me-2"></i>Tất cả
+                </button>
+                <button class="role-tab" onclick="filterByRole('benhnhan')">
+                    <i class="fas fa-user-injured me-2"></i>Bệnh nhân
+                </button>
+                <button class="role-tab" onclick="filterByRole('bacsi')">
+                    <i class="fas fa-user-md me-2"></i>Bác sĩ
+                </button>
+                <button class="role-tab" onclick="filterByRole('quantri')">
+                    <i class="fas fa-user-shield me-2"></i>Quản trị viên
+                </button>
             </div>
-
-            <div class="filter-section">
-                <h6 class="fw-bold mb-3"><i class="fas fa-filter me-2"></i>Lọc theo vai trò</h6>
-                <div class="role-tabs">
-                    <button class="role-tab active" onclick="filterByRole('all')">
-                        <i class="fas fa-users me-2"></i>Tất cả
-                    </button>
-                    <button class="role-tab" onclick="filterByRole('benhnhan')">
-                        <i class="fas fa-user-injured me-2"></i>Bệnh nhân
-                    </button>
-                    <button class="role-tab" onclick="filterByRole('bacsi')">
-                        <i class="fas fa-user-md me-2"></i>Bác sĩ
-                    </button>
-                    <button class="role-tab" onclick="filterByRole('quantri')">
-                        <i class="fas fa-user-shield me-2"></i>Quản trị viên
-                    </button>
+            <div class="row g-3 align-items-end">
+                <div class="col-md-6">
+                    <label class="form-label">Tìm kiếm</label>
+                    <input type="text" class="form-control" id="searchInput" 
+                           placeholder="Tên đăng nhập, họ tên, số điện thoại..." 
+                           oninput="applyFilters()">
                 </div>
-                <div class="row g-3 align-items-end">
-                    <div class="col-md-6">
-                        <label class="form-label">Tìm kiếm</label>
-                        <input type="text" class="form-control" id="searchInput" 
-                               placeholder="Tên đăng nhập, họ tên, số điện thoại..." 
-                               oninput="applyFilters()">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Trạng thái</label>
-                        <select class="form-select" id="statusFilter" onchange="applyFilters()">
-                            <option value="">Tất cả</option>
-                            <option value="active">Hoạt động</option>
-                            <option value="locked">Đã khóa</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <button class="btn btn-secondary w-100" onclick="resetFilters()">
-                            <i class="fas fa-redo me-2"></i>Đặt lại
-                        </button>
-                    </div>
+                <div class="col-md-3">
+                    <label class="form-label">Trạng thái</label>
+                    <select class="form-select" id="statusFilter" onchange="applyFilters()">
+                        <option value="">Tất cả</option>
+                        <option value="active">Hoạt động</option>
+                        <option value="locked">Đã khóa</option>
+                    </select>
                 </div>
-            </div>
-
-            <div class="table-section">
-                <div class="table-header">
-                    <h5><i class="fas fa-list me-2"></i>Danh sách tài khoản</h5>
-                    <button class="btn-add" onclick="openAddModal()">
-                        <i class="fas fa-plus me-2"></i>Thêm tài khoản
+                <div class="col-md-3">
+                    <button class="btn btn-secondary w-100" onclick="resetFilters()">
+                        <i class="fas fa-redo me-2"></i>Đặt lại
                     </button>
-                </div>
-
-                <div id="loadingIndicator" class="loading" style="display: none;">
-                    <div class="spinner-border text-primary" role="status"></div>
-                    <p class="mt-3">Đang tải dữ liệu...</p>
-                </div>
-
-                <div class="table-responsive" id="tableContainer">
-                    <table class="custom-table">
-                        <thead>
-                            <tr>
-                                <th>Tên đăng nhập</th>
-                                <th>Họ tên</th>
-                                <th>Số điện thoại</th>
-                                <th>Vai trò</th>
-                                <th>Trạng thái</th>
-                                <th class="text-center">Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody id="accountTableBody"></tbody>
-                    </table>
-                </div>
-
-                <div class="pagination-container">
-                    <div class="text-muted" id="recordInfo">Hiển thị 0 - 0 của 0 bản ghi</div>
-                    <nav>
-                        <ul class="pagination" id="paginationContainer"></ul>
-                    </nav>
                 </div>
             </div>
         </div>
+
+        <div class="table-section">
+            <div class="table-header">
+                <h5><i class="fas fa-list me-2"></i>Danh sách tài khoản</h5>
+                <button class="btn-add" onclick="openAddModal()">
+                    <i class="fas fa-plus me-2"></i>Thêm tài khoản
+                </button>
+            </div>
+
+            <div id="loadingIndicator" class="loading" style="display: none;">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-3">Đang tải dữ liệu...</p>
+            </div>
+
+            <div class="table-responsive" id="tableContainer">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Tên đăng nhập</th>
+                            <th>Họ tên</th>
+                            <th>Số điện thoại</th>
+                            <th>Vai trò</th>
+                            <th>Trạng thái</th>
+                            <th class="text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="accountTableBody"></tbody>
+                </table>
+            </div>
+
+            <div class="pagination-container">
+                <div class="text-muted" id="recordInfo">Hiển thị 0 - 0 của 0 bản ghi</div>
+                <nav>
+                    <ul class="pagination" id="paginationContainer"></ul>
+                </nav>
+            </div>
+        </div>
     </div>
 
     <!-- Modal Thêm Tài Khoản -->
@@ -1043,16 +625,12 @@
         </div>
     </div>
 
-    <button id="scrollTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-        <span>▲</span>
-    </button>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/api-config.js"></script>
+    <script src="assets/js/config-admin.js"></script>
+    <script src="assets/js/sidebar-admin.js"></script>
     <script>
-        const API_BASE = window.API_ENDPOINTS.admin;
-
-        let currentPage = 1;
+let currentPage = 1;
         const itemsPerPage = 10;
         let allAccounts = [];
         let filteredAccounts = [];
@@ -1061,81 +639,20 @@
         let allSpecialties = [];
 
         document.addEventListener('DOMContentLoaded', function() {
-            loadAdminInfo();
             loadStatistics();
             loadAccounts();
             loadDepartments();
             loadSpecialties();
-            loadUnreadNotificationsCount();
-            
             document.getElementById('accountForm').addEventListener('submit', handleFormSubmit);
             
             // Mobile menu
-            const menuToggle = document.getElementById('menuToggle');
-            const sidebar = document.getElementById('sidebar');
-            const mobileOverlay = document.getElementById('mobileOverlay');
-
-            menuToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('active');
-                mobileOverlay.classList.toggle('active');
-            });
-
-            mobileOverlay.addEventListener('click', function() {
-                sidebar.classList.remove('active');
-                mobileOverlay.classList.remove('active');
-            });
-
-            sidebar.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', function() {
-                    if (window.innerWidth <= 768) {
-                        sidebar.classList.remove('active');
-                        mobileOverlay.classList.remove('active');
-                    }
-                });
-            });
-            
             // Scroll to top
-            window.onscroll = function() {
-                const btn = document.getElementById('scrollTopBtn');
-                if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-                    btn.style.display = 'flex';
-                } else {
-                    btn.style.display = 'none';
-                }
-            };
-            
             // Auto refresh notification count
-            setInterval(loadUnreadNotificationsCount, 3000);
         });
-
-        async function loadAdminInfo() {
-            try {
-                const response = await fetch(`${API_BASE}/get-admin-info.php`, {
-                    credentials: 'include'
-                });
-                const data = await response.json();
-
-                if (data.success) {
-                    const userName = data.data.tenDangNhap || 'Admin';
-                    document.getElementById('adminName').textContent = userName;
-                    document.getElementById('sidebarUserName').textContent = userName;
-
-                    const firstLetter = userName.charAt(0).toUpperCase();
-                    document.querySelectorAll('.user-avatar').forEach(el => {
-                        el.textContent = firstLetter;
-                    });
-                } else {
-                    handleSessionExpired(data.message);
-                }
-            } catch (error) {
-                console.error('Error loading admin info:', error);
-                handleSessionExpired("fetch_failed");
-            }
-        }
 
         async function loadStatistics() {
             try {
-                const response = await fetch(`${API_BASE}/account-stats.php`, {
+                const response = await fetch(`${API_BASE_ADMIN}/account-stats.php`, {
                     credentials: 'include'
                 });
                 const data = await response.json();
@@ -1154,51 +671,12 @@
             }
         }
 
-        async function loadUnreadNotificationsCount() {
-            try {
-                const response = await fetch(`${API_BASE}/get-unread-notifications-count.php`, {
-                    credentials: 'include'
-                });
-                const data = await response.json();
-                
-                if (data.success && data.count > 0) {
-                    document.getElementById('topNotifBadge').textContent = data.count;
-                    document.getElementById('topNotifBadge').style.display = 'inline-block';
-                    document.getElementById('sidebarNotifBadge').textContent = data.count;
-                    document.getElementById('sidebarNotifBadge').style.display = 'inline-block';
-                } else {
-                    document.getElementById('topNotifBadge').style.display = 'none';
-                    document.getElementById('sidebarNotifBadge').style.display = 'none';
-                }
-            } catch (error) {
-                console.error('Error loading notification count:', error);
-            }
-        }
-
-        function animateNumber(elementId, targetNumber) {
-            const element = document.getElementById(elementId);
-            let currentNumber = 0;
-            const increment = targetNumber / 50;
-            const duration = 1000;
-            const stepTime = duration / 50;
-            
-            const timer = setInterval(() => {
-                currentNumber += increment;
-                if (currentNumber >= targetNumber) {
-                    element.textContent = targetNumber.toLocaleString('vi-VN');
-                    clearInterval(timer);
-                } else {
-                    element.textContent = Math.floor(currentNumber).toLocaleString('vi-VN');
-                }
-            }, stepTime);
-        }
-
         async function loadAccounts() {
             document.getElementById('loadingIndicator').style.display = 'block';
             document.getElementById('tableContainer').style.display = 'none';
             
             try {
-                const response = await fetch(`${API_BASE}/get-all-accounts.php`, {
+                const response = await fetch(`${API_BASE_ADMIN}/get-all-accounts.php`, {
                     credentials: 'include'
                 });
                 const data = await response.json();
@@ -1368,7 +846,7 @@
 
         async function loadDepartments() {
             try {
-                const response = await fetch(`${API_BASE}/get-departments.php`, {
+                const response = await fetch(`${API_BASE_ADMIN}/get-departments.php`, {
                     credentials: 'include'
                 });
                 const data = await response.json();
@@ -1387,7 +865,7 @@
 
         async function loadSpecialties() {
             try {
-                const response = await fetch(`${API_BASE}/get-all-specialties.php`, {
+                const response = await fetch(`${API_BASE_ADMIN}/get-all-specialties.php`, {
                     credentials: 'include'
                 });
                 const data = await response.json();
@@ -1520,7 +998,7 @@
             if (!confirm(`Bạn có chắc chắn muốn ${action} tài khoản này?`)) return;
             
             try {
-                const response = await fetch(`${API_BASE}/toggle-lock-account.php`, {
+                const response = await fetch(`${API_BASE_ADMIN}/toggle-lock-account.php`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -1586,7 +1064,7 @@
             }
             
             try {
-                const response = await fetch(`${API_BASE}/create-account.php`, {
+                const response = await fetch(`${API_BASE_ADMIN}/create-account.php`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -1606,52 +1084,6 @@
             } catch (error) {
                 console.error('Error creating account:', error);
                 showAlert('error', 'Lỗi kết nối đến server');
-            }
-        }
-
-        function showAlert(type, message) {
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
-            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-            alertDiv.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            
-            document.body.appendChild(alertDiv);
-            setTimeout(() => alertDiv.remove(), 5000);
-        }
-
-        async function logout() {
-            try {
-                const response = await fetch(`${window.API_ENDPOINTS.auth}/logout.php`, {
-                    method: 'POST',
-                    credentials: 'include'
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    window.location.href = 'login.html';
-                } else {
-                    alert('Không thể đăng xuất. Vui lòng thử lại.');
-                }
-            } catch (error) {
-                console.error('Logout error:', error);
-                alert('Lỗi khi đăng xuất');
-            }
-        }
-
-        function handleSessionExpired(msg) {
-            if (
-                !msg ||
-                msg === "fetch_failed" ||
-                msg.includes('Phiên đăng nhập') ||
-                msg.includes('Không có quyền') ||
-                msg.includes('Chưa đăng nhập')
-            ) {
-                showAlert('error', 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
-                setTimeout(() => window.location.href = 'login.html', 500);
             }
         }
     </script>

@@ -1,16 +1,19 @@
-(function() {
+(function () {
     'use strict';
 
     async function loadSidebar() {
         try {
             const response = await fetch(COMPONENT_PATH + 'sidebar-admin.html');
             const html = await response.text();
-            
+
             // Insert sidebar into placeholder
             const placeholder = document.getElementById('sidebar-placeholder');
             if (placeholder) {
                 placeholder.innerHTML = html;
             }
+
+            // Move page content into admin content area
+            movePageContent();
 
             // Load CSS
             loadSidebarCSS();
@@ -19,6 +22,17 @@
             initSidebar();
         } catch (error) {
             console.error('Error loading sidebar:', error);
+        }
+    }
+
+    function movePageContent() {
+        const pageContent = document.getElementById('page-content');
+        const contentArea = document.getElementById('adminContentArea');
+        if (pageContent && contentArea) {
+            while (pageContent.firstChild) {
+                contentArea.appendChild(pageContent.firstChild);
+            }
+            pageContent.remove();
         }
     }
 
@@ -98,7 +112,7 @@
                 credentials: 'include'
             });
             const data = await response.json();
-            
+
             UNREAD_NOTIFICATION_COUNT = data.count || 0;
 
             const badges = [
@@ -155,7 +169,7 @@
     function closeMobileSidebar() {
         const sidebar = document.getElementById('sidebar');
         const mobileOverlay = document.getElementById('mobileOverlay');
-        
+
         if (sidebar) sidebar.classList.remove('active');
         if (mobileOverlay) mobileOverlay.classList.remove('active');
         document.body.style.overflow = '';
@@ -163,7 +177,7 @@
 
     function setupScrollEffects() {
         const scrollBtn = document.getElementById('scrollTopBtn');
-        
+
         if (!scrollBtn) return;
 
         window.addEventListener('scroll', () => {
@@ -174,7 +188,7 @@
     function setActiveNavLink() {
         const currentPage = window.location.pathname.split('/').pop();
         const menuLinks = document.querySelectorAll('.sidebar-menu a[data-page]');
-        
+
         menuLinks.forEach(link => {
             const linkPage = link.getAttribute('data-page');
             if (currentPage.includes(linkPage)) {
@@ -188,7 +202,7 @@
     function updatePageTitle() {
         const currentPage = window.location.pathname.split('/').pop();
         const pageTitle = document.getElementById('pageTitle');
-        
+
         if (!pageTitle) return;
 
         const pageTitles = {
@@ -207,7 +221,7 @@
         pageTitle.innerHTML = pageTitles[currentPage] || '<i class="fas fa-chart-line me-2"></i>Dashboard';
     }
 
-    window.handleLogout = async function() {
+    window.handleLogout = async function () {
         if (!confirm('Bạn có chắc chắn muốn đăng xuất?')) return;
 
         try {
