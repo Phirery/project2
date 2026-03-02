@@ -46,6 +46,27 @@ function renderCircleAvatar(element, fullName, avatarUrl) {
     element.textContent = firstLetter;
 }
 
+function normalizeRole(rawRole) {
+    if (rawRole == null) return '';
+
+    const normalized = String(rawRole)
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[\s_-]+/g, '');
+
+    if (normalized === 'benhnhan' || normalized === 'patient') return 'benhnhan';
+    if (normalized === 'bacsi' || normalized === 'doctor') return 'bacsi';
+    if (normalized === 'quantri' || normalized === 'admin' || normalized === 'administrator' || normalized === 'quantrivien') return 'quantri';
+
+    return normalized;
+}
+
+function setMenuItemVisible(item, visible) {
+    if (!item) return;
+    item.style.display = visible ? 'list-item' : 'none';
+}
+
 // Load Header và Footer vào trang
 async function loadComponents() {
     try {
@@ -120,17 +141,18 @@ async function checkLoginStatus() {
 
         if (data.success) {
             const fullName = data.data.fullName || data.data.username || 'Người dùng';
+            const normalizedRole = normalizeRole(data.data.role);
 
             // Desktop
             if (authButtons) authButtons.style.display = 'none';
             if (logoutHeader) logoutHeader.classList.add('active');
-            navLoggedInItems.forEach(item => item.style.display = '');
+            navLoggedInItems.forEach(item => setMenuItemVisible(item, true));
             
             renderCircleAvatar(userAvatar, fullName, data.data.avatar);
             if (headerUserName) headerUserName.textContent = fullName;
 
             // Show notification icon (chỉ cho bệnh nhân)
-            if (data.data.role === 'benhnhan') {
+            if (normalizedRole === 'benhnhan') {
                 if (notificationIconWrapper) notificationIconWrapper.style.display = 'block';
                 initNotifications();
             }
@@ -138,24 +160,24 @@ async function checkLoginStatus() {
             // Mobile
             if (mobileAuthButtons) mobileAuthButtons.style.display = 'none';
             if (mobileUserInfo) mobileUserInfo.classList.add('active');
-            mobileMenuLoggedIn.forEach(item => item.style.display = '');
+            mobileMenuLoggedIn.forEach(item => setMenuItemVisible(item, true));
             
             renderCircleAvatar(mobileUserAvatar, fullName, data.data.avatar);
             if (mobileUserName) mobileUserName.textContent = fullName;
 
-            applyRoleNavigation(data.data.role);
-            updateProfileLink(data.data.role);
+            applyRoleNavigation(normalizedRole);
+            updateProfileLink(normalizedRole);
 
         } else {
             // Not logged in
             if (authButtons) authButtons.style.display = 'flex';
             if (logoutHeader) logoutHeader.classList.remove('active');
-            navLoggedInItems.forEach(item => item.style.display = 'none');
+            navLoggedInItems.forEach(item => setMenuItemVisible(item, false));
             if (notificationIconWrapper) notificationIconWrapper.style.display = 'none';
 
             if (mobileAuthButtons) mobileAuthButtons.style.display = 'flex';
             if (mobileUserInfo) mobileUserInfo.classList.remove('active');
-            mobileMenuLoggedIn.forEach(item => item.style.display = 'none');
+            mobileMenuLoggedIn.forEach(item => setMenuItemVisible(item, false));
             applyRoleNavigation(null);
         }
 
@@ -243,19 +265,21 @@ function showAlert(type, message) {
 }
 
 function updateProfileLink(role) {
+    const normalizedRole = normalizeRole(role);
     const profileLinks = document.querySelectorAll('a[href="tai-khoan-ca-nhan.html"]');
-    if (role === 'bacsi') {
+    if (normalizedRole === 'bacsi') {
         profileLinks.forEach(link => link.href = 'dashboard-doctor.html');
-    } else if (role === 'quantri') {
+    } else if (normalizedRole === 'quantri') {
         profileLinks.forEach(link => link.href = 'dashboard-admin.html');
     }
 }
 
 function applyRoleNavigation(role) {
-    const isPatient = role === 'benhnhan';
-    const isDoctor = role === 'bacsi';
-    const isAdmin = role === 'quantri';
+    const normalizedRole = normalizeRole(role);
+    const isDoctor = normalizedRole === 'bacsi';
+    const isAdmin = normalizedRole === 'quantri';
     const isStaff = isDoctor || isAdmin;
+    const shouldShowPatientItems = Boolean(normalizedRole) && !isStaff;
 
     const patientDesktopItems = document.querySelectorAll('.nav-item-patient-only');
     const patientMobileItems = document.querySelectorAll('.mobile-menu-patient-only');
@@ -263,16 +287,16 @@ function applyRoleNavigation(role) {
     const dashboardMobileItems = document.querySelectorAll('.mobile-menu-dashboard');
 
     patientDesktopItems.forEach(item => {
-        item.style.display = isPatient ? '' : 'none';
+        setMenuItemVisible(item, shouldShowPatientItems);
     });
     patientMobileItems.forEach(item => {
-        item.style.display = isPatient ? '' : 'none';
+        setMenuItemVisible(item, shouldShowPatientItems);
     });
 
     const dashboardHref = isDoctor ? 'dashboard-doctor.html' : (isAdmin ? 'dashboard-admin.html' : '');
 
     dashboardDesktopItems.forEach(item => {
-        item.style.display = isStaff ? '' : 'none';
+        setMenuItemVisible(item, isStaff);
         const link = item.querySelector('a');
         if (link && dashboardHref) {
             link.href = dashboardHref;
@@ -280,7 +304,7 @@ function applyRoleNavigation(role) {
     });
 
     dashboardMobileItems.forEach(item => {
-        item.style.display = isStaff ? '' : 'none';
+        setMenuItemVisible(item, isStaff);
         const link = item.querySelector('a');
         if (link && dashboardHref) {
             link.href = dashboardHref;
