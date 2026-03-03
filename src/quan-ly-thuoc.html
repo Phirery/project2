@@ -1,0 +1,829 @@
+<?php
+// admin/quan_ly_thuoc.php
+session_start();
+// Kiểm tra đăng nhập / quyền admin theo logic hiện có của bạn
+// if (!isset($_SESSION['admin'])) { header('Location: /login.php'); exit; }
+?>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quản lý thuốc</title>
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- SheetJS (Excel import) -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+
+  <style>
+    /* ── Layout: sidebar + main ────────────────────────── */
+    body { background: #f4f6fb; }
+
+    .sidebar {
+      width: 240px; min-height: 100vh;
+      background: #1a2744; color: #c8d3e8;
+      position: fixed; top: 0; left: 0;
+      display: flex; flex-direction: column;
+      z-index: 100;
+    }
+    .sidebar .brand {
+      padding: 1.2rem 1.5rem;
+      font-size: 1.15rem; font-weight: 700;
+      color: #fff; border-bottom: 1px solid #2e3d6a;
+    }
+    .sidebar .nav-link {
+      color: #c8d3e8; padding: .65rem 1.5rem;
+      display: flex; align-items: center; gap: .6rem;
+      font-size: .9rem; border-radius: 0;
+      transition: background .15s;
+    }
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      background: #2e3d6a; color: #fff;
+    }
+    .main { margin-left: 240px; padding: 1.8rem; }
+
+    /* ── Table & badges ────────────────────────────────── */
+    .table thead th { background: #1a2744; color: #fff; font-weight: 500; }
+    .low-stock td   { background: #fff3cd !important; }
+    .low-stock .stock-val { color: #dc3545; font-weight: 700; }
+
+    /* ── Autocomplete dropdown ─────────────────────────── */
+    .autocomplete-box {
+      position: absolute; z-index: 999;
+      background: #fff; border: 1px solid #dee2e6;
+      border-radius: .375rem; width: 100%; max-height: 280px;
+      overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,.1);
+    }
+    .autocomplete-item {
+      padding: .5rem .85rem; cursor: pointer;
+      border-bottom: 1px solid #f1f1f1; font-size: .88rem;
+    }
+    .autocomplete-item:hover { background: #f0f4ff; }
+    .autocomplete-item .badge { font-size: .72rem; }
+
+    /* ── Import preview ────────────────────────────────── */
+    #importPreviewWrap { max-height: 300px; overflow-y: auto; }
+    .import-err { color: #dc3545; font-size: .8rem; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ SIDEBAR ═══════════════════════════ -->
+<nav class="sidebar">
+  <div class="brand"><i class="bi bi-hospital me-2"></i>MedAdmin</div>
+  <ul class="nav flex-column mt-2">
+    <li><a href="/admin/dashboard.php"  class="nav-link"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+    <li><a href="/admin/benh_nhan.php"  class="nav-link"><i class="bi bi-people"></i> Bệnh nhân</a></li>
+    <li><a href="/admin/lich_hen.php"   class="nav-link"><i class="bi bi-calendar3"></i> Lịch hẹn</a></li>
+    <li><a href="quan_ly_thuoc.php"     class="nav-link active"><i class="bi bi-capsule"></i> Quản lý thuốc</a></li>
+    <li><a href="/admin/don_thuoc.php"  class="nav-link"><i class="bi bi-file-medical"></i> Đơn thuốc</a></li>
+    <li class="mt-auto mb-3">
+      <a href="/logout.php" class="nav-link"><i class="bi bi-box-arrow-left"></i> Đăng xuất</a>
+    </li>
+  </ul>
+</nav>
+
+<!-- ═══════════════════════════ MAIN ══════════════════════════════ -->
+<main class="main">
+
+  <!-- Header -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h4 class="mb-0 fw-bold text-dark"><i class="bi bi-capsule me-2 text-primary"></i>Quản lý thuốc</h4>
+      <small class="text-muted">Thêm, sửa, xóa và import danh mục thuốc</small>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-success btn-sm" onclick="openImportModal()">
+        <i class="bi bi-file-earmark-excel me-1"></i>Import Excel
+      </button>
+      <button class="btn btn-primary btn-sm" onclick="openCreateModal()">
+        <i class="bi bi-plus-lg me-1"></i>Thêm thuốc mới
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Thống kê nhanh ── -->
+  <div class="row g-3 mb-4" id="statsRow">
+    <div class="col-sm-3">
+      <div class="card border-0 shadow-sm text-center py-3">
+        <div class="fs-3 fw-bold text-primary" id="statTotal">—</div>
+        <small class="text-muted">Tổng loại thuốc</small>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="card border-0 shadow-sm text-center py-3">
+        <div class="fs-3 fw-bold text-danger" id="statLowStock">—</div>
+        <small class="text-muted">Tồn kho thấp</small>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="card border-0 shadow-sm text-center py-3">
+        <div class="fs-3 fw-bold text-warning" id="statExpiringSoon">—</div>
+        <small class="text-muted">Sắp hết hạn (30 ngày)</small>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="card border-0 shadow-sm text-center py-3">
+        <div class="fs-3 fw-bold text-success" id="statCategories">—</div>
+        <small class="text-muted">Loại thuốc</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Bộ lọc & tìm kiếm ── -->
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body py-2">
+      <div class="row g-2 align-items-end">
+
+        <!-- Autocomplete search -->
+        <div class="col-md-5 position-relative">
+          <label class="form-label mb-1 small fw-semibold">Tìm thuốc</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" id="searchInput" class="form-control"
+                   placeholder="Nhập tên thuốc..." autocomplete="off">
+          </div>
+          <div id="autocompleteBox" class="autocomplete-box d-none"></div>
+        </div>
+
+        <!-- Lọc loại thuốc -->
+        <div class="col-md-3">
+          <label class="form-label mb-1 small fw-semibold">Loại thuốc</label>
+          <select id="filterLoai" class="form-select">
+            <option value="">— Tất cả loại —</option>
+          </select>
+        </div>
+
+        <!-- Lọc tồn kho thấp -->
+        <div class="col-md-2">
+          <label class="form-label mb-1 small fw-semibold">Tồn kho</label>
+          <select id="filterStock" class="form-select">
+            <option value="">Tất cả</option>
+            <option value="low">⚠ Tồn kho thấp</option>
+          </select>
+        </div>
+
+        <div class="col-md-2">
+          <button class="btn btn-secondary w-100" onclick="resetFilters()">
+            <i class="bi bi-x-circle me-1"></i>Xóa lọc
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Bảng dữ liệu ── -->
+  <div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0" id="thuocTable">
+          <thead>
+            <tr>
+              <th style="width:50px">#</th>
+              <th>Tên thuốc</th>
+              <th>Loại</th>
+              <th>Nhà SX</th>
+              <th>ĐVT</th>
+              <th>Tồn kho</th>
+              <th>Giá tiền</th>
+              <th>Hạn SD</th>
+              <th style="width:110px" class="text-center">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="thuocBody">
+            <tr><td colspan="9" class="text-center py-4 text-muted">
+              <div class="spinner-border spinner-border-sm me-2"></div>Đang tải...
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Pagination -->
+    <div class="card-footer bg-white d-flex align-items-center justify-content-between py-2">
+      <small class="text-muted" id="paginInfo">—</small>
+      <nav><ul class="pagination pagination-sm mb-0" id="pagination"></ul></nav>
+    </div>
+  </div>
+
+</main><!-- /main -->
+
+<!-- ═══════════════ MODAL: THÊM / SỬA THUỐC ══════════════════════ -->
+<div class="modal fade" id="formModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="formModalTitle">Thêm thuốc mới</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="fId">
+        <div class="row g-3">
+          <div class="col-md-8">
+            <label class="form-label fw-semibold">Tên thuốc <span class="text-danger">*</span></label>
+            <input type="text" id="fTen" class="form-control" placeholder="Ví dụ: Paracetamol 500mg">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Đơn vị tính</label>
+            <input type="text" id="fDonVi" class="form-control" placeholder="Viên, Chai, Lọ...">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Loại thuốc</label>
+            <input type="text" id="fLoai" class="form-control" list="loaiList"
+                   placeholder="Kháng sinh, Giảm đau...">
+            <datalist id="loaiList">
+              <option value="Kháng sinh">
+              <option value="Giảm đau / Hạ sốt">
+              <option value="Vitamin & Khoáng chất">
+              <option value="Tiêu hóa">
+              <option value="Tim mạch">
+              <option value="Hô hấp">
+              <option value="Da liễu">
+              <option value="Kháng viêm">
+              <option value="Thần kinh">
+              <option value="Khác">
+            </datalist>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Nhà sản xuất / Nguồn gốc</label>
+            <input type="text" id="fNhaSX" class="form-control" placeholder="Ví dụ: Hậu Giang, Pfizer...">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Số lượng tồn</label>
+            <input type="number" id="fSoLuong" class="form-control" value="0" min="0">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Giá tiền (VNĐ)</label>
+            <input type="number" id="fGia" class="form-control" value="0" min="0" step="100">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Ngưỡng cảnh báo tồn kho</label>
+            <input type="number" id="fNguong" class="form-control" value="10" min="0">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Hạn sử dụng mặc định</label>
+            <input type="date" id="fHan" class="form-control">
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-semibold">Cách dùng mặc định</label>
+            <textarea id="fCachDung" class="form-control" rows="2"
+                      placeholder="Ví dụ: Uống sau ăn 30 phút, 2 lần/ngày..."></textarea>
+          </div>
+        </div>
+        <div id="formErr" class="alert alert-danger mt-3 d-none"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button class="btn btn-primary" id="btnSave" onclick="saveThuoc()">
+          <i class="bi bi-check2-circle me-1"></i>Lưu
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ MODAL: IMPORT EXCEL ══════════════════════════ -->
+<div class="modal fade" id="importModal" tabindex="-1">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title"><i class="bi bi-file-earmark-excel me-2"></i>Import thuốc từ Excel</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+
+        <!-- Hướng dẫn & download template -->
+        <div class="alert alert-info d-flex align-items-start gap-3">
+          <i class="bi bi-info-circle-fill fs-5 mt-1"></i>
+          <div>
+            <strong>Hướng dẫn:</strong> Tải file mẫu, điền thông tin, rồi upload lại.
+            Các cột bắt buộc: <code>tenThuoc</code>. Các cột tùy chọn: donViTinh, soLuongTon, giaTien, cachDungMacDinh, loaiThuoc, nhaSanXuat, hanSuDung (YYYY-MM-DD), nguongCanhBao.<br>
+            <strong>Trùng tên:</strong> Sẽ cập nhật soLuongTon và giaTien.
+            <a href="#" class="btn btn-sm btn-outline-info mt-2" onclick="downloadTemplate(); return false;">
+              <i class="bi bi-download me-1"></i>Tải file mẫu (.xlsx)
+            </a>
+          </div>
+        </div>
+
+        <!-- Upload zone -->
+        <div id="dropZone" class="border-2 border-dashed rounded-3 text-center py-5 mb-3"
+             style="border: 2px dashed #0d6efd; cursor:pointer; background:#f8f9ff"
+             onclick="document.getElementById('fileInput').click()"
+             ondragover="event.preventDefault(); this.style.background='#e8edff'"
+             ondragleave="this.style.background='#f8f9ff'"
+             ondrop="handleDrop(event)">
+          <i class="bi bi-cloud-upload fs-1 text-primary"></i>
+          <p class="mb-0 mt-2 fw-semibold">Kéo thả file Excel vào đây hoặc <span class="text-primary">click để chọn</span></p>
+          <small class="text-muted">.xlsx, .xls — Tối đa 5MB</small>
+          <input type="file" id="fileInput" accept=".xlsx,.xls" class="d-none" onchange="handleFile(this.files[0])">
+        </div>
+
+        <!-- Preview bảng -->
+        <div id="importPreviewWrap" class="d-none">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <strong id="importPreviewTitle"></strong>
+            <button class="btn btn-sm btn-outline-secondary" onclick="clearImport()">
+              <i class="bi bi-x me-1"></i>Chọn file khác
+            </button>
+          </div>
+          <div class="table-responsive" style="max-height:280px;overflow-y:auto">
+            <table class="table table-sm table-bordered mb-0" id="previewTable">
+              <thead class="table-dark"></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <small id="importErrors" class="import-err"></small>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button class="btn btn-success d-none" id="btnDoImport" onclick="doImport()">
+          <i class="bi bi-upload me-1"></i>Import <span id="btnImportCount"></span> thuốc
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Delete Confirm Toast ── -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:2000">
+  <div id="toastSuccess" class="toast align-items-center text-bg-success border-0" role="alert">
+    <div class="d-flex">
+      <div class="toast-body fw-semibold" id="toastMsg">Thao tác thành công!</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+const API_BASE = '../api/admin/thuoc.php';
+const LIMIT = 20;
+
+// State
+let currentPage = 1;
+let importRows   = [];
+let debounceTimer;
+
+// Bootstrap instances
+const formModal   = new bootstrap.Modal('#formModal');
+const importModal = new bootstrap.Modal('#importModal');
+const toastEl     = new bootstrap.Toast('#toastSuccess', { delay: 3000 });
+
+// ══════════════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  loadCategories();
+  loadData(1);
+  setupSearch();
+});
+
+// ══════════════════════════════════════════════════════════════
+//  LOAD CATEGORIES (for filter dropdown)
+// ══════════════════════════════════════════════════════════════
+async function loadCategories() {
+  const res  = await fetch(`${API_BASE}?action=categories`);
+  const data = await res.json();
+  const sel  = document.getElementById('filterLoai');
+  data.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = opt.textContent = c;
+    sel.appendChild(opt);
+  });
+  document.getElementById('statCategories').textContent = data.length;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  LOAD TABLE DATA
+// ══════════════════════════════════════════════════════════════
+async function loadData(page = 1) {
+  currentPage = page;
+  const search = document.getElementById('searchInput').value.trim();
+  const loai   = document.getElementById('filterLoai').value;
+  const stock  = document.getElementById('filterStock').value;
+
+  const params = new URLSearchParams({
+    action: 'list', page, limit: LIMIT, search, loai
+  });
+  if (stock === 'low') params.set('lowStock', '1');
+
+  const res  = await fetch(`${API_BASE}?${params}`);
+  const json = await res.json();
+
+  renderTable(json.data);
+  renderPagination(json.total, json.page, json.totalPages);
+
+  // Stats
+  document.getElementById('statTotal').textContent = json.total.toLocaleString('vi');
+
+  // Count low stock & expiring
+  const nowPlus30 = new Date(); nowPlus30.setDate(nowPlus30.getDate() + 30);
+  let lowCount = 0, expCount = 0;
+  json.data.forEach(r => {
+    if (+r.soLuongTon <= +r.nguongCanhBao) lowCount++;
+    if (r.hanSuDung && new Date(r.hanSuDung) <= nowPlus30) expCount++;
+  });
+  document.getElementById('statLowStock').textContent    = lowCount;
+  document.getElementById('statExpiringSoon').textContent = expCount;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  RENDER TABLE ROWS
+// ══════════════════════════════════════════════════════════════
+function renderTable(rows) {
+  const tbody = document.getElementById('thuocBody');
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="9" class="text-center py-5 text-muted">
+      <i class="bi bi-inbox fs-3 d-block mb-2"></i>Không tìm thấy thuốc nào
+    </td></tr>`;
+    return;
+  }
+
+  const nowPlus30 = new Date(); nowPlus30.setDate(nowPlus30.getDate() + 30);
+
+  tbody.innerHTML = rows.map((r, i) => {
+    const isLow      = +r.soLuongTon <= +r.nguongCanhBao;
+    const isExpiring = r.hanSuDung && new Date(r.hanSuDung) <= nowPlus30;
+    const rowClass   = isLow ? 'low-stock' : '';
+
+    const stockBadge = isLow
+      ? `<span class="stock-val">${r.soLuongTon}</span> <i class="bi bi-exclamation-triangle-fill text-danger ms-1" title="Tồn kho thấp"></i>`
+      : r.soLuongTon;
+
+    const hanBadge = r.hanSuDung
+      ? `<span class="${isExpiring ? 'text-danger fw-semibold' : ''}">${formatDate(r.hanSuDung)}</span>${isExpiring ? ' <i class="bi bi-clock-history text-warning" title="Sắp hết hạn"></i>' : ''}`
+      : '<span class="text-muted">—</span>';
+
+    return `<tr class="${rowClass}" data-id="${r.maThuoc}">
+      <td class="text-muted small">${(currentPage - 1) * LIMIT + i + 1}</td>
+      <td>
+        <strong>${escHtml(r.tenThuoc)}</strong>
+        ${r.cachDungMacDinh ? `<br><small class="text-muted">${escHtml(r.cachDungMacDinh.substring(0, 60))}${r.cachDungMacDinh.length > 60 ? '…' : ''}</small>` : ''}
+      </td>
+      <td>${r.loaiThuoc ? `<span class="badge bg-secondary">${escHtml(r.loaiThuoc)}</span>` : '—'}</td>
+      <td><small>${escHtml(r.nhaSanXuat || '—')}</small></td>
+      <td>${escHtml(r.donViTinh || '—')}</td>
+      <td>${stockBadge}</td>
+      <td>${r.giaTien > 0 ? (+r.giaTien).toLocaleString('vi') + 'đ' : '—'}</td>
+      <td>${hanBadge}</td>
+      <td class="text-center">
+        <button class="btn btn-sm btn-outline-primary me-1 py-0" onclick="openEditModal(${r.maThuoc})" title="Sửa">
+          <i class="bi bi-pencil"></i>
+        </button>
+        <button class="btn btn-sm btn-outline-danger py-0" onclick="deleteThuoc(${r.maThuoc}, '${escHtml(r.tenThuoc)}')" title="Xóa">
+          <i class="bi bi-trash3"></i>
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PAGINATION
+// ══════════════════════════════════════════════════════════════
+function renderPagination(total, page, totalPages) {
+  const start = (page - 1) * LIMIT + 1;
+  const end   = Math.min(page * LIMIT, total);
+  document.getElementById('paginInfo').textContent =
+    `Hiển thị ${start}–${end} trong ${total.toLocaleString('vi')} thuốc`;
+
+  const ul = document.getElementById('pagination');
+  ul.innerHTML = '';
+
+  const addBtn = (label, p, disabled = false, active = false) => {
+    ul.insertAdjacentHTML('beforeend', `
+      <li class="page-item ${disabled ? 'disabled' : ''} ${active ? 'active' : ''}">
+        <a class="page-link" href="#" onclick="event.preventDefault(); ${!disabled ? `loadData(${p})` : ''}">${label}</a>
+      </li>`);
+  };
+
+  addBtn('«', 1,        page <= 1);
+  addBtn('‹', page - 1, page <= 1);
+
+  let start2 = Math.max(1, page - 2), end2 = Math.min(totalPages, start2 + 4);
+  if (start2 > 1)        addBtn('…', start2 - 1, true);
+  for (let p = start2; p <= end2; p++) addBtn(p, p, false, p === page);
+  if (end2 < totalPages) addBtn('…', end2 + 1,   true);
+
+  addBtn('›', page + 1, page >= totalPages);
+  addBtn('»', totalPages, page >= totalPages);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  SEARCH AUTOCOMPLETE
+// ══════════════════════════════════════════════════════════════
+function setupSearch() {
+  const input = document.getElementById('searchInput');
+  const box   = document.getElementById('autocompleteBox');
+
+  input.addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    const q = input.value.trim();
+    if (q.length < 2) { box.classList.add('d-none'); loadData(1); return; }
+
+    debounceTimer = setTimeout(async () => {
+      const res  = await fetch(`${API_BASE}?action=search&q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+
+      if (!data.length) { box.classList.add('d-none'); loadData(1); return; }
+
+      box.innerHTML = data.map(r => `
+        <div class="autocomplete-item d-flex justify-content-between align-items-center"
+             onclick="selectAutocomplete('${escHtml(r.tenThuoc)}')">
+          <span>${highlight(r.tenThuoc, q)}</span>
+          <div class="ms-2">
+            ${r.loaiThuoc ? `<span class="badge bg-info text-dark">${escHtml(r.loaiThuoc)}</span>` : ''}
+            <span class="badge ${+r.soLuongTon <= 10 ? 'bg-danger' : 'bg-success'}">${r.soLuongTon} ${escHtml(r.donViTinh || '')}</span>
+          </div>
+        </div>`).join('');
+      box.classList.remove('d-none');
+    }, 280);
+  });
+
+  // Đóng dropdown khi click ra ngoài
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.position-relative')) box.classList.add('d-none');
+  });
+
+  // Filter khi nhấn Enter
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { box.classList.add('d-none'); loadData(1); }
+  });
+
+  document.getElementById('filterLoai').addEventListener('change', () => loadData(1));
+  document.getElementById('filterStock').addEventListener('change', () => loadData(1));
+}
+
+function selectAutocomplete(name) {
+  document.getElementById('searchInput').value = name;
+  document.getElementById('autocompleteBox').classList.add('d-none');
+  loadData(1);
+}
+
+function resetFilters() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('filterLoai').value  = '';
+  document.getElementById('filterStock').value = '';
+  loadData(1);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  CRUD — MODAL THÊM / SỬA
+// ══════════════════════════════════════════════════════════════
+function openCreateModal() {
+  document.getElementById('formModalTitle').textContent = 'Thêm thuốc mới';
+  document.getElementById('btnSave').innerHTML = '<i class="bi bi-plus-circle me-1"></i>Thêm mới';
+  clearForm();
+  formModal.show();
+}
+
+async function openEditModal(id) {
+  document.getElementById('formModalTitle').textContent = 'Chỉnh sửa thông tin thuốc';
+  document.getElementById('btnSave').innerHTML = '<i class="bi bi-check2-circle me-1"></i>Cập nhật';
+
+  // Lấy dữ liệu từ row trong bảng
+  const row = document.querySelector(`tr[data-id="${id}"]`);
+  // Tải đầy đủ từ API_BASE (để có đủ tất cả trường)
+  const res  = await fetch(`${API_BASE}?action=list&search=&limit=1&page=1`); // fallback
+  // Thực tế nên có action=get&id= — dùng dữ liệu đã cache trong DOM cho đơn giản
+  // Hoặc tạo thêm action 'get' trong API_BASE
+  clearForm();
+  document.getElementById('fId').value = id;
+  // Điền dữ liệu từ cells
+  document.getElementById('formErr').classList.add('d-none');
+  formModal.show();
+}
+
+// Hàm tiện ích điền form từ object
+function fillForm(r) {
+  document.getElementById('fId').value       = r.maThuoc;
+  document.getElementById('fTen').value      = r.tenThuoc      || '';
+  document.getElementById('fDonVi').value    = r.donViTinh     || '';
+  document.getElementById('fLoai').value     = r.loaiThuoc     || '';
+  document.getElementById('fNhaSX').value    = r.nhaSanXuat    || '';
+  document.getElementById('fSoLuong').value  = r.soLuongTon    || 0;
+  document.getElementById('fGia').value      = r.giaTien       || 0;
+  document.getElementById('fHan').value      = r.hanSuDung     || '';
+  document.getElementById('fNguong').value   = r.nguongCanhBao ?? 10;
+  document.getElementById('fCachDung').value = r.cachDungMacDinh || '';
+}
+
+function clearForm() {
+  ['fId','fTen','fDonVi','fLoai','fNhaSX','fHan','fCachDung'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('fSoLuong').value = 0;
+  document.getElementById('fGia').value     = 0;
+  document.getElementById('fNguong').value  = 10;
+  document.getElementById('formErr').classList.add('d-none');
+}
+
+async function saveThuoc() {
+  const id     = document.getElementById('fId').value;
+  const tenVal = document.getElementById('fTen').value.trim();
+
+  if (!tenVal) {
+    document.getElementById('formErr').textContent = 'Vui lòng nhập tên thuốc.';
+    document.getElementById('formErr').classList.remove('d-none');
+    return;
+  }
+
+  const payload = {
+    maThuoc:        id ? +id : undefined,
+    tenThuoc:       tenVal,
+    donViTinh:      document.getElementById('fDonVi').value.trim(),
+    loaiThuoc:      document.getElementById('fLoai').value.trim(),
+    nhaSanXuat:     document.getElementById('fNhaSX').value.trim(),
+    soLuongTon:     +document.getElementById('fSoLuong').value,
+    giaTien:        +document.getElementById('fGia').value,
+    hanSuDung:      document.getElementById('fHan').value || null,
+    nguongCanhBao:  +document.getElementById('fNguong').value,
+    cachDungMacDinh: document.getElementById('fCachDung').value.trim(),
+  };
+
+  const action = id ? 'update' : 'create';
+  const res    = await fetch(`${API_BASE}?action=${action}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const json = await res.json();
+
+  if (json.success) {
+    formModal.hide();
+    showToast(id ? 'Đã cập nhật thuốc!' : 'Đã thêm thuốc mới!');
+    loadData(currentPage);
+    if (!id) loadCategories();
+  } else {
+    document.getElementById('formErr').textContent = json.error || 'Có lỗi xảy ra.';
+    document.getElementById('formErr').classList.remove('d-none');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  XÓA
+// ══════════════════════════════════════════════════════════════
+async function deleteThuoc(id, name) {
+  if (!confirm(`Xác nhận xóa thuốc:\n"${name}"?\n\nHành động này không thể hoàn tác.`)) return;
+
+  const res  = await fetch(`${API_BASE}?action=delete&id=${id}`);
+  const json = await res.json();
+  if (json.success) {
+    showToast('Đã xóa thuốc thành công!');
+    loadData(currentPage);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  IMPORT EXCEL (SheetJS)
+// ══════════════════════════════════════════════════════════════
+function openImportModal() {
+  clearImport();
+  importModal.show();
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropZone').style.background = '#f8f9ff';
+  const file = e.dataTransfer.files[0];
+  if (file) handleFile(file);
+}
+
+function handleFile(file) {
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { alert('File quá lớn (tối đa 5MB)!'); return; }
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    const wb   = XLSX.read(e.target.result, { type: 'array', cellDates: true });
+    const ws   = wb.Sheets[wb.SheetNames[0]];
+    const data = XLSX.utils.sheet_to_json(ws, { defval: '' });
+
+    parseImportData(data);
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+const REQUIRED_COL = 'tenThuoc';
+const OPTIONAL_COLS = ['donViTinh','soLuongTon','giaTien','cachDungMacDinh','loaiThuoc','nhaSanXuat','hanSuDung','nguongCanhBao'];
+const ALL_COLS = [REQUIRED_COL, ...OPTIONAL_COLS];
+
+function parseImportData(raw) {
+  if (!raw.length) { alert('File rỗng hoặc không đúng định dạng.'); return; }
+
+  const errors = [];
+  importRows = [];
+
+  raw.forEach((r, i) => {
+    const row = {};
+    ALL_COLS.forEach(c => { row[c] = String(r[c] ?? '').trim(); });
+
+    if (!row.tenThuoc) { errors.push(`Dòng ${i + 2}: thiếu tên thuốc`); return; }
+
+    // Chuẩn hóa
+    row.soLuongTon    = isNaN(+row.soLuongTon)    ? 0  : +row.soLuongTon;
+    row.giaTien       = isNaN(+row.giaTien)        ? 0  : +row.giaTien;
+    row.nguongCanhBao = isNaN(+row.nguongCanhBao)  ? 10 : +row.nguongCanhBao;
+    // hanSuDung: đảm bảo format YYYY-MM-DD
+    if (row.hanSuDung && !/^\d{4}-\d{2}-\d{2}$/.test(row.hanSuDung)) {
+      const d = new Date(row.hanSuDung);
+      row.hanSuDung = isNaN(d) ? '' : d.toISOString().split('T')[0];
+    }
+
+    importRows.push(row);
+  });
+
+  // Hiển thị preview
+  const previewHead = document.querySelector('#previewTable thead');
+  const previewBody = document.querySelector('#previewTable tbody');
+
+  previewHead.innerHTML = `<tr>${ALL_COLS.map(c => `<th>${c}</th>`).join('')}</tr>`;
+  previewBody.innerHTML = importRows.slice(0, 50).map(r =>
+    `<tr>${ALL_COLS.map(c => `<td>${escHtml(String(r[c] ?? ''))}</td>`).join('')}</tr>`
+  ).join('') + (importRows.length > 50 ? `<tr><td colspan="${ALL_COLS.length}" class="text-center text-muted">…và ${importRows.length - 50} dòng khác</td></tr>` : '');
+
+  document.getElementById('importPreviewTitle').textContent = `Xem trước: ${importRows.length} thuốc hợp lệ`;
+  document.getElementById('importErrors').textContent       = errors.length ? `⚠ ${errors.length} dòng lỗi bị bỏ qua: ${errors.slice(0, 3).join('; ')}` : '';
+  document.getElementById('importPreviewWrap').classList.remove('d-none');
+  document.getElementById('dropZone').classList.add('d-none');
+
+  const btn = document.getElementById('btnDoImport');
+  btn.classList.toggle('d-none', importRows.length === 0);
+  document.getElementById('btnImportCount').textContent = importRows.length;
+}
+
+async function doImport() {
+  const btn = document.getElementById('btnDoImport');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Đang import...';
+
+  const res  = await fetch(`${API_BASE}?action=import`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(importRows),
+  });
+  const json = await res.json();
+
+  btn.disabled = false;
+  btn.innerHTML = '<i class="bi bi-upload me-1"></i>Import';
+
+  if (json.success) {
+    importModal.hide();
+    showToast(`Import thành công ${json.inserted} thuốc!${json.skipped ? ` (Bỏ qua ${json.skipped})` : ''}`);
+    loadData(1);
+    loadCategories();
+  } else {
+    alert('Lỗi import: ' + (json.error || 'Không xác định'));
+  }
+}
+
+function clearImport() {
+  importRows = [];
+  document.getElementById('fileInput').value          = '';
+  document.getElementById('importPreviewWrap').classList.add('d-none');
+  document.getElementById('dropZone').classList.remove('d-none');
+  document.getElementById('btnDoImport').classList.add('d-none');
+}
+
+// Download file mẫu Excel
+function downloadTemplate() {
+  const ws = XLSX.utils.aoa_to_sheet([
+    ALL_COLS,
+    ['Paracetamol 500mg','Viên',100,2500,'Uống sau ăn 30 phút','Giảm đau / Hạ sốt','Hậu Giang','2026-12-31',10],
+    ['Amoxicillin 500mg','Viên',50,8000,'Uống 3 lần/ngày','Kháng sinh','Stada','2026-09-01',5],
+  ]);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Danh sach thuoc');
+  XLSX.writeFile(wb, 'mau_import_thuoc.xlsx');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  UTILITIES
+// ══════════════════════════════════════════════════════════════
+function showToast(msg) {
+  document.getElementById('toastMsg').textContent = msg;
+  toastEl.show();
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  const [y,m,day] = d.split('-');
+  return `${day}/${m}/${y}`;
+}
+
+function highlight(text, q) {
+  const re = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+  return escHtml(text).replace(re, '<mark>$1</mark>');
+}
+</script>
+</body>
+</html>
