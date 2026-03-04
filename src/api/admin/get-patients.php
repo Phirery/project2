@@ -12,7 +12,9 @@ $sql = "SELECT
             bn.ngaySinh,
             bn.gioiTinh,
             bn.soTheBHYT,
-            nd.soDienThoai
+            nd.soDienThoai,
+            nd.email,
+            nd.tenDangNhap
         FROM benhnhan bn
         LEFT JOIN nguoidung nd ON bn.nguoiDungId = nd.id
         ORDER BY bn.tenBenhNhan ASC";
@@ -38,7 +40,9 @@ if ($result->num_rows > 0) {
             'ngaySinh' => $row['ngaySinh'],
             'gioiTinh' => $row['gioiTinh'],
             'soTheBHYT' => $row['soTheBHYT'],
-            'soDienThoai' => $row['soDienThoai']
+            'soDienThoai' => $row['soDienThoai'],
+            'email' => $row['email'],
+            'tenDangNhap' => $row['tenDangNhap']
         ];
     }
 }

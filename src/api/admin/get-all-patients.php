@@ -8,7 +8,7 @@ require_role('quantri');
 try {
     $sql = "SELECT 
                 b.maBenhNhan, b.tenBenhNhan, b.ngaySinh, b.gioiTinh, b.soTheBHYT,
-                n.tenDangNhap, n.soDienThoai
+                n.tenDangNhap, n.soDienThoai, n.email
             FROM benhnhan b
             JOIN nguoidung n ON b.nguoiDungId = n.id
             WHERE n.vaiTro = 'benhnhan'

@@ -10,14 +10,20 @@ try {
     
     $tenBenhNhan = trim($conn->real_escape_string($data['tenBenhNhan'] ?? ''));
     $soDienThoai = trim($conn->real_escape_string($data['soDienThoai'] ?? ''));
+    $emailRaw = trim($data['email'] ?? '');
+    $email = $emailRaw !== '' ? $conn->real_escape_string($emailRaw) : null;
     $ngaySinh = $conn->real_escape_string($data['ngaySinh'] ?? '');
     $gioiTinh = $conn->real_escape_string($data['gioiTinh'] ?? '');
     $soTheBHYT = $conn->real_escape_string($data['soTheBHYT'] ?? null);
     $tenDangNhap = trim($conn->real_escape_string($data['tenDangNhap'] ?? ''));
     $matKhau = $data['matKhau'] ?? '';
 
-    if (empty($tenBenhNhan) || empty($tenDangNhap) || empty($matKhau) || empty($ngaySinh) || empty($gioiTinh)) {
+    if (empty($tenBenhNhan) || empty($tenDangNhap) || empty($matKhau) || empty($ngaySinh) || empty($gioiTinh) || empty($emailRaw)) {
         throw new Exception('Vui lòng điền đầy đủ thông tin bắt buộc!');
+    }
+
+    if (!filter_var($emailRaw, FILTER_VALIDATE_EMAIL)) {
+        throw new Exception('Email không hợp lệ!');
     }
 
     // Kiểm tra username tồn tại
@@ -27,12 +33,19 @@ try {
         throw new Exception('Tên đăng nhập đã tồn tại!');
     }
 
+    // Kiểm tra email tồn tại
+    $checkEmailSql = "SELECT COUNT(*) as count FROM nguoidung WHERE email = '$email'";
+    $checkEmail = $conn->query($checkEmailSql)->fetch_assoc()['count'];
+    if ($checkEmail > 0) {
+        throw new Exception('Email đã tồn tại!');
+    }
+
     // Hash password
     $hashedPassword = password_hash($matKhau, PASSWORD_DEFAULT);
 
     // Tạo nguoidung
-    $insertUserSql = "INSERT INTO nguoidung (tenDangNhap, matKhau, soDienThoai, vaiTro, trangThai) 
-                      VALUES ('$tenDangNhap', '$hashedPassword', '$soDienThoai', 'benhnhan', 'Hoạt Động')";
+    $insertUserSql = "INSERT INTO nguoidung (tenDangNhap, matKhau, soDienThoai, email, vaiTro, trangThai) 
+                      VALUES ('$tenDangNhap', '$hashedPassword', '$soDienThoai', " . ($email ? "'$email'" : "NULL") . ", 'benhnhan', 'Hoạt Động')";
     if (!$conn->query($insertUserSql)) {
         throw new Exception('Lỗi tạo tài khoản: ' . $conn->error);
     }

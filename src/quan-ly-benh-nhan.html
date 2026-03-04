@@ -322,6 +322,77 @@
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
 
+        .patient-detail-card {
+            border: 1px solid #edf0f5;
+            border-radius: 14px;
+            padding: 20px;
+            background: #ffffff;
+        }
+
+        .patient-detail-hero {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #edf0f5;
+        }
+
+        .patient-detail-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+            color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .patient-detail-name {
+            margin: 0 0 6px 0;
+            font-weight: 700;
+            color: #22314a;
+        }
+
+        .patient-detail-code {
+            margin: 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .patient-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .patient-detail-item {
+            background: #f8fafc;
+            border: 1px solid #edf0f5;
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+
+        .patient-detail-label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.35px;
+            color: #718198;
+            margin-bottom: 6px;
+        }
+
+        .patient-detail-value {
+            color: #1f2d3d;
+            font-weight: 600;
+            word-break: break-word;
+        }
+
         .loading {
             text-align: center;
             padding: 50px;
@@ -456,7 +527,7 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Tìm kiếm</label>
-                    <input type="text" class="form-control" id="filterSearch" placeholder="Tên bệnh nhân, SĐT...">
+                    <input type="text" class="form-control" id="filterSearch" placeholder="Tên, mã BN, SĐT, email...">
                 </div>
             </div>
             <div class="mt-3">
@@ -531,6 +602,10 @@
                                 <input type="tel" class="form-control" id="patientPhone" required pattern="[0-9]{10,11}">
                             </div>
                             <div class="col-md-6">
+                                <label class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="patientEmail" required maxlength="100" placeholder="email@domain.com">
+                            </div>
+                            <div class="col-md-6">
                                 <label class="form-label">Ngày sinh <span class="text-danger">*</span></label>
                                 <input type="date" class="form-control" id="patientBirthDate" required>
                             </div>
@@ -551,7 +626,7 @@
                                 <label class="form-label">Tên đăng nhập <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="username" required>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <label class="form-label">Mật khẩu <span class="text-danger" id="passwordRequired">*</span></label>
                                 <input type="password" class="form-control" id="password">
                                 <small class="text-muted">Để trống nếu không muốn thay đổi (khi sửa)</small>
@@ -568,7 +643,7 @@
 
     <!-- View Patient Modal -->
     <div class="modal fade" id="viewModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Thông tin bệnh nhân</h5>
@@ -747,7 +822,7 @@ let currentPage = 1;
                 if (bhyt === 'co' && !patient.soTheBHYT) match = false;
                 if (bhyt === 'khong' && patient.soTheBHYT) match = false;
                 if (search) {
-                    const searchFields = `${patient.tenBenhNhan} ${patient.soDienThoai || ''}`.toLowerCase();
+                    const searchFields = `${patient.maBenhNhan || ''} ${patient.tenBenhNhan || ''} ${patient.soDienThoai || ''} ${patient.email || ''} ${patient.tenDangNhap || ''}`.toLowerCase();
                     if (!searchFields.includes(search)) match = false;
                 }
                 
@@ -786,6 +861,7 @@ let currentPage = 1;
             document.getElementById('patientId').value = maBenhNhan;
             document.getElementById('patientName').value = patient.tenBenhNhan;
             document.getElementById('patientPhone').value = patient.soDienThoai;
+            document.getElementById('patientEmail').value = patient.email || '';
             document.getElementById('patientBirthDate').value = patient.ngaySinh;
             document.getElementById('patientGender').value = patient.gioiTinh;
             document.getElementById('patientBHYT').value = patient.soTheBHYT || '';
@@ -805,33 +881,43 @@ let currentPage = 1;
             
             const age = calculateAge(patient.ngaySinh);
             const genderLabel = patient.gioiTinh === 'nam' ? 'Nam' : patient.gioiTinh === 'nu' ? 'Nữ' : 'Khác';
+            const genderClass = patient.gioiTinh === 'nam' ? 'male' : patient.gioiTinh === 'nu' ? 'female' : '';
             const initials = patient.tenBenhNhan.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
             
             const body = document.getElementById('viewModalBody');
             body.innerHTML = `
-                <div class="row g-3">
-                    <div class="col-12 text-center mb-3">
-                        <div style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue)); color: white; display: inline-flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 700;">
-                            ${initials}
+                <div class="patient-detail-card">
+                    <div class="patient-detail-hero">
+                        <div class="patient-detail-avatar">
+                            ${initials || 'BN'}
+                        </div>
+                        <div>
+                            <h5 class="patient-detail-name">${patient.tenBenhNhan}</h5>
+                            <p class="patient-detail-code">Mã bệnh nhân: ${patient.maBenhNhan || 'N/A'}</p>
+                            <span class="gender-badge ${genderClass}">${genderLabel}</span>
                         </div>
                     </div>
-                    <div class="col-12">
-                        <strong>Họ và tên:</strong> ${patient.tenBenhNhan}
-                    </div>
-                    <div class="col-12">
-                        <strong>Ngày sinh:</strong> ${formatDate(patient.ngaySinh)} (${age} tuổi)
-                    </div>
-                    <div class="col-12">
-                        <strong>Giới tính:</strong> ${genderLabel}
-                    </div>
-                    <div class="col-12">
-                        <strong>Số điện thoại:</strong> ${patient.soDienThoai || 'N/A'}
-                    </div>
-                    <div class="col-12">
-                        <strong>Số thẻ BHYT:</strong> ${patient.soTheBHYT ? `<span class="bhyt-badge">${patient.soTheBHYT}</span>` : '<span class="no-bhyt">Chưa có</span>'}
-                    </div>
-                    <div class="col-12">
-                        <strong>Tên đăng nhập:</strong> ${patient.tenDangNhap || 'N/A'}
+                    <div class="patient-detail-grid">
+                        <div class="patient-detail-item">
+                            <span class="patient-detail-label">Ngày sinh</span>
+                            <span class="patient-detail-value">${formatDate(patient.ngaySinh)} (${age} tuổi)</span>
+                        </div>
+                        <div class="patient-detail-item">
+                            <span class="patient-detail-label">Số điện thoại</span>
+                            <span class="patient-detail-value">${patient.soDienThoai || 'Chưa cập nhật'}</span>
+                        </div>
+                        <div class="patient-detail-item">
+                            <span class="patient-detail-label">Email</span>
+                            <span class="patient-detail-value">${patient.email || 'Chưa cập nhật'}</span>
+                        </div>
+                        <div class="patient-detail-item">
+                            <span class="patient-detail-label">BHYT</span>
+                            <span class="patient-detail-value">${patient.soTheBHYT ? `<span class="bhyt-badge">${patient.soTheBHYT}</span>` : '<span class="no-bhyt">Chưa có</span>'}</span>
+                        </div>
+                        <div class="patient-detail-item">
+                            <span class="patient-detail-label">Tên đăng nhập</span>
+                            <span class="patient-detail-value">${patient.tenDangNhap || 'N/A'}</span>
+                        </div>
                     </div>
                 </div>
             `;
@@ -872,6 +958,7 @@ let currentPage = 1;
             const data = {
                 tenBenhNhan: document.getElementById('patientName').value,
                 soDienThoai: document.getElementById('patientPhone').value,
+                email: document.getElementById('patientEmail').value.trim(),
                 ngaySinh: document.getElementById('patientBirthDate').value,
                 gioiTinh: document.getElementById('patientGender').value,
                 soTheBHYT: document.getElementById('patientBHYT').value || null,
