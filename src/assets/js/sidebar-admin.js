@@ -222,8 +222,6 @@
     }
 
     window.handleLogout = async function () {
-        if (!confirm('Bạn có chắc chắn muốn đăng xuất?')) return;
-
         try {
             const response = await fetch(`${API_BASE_AUTH}/logout.php`, {
                 method: 'POST',
