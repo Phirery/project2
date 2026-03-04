@@ -7,6 +7,7 @@ return [
     'site_url' => APP_BASE_URL,
     'events' => [
         'auth_register_success' => true,
+        'auth_register_otp' => true,
         'auth_forgot_otp' => true,
         'auth_password_changed' => true,
 

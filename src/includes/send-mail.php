@@ -315,6 +315,64 @@ function getOTPEmailTemplate($otp, $expiryMinutes = 3) {
 }
 
 /**
+ * Template HTML cho email OTP đăng ký tài khoản
+ */
+function getRegisterOTPEmailTemplate($otp, $expiryMinutes = 5) {
+    return "
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset='UTF-8'>
+        <style>
+            body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+            .container { max-width: 600px; margin: 40px auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+            .header { background: linear-gradient(135deg, #4A90E2 0%); padding: 30px; text-align: center; color: white; }
+            .header h1 { margin: 0; font-size: 28px; font-weight: 700; }
+            .header p { margin: 10px 0 0; font-size: 14px; opacity: 0.9; }
+            .content { padding: 40px 30px; }
+            .otp-box { background: linear-gradient(135deg, #4A90E2); color: white; text-align: center; padding: 25px; border-radius: 10px; margin: 30px 0; }
+            .otp-code { font-size: 36px; font-weight: 700; letter-spacing: 8px; margin: 10px 0; }
+            .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 6px; }
+            .warning-icon { color: #ffc107; font-size: 20px; margin-right: 10px; }
+            .footer { background: #f8f9fa; padding: 20px; text-align: center; color: #666; font-size: 13px; border-top: 1px solid #e0e0e0; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h1>🏥 Eden Health</h1>
+                <p>Hệ thống Quản lý Phòng Khám</p>
+            </div>
+
+            <div class='content'>
+                <h2 style='color: #333; margin-top: 0;'>Xác thực email đăng ký</h2>
+                <p style='color: #666; line-height: 1.6;'>Vui lòng dùng mã OTP bên dưới để xác thực email và hoàn tất tạo tài khoản:</p>
+
+                <div class='otp-box'>
+                    <p style='margin: 0; font-size: 14px; opacity: 0.9;'>Mã xác thực OTP của bạn</p>
+                    <div class='otp-code'>{$otp}</div>
+                    <p style='margin: 0; font-size: 13px; opacity: 0.8;'>⏱️ Có hiệu lực trong {$expiryMinutes} phút</p>
+                </div>
+
+                <div class='warning'>
+                    <p style='margin: 0; color: #856404;'><span class='warning-icon'>⚠️</span><strong>Lưu ý bảo mật:</strong> Không chia sẻ mã này với bất kỳ ai.</p>
+                </div>
+
+                <p style='color: #666; margin-top: 30px;'>Nếu bạn không thực hiện đăng ký tài khoản, vui lòng bỏ qua email này.</p>
+            </div>
+
+            <div class='footer'>
+                <p style='margin: 0 0 10px;'><strong>Eden Health - Chăm sóc sức khỏe toàn diện</strong></p>
+                <p style='margin: 0;'>📧 Email: support@edenhealth.vn | 📞 Hotline: 1900-xxxx</p>
+                <p style='margin: 10px 0 0;'>© 2025 Eden Health. All rights reserved.</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    ";
+}
+
+/**
  * Template HTML cho email đổi mật khẩu thành công
  */
 function getPasswordChangedEmailTemplate($username, $changeTime) {
