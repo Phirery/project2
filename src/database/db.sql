@@ -69,7 +69,8 @@ INSERT INTO benhnhan (nguoiDungId, maBenhNhan, tenBenhNhan, ngaySinh, gioiTinh, 
 (15, 'BN2025111712142915', 'Trần Văn Hoàng', '2000-12-31', 'nam', NULL),
 (58, 'BN2025112200000058', 'Võ Quốc Thái', '2000-11-21', 'nam', NULL),
 (59, 'BN2025112200000059', 'Lê Minh Tuyền', '2005-11-21', 'nam', NULL),
-(60, 'BN2026020300000060', 'tester', '2005-10-09', 'khac', NULL);
+(60, 'BN2026020300000060', 'tester', '2005-10-09', 'khac', NULL),
+(61, 'BN2026030400000061', 'Nguyễn Đạt', '2005-10-09', 'nam', NULL);
 DELIMITER $$
 CREATE TRIGGER `validate_birthdate_before_insert` BEFORE INSERT ON `benhnhan` FOR EACH ROW BEGIN
     IF NEW.ngaySinh > CURDATE() THEN
@@ -157,7 +158,8 @@ INSERT INTO doimatkhau (id, nguoiDungId, trangThai, thoiGianYeuCau, thoiGianXuLy
 (6, 58, 'Đã xử lý', '2025-11-24 22:12:44', '2025-11-24 22:13:00', 3),
 (7, 2, 'Đã xử lý', '2025-11-24 22:14:15', '2025-11-24 22:14:26', 3),
 (8, 58, 'Từ chối', '2025-11-24 22:17:16', '2025-11-24 22:18:00', 3),
-(9, 58, 'Từ chối', '2025-11-24 22:20:20', '2025-11-24 22:20:35', 3);
+(9, 58, 'Từ chối', '2025-11-24 22:20:20', '2025-11-24 22:20:35', 3),
+(12, 29, 'Đã xử lý', '2026-03-04 23:25:19', '2026-03-04 23:25:55', 3);
 DELIMITER $$
 CREATE TRIGGER `after_doimatkhau_insert` AFTER INSERT ON `doimatkhau` FOR EACH ROW BEGIN
     DECLARE userName VARCHAR(100);
@@ -521,7 +523,9 @@ INSERT INTO mail_notification_log (id, event_code, event_key, recipient_email, s
 (10, 'appointment_cancelled_patient', '77:cancel:2026-02-24:e85cb88eb47badfeb0819053c9d72568', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thong bao huy lich kham #77\"}', '2026-02-23 22:57:57'),
 (11, 'appointment_cancelled_patient', '78:cancel:2026-02-24:e85cb88eb47badfeb0819053c9d72568', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thong bao huy lich kham #78\"}', '2026-02-25 23:19:33'),
 (12, 'auth_forgot_otp', 'forgot_otp:1:974521', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Mã OTP đặt lại mật khẩu - Eden Health\"}', '2026-03-02 21:34:32'),
-(13, 'auth_password_changed', 'password_changed:1:1772462149', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Mật khẩu đã được thay đổi - Eden Health\"}', '2026-03-02 21:35:50');
+(13, 'auth_password_changed', 'password_changed:1:1772462149', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Mật khẩu đã được thay đổi - Eden Health\"}', '2026-03-02 21:35:50'),
+(14, 'auth_register_otp', 'register_otp:00db042cd3d0326c4c3b15dad3724611662887761c7dd45740a8b68bba171351:1772614186', 'dat123456789fa+web2@gmail.com', 'sent', NULL, '{\"subject\":\"Mã OTP xác thực đăng ký tài khoản - Eden Health\"}', '2026-03-04 15:49:49'),
+(15, 'auth_register_success', 'register:61', 'dat123456789fa+web2@gmail.com', 'sent', NULL, '{\"subject\":\"Chào mừng đến với Eden Health!\"}', '2026-03-04 15:50:07');
 
 CREATE TABLE ngaynghi (
   maNghi int(11) NOT NULL,
@@ -664,7 +668,7 @@ INSERT INTO nguoidung (id, tenDangNhap, matKhau, soDienThoai, email, vaiTro, tra
 (26, 'nguyenquangdung', 'nguyenquangdung1988', '0912006001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
 (27, 'tranthihuonggiang', 'tranthihuonggiang1998', '0912006002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
 (28, 'vuminhduc', 'vuminhduc1992', '0912007001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
-(29, 'nguyenhoanganh', '$2y$10$seSDYzDxzCvikcVpg6kdLu9Z64wDg1iZMNSOIy1yZ3aNuOyIuY/lq', '0912007002', NULL, 'bacsi', 'Hoạt Động', '2026-02-26 18:46:11', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1772106371/Images/bacsi_29.png'),
+(29, 'nguyenhoanganh', '$2y$10$Ihal3lo7bFJqStN0VXDv5.AsEZI6fw9nBoGqb/TsdKQeScLVoLVX6', '0912007002', NULL, 'bacsi', 'Hoạt Động', '2026-02-26 18:46:11', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1772106371/Images/bacsi_29.png'),
 (30, 'letrungkien', 'letrungkien1995', '0912008001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
 (31, 'tranthikimhue', 'tranthikimhue1997', '0912008002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
 (32, 'phamthanhhai', 'phamthanhhai1990', '0912009001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
@@ -695,7 +699,8 @@ INSERT INTO nguoidung (id, tenDangNhap, matKhau, soDienThoai, email, vaiTro, tra
 (57, 'buithixuan', 'buithixuan2004', '0933004002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
 (58, 'test1', '$2y$10$QRCJtDF7COPA8NViycczmOk.0srx9hql/gbe97mzpr5CQxI2q9/Di', '0111111111', NULL, 'benhnhan', 'Hoạt Động', '2025-11-22 23:31:28', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
 (59, 'test2', 'Eden24112025', '0222222222', NULL, 'benhnhan', 'Hoạt Động', '2025-11-22 23:33:27', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
-(60, 'tester', '$2y$10$qQMXcOo5TpctMAZ4iSm8UezazFy.WuT.6Dfhm5tiXldT/wWWjocMG', '0387856540', 'nguyendat992005@gmail.com', 'benhnhan', 'Hoạt Động', '2026-02-03 01:26:45', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png');
+(60, 'tester', '$2y$10$qQMXcOo5TpctMAZ4iSm8UezazFy.WuT.6Dfhm5tiXldT/wWWjocMG', '0387856540', 'nguyendat992005@gmail.com', 'benhnhan', 'Hoạt Động', '2026-02-03 01:26:45', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'),
+(61, 'benhnhan3', '$2y$10$OCV02D1gSyYuyT1ufFWgdOaDEOOUEFGhHrXPNcjOabtdykjrTibpm', '0123123123', 'dat123456789fa+web2@gmail.com', 'benhnhan', 'Hoạt Động', '2026-03-04 15:50:05', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png');
 
 CREATE TABLE quantrivien (
   nguoiDungId int(11) NOT NULL,
@@ -747,7 +752,8 @@ INSERT INTO thongbaoadmin (maThongBao, nguoiDungId, maNghi, maYeuCau, soDienThoa
 (3, 2, 7, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn BBD xin nghỉ phép vào ngày 27/11/2025 - Cả ngày. Lý do: Thử', '2025-11-24 22:15:13', 1, 'Chờ', NULL, '2025-11-27'),
 (4, 58, NULL, 8, '0111111111', 'Cấp lại mật khẩu', 'Yêu cầu cấp lại mật khẩu', 'Người dùng test1 (benhnhan) yêu cầu cấp lại mật khẩu', '2025-11-24 22:17:16', 1, 'Từ chối', '2025-11-24 22:18:00', NULL),
 (5, 58, NULL, 9, '0111111111', 'Cấp lại mật khẩu', 'Yêu cầu cấp lại mật khẩu', 'Người dùng test1 (benhnhan) yêu cầu cấp lại mật khẩu', '2025-11-24 22:20:20', 1, 'Từ chối', '2025-11-24 22:20:35', NULL),
-(6, 2, 9, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn Bảo xin nghỉ phép vào ngày 03/12/2025 - Ca sáng. Lý do: Thích', '2025-12-02 00:00:58', 1, 'Chờ', NULL, '2025-12-03');
+(6, 2, 9, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn Bảo xin nghỉ phép vào ngày 03/12/2025 - Ca sáng. Lý do: Thích', '2025-12-02 00:00:58', 1, 'Chờ', NULL, '2025-12-03'),
+(9, 29, NULL, 12, '0912007002', 'Cấp lại mật khẩu', 'Yêu cầu cấp lại mật khẩu', 'Người dùng nguyenhoanganh (bacsi) yêu cầu cấp lại mật khẩu', '2026-03-04 23:25:19', 1, 'Đã xử lý', '2026-03-04 23:25:55', NULL);
 
 CREATE TABLE thongbaobenhnhan (
   maThongBao int(11) NOT NULL,
@@ -860,7 +866,8 @@ INSERT INTO thongbaolichkham (maThongBao, maBacSi, maLichKham, loai, tieuDe, noi
 (95, 'bs1', 74, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 02/12/2025 - Ca chiều. Lý do: 1', '2026-02-23 22:56:10', 1),
 (96, 'bs1', 70, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 04/12/2025 - Ca sáng. Lý do: 1', '2026-02-23 22:56:27', 1),
 (97, 'BS20251121022', 75, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 05/12/2025 - Ca sáng. Lý do: 1', '2026-02-23 22:56:48', 1),
-(98, 'BS20251121028', 63, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 05/12/2025 - Ca sáng. Lý do: 1', '2026-02-23 22:57:08', 0);
+(98, 'BS20251121028', 63, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 05/12/2025 - Ca sáng. Lý do: 1', '2026-02-23 22:57:08', 0),
+(99, 'BS20251121022', NULL, 'Đặt lịch', 'Cấp lại mật khẩu', 'Mật khẩu mới của bạn là: Eden04032026. Vui lòng đổi mật khẩu sau khi đăng nhập.', '2026-03-04 23:25:55', 0);
 
 CREATE TABLE thuoc (
   maThuoc int(11) NOT NULL,
@@ -951,7 +958,9 @@ INSERT INTO thuoc (maThuoc, tenThuoc, donViTinh, soLuongTon, giaTien, cachDungMa
 (73, 'Clopidogrel 75mg', 'Viên', 120, 15000.00, 'Uống 1 viên/ngày sau bữa ăn', 'Chống đông', 'Sanofi', '2027-01-31', 10),
 (74, 'Warfarin 2mg', 'Viên', 80, 8500.00, 'Uống theo chỉ định bác sĩ, cùng giờ mỗi ngày', 'Chống đông', 'Orion', '2026-12-31', 10),
 (75, 'Epinephrine 1mg/mL (tiêm)', 'Ống', 30, 45000.00, 'Chỉ dùng trong cấp cứu phản vệ, theo chỉ định bác sĩ', 'Cấp cứu', 'Aguettant', '2026-08-31', 3),
-(76, 'Atropine 0.5mg (tiêm)', 'Ống', 30, 38000.00, 'Dùng theo chỉ định bác sĩ, tiêm tĩnh mạch hoặc bắp', 'Cấp cứu', 'DHG Pharma', '2026-07-31', 3);
+(76, 'Atropine 0.5mg (tiêm)', 'Ống', 30, 38000.00, 'Dùng theo chỉ định bác sĩ, tiêm tĩnh mạch hoặc bắp', 'Cấp cứu', 'DHG Pharma', '2026-07-31', 3),
+(77, 'Paracetamol 500mg', 'Viên', 100, 2500.00, 'Uống sau ăn 30 phút', 'Giảm đau / Hạ sốt', 'Hậu Giang', '2026-12-31', 10),
+(78, 'Amoxicillin 500mg', 'Viên', 50, 8000.00, 'Uống 3 lần/ngày', 'Kháng sinh', 'Stada', '2026-09-01', 5);
 
 
 ALTER TABLE bacsi
@@ -1073,7 +1082,7 @@ ALTER TABLE chitietdonthuoc
   MODIFY id int(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE doimatkhau
-  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 ALTER TABLE donthuoc
   MODIFY maDonThuoc int(11) NOT NULL AUTO_INCREMENT;
@@ -1091,28 +1100,28 @@ ALTER TABLE lienhe
   MODIFY maLienHe int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 ALTER TABLE mail_notification_log
-  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 ALTER TABLE ngaynghi
   MODIFY maNghi int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 ALTER TABLE nguoidung
-  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 ALTER TABLE suatkham
   MODIFY maSuat int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 ALTER TABLE thongbaoadmin
-  MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 ALTER TABLE thongbaobenhnhan
   MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 ALTER TABLE thongbaolichkham
-  MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=99;
+  MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
 
 ALTER TABLE thuoc
-  MODIFY maThuoc int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
+  MODIFY maThuoc int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
 
 
 ALTER TABLE bacsi
