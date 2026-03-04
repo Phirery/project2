@@ -101,9 +101,12 @@
             overflow: hidden;
             position: relative;
         }
+        .profile-avatar.has-image { background: transparent; }
         .profile-avatar img {
             width: 100%; height: 100%;
             object-fit: cover;
+            display: block;
+            flex: 0 0 100%;
         }
 
         /* Avatar edit overlay (doctor only, edit mode) */
@@ -112,7 +115,8 @@
             display: inline-block;
             cursor: pointer;
         }
-        .avatar-edit-wrap .avatar-overlay {
+        .avatar-edit-wrap .avatar-overlay,
+        .profile-avatar .avatar-overlay {
             position: absolute;
             inset: 0;
             border-radius: 50%;
@@ -122,9 +126,12 @@
             justify-content: center;
             opacity: 0;
             transition: opacity 0.2s;
+            pointer-events: none;
         }
         .avatar-edit-wrap:hover .avatar-overlay,
-        .avatar-edit-wrap.show-overlay .avatar-overlay {
+        .avatar-edit-wrap.show-overlay .avatar-overlay,
+        .profile-avatar:hover .avatar-overlay,
+        .profile-avatar.show-overlay .avatar-overlay {
             opacity: 1;
         }
         .avatar-overlay i { color: white; font-size: 1.1rem; }
@@ -716,7 +723,7 @@
 
             <div class="otp-info-box">
                 <i class="fas fa-info-circle"></i>
-                <span>Mã OTP sẽ có hiệu lực trong <strong>5 phút</strong>.</span>
+                <span>Mã OTP sẽ có hiệu lực trong <strong id="otpValidityLabel">1 phút</strong>.</span>
             </div>
 
             <button class="btn-full primary" id="btnSendOtp" onclick="sendOtpToEmail()">
@@ -739,7 +746,7 @@
 
             <div class="timer-display" id="otpTimerBox">
                 <i class="fas fa-clock"></i>
-                Mã còn hiệu lực: <strong id="otpCountdown">05:00</strong>
+                Mã còn hiệu lực: <strong id="otpCountdown">01:00</strong>
             </div>
 
             <form onsubmit="verifyOtpAndReset(event)">
@@ -801,16 +808,22 @@
     };
     const API_USER = endpointConfig.user;
     const API_AUTH = endpointConfig.auth;
+    const FRONTEND_TIMER_CONFIG = {
+        otpExpirySecondsFallback: 60,
+        otpResendCooldownSeconds: 60
+    };
 
     let userData    = {};
     let pendingAvatarFile = null;   // File ảnh đại diện chờ upload (bác sĩ)
     let otpCountdownInterval  = null;
     let resendCooldownInterval = null;
+    let updateCooldownInterval = null;
 
     // ══════════════════════════════════════════
     //  INIT
     // ══════════════════════════════════════════
     document.addEventListener('DOMContentLoaded', () => {
+        syncOtpTimingLabels(FRONTEND_TIMER_CONFIG.otpExpirySecondsFallback);
         initTabs();
         loadProfile();
         setupBackBtn();
@@ -865,9 +878,11 @@
     function renderAvatarEl(wrap, name, avatarUrl, editMode) {
         const isDefault = !avatarUrl || avatarUrl.includes('samples/paper.png');
         if (!isDefault) {
-            wrap.innerHTML = `<img src="${avatarUrl}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+            wrap.classList.add('has-image');
+            wrap.innerHTML = `<img src="${avatarUrl}" alt="Avatar">`;
         } else {
             const initials = (name || 'U').split(' ').slice(-2).map(w => w[0]).join('').toUpperCase();
+            wrap.classList.remove('has-image');
             wrap.innerHTML = `<span>${initials}</span>`;
         }
 
@@ -1064,7 +1079,8 @@
         reader.onload = (e) => {
             const wrap = document.getElementById('avatarWrap');
             // Show preview
-            wrap.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+            wrap.classList.add('has-image');
+            wrap.innerHTML = `<img src="${e.target.result}" alt="Avatar preview">`;
             // Re-add overlay
             const overlay = document.createElement('div');
             overlay.className = 'avatar-overlay';
@@ -1129,12 +1145,48 @@
             const res  = await fetch(`${API_USER}/get-update-cooldown.php`, { credentials: 'include' });
             const data = await res.json();
             if (data.success && !data.canUpdate) {
-                document.getElementById('infoCooldown').innerHTML =
-                    `<div class="cooldown-notice"><i class="fas fa-clock"></i>
-                     Bạn chỉ có thể cập nhật thông tin sau <strong>${data.remainingTime}</strong>.</div>`;
-                document.getElementById('btnEdit').disabled = true;
+                const remainingSeconds = toPositiveInt(
+                    data.remainingSeconds,
+                    parseVietnameseDurationToSeconds(data.remainingTime)
+                );
+                startUpdateCooldown(remainingSeconds);
+            } else {
+                startUpdateCooldown(0);
             }
         } catch {}
+    }
+
+    function startUpdateCooldown(seconds) {
+        clearInterval(updateCooldownInterval);
+        const wrap = document.getElementById('infoCooldown');
+        const btn  = document.getElementById('btnEdit');
+        const safeSeconds = toPositiveInt(seconds, 0);
+
+        if (safeSeconds <= 0) {
+            wrap.innerHTML = '';
+            btn.disabled = false;
+            return;
+        }
+
+        wrap.innerHTML = `<div class="cooldown-notice"><i class="fas fa-clock"></i>
+            Bạn chỉ có thể cập nhật thông tin sau <strong id="updateCooldownText"></strong>.</div>`;
+        const textEl = document.getElementById('updateCooldownText');
+        const endAt = Date.now() + (safeSeconds * 1000);
+
+        const tick = () => {
+            const rem = Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
+            textEl.textContent = formatDurationVi(rem);
+            btn.disabled = rem > 0;
+
+            if (rem <= 0) {
+                clearInterval(updateCooldownInterval);
+                wrap.innerHTML = '';
+                btn.disabled = false;
+            }
+        };
+
+        tick();
+        updateCooldownInterval = setInterval(tick, 1000);
     }
 
     async function checkPasswordCooldown() {
@@ -1212,17 +1264,21 @@
     //  OTP QUA EMAIL (Tab bảo mật)
     // ══════════════════════════════════════════
     function openOtpModal() {
+        syncOtpTimingLabels(FRONTEND_TIMER_CONFIG.otpExpirySecondsFallback);
         document.getElementById('otpModal').classList.add('active');
         document.getElementById('otpStep1').style.display = 'block';
         document.getElementById('otpStep2').style.display = 'none';
         document.getElementById('btnSendOtp').disabled = false;
         document.getElementById('btnSendOtp').innerHTML = '<i class="fas fa-paper-plane"></i> Gửi mã OTP vào Email';
+        document.getElementById('btnResendOtp').disabled = true;
+        document.getElementById('btnResendOtp').innerHTML = '<i class="fas fa-redo me-1"></i> Gửi lại mã OTP <span id="resendTimer"></span>';
     }
 
     function closeOtpModal() {
         document.getElementById('otpModal').classList.remove('active');
         clearInterval(otpCountdownInterval);
         clearInterval(resendCooldownInterval);
+        syncOtpTimingLabels(FRONTEND_TIMER_CONFIG.otpExpirySecondsFallback);
         // Reset form
         ['otpInputField','otpNewPwd','otpConfirmPwd'].forEach(id => {
             const el = document.getElementById(id);
@@ -1235,6 +1291,7 @@
         document.getElementById('otpStep2').style.display = 'none';
         clearInterval(otpCountdownInterval);
         clearInterval(resendCooldownInterval);
+        syncOtpTimingLabels(FRONTEND_TIMER_CONFIG.otpExpirySecondsFallback);
     }
 
     async function sendOtpToEmail() {
@@ -1253,8 +1310,10 @@
                 document.getElementById('maskedEmailDisplay').textContent = data.maskedEmail;
                 document.getElementById('otpStep1').style.display = 'none';
                 document.getElementById('otpStep2').style.display = 'block';
-                startOtpCountdown(data.expirySeconds || 300);
-                startResendCooldown(60);
+                const expirySeconds = toPositiveInt(data.expirySeconds, FRONTEND_TIMER_CONFIG.otpExpirySecondsFallback);
+                syncOtpTimingLabels(expirySeconds);
+                startOtpCountdown(expirySeconds);
+                startResendCooldown(FRONTEND_TIMER_CONFIG.otpResendCooldownSeconds);
                 showAlert('success', 'Mã OTP đã gửi vào email của bạn!');
             } else {
                 showAlert('error', data.message || 'Không thể gửi OTP');
@@ -1286,8 +1345,10 @@
 
             if (data.success) {
                 showAlert('success', 'Đã gửi lại mã OTP vào email!');
-                startOtpCountdown(data.expirySeconds || 300);
-                startResendCooldown(60);
+                const expirySeconds = toPositiveInt(data.expirySeconds, FRONTEND_TIMER_CONFIG.otpExpirySecondsFallback);
+                syncOtpTimingLabels(expirySeconds);
+                startOtpCountdown(expirySeconds);
+                startResendCooldown(FRONTEND_TIMER_CONFIG.otpResendCooldownSeconds);
             } else {
                 showAlert('error', data.message || 'Không thể gửi lại OTP');
                 if (data.cooldown) startResendCooldown(data.cooldown);
@@ -1301,18 +1362,20 @@
 
     function startOtpCountdown(seconds) {
         clearInterval(otpCountdownInterval);
-        let rem = seconds;
-        const el = document.getElementById('otpCountdown');
+        const safeSeconds = toPositiveInt(seconds, FRONTEND_TIMER_CONFIG.otpExpirySecondsFallback);
         const box = document.getElementById('otpTimerBox');
+        box.innerHTML = '<i class="fas fa-clock"></i> Mã còn hiệu lực: <strong id="otpCountdown"></strong>';
+        const el = document.getElementById('otpCountdown');
+        const endAt = Date.now() + (safeSeconds * 1000);
 
         const tick = () => {
+            const rem = Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
             const m = Math.floor(rem / 60), s = rem % 60;
             el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
             if (rem <= 0) {
                 clearInterval(otpCountdownInterval);
                 box.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#dc3545;"></i> <strong style="color:#dc3545;">Mã OTP đã hết hạn! Vui lòng gửi lại.</strong>';
             }
-            rem--;
         };
         tick();
         otpCountdownInterval = setInterval(tick, 1000);
@@ -1321,15 +1384,14 @@
     function startResendCooldown(seconds) {
         clearInterval(resendCooldownInterval);
         const btn   = document.getElementById('btnResendOtp');
-        const timer = document.getElementById('resendTimer');
-        let rem = seconds;
+        const safeSeconds = toPositiveInt(seconds, FRONTEND_TIMER_CONFIG.otpResendCooldownSeconds);
+        const endAt = Date.now() + (safeSeconds * 1000);
 
         const tick = () => {
+            const rem = Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
             if (rem > 0) {
                 btn.disabled = true;
-                timer.textContent = `(${rem}s)`;
                 btn.innerHTML = `<i class="fas fa-redo me-1"></i> Gửi lại mã OTP <span id="resendTimer">(${rem}s)</span>`;
-                rem--;
             } else {
                 clearInterval(resendCooldownInterval);
                 btn.disabled = false;
@@ -1419,6 +1481,44 @@
     function formatDate(s) {
         if (!s) return '';
         return new Date(s).toLocaleDateString('vi-VN');
+    }
+    function toPositiveInt(value, fallback = 0) {
+        const n = Number(value);
+        return Number.isFinite(n) && n >= 0 ? Math.floor(n) : fallback;
+    }
+    function formatDurationVi(totalSeconds) {
+        const secs = toPositiveInt(totalSeconds, 0);
+        const h = Math.floor(secs / 3600);
+        const m = Math.floor((secs % 3600) / 60);
+        const s = secs % 60;
+        if (h > 0) return `${h} giờ ${m} phút ${s} giây`;
+        if (m > 0) return `${m} phút ${s} giây`;
+        return `${s} giây`;
+    }
+    function parseVietnameseDurationToSeconds(raw) {
+        const text = String(raw || '').toLowerCase();
+        const hours = Number((text.match(/(\d+)\s*giờ/) || [])[1] || 0);
+        const minutes = Number((text.match(/(\d+)\s*phút/) || [])[1] || 0);
+        const seconds = Number((text.match(/(\d+)\s*giây/) || [])[1] || 0);
+        const total = (hours * 3600) + (minutes * 60) + seconds;
+        if (total > 0) return total;
+
+        // Fallback nếu backend chỉ trả số.
+        const plainNumber = Number((text.match(/\d+/) || [])[0] || 0);
+        return Number.isFinite(plainNumber) ? plainNumber : 0;
+    }
+    function syncOtpTimingLabels(seconds) {
+        const safeSeconds = toPositiveInt(seconds, FRONTEND_TIMER_CONFIG.otpExpirySecondsFallback);
+        const label = document.getElementById('otpValidityLabel');
+        const countdown = document.getElementById('otpCountdown');
+        const box = document.getElementById('otpTimerBox');
+
+        if (label) label.textContent = formatDurationVi(safeSeconds);
+        if (box) {
+            box.innerHTML = `<i class="fas fa-clock"></i> Mã còn hiệu lực: <strong id="otpCountdown">${String(Math.floor(safeSeconds / 60)).padStart(2, '0')}:${String(safeSeconds % 60).padStart(2, '0')}</strong>`;
+        } else if (countdown) {
+            countdown.textContent = `${String(Math.floor(safeSeconds / 60)).padStart(2, '0')}:${String(safeSeconds % 60).padStart(2, '0')}`;
+        }
     }
     function escapeHtml(str) {
         return String(str)
