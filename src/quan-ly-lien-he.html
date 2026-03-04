@@ -548,6 +548,29 @@
             box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
         }
 
+        .mail-setting-box {
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 14px;
+            background: #fafbff;
+            margin-bottom: 14px;
+        }
+
+        .mail-setting-title {
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mail-setting-desc {
+            color: #6b7280;
+            font-size: 0.88rem;
+            margin-bottom: 10px;
+        }
+
         /* ===== MODAL ===== */
         .modal-content {
             border-radius: 15px;
@@ -1386,12 +1409,49 @@
                     <form id="processForm">
                         <input type="hidden" id="processContactId">
                         <div class="mb-3">
-                            <label class="form-label">Ghi chú xử lý</label>
-                            <textarea class="form-control" id="processNote" rows="4" placeholder="Nhập ghi chú về việc xử lý liên hệ này (tùy chọn)..."></textarea>
+                            <label class="form-label">Ghi chú xử lý nội bộ (tùy chọn)</label>
+                            <textarea class="form-control" id="processNote" rows="3" placeholder="Ghi chú nội bộ cho liên hệ này..."></textarea>
+                        </div>
+
+                        <div class="mail-setting-box">
+                            <div class="mail-setting-title">
+                                <i class="fas fa-envelope text-primary"></i>
+                                Cấu hình email xác nhận
+                            </div>
+                            <div class="mail-setting-desc">
+                                Bạn có thể gửi email xác nhận đã xử lý ngay khi lưu.
+                            </div>
+
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="sendConfirmEmail" checked>
+                                <label class="form-check-label" for="sendConfirmEmail">
+                                    Gửi email xác nhận cho người dùng
+                                </label>
+                            </div>
+
+                            <div id="emailModeGroup">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="processEmailMode" id="emailModeDefault" value="default" checked>
+                                    <label class="form-check-label" for="emailModeDefault">
+                                        Nội dung mặc định
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="processEmailMode" id="emailModeCustom" value="custom">
+                                    <label class="form-check-label" for="emailModeCustom">
+                                        Nhập nội dung phản hồi riêng
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="customEmailMessageGroup" style="display: none;">
+                                <label class="form-label">Nội dung phản hồi email</label>
+                                <textarea class="form-control" id="processEmailMessage" rows="4" placeholder="Ví dụ: Vấn đề của bạn đã được xử lý. Cảm ơn bạn đã liên hệ Eden Health."></textarea>
+                            </div>
                         </div>
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle me-2"></i>
-                            Sau khi xác nhận, liên hệ này sẽ được đánh dấu là "Đã xử lý"
+                            Sau khi xác nhận, liên hệ này sẽ được đánh dấu là "Đã xử lý".
                         </div>
                         <button type="submit" class="btn-submit">
                             <i class="fas fa-check me-2"></i>Xác nhận xử lý
@@ -1419,6 +1479,14 @@
             loadStatistics();
             loadContacts();
             document.getElementById('processForm').addEventListener('submit', handleProcessSubmit);
+
+            const sendConfirmEmail = document.getElementById('sendConfirmEmail');
+            sendConfirmEmail.addEventListener('change', updateProcessMailOptions);
+            document.querySelectorAll('input[name="processEmailMode"]').forEach(input => {
+                input.addEventListener('change', updateProcessMailOptions);
+            });
+
+            updateProcessMailOptions();
         });
 
         // ===== LOAD STATISTICS =====
@@ -1727,10 +1795,36 @@
             new bootstrap.Modal(document.getElementById('viewModal')).show();
         }
 
+        function updateProcessMailOptions() {
+            const sendEmailInput = document.getElementById('sendConfirmEmail');
+            const emailModeGroup = document.getElementById('emailModeGroup');
+            const customMessageGroup = document.getElementById('customEmailMessageGroup');
+            const customMessageInput = document.getElementById('processEmailMessage');
+
+            if (!sendEmailInput || !emailModeGroup || !customMessageGroup || !customMessageInput) {
+                return;
+            }
+
+            const sendEmail = sendEmailInput.checked;
+            const selectedMode = document.querySelector('input[name="processEmailMode"]:checked')?.value || 'default';
+
+            emailModeGroup.style.display = sendEmail ? 'block' : 'none';
+            customMessageGroup.style.display = sendEmail && selectedMode === 'custom' ? 'block' : 'none';
+            customMessageInput.required = sendEmail && selectedMode === 'custom';
+
+            if (!(sendEmail && selectedMode === 'custom')) {
+                customMessageInput.value = '';
+            }
+        }
+
         // ===== OPEN PROCESS MODAL =====
         function openProcessModal(maLienHe) {
             document.getElementById('processContactId').value = maLienHe;
             document.getElementById('processNote').value = '';
+            document.getElementById('sendConfirmEmail').checked = true;
+            document.getElementById('emailModeDefault').checked = true;
+            document.getElementById('processEmailMessage').value = '';
+            updateProcessMailOptions();
             new bootstrap.Modal(document.getElementById('processModal')).show();
         }
 
@@ -1739,7 +1833,16 @@
             e.preventDefault();
             
             const maLienHe = document.getElementById('processContactId').value;
-            const ghiChu = document.getElementById('processNote').value;
+            const ghiChu = document.getElementById('processNote').value.trim();
+            const sendEmail = document.getElementById('sendConfirmEmail').checked;
+            const emailMode = document.querySelector('input[name="processEmailMode"]:checked')?.value || 'default';
+            const emailMessage = document.getElementById('processEmailMessage').value.trim();
+
+            if (sendEmail && emailMode === 'custom' && !emailMessage) {
+                showAlert('error', 'Vui lòng nhập nội dung phản hồi email.');
+                document.getElementById('processEmailMessage').focus();
+                return;
+            }
             
             try {
                 const response = await fetch(`${API_BASE}/process-contact.php`, {
@@ -1748,14 +1851,25 @@
                     credentials: 'include',
                     body: JSON.stringify({ 
                         maLienHe: maLienHe,
-                        ghiChu: ghiChu 
+                        ghiChu: ghiChu,
+                        sendEmail: sendEmail,
+                        emailMode: emailMode,
+                        emailMessage: emailMessage
                     })
                 });
                 
                 const data = await response.json();
                 
                 if (data.success) {
-                    showAlert('success', 'Xử lý liên hệ thành công!');
+                    showAlert('success', data.message || 'Xử lý liên hệ thành công!');
+                    if (
+                        data.mailStatus &&
+                        data.mailStatus.attempted &&
+                        data.mailStatus.success === false &&
+                        data.mailStatus.reason
+                    ) {
+                        showAlert('error', `Chi tiết lỗi gửi mail: ${data.mailStatus.reason}`);
+                    }
                     bootstrap.Modal.getInstance(document.getElementById('processModal')).hide();
                     loadContacts();
                     loadStatistics();

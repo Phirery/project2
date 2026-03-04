@@ -606,7 +606,12 @@ function sendContactReceivedEmail(
     return sendTransactionalMail($conn, 'contact_received', $eventKey, $email, $subject, $html);
 }
 
-function sendContactProcessedEmail(mysqli $conn, int $maLienHe): array {
+function sendContactProcessedEmail(
+    mysqli $conn,
+    int $maLienHe,
+    ?string $responseMessage = null,
+    bool $useStoredNote = true
+): array {
     $stmt = $conn->prepare(
         "SELECT hoTen, email, chuDe, ghiChu, thoiGianXuLy FROM lienhe WHERE maLienHe = ? LIMIT 1"
     );
@@ -623,6 +628,15 @@ function sendContactProcessedEmail(mysqli $conn, int $maLienHe): array {
         return ['success' => false, 'message' => 'contact_not_found'];
     }
 
+    $responseMessage = trim((string)$responseMessage);
+    $finalResponse = $responseMessage;
+    if ($finalResponse === '' && $useStoredNote) {
+        $finalResponse = trim((string)($contact['ghiChu'] ?? ''));
+    }
+    if ($finalResponse === '') {
+        $finalResponse = 'Da tiep nhan va xu ly';
+    }
+
     $subject = 'Lien he #' . $maLienHe . ' da duoc xu ly';
     $html = buildEmailLayout(
         'Lien he da xu ly',
@@ -634,7 +648,7 @@ function sendContactProcessedEmail(mysqli $conn, int $maLienHe): array {
             <li>Ma lien he: <strong>#{$maLienHe}</strong></li>
             <li>Chu de: <strong>" . htmlspecialchars((string)$contact['chuDe'], ENT_QUOTES, 'UTF-8') . "</strong></li>
             <li>Thoi gian xu ly: <strong>" . formatVNDateTime((string)$contact['thoiGianXuLy']) . "</strong></li>
-            <li>Phan hoi: <strong>" . htmlspecialchars((string)($contact['ghiChu'] ?: 'Da tiep nhan va xu ly'), ENT_QUOTES, 'UTF-8') . "</strong></li>
+            <li>Phan hoi: <strong>" . htmlspecialchars($finalResponse, ENT_QUOTES, 'UTF-8') . "</strong></li>
         </ul>
         "
     );

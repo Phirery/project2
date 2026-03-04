@@ -7,8 +7,34 @@ require_once '../../includes/mail-events.php';
 // Kiểm tra quyền admin
 require_role('quantri');
 
+function toBool($value, bool $default = true): bool
+{
+    if (is_bool($value)) {
+        return $value;
+    }
+
+    if (is_string($value)) {
+        $normalized = strtolower(trim($value));
+        if (in_array($normalized, ['1', 'true', 'yes', 'on'], true)) {
+            return true;
+        }
+        if (in_array($normalized, ['0', 'false', 'no', 'off'], true)) {
+            return false;
+        }
+    }
+
+    if (is_numeric($value)) {
+        return ((int)$value) !== 0;
+    }
+
+    return $default;
+}
+
 // Lấy dữ liệu JSON từ request
 $data = json_decode(file_get_contents('php://input'), true);
+if (!is_array($data)) {
+    $data = [];
+}
 
 // Validate dữ liệu
 if (!isset($data['maLienHe'])) {
@@ -20,18 +46,50 @@ if (!isset($data['maLienHe'])) {
     exit;
 }
 
-$maLienHe = $conn->real_escape_string($data['maLienHe']);
-$ghiChu = isset($data['ghiChu']) && !empty($data['ghiChu']) 
-    ? $conn->real_escape_string($data['ghiChu']) 
-    : null;
-$nguoiXuLy = $_SESSION['id'];
+$maLienHe = (int)$data['maLienHe'];
+if ($maLienHe <= 0) {
+    http_response_code(400);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Mã liên hệ không hợp lệ'
+    ]);
+    exit;
+}
+
+$ghiChuRaw = trim((string)($data['ghiChu'] ?? ''));
+$ghiChu = $ghiChuRaw !== '' ? $ghiChuRaw : null;
+
+$sendEmail = array_key_exists('sendEmail', $data)
+    ? toBool($data['sendEmail'], true)
+    : true;
+
+$emailModeInput = strtolower(trim((string)($data['emailMode'] ?? 'default')));
+$emailMode = $emailModeInput === 'custom' ? 'custom' : 'default';
+$emailMessage = trim((string)($data['emailMessage'] ?? ''));
+
+if ($sendEmail && $emailMode === 'custom' && $emailMessage === '') {
+    http_response_code(400);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Vui lòng nhập nội dung phản hồi email'
+    ]);
+    exit;
+}
+
+$nguoiXuLy = (int)$_SESSION['id'];
 
 try {
     // Kiểm tra liên hệ tồn tại
-    $checkQuery = "SELECT maLienHe, trangThai FROM lienhe WHERE maLienHe = '$maLienHe'";
-    $checkResult = $conn->query($checkQuery);
-    
-    if ($checkResult->num_rows === 0) {
+    $checkStmt = $conn->prepare("SELECT maLienHe, trangThai FROM lienhe WHERE maLienHe = ? LIMIT 1");
+    if (!$checkStmt) {
+        throw new Exception($conn->error);
+    }
+    $checkStmt->bind_param('i', $maLienHe);
+    $checkStmt->execute();
+    $checkResult = $checkStmt->get_result();
+
+    if (!$checkResult || $checkResult->num_rows === 0) {
+        $checkStmt->close();
         http_response_code(404);
         echo json_encode([
             'success' => false,
@@ -39,9 +97,10 @@ try {
         ]);
         exit;
     }
-    
+
     $contact = $checkResult->fetch_assoc();
-    
+    $checkStmt->close();
+
     // Kiểm tra trạng thái hiện tại
     if ($contact['trangThai'] === 'Đã xử lý') {
         http_response_code(400);
@@ -51,38 +110,62 @@ try {
         ]);
         exit;
     }
-    
+
     // Cập nhật trạng thái
-    $updateQuery = "
-        UPDATE lienhe 
-        SET 
-            trangThai = 'Đã xử lý',
-            nguoiXuLy = $nguoiXuLy,
-            thoiGianXuLy = NOW()
-    ";
-    
-    // Thêm ghi chú nếu có
     if ($ghiChu !== null) {
-        $updateQuery .= ", ghiChu = '$ghiChu'";
+        $updateStmt = $conn->prepare(
+            "UPDATE lienhe
+             SET trangThai = 'Đã xử lý', nguoiXuLy = ?, thoiGianXuLy = NOW(), ghiChu = ?
+             WHERE maLienHe = ?"
+        );
+        if (!$updateStmt) {
+            throw new Exception($conn->error);
+        }
+        $updateStmt->bind_param('isi', $nguoiXuLy, $ghiChu, $maLienHe);
+    } else {
+        $updateStmt = $conn->prepare(
+            "UPDATE lienhe
+             SET trangThai = 'Đã xử lý', nguoiXuLy = ?, thoiGianXuLy = NOW()
+             WHERE maLienHe = ?"
+        );
+        if (!$updateStmt) {
+            throw new Exception($conn->error);
+        }
+        $updateStmt->bind_param('ii', $nguoiXuLy, $maLienHe);
     }
-    
-    $updateQuery .= " WHERE maLienHe = '$maLienHe'";
-    
-    if ($conn->query($updateQuery)) {
-        try {
-            sendContactProcessedEmail($conn, (int)$maLienHe);
-        } catch (Throwable $mailError) {
-            error_log('Contact processed mail error: ' . $mailError->getMessage());
+
+    if ($updateStmt->execute()) {
+        $mailStatus = [
+            'attempted' => false,
+            'success' => null,
+            'reason' => null,
+            'mode' => $sendEmail ? $emailMode : 'disabled',
+        ];
+
+        if ($sendEmail) {
+            $mailStatus['attempted'] = true;
+            $customResponse = $emailMode === 'custom' ? $emailMessage : null;
+            $mailResult = sendContactProcessedEmail($conn, $maLienHe, $customResponse, false);
+            $mailStatus['success'] = (bool)($mailResult['success'] ?? false);
+            $mailStatus['reason'] = $mailResult['reason'] ?? ($mailResult['message'] ?? null);
+        }
+
+        $message = 'Xử lý liên hệ thành công';
+        if ($mailStatus['attempted']) {
+            $message .= $mailStatus['success']
+                ? ' và đã gửi email xác nhận.'
+                : ' nhưng chưa gửi được email xác nhận.';
         }
 
         echo json_encode([
             'success' => true,
-            'message' => 'Xử lý liên hệ thành công'
+            'message' => $message,
+            'mailStatus' => $mailStatus
         ]);
     } else {
         throw new Exception($conn->error);
     }
-    
+    $updateStmt->close();
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode([
