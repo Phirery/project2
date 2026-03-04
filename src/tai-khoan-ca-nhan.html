@@ -569,7 +569,7 @@
 
 <div class="account-container">
     <!-- Back button -->
-    <button class="back-btn" id="backBtn" onclick="history.back()">
+    <button class="back-btn" id="backBtn" onclick="goBack1Step()">
         <i class="fas fa-arrow-left"></i> Quay lại
     </button>
 
@@ -1562,6 +1562,13 @@
             }
         `;
         document.head.appendChild(style);
+    }
+    function goBack1Step() {
+        if (document.referrer !== "") {
+            window.history.back();
+        } else {
+            window.location.href = "index.html";
+        }
     }
 
     function showAlert(type, msg) {

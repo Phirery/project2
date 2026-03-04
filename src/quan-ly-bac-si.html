@@ -326,6 +326,135 @@
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
 
+        .doctor-row-main {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .doctor-row-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            object-fit: cover;
+            flex-shrink: 0;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+        }
+
+        .avatar-picker {
+            border: 1px dashed #cfd6df;
+            border-radius: 12px;
+            padding: 14px;
+            background: #fbfcfe;
+        }
+
+        .avatar-preview-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .avatar-preview {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            display: none;
+            border: 2px solid #e9ecef;
+        }
+
+        .avatar-fallback {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .doctor-detail-card {
+            border: 1px solid #edf0f5;
+            border-radius: 14px;
+            padding: 20px;
+            background: #ffffff;
+        }
+
+        .doctor-detail-hero {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #edf0f5;
+        }
+
+        .doctor-detail-avatar {
+            width: 78px;
+            height: 78px;
+            border-radius: 50%;
+            object-fit: cover;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: #ffffff;
+            font-size: 1.7rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+        }
+
+        .doctor-detail-name {
+            margin: 0 0 6px 0;
+            font-weight: 700;
+            color: #22314a;
+        }
+
+        .doctor-detail-code {
+            margin: 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .doctor-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .doctor-detail-item {
+            background: #f8fafc;
+            border: 1px solid #edf0f5;
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+
+        .doctor-detail-label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.35px;
+            color: #718198;
+            margin-bottom: 6px;
+        }
+
+        .doctor-detail-value {
+            color: #1f2d3d;
+            font-weight: 600;
+            word-break: break-word;
+        }
+
         .loading {
             text-align: center;
             padding: 50px;
@@ -454,7 +583,7 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Tìm kiếm</label>
-                    <input type="text" class="form-control" id="filterSearch" placeholder="Tên bác sĩ, mã bác sĩ...">
+                    <input type="text" class="form-control" id="filterSearch" placeholder="Tên, mã BS, SĐT, email...">
                 </div>
             </div>
             <div class="mt-3">
@@ -517,6 +646,7 @@
                 <div class="modal-body">
                     <form id="doctorForm">
                         <input type="hidden" id="doctorId">
+                        <input type="hidden" id="doctorAvatarCurrent">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Tên bác sĩ <span class="text-danger">*</span></label>
@@ -525,6 +655,10 @@
                             <div class="col-md-6">
                                 <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
                                 <input type="tel" class="form-control" id="doctorPhone" required pattern="[0-9]{10,11}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="doctorEmail" required maxlength="100" placeholder="email@domain.com">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Giới tính <span class="text-danger">*</span></label>
@@ -537,7 +671,7 @@
                             <div class="col-md-4">
                                 <label class="form-label">Năm làm việc <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="doctorWorkYear" required min="1980"
-                                    max="2025">
+                                    max="2100">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Khoa <span class="text-danger">*</span></label>
@@ -556,11 +690,23 @@
                                 <label class="form-label">Tên đăng nhập <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="username" required>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <label class="form-label">Mật khẩu <span class="text-danger"
                                         id="passwordRequired">*</span></label>
                                 <input type="password" class="form-control" id="password">
                                 <small class="text-muted">Để trống nếu không muốn thay đổi (khi sửa)</small>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Avatar bác sĩ</label>
+                                <div class="avatar-picker">
+                                    <div class="avatar-preview-wrap">
+                                        <img id="doctorAvatarPreviewImg" class="avatar-preview" alt="Avatar preview">
+                                        <div id="doctorAvatarFallback" class="avatar-fallback">BS</div>
+                                        <div class="text-muted small">JPG, PNG, WEBP, GIF - tối đa 5MB</div>
+                                    </div>
+                                    <input type="file" class="form-control" id="doctorAvatarFile" accept="image/jpeg,image/png,image/webp,image/gif">
+                                    <small class="text-muted">Để trống nếu không thay đổi avatar hiện tại.</small>
+                                </div>
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Mô tả</label>
@@ -601,6 +747,9 @@
         let filteredDoctors = [];
         let allDepartments = [];
         let allSpecialties = [];
+        const DEFAULT_DB_AVATAR_KEY = 'samples/paper.png';
+        let pendingDoctorAvatarFile = null;
+        let doctorAvatarPreviewObjectUrl = null;
 
         document.addEventListener('DOMContentLoaded', function () {
             loadStatistics();
@@ -609,7 +758,115 @@
             loadDoctors();
 
             document.getElementById('doctorForm').addEventListener('submit', handleFormSubmit);
+            document.getElementById('doctorAvatarFile').addEventListener('change', handleDoctorAvatarChange);
+            document.getElementById('doctorName').addEventListener('input', () => {
+                const currentUrl = document.getElementById('doctorAvatarCurrent').value || '';
+                renderDoctorAvatarPreview(currentUrl, document.getElementById('doctorName').value);
+            });
+            document.getElementById('doctorModal').addEventListener('hidden.bs.modal', () => {
+                pendingDoctorAvatarFile = null;
+                document.getElementById('doctorAvatarFile').value = '';
+                clearAvatarPreviewObjectUrl();
+            });
+
+            const currentYear = new Date().getFullYear();
+            document.getElementById('doctorWorkYear').setAttribute('max', currentYear);
         });
+
+        function hasCustomAvatar(avatarUrl) {
+            return typeof avatarUrl === 'string' && avatarUrl.trim() !== '' && !avatarUrl.includes(DEFAULT_DB_AVATAR_KEY);
+        }
+
+        function getInitials(name, fallback = 'BS') {
+            if (!name) return fallback;
+            const initials = name.trim().split(/\s+/).map(part => part[0]).join('').toUpperCase().slice(0, 2);
+            return initials || fallback;
+        }
+
+        function clearAvatarPreviewObjectUrl() {
+            if (doctorAvatarPreviewObjectUrl) {
+                URL.revokeObjectURL(doctorAvatarPreviewObjectUrl);
+                doctorAvatarPreviewObjectUrl = null;
+            }
+        }
+
+        function renderDoctorAvatarMarkup(doctor, sizeClass = 'doctor-row-avatar') {
+            const initials = getInitials(doctor.tenBacSi);
+            if (hasCustomAvatar(doctor.avatar)) {
+                return `<img class="${sizeClass}" src="${doctor.avatar}" alt="Avatar ${doctor.tenBacSi}">`;
+            }
+            return `<span class="${sizeClass}">${initials}</span>`;
+        }
+
+        function renderDoctorAvatarPreview(avatarUrl = '', name = '') {
+            const imgEl = document.getElementById('doctorAvatarPreviewImg');
+            const fallbackEl = document.getElementById('doctorAvatarFallback');
+            const fallbackText = getInitials(name || document.getElementById('doctorName').value || 'BS');
+
+            if (pendingDoctorAvatarFile) {
+                clearAvatarPreviewObjectUrl();
+                doctorAvatarPreviewObjectUrl = URL.createObjectURL(pendingDoctorAvatarFile);
+                imgEl.src = doctorAvatarPreviewObjectUrl;
+                imgEl.style.display = 'inline-block';
+                fallbackEl.style.display = 'none';
+                return;
+            }
+
+            clearAvatarPreviewObjectUrl();
+            if (hasCustomAvatar(avatarUrl)) {
+                imgEl.src = avatarUrl;
+                imgEl.style.display = 'inline-block';
+                fallbackEl.style.display = 'none';
+            } else {
+                imgEl.removeAttribute('src');
+                imgEl.style.display = 'none';
+                fallbackEl.textContent = fallbackText;
+                fallbackEl.style.display = 'inline-flex';
+            }
+        }
+
+        function handleDoctorAvatarChange(event) {
+            const file = event.target.files?.[0];
+            if (!file) {
+                pendingDoctorAvatarFile = null;
+                renderDoctorAvatarPreview(document.getElementById('doctorAvatarCurrent').value || '', document.getElementById('doctorName').value);
+                return;
+            }
+
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+            const maxBytes = 5 * 1024 * 1024;
+
+            if (!allowedTypes.includes(file.type)) {
+                showAlert('error', 'Avatar chỉ chấp nhận JPG, PNG, WEBP hoặc GIF.');
+                event.target.value = '';
+                pendingDoctorAvatarFile = null;
+                renderDoctorAvatarPreview(document.getElementById('doctorAvatarCurrent').value || '', document.getElementById('doctorName').value);
+                return;
+            }
+
+            if (file.size > maxBytes) {
+                showAlert('error', 'Avatar không được vượt quá 5MB.');
+                event.target.value = '';
+                pendingDoctorAvatarFile = null;
+                renderDoctorAvatarPreview(document.getElementById('doctorAvatarCurrent').value || '', document.getElementById('doctorName').value);
+                return;
+            }
+
+            pendingDoctorAvatarFile = file;
+            renderDoctorAvatarPreview('', document.getElementById('doctorName').value);
+        }
+
+        async function uploadDoctorAvatar(file) {
+            const formData = new FormData();
+            formData.append('avatar', file);
+
+            const response = await fetch(`${API_BASE_ADMIN}/upload-avatar.php`, {
+                method: 'POST',
+                credentials: 'include',
+                body: formData
+            });
+            return response.json();
+        }
 
         async function loadStatistics() {
             try {
@@ -722,7 +979,9 @@
 
         function formatGender(gender) {
             if (!gender) return '';
-            return gender === 'nam' ? 'nam' : 'nữ';
+            if (gender === 'nam') return 'nam';
+            if (gender === 'nu') return 'nữ';
+            return 'khác';
         }
 
         function displayDoctors() {
@@ -740,12 +999,15 @@
                 const genderText = formatGender(doctor.gioiTinh);
                 const displayName = genderText ? `${doctor.tenBacSi} (${genderText})` : doctor.tenBacSi;
                 const workYearText = calculateExperience(doctor.namLamViec);
+                const avatarHtml = renderDoctorAvatarMarkup(doctor);
 
                 return `
                 <tr>
                     <td>
-                        <i class="fas fa-user-md me-2 text-primary"></i>
-                        ${displayName}
+                        <div class="doctor-row-main">
+                            ${avatarHtml}
+                            <div>${displayName}</div>
+                        </div>
                     </td>
                     <td>${doctor.tenKhoa || 'N/A'}</td>
                     <td><span class="specialty-badge">${doctor.tenChuyenKhoa || 'N/A'}</span></td>
@@ -827,7 +1089,7 @@
                 if (specialty && doctor.maChuyenKhoa !== specialty) match = false;
                 if (gender && doctor.gioiTinh !== gender) match = false;
                 if (search) {
-                    const searchFields = `${doctor.tenBacSi} ${doctor.maBacSi}`.toLowerCase();
+                    const searchFields = `${doctor.tenBacSi || ''} ${doctor.maBacSi || ''} ${doctor.soDienThoai || ''} ${doctor.email || ''} ${doctor.tenDangNhap || ''}`.toLowerCase();
                     if (!searchFields.includes(search)) match = false;
                 }
                 return match;
@@ -851,11 +1113,16 @@
             document.getElementById('modalTitle').textContent = 'Thêm bác sĩ mới';
             document.getElementById('doctorForm').reset();
             document.getElementById('doctorId').value = '';
+            document.getElementById('doctorAvatarCurrent').value = '';
             document.getElementById('password').required = true;
             document.getElementById('passwordRequired').textContent = '*';
+            pendingDoctorAvatarFile = null;
+            document.getElementById('doctorAvatarFile').value = '';
 
             const currentYear = new Date().getFullYear();
             document.getElementById('doctorWorkYear').value = currentYear;
+            document.getElementById('doctorWorkYear').setAttribute('max', currentYear);
+            renderDoctorAvatarPreview('', '');
 
             new bootstrap.Modal(document.getElementById('doctorModal')).show();
         }
@@ -867,10 +1134,13 @@
             document.getElementById('modalTitle').textContent = 'Chỉnh sửa thông tin bác sĩ';
             document.getElementById('doctorId').value = maBacSi;
             document.getElementById('doctorName').value = doctor.tenBacSi;
-            document.getElementById('doctorPhone').value = doctor.soDienThoai;
+            document.getElementById('doctorPhone').value = doctor.soDienThoai || '';
+            document.getElementById('doctorEmail').value = doctor.email || '';
             document.getElementById('doctorGender').value = doctor.gioiTinh || '';
             document.getElementById('doctorWorkYear').value = doctor.namLamViec || '';
-            document.getElementById('departmentSelect').value = doctor.maKhoa;
+            document.getElementById('doctorWorkYear').setAttribute('max', new Date().getFullYear());
+            document.getElementById('departmentSelect').value = doctor.maKhoa || '';
+            document.getElementById('doctorAvatarCurrent').value = doctor.avatar || '';
 
             loadSpecialtiesByDepartment();
 
@@ -878,11 +1148,14 @@
                 document.getElementById('specialtySelect').value = doctor.maChuyenKhoa;
             }, 100);
 
-            document.getElementById('username').value = doctor.tenDangNhap;
+            document.getElementById('username').value = doctor.tenDangNhap || '';
             document.getElementById('description').value = doctor.moTa || '';
             document.getElementById('password').value = '';
             document.getElementById('password').required = false;
             document.getElementById('passwordRequired').textContent = '';
+            pendingDoctorAvatarFile = null;
+            document.getElementById('doctorAvatarFile').value = '';
+            renderDoctorAvatarPreview(doctor.avatar || '', doctor.tenBacSi);
 
             new bootstrap.Modal(document.getElementById('doctorModal')).show();
         }
@@ -893,18 +1166,52 @@
 
             const genderText = formatGender(doctor.gioiTinh);
             const workYearText = calculateExperience(doctor.namLamViec);
+            const avatarHtml = hasCustomAvatar(doctor.avatar)
+                ? `<img class="doctor-detail-avatar" src="${doctor.avatar}" alt="Avatar ${doctor.tenBacSi}">`
+                : `<div class="doctor-detail-avatar">${getInitials(doctor.tenBacSi)}</div>`;
 
             const body = document.getElementById('viewModalBody');
             body.innerHTML = `
-                <div class="row g-3">
-                    <div class="col-md-6"><strong>Họ và tên:</strong> ${doctor.tenBacSi}</div>
-                    <div class="col-md-6"><strong>Giới tính:</strong> ${genderText ? genderText.charAt(0).toUpperCase() + genderText.slice(1) : 'N/A'}</div>
-                    <div class="col-md-6"><strong>Năm làm việc:</strong> ${workYearText || 'N/A'}</div>
-                    <div class="col-md-6"><strong>Khoa:</strong> ${doctor.tenKhoa || 'N/A'}</div>
-                    <div class="col-md-6"><strong>Chuyên khoa:</strong> <span class="specialty-badge">${doctor.tenChuyenKhoa || 'N/A'}</span></div>
-                    <div class="col-md-6"><strong>Số điện thoại:</strong> ${doctor.soDienThoai || 'N/A'}</div>
-                    <div class="col-md-12"><strong>Tên đăng nhập:</strong> ${doctor.tenDangNhap || 'N/A'}</div>
-                    ${doctor.moTa ? `<div class="col-12"><strong>Mô tả:</strong><br>${doctor.moTa}</div>` : ''}
+                <div class="doctor-detail-card">
+                    <div class="doctor-detail-hero">
+                        ${avatarHtml}
+                        <div>
+                            <h5 class="doctor-detail-name">${doctor.tenBacSi}</h5>
+                            <p class="doctor-detail-code">Mã bác sĩ: ${doctor.maBacSi || 'N/A'}</p>
+                            <span class="specialty-badge">${doctor.tenChuyenKhoa || 'N/A'}</span>
+                        </div>
+                    </div>
+                    <div class="doctor-detail-grid">
+                        <div class="doctor-detail-item">
+                            <span class="doctor-detail-label">Giới tính</span>
+                            <span class="doctor-detail-value">${genderText ? genderText.charAt(0).toUpperCase() + genderText.slice(1) : 'N/A'}</span>
+                        </div>
+                        <div class="doctor-detail-item">
+                            <span class="doctor-detail-label">Năm làm việc</span>
+                            <span class="doctor-detail-value">${workYearText || 'N/A'}</span>
+                        </div>
+                        <div class="doctor-detail-item">
+                            <span class="doctor-detail-label">Khoa</span>
+                            <span class="doctor-detail-value">${doctor.tenKhoa || 'N/A'}</span>
+                        </div>
+                        <div class="doctor-detail-item">
+                            <span class="doctor-detail-label">Số điện thoại</span>
+                            <span class="doctor-detail-value">${doctor.soDienThoai || 'N/A'}</span>
+                        </div>
+                        <div class="doctor-detail-item">
+                            <span class="doctor-detail-label">Email</span>
+                            <span class="doctor-detail-value">${doctor.email || 'Chưa cập nhật'}</span>
+                        </div>
+                        <div class="doctor-detail-item">
+                            <span class="doctor-detail-label">Tên đăng nhập</span>
+                            <span class="doctor-detail-value">${doctor.tenDangNhap || 'N/A'}</span>
+                        </div>
+                        ${doctor.moTa ? `
+                        <div class="doctor-detail-item" style="grid-column: 1 / -1;">
+                            <span class="doctor-detail-label">Mô tả</span>
+                            <span class="doctor-detail-value">${doctor.moTa}</span>
+                        </div>` : ''}
+                    </div>
                 </div>
             `;
 
@@ -941,9 +1248,12 @@
             e.preventDefault();
 
             const maBacSi = document.getElementById('doctorId').value;
+            const submitBtn = document.querySelector('#doctorForm button[type="submit"]');
+            const originalBtnHtml = submitBtn.innerHTML;
             const data = {
                 tenBacSi: document.getElementById('doctorName').value,
                 soDienThoai: document.getElementById('doctorPhone').value,
+                email: document.getElementById('doctorEmail').value.trim(),
                 gioiTinh: document.getElementById('doctorGender').value,
                 namLamViec: parseInt(document.getElementById('doctorWorkYear').value),
                 maChuyenKhoa: document.getElementById('specialtySelect').value,
@@ -955,6 +1265,18 @@
             if (maBacSi) data.maBacSi = maBacSi;
 
             try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xử lý...';
+
+                if (pendingDoctorAvatarFile) {
+                    const uploadResult = await uploadDoctorAvatar(pendingDoctorAvatarFile);
+                    if (!uploadResult.success || !uploadResult.avatarUrl) {
+                        showAlert('error', uploadResult.message || 'Upload avatar thất bại.');
+                        return;
+                    }
+                    data.avatar = uploadResult.avatarUrl;
+                }
+
                 const url = maBacSi ? `${API_BASE_ADMIN}/update-doctor.php` : `${API_BASE_ADMIN}/create-doctor.php`;
                 const response = await fetch(url, {
                     method: 'POST',
@@ -968,6 +1290,8 @@
                 if (result.success) {
                     showAlert('success', maBacSi ? 'Cập nhật thành công!' : 'Thêm bác sĩ thành công!');
                     bootstrap.Modal.getInstance(document.getElementById('doctorModal')).hide();
+                    pendingDoctorAvatarFile = null;
+                    clearAvatarPreviewObjectUrl();
                     loadDoctors();
                     loadStatistics();
                 } else {
@@ -976,6 +1300,9 @@
             } catch (error) {
                 console.error('Error:', error);
                 showAlert('error', 'Lỗi kết nối đến server');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnHtml;
             }
         }
     </script>

@@ -12,7 +12,10 @@ $sql = "SELECT
             bs.maChuyenKhoa,
             ck.tenChuyenKhoa,
             k.tenKhoa,
-            nd.soDienThoai
+            nd.soDienThoai,
+            nd.tenDangNhap,
+            nd.email,
+            nd.avatar
         FROM bacsi bs
         LEFT JOIN chuyenkhoa ck ON bs.maChuyenKhoa = ck.maChuyenKhoa
         LEFT JOIN khoa k ON ck.maKhoa = k.maKhoa
@@ -40,7 +43,10 @@ if ($result->num_rows > 0) {
             'maChuyenKhoa' => $row['maChuyenKhoa'],
             'tenChuyenKhoa' => $row['tenChuyenKhoa'] ?? 'N/A',
             'tenKhoa' => $row['tenKhoa'] ?? 'N/A',
-            'soDienThoai' => $row['soDienThoai']
+            'soDienThoai' => $row['soDienThoai'],
+            'tenDangNhap' => $row['tenDangNhap'],
+            'email' => $row['email'],
+            'avatar' => $row['avatar']
         ];
     }
 }
