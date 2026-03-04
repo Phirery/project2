@@ -818,6 +818,105 @@ function sendMedicalRecordCompletedEmail(mysqli $conn, string $maHoSo): array {
     );
 }
 
+function roleLabelForAccountMail(string $role): string {
+    $role = strtolower(trim($role));
+    if ($role === 'benhnhan') {
+        return 'Benh nhan';
+    }
+    if ($role === 'bacsi') {
+        return 'Bac si';
+    }
+    if ($role === 'quantri') {
+        return 'Quan tri vien';
+    }
+    return 'Nguoi dung';
+}
+
+function getAccountMailContext(mysqli $conn, int $userId): ?array {
+    $sql = "
+        SELECT
+            nd.id,
+            nd.tenDangNhap,
+            nd.email,
+            nd.vaiTro,
+            CASE
+                WHEN nd.vaiTro = 'benhnhan' THEN bn.tenBenhNhan
+                WHEN nd.vaiTro = 'bacsi' THEN bs.tenBacSi
+                ELSE qtv.maQuanTriVien
+            END AS hoTen
+        FROM nguoidung nd
+        LEFT JOIN benhnhan bn ON bn.nguoiDungId = nd.id
+        LEFT JOIN bacsi bs ON bs.nguoiDungId = nd.id
+        LEFT JOIN quantrivien qtv ON qtv.nguoiDungId = nd.id
+        WHERE nd.id = ?
+        LIMIT 1
+    ";
+
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        return null;
+    }
+
+    $stmt->bind_param('i', $userId);
+    $stmt->execute();
+    $ctx = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    return $ctx ?: null;
+}
+
+function sendAccountStatusChangedEmail(mysqli $conn, int $userId, string $newStatus, string $reason = ''): array {
+    $ctx = getAccountMailContext($conn, $userId);
+    if (!$ctx) {
+        return ['success' => false, 'message' => 'account_not_found'];
+    }
+
+    $recipientEmail = trim((string)($ctx['email'] ?? ''));
+    if ($recipientEmail === '') {
+        return ['success' => false, 'message' => 'email_missing'];
+    }
+
+    $isLocked = trim($newStatus) === 'Khóa';
+    $eventCode = $isLocked ? 'account_locked' : 'account_unlocked';
+    $subject = $isLocked
+        ? 'Thong bao khoa tai khoan'
+        : 'Thong bao mo khoa tai khoan';
+
+    $statusLabel = $isLocked ? 'Da khoa' : 'Hoat dong';
+    $defaultReason = $isLocked
+        ? 'Vi pham chinh sach su dung cua he thong.'
+        : 'Tai khoan da duoc mo khoa va co the su dung lai.';
+    $reasonText = trim($reason) !== '' ? trim($reason) : $defaultReason;
+
+    $html = buildEmailLayout(
+        $isLocked ? 'Tai khoan da bi khoa' : 'Tai khoan da duoc mo khoa',
+        "
+        <h2 style='margin:0 0 12px;'>" . ($isLocked ? 'Tai khoan cua ban da bi khoa' : 'Tai khoan cua ban da duoc mo khoa') . "</h2>
+        <p>Xin chao <strong>" . htmlspecialchars((string)($ctx['hoTen'] ?? $ctx['tenDangNhap']), ENT_QUOTES, 'UTF-8') . "</strong>,</p>
+        <p>He thong " . htmlspecialchars(mailSiteName(), ENT_QUOTES, 'UTF-8') . " vua cap nhat trang thai tai khoan cua ban.</p>
+        <ul>
+            <li>Ten dang nhap: <strong>" . htmlspecialchars((string)$ctx['tenDangNhap'], ENT_QUOTES, 'UTF-8') . "</strong></li>
+            <li>Vai tro: <strong>" . htmlspecialchars(roleLabelForAccountMail((string)$ctx['vaiTro']), ENT_QUOTES, 'UTF-8') . "</strong></li>
+            <li>Trang thai moi: <strong>{$statusLabel}</strong></li>
+            <li>Ly do: <strong>" . htmlspecialchars($reasonText, ENT_QUOTES, 'UTF-8') . "</strong></li>
+        </ul>
+        <p>Neu can ho tro, vui long lien he bo phan quan tri he thong.</p>
+        "
+    );
+
+    $statusKey = $isLocked ? 'locked' : 'active';
+    $eventKey = $userId . ':account_status:' . $statusKey . ':' . date('YmdHis');
+
+    return sendTransactionalMail(
+        $conn,
+        $eventCode,
+        $eventKey,
+        $recipientEmail,
+        $subject,
+        $html
+    );
+}
+
 function extractAppointmentSnapshotFromDbRow(array $row): array {
     $slotDisplay = 'N/A';
     if (!empty($row['gioBatDau']) && !empty($row['gioKetThuc'])) {

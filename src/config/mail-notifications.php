@@ -30,5 +30,8 @@ return [
         'payment_failed' => true,
 
         'medical_record_ready' => true,
+
+        'account_locked' => true,
+        'account_unlocked' => true,
     ],
 ];

@@ -10,6 +10,7 @@ SELECT
     nd.id, 
     nd.tenDangNhap, 
     nd.soDienThoai, 
+    nd.email,
     nd.vaiTro, 
     nd.trangThai,
     CASE 

@@ -434,16 +434,16 @@
         <div class="filter-section">
             <h6 class="fw-bold mb-3"><i class="fas fa-filter me-2"></i>Lọc theo vai trò</h6>
             <div class="role-tabs">
-                <button class="role-tab active" onclick="filterByRole('all')">
+                <button class="role-tab active" onclick="filterByRole('all', this)">
                     <i class="fas fa-users me-2"></i>Tất cả
                 </button>
-                <button class="role-tab" onclick="filterByRole('benhnhan')">
+                <button class="role-tab" onclick="filterByRole('benhnhan', this)">
                     <i class="fas fa-user-injured me-2"></i>Bệnh nhân
                 </button>
-                <button class="role-tab" onclick="filterByRole('bacsi')">
+                <button class="role-tab" onclick="filterByRole('bacsi', this)">
                     <i class="fas fa-user-md me-2"></i>Bác sĩ
                 </button>
-                <button class="role-tab" onclick="filterByRole('quantri')">
+                <button class="role-tab" onclick="filterByRole('quantri', this)">
                     <i class="fas fa-user-shield me-2"></i>Quản trị viên
                 </button>
             </div>
@@ -451,7 +451,7 @@
                 <div class="col-md-6">
                     <label class="form-label">Tìm kiếm</label>
                     <input type="text" class="form-control" id="searchInput" 
-                           placeholder="Tên đăng nhập, họ tên, số điện thoại..." 
+                           placeholder="Tên đăng nhập, họ tên, số điện thoại, email..." 
                            oninput="applyFilters()">
                 </div>
                 <div class="col-md-3">
@@ -538,7 +538,11 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
-                                <input type="tel" class="form-control" id="phone" required pattern="[0-9]{10}">
+                                <input type="tel" class="form-control" id="phone" required pattern="[0-9]{10,11}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email" required maxlength="100" placeholder="email@domain.com">
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Họ và tên <span class="text-danger">*</span></label>
@@ -549,12 +553,13 @@
                             <div id="patientFields" style="display: none;">
                                 <div class="row g-3">
                                     <div class="col-md-6">
-                                        <label class="form-label">Ngày sinh</label>
+                                        <label class="form-label">Ngày sinh <span class="text-danger">*</span></label>
                                         <input type="date" class="form-control" id="birthDate">
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label">Giới tính</label>
+                                        <label class="form-label">Giới tính <span class="text-danger">*</span></label>
                                         <select class="form-select" id="patientGender">
+                                            <option value="">-- Chọn --</option>
                                             <option value="nam">Nam</option>
                                             <option value="nu">Nữ</option>
                                             <option value="khac">Khác</option>
@@ -580,7 +585,7 @@
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Năm làm việc <span class="text-danger">*</span></label>
-                                        <input type="number" class="form-control" id="doctorWorkYear" min="1980" max="2025">
+                                        <input type="number" class="form-control" id="doctorWorkYear" min="1980" max="2100">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Khoa <span class="text-danger">*</span></label>
@@ -625,6 +630,35 @@
         </div>
     </div>
 
+    <!-- Modal Lý Do Khóa Tài Khoản -->
+    <div class="modal fade" id="lockReasonModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Khóa tài khoản</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="lockTargetAccountId">
+                    <div class="mb-3">
+                        <label class="form-label">Lý do khóa</label>
+                        <textarea class="form-control" id="lockReasonInput" rows="4" placeholder="Nhập lý do khóa tài khoản..."></textarea>
+                        <small class="text-muted">Nếu để trống, hệ thống sẽ dùng lý do mặc định.</small>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="lockNotifyEmail" checked>
+                        <label class="form-check-label" for="lockNotifyEmail">
+                            Gửi email thông báo cho người dùng
+                        </label>
+                    </div>
+                    <button type="button" class="btn-submit" onclick="submitLockAccount()">
+                        <i class="fas fa-lock me-2"></i>Xác nhận khóa tài khoản
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/api-config.js"></script>
     <script src="assets/js/config-admin.js"></script>
@@ -637,6 +671,7 @@ let currentPage = 1;
         let currentRoleFilter = 'all';
         let allDepartments = [];
         let allSpecialties = [];
+        const DEFAULT_LOCK_REASON = 'Vi phạm chính sách sử dụng của hệ thống.';
 
         document.addEventListener('DOMContentLoaded', function() {
             loadStatistics();
@@ -644,6 +679,11 @@ let currentPage = 1;
             loadDepartments();
             loadSpecialties();
             document.getElementById('accountForm').addEventListener('submit', handleFormSubmit);
+
+            const currentYear = new Date().getFullYear();
+            document.getElementById('doctorWorkYear').setAttribute('max', currentYear);
+            document.getElementById('birthDate').setAttribute('max', new Date().toISOString().split('T')[0]);
+            document.getElementById('lockReasonInput').value = DEFAULT_LOCK_REASON;
             
             // Mobile menu
             // Scroll to top
@@ -736,11 +776,11 @@ let currentPage = 1;
                                 <button class="btn-action btn-unlock" onclick="toggleLockAccount(${acc.id}, false)" title="Mở khóa">
                                     <i class="fas fa-unlock"></i>
                                 </button>
-                            ` : `
-                                <button class="btn-action btn-lock" onclick="toggleLockAccount(${acc.id}, true)" title="Khóa">
+                            ` : (acc.vaiTro === 'quantri' ? '' : `
+                                <button class="btn-action btn-lock" onclick="openLockReasonModal(${acc.id})" title="Khóa">
                                     <i class="fas fa-lock"></i>
                                 </button>
-                            `}
+                            `)}
                         </td>
                     </tr>
                 `;
@@ -796,11 +836,13 @@ let currentPage = 1;
             }
         }
 
-        function filterByRole(role) {
+        function filterByRole(role, clickedBtn) {
             currentRoleFilter = role;
             
             document.querySelectorAll('.role-tab').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            if (clickedBtn) {
+                clickedBtn.classList.add('active');
+            }
             
             applyFilters();
         }
@@ -817,7 +859,7 @@ let currentPage = 1;
                 }
                 
                 if (search) {
-                    const searchFields = `${acc.tenDangNhap} ${acc.hoTen || ''} ${acc.soDienThoai || ''}`.toLowerCase();
+                    const searchFields = `${acc.tenDangNhap} ${acc.hoTen || ''} ${acc.soDienThoai || ''} ${acc.email || ''}`.toLowerCase();
                     if (!searchFields.includes(search)) match = false;
                 }
                 
@@ -896,17 +938,33 @@ let currentPage = 1;
             const role = document.getElementById('roleSelect').value;
             const patientFields = document.getElementById('patientFields');
             const doctorFields = document.getElementById('doctorFields');
+            const birthDate = document.getElementById('birthDate');
+            const patientGender = document.getElementById('patientGender');
+            const doctorGender = document.getElementById('doctorGender');
+            const doctorWorkYear = document.getElementById('doctorWorkYear');
+            const specialtySelect = document.getElementById('specialtySelect');
             
             patientFields.style.display = 'none';
             doctorFields.style.display = 'none';
+            birthDate.required = false;
+            patientGender.required = false;
+            doctorGender.required = false;
+            doctorWorkYear.required = false;
+            specialtySelect.required = false;
             
             if (role === 'benhnhan') {
                 patientFields.style.display = 'block';
+                birthDate.required = true;
+                patientGender.required = true;
             } else if (role === 'bacsi') {
                 doctorFields.style.display = 'block';
+                doctorGender.required = true;
+                doctorWorkYear.required = true;
+                specialtySelect.required = true;
                 // Set default work year
                 const currentYear = new Date().getFullYear();
-                document.getElementById('doctorWorkYear').value = currentYear;
+                doctorWorkYear.value = currentYear;
+                doctorWorkYear.setAttribute('max', currentYear);
             }
         }
 
@@ -914,6 +972,12 @@ let currentPage = 1;
             document.getElementById('accountForm').reset();
             document.getElementById('patientFields').style.display = 'none';
             document.getElementById('doctorFields').style.display = 'none';
+            document.getElementById('birthDate').required = false;
+            document.getElementById('patientGender').required = false;
+            document.getElementById('doctorGender').required = false;
+            document.getElementById('doctorWorkYear').required = false;
+            document.getElementById('specialtySelect').required = false;
+            document.getElementById('lockReasonInput').value = DEFAULT_LOCK_REASON;
             
             new bootstrap.Modal(document.getElementById('accountModal')).show();
         }
@@ -958,6 +1022,7 @@ let currentPage = 1;
                     <div class="col-12"><strong>Tên đăng nhập:</strong> ${account.tenDangNhap}</div>
                     <div class="col-12"><strong>Họ và tên:</strong> ${account.hoTen || 'N/A'}</div>
                     <div class="col-12"><strong>Số điện thoại:</strong> ${account.soDienThoai || 'N/A'}</div>
+                    <div class="col-12"><strong>Email:</strong> ${account.email || 'N/A'}</div>
                     <div class="col-12">
                         <strong>Vai trò:</strong> 
                         <span class="role-badge ${account.vaiTro}">${roleText}</span>
@@ -993,22 +1058,53 @@ let currentPage = 1;
             new bootstrap.Modal(document.getElementById('viewModal')).show();
         }
 
-        async function toggleLockAccount(id, lock) {
+        function openLockReasonModal(id) {
+            document.getElementById('lockTargetAccountId').value = id;
+            document.getElementById('lockReasonInput').value = DEFAULT_LOCK_REASON;
+            document.getElementById('lockNotifyEmail').checked = true;
+            new bootstrap.Modal(document.getElementById('lockReasonModal')).show();
+        }
+
+        async function submitLockAccount() {
+            const id = parseInt(document.getElementById('lockTargetAccountId').value, 10);
+            const reason = document.getElementById('lockReasonInput').value.trim() || DEFAULT_LOCK_REASON;
+            const notifyEmail = document.getElementById('lockNotifyEmail').checked;
+
+            const ok = await toggleLockAccount(id, true, reason, notifyEmail, true);
+            if (ok) {
+                bootstrap.Modal.getInstance(document.getElementById('lockReasonModal')).hide();
+            }
+        }
+
+        async function toggleLockAccount(id, lock, reason = '', notifyEmail = true, skipConfirm = false) {
             const action = lock ? 'khóa' : 'mở khóa';
-            if (!confirm(`Bạn có chắc chắn muốn ${action} tài khoản này?`)) return;
+            if (!skipConfirm) {
+                if (!confirm(`Bạn có chắc chắn muốn ${action} tài khoản này?`)) return false;
+            }
             
             try {
+                const payload = {
+                    id: id,
+                    lock: lock,
+                    reason: reason || (lock ? DEFAULT_LOCK_REASON : 'Tài khoản đã được mở khóa và có thể đăng nhập lại.'),
+                    notifyEmail: notifyEmail
+                };
+
                 const response = await fetch(`${API_BASE_ADMIN}/toggle-lock-account.php`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
-                    body: JSON.stringify({ id: id, lock: lock })
+                    body: JSON.stringify(payload)
                 });
                 
                 const data = await response.json();
                 
                 if (data.success) {
-                    showAlert('success', `${lock ? 'Khóa' : 'Mở khóa'} tài khoản thành công!`);
+                    let successMsg = `${lock ? 'Khóa' : 'Mở khóa'} tài khoản thành công!`;
+                    if (data.mail?.attempted && !data.mail?.sent) {
+                        successMsg += ' (Chưa gửi được email thông báo.)';
+                    }
+                    showAlert('success', successMsg);
                     
                     const account = allAccounts.find(a => a.id == id);
                     if (account) {
@@ -1017,12 +1113,15 @@ let currentPage = 1;
                     
                     applyFilters();
                     loadStatistics();
-                } else {
-                    showAlert('error', data.message || `Không thể ${action} tài khoản`);
+                    return true;
                 }
+
+                showAlert('error', data.message || `Không thể ${action} tài khoản`);
+                return false;
             } catch (error) {
                 console.error('Error toggling account lock:', error);
                 showAlert('error', 'Lỗi kết nối đến server');
+                return false;
             }
         }
 
@@ -1036,13 +1135,33 @@ let currentPage = 1;
                 tenDangNhap: document.getElementById('username').value,
                 matKhau: document.getElementById('password').value,
                 soDienThoai: document.getElementById('phone').value,
+                email: document.getElementById('email').value.trim(),
                 hoTen: document.getElementById('fullName').value
             };
+
+            if (!role) {
+                showAlert('error', 'Vui lòng chọn vai trò!');
+                return;
+            }
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+                showAlert('error', 'Email không hợp lệ!');
+                return;
+            }
             
             if (role === 'benhnhan') {
                 data.ngaySinh = document.getElementById('birthDate').value;
                 data.gioiTinh = document.getElementById('patientGender').value;
                 data.soTheBHYT = document.getElementById('insuranceNumber').value;
+
+                if (!data.ngaySinh) {
+                    showAlert('error', 'Vui lòng chọn ngày sinh cho bệnh nhân!');
+                    return;
+                }
+                if (!data.gioiTinh) {
+                    showAlert('error', 'Vui lòng chọn giới tính cho bệnh nhân!');
+                    return;
+                }
             } else if (role === 'bacsi') {
                 data.gioiTinh = document.getElementById('doctorGender').value;
                 data.namLamViec = parseInt(document.getElementById('doctorWorkYear').value);
