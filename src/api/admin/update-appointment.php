@@ -35,6 +35,21 @@ if (
     exit;
 }
 
+$allowedTransitions = [
+    'Chờ' => ['Chờ', 'Đã đặt', 'Hủy'],
+    'Đã đặt' => ['Đã đặt', 'Hoàn thành', 'Hủy'],
+    'Hoàn thành' => ['Hoàn thành'],
+    'Hủy' => ['Hủy']
+];
+
+if (!array_key_exists($trangThai, $allowedTransitions)) {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Trạng thái lịch khám không hợp lệ'
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
 try {
     // Lấy snapshot cũ để xác định có đổi lịch/hủy hay không
     $oldStmt = $conn->prepare(
@@ -67,6 +82,21 @@ try {
         echo json_encode([
             'success' => false,
             'message' => 'Không tìm thấy lịch khám'
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    $oldStatus = trim((string)($oldRow['trangThai'] ?? ''));
+    $allowedNextStatuses = $allowedTransitions[$oldStatus] ?? [$oldStatus];
+
+    if (!in_array($trangThai, $allowedNextStatuses, true)) {
+        echo json_encode([
+            'success' => false,
+            'message' => sprintf(
+                'Không thể chuyển trạng thái từ "%s" sang "%s"',
+                $oldStatus,
+                $trangThai
+            )
         ], JSON_UNESCAPED_UNICODE);
         exit;
     }

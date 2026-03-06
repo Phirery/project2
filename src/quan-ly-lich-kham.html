@@ -549,6 +549,7 @@
                                     <option value="Hoàn thành">Hoàn thành</option>
                                     <option value="Hủy">Hủy</option>
                                 </select>
+                                <div class="form-text" id="statusHelpText"></div>
                             </div>
 
                             <div class="col-md-12">
@@ -591,6 +592,14 @@ let currentPage = 1;
         let allShifts = [];
         let allSlots = [];
         let allPackages = [];
+        let currentEditingOriginalStatus = null;
+
+        const STATUS_TRANSITIONS = {
+            'Chờ': ['Chờ', 'Đã đặt', 'Hủy'],
+            'Đã đặt': ['Đã đặt', 'Hoàn thành', 'Hủy'],
+            'Hoàn thành': ['Hoàn thành'],
+            'Hủy': ['Hủy']
+        };
 
         document.addEventListener('DOMContentLoaded', function() {
             loadStatistics();
@@ -871,6 +880,8 @@ let currentPage = 1;
             document.getElementById('modalTitle').textContent = 'Thêm lịch khám';
             document.getElementById('appointmentForm').reset();
             document.getElementById('appointmentId').value = '';
+            currentEditingOriginalStatus = null;
+            updateStatusSelectForContext(null, true);
             new bootstrap.Modal(document.getElementById('appointmentModal')).show();
         }
 
@@ -888,6 +899,8 @@ let currentPage = 1;
             await loadTimeSlots();
             document.getElementById('slotSelect').value = apt.maSuat;
             document.getElementById('packageSelect').value = apt.maGoi || '';
+            currentEditingOriginalStatus = apt.trangThai;
+            updateStatusSelectForContext(currentEditingOriginalStatus, false);
             document.getElementById('appointmentStatus').value = apt.trangThai;
             document.getElementById('appointmentNote').value = apt.ghiChu || '';
             
@@ -982,6 +995,16 @@ let currentPage = 1;
             };
             
             if (id) data.maLichKham = id;
+
+            if (id && !isStatusTransitionAllowed(currentEditingOriginalStatus, data.trangThai)) {
+                showAlert('error', `Không thể đổi trạng thái từ "${currentEditingOriginalStatus}" sang "${data.trangThai}"`);
+                return;
+            }
+
+            if (!id && data.trangThai !== 'Đã đặt') {
+                showAlert('error', 'Lịch khám mới chỉ được tạo với trạng thái "Đã đặt"');
+                return;
+            }
             
             try {
                 const url = id ? `${API_BASE_ADMIN}/update-appointment.php` : `${API_BASE_ADMIN}/create-appointment.php`;
@@ -1024,6 +1047,36 @@ let currentPage = 1;
                 'Hủy': '<span class="badge cancelled">Đã hủy</span>'
             };
             return badges[status] || status;
+        }
+
+        function isStatusTransitionAllowed(fromStatus, toStatus) {
+            const allowed = STATUS_TRANSITIONS[fromStatus] || [fromStatus];
+            return allowed.includes(toStatus);
+        }
+
+        function updateStatusSelectForContext(currentStatus, isCreate = false) {
+            const select = document.getElementById('appointmentStatus');
+            const helpText = document.getElementById('statusHelpText');
+            const allowedStatuses = isCreate
+                ? ['Đã đặt']
+                : (STATUS_TRANSITIONS[currentStatus] || [currentStatus]);
+
+            select.innerHTML = allowedStatuses.map(status => `<option value="${status}">${status}</option>`).join('');
+            if (allowedStatuses.length > 0) {
+                select.value = allowedStatuses[0];
+            }
+
+            if (isCreate) {
+                helpText.textContent = 'Lịch mới được tạo ở trạng thái "Đã đặt".';
+                return;
+            }
+
+            if (currentStatus === 'Hủy' || currentStatus === 'Hoàn thành') {
+                helpText.textContent = `Trạng thái "${currentStatus}" là trạng thái kết thúc, không thể chuyển sang trạng thái khác.`;
+                return;
+            }
+
+            helpText.textContent = '';
         }
     </script>
 </body>
