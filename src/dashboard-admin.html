@@ -269,21 +269,71 @@
             }
 
             .stats-container {
-                grid-template-columns: 1fr;
-                gap: 15px;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 8px;
             }
 
             .stat-card {
-                padding: 20px;
+                padding: 10px 8px;
+                border-radius: 12px;
+            }
+
+            .stat-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+                border-radius: 8px;
+                margin-bottom: 8px;
+            }
+
+            .stat-number {
+                font-size: 1.05rem;
+                margin: 6px 0;
+                line-height: 1.2;
+            }
+
+            .stat-label {
+                font-size: 0.72rem;
+                line-height: 1.25;
+            }
+
+            .stat-trend {
+                display: none;
             }
 
             .management-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 10px;
             }
 
             .management-card {
-                padding: 25px;
+                padding: 12px 10px;
+                border-radius: 12px;
+            }
+
+            .management-icon {
+                width: 42px;
+                height: 42px;
+                border-radius: 10px;
+                font-size: 1.1rem;
+                margin-bottom: 10px;
+            }
+
+            .management-title {
+                font-size: 0.9rem;
+                margin-bottom: 8px;
+                line-height: 1.3;
+            }
+
+            .management-desc {
+                font-size: 0.72rem;
+                line-height: 1.35;
+                margin-bottom: 8px;
+            }
+
+            .management-arrow {
+                font-size: 0.72rem;
+                gap: 4px;
             }
         }
     </style>
@@ -417,6 +467,45 @@
                     <h4 class="management-title">Quản lý tài khoản</h4>
                     <p class="management-desc">
                         Quản lý tài khoản người dùng, phân quyền, khóa/mở khóa tài khoản và bảo mật.
+                    </p>
+                    <span class="management-arrow">
+                        Truy cập <i class="fas fa-arrow-right"></i>
+                    </span>
+                </a>
+
+                <a href="quan-ly-lien-he.html" class="management-card">
+                    <div class="management-icon">
+                        <i class="fas fa-envelope-open-text"></i>
+                    </div>
+                    <h4 class="management-title">Quản lý liên hệ</h4>
+                    <p class="management-desc">
+                        Theo dõi phản hồi, hỗ trợ yêu cầu từ người dùng và cập nhật trạng thái xử lý liên hệ.
+                    </p>
+                    <span class="management-arrow">
+                        Truy cập <i class="fas fa-arrow-right"></i>
+                    </span>
+                </a>
+
+                <a href="quan-ly-thuoc.html" class="management-card">
+                    <div class="management-icon">
+                        <i class="fas fa-pills"></i>
+                    </div>
+                    <h4 class="management-title">Quản lý thuốc</h4>
+                    <p class="management-desc">
+                        Quản lý danh mục thuốc, thông tin sử dụng, tồn kho và cập nhật dữ liệu kê đơn.
+                    </p>
+                    <span class="management-arrow">
+                        Truy cập <i class="fas fa-arrow-right"></i>
+                    </span>
+                </a>
+
+                <a href="thong-bao-admin.html" class="management-card">
+                    <div class="management-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h4 class="management-title">Thông báo admin</h4>
+                    <p class="management-desc">
+                        Gửi và quản lý thông báo nội bộ, cập nhật hệ thống và nhắc việc cho quản trị viên.
                     </p>
                     <span class="management-arrow">
                         Truy cập <i class="fas fa-arrow-right"></i>

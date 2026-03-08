@@ -21,9 +21,11 @@ $password = $input['password'];
 try {
     // Tìm user bằng username HOẶC soDienThoai HOẶC email
     $stmt = $conn->prepare("
-        SELECT id, tenDangNhap, matKhau, vaiTro, trangThai 
-        FROM nguoidung 
+        SELECT id, tenDangNhap, matKhau, vaiTro, trangThai, isDeleted
+        FROM nguoidung
         WHERE (tenDangNhap = ? OR soDienThoai = ? OR email = ?)
+          AND isDeleted = 0
+        LIMIT 1
     ");
     
     $stmt->bind_param("sss", $username, $username, $username);
@@ -43,6 +45,16 @@ try {
     $user = $result->fetch_assoc();
 
     // Kiểm tra trạng thái tài khoản
+    if ((int)$user['isDeleted'] === 1) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Tài khoản đã bị xóa khỏi hệ thống'
+        ]);
+        $stmt->close();
+        $conn->close();
+        exit;
+    }
+
     if ($user['trangThai'] === 'Khóa') {
         echo json_encode([
             'success' => false,

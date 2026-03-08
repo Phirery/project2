@@ -31,6 +31,7 @@ try {
         JOIN nguoidung nd ON bn.nguoiDungId = nd.id
         JOIN lichkham lk ON bn.maBenhNhan = lk.maBenhNhan
         WHERE lk.maBacSi = ?
+          AND nd.isDeleted = 0
         GROUP BY bn.maBenhNhan, bn.tenBenhNhan, bn.ngaySinh, bn.gioiTinh, bn.soTheBHYT, nd.soDienThoai
         ORDER BY lanKhamGanNhat DESC
     ");

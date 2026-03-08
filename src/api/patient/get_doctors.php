@@ -11,7 +11,7 @@ function buildDoctorFilterClause(
     array &$params,
     string &$types
 ): array {
-    $where = " WHERE 1=1";
+    $where = " WHERE EXISTS (SELECT 1 FROM nguoidung ndu WHERE ndu.id = {$bsAlias}.nguoiDungId AND ndu.isDeleted = 0)";
     $requiresSpecialtyJoin = false;
 
     if ($maChuyenKhoa !== '') {

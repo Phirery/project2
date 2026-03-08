@@ -38,8 +38,10 @@ try {
                 ELSE 1
             END as available
         FROM bacsi bs
+        JOIN nguoidung nd ON bs.nguoiDungId = nd.id
         JOIN chuyenkhoa ck ON bs.maChuyenKhoa = ck.maChuyenKhoa
         WHERE bs.maChuyenKhoa = ?
+          AND nd.isDeleted = 0
         ORDER BY bs.tenBacSi
     ");
     $stmt->bind_param("sss", $ngayKham, $ngayKham, $maChuyenKhoa);

@@ -33,6 +33,48 @@ function require_role($roles) {
     // Lấy vai trò của người dùng từ session
     $userRole = $_SESSION['vaiTro'];
 
+    // Kiểm tra trạng thái tài khoản trực tiếp từ DB nếu có kết nối
+    if (isset($GLOBALS['conn']) && $GLOBALS['conn'] instanceof mysqli) {
+        $conn = $GLOBALS['conn'];
+        $stmt = $conn->prepare("SELECT vaiTro, trangThai, isDeleted FROM nguoidung WHERE id = ? LIMIT 1");
+
+        if ($stmt) {
+            $stmt->bind_param("i", $_SESSION['id']);
+            $stmt->execute();
+            $dbUser = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+
+            if (!$dbUser || (int)$dbUser['isDeleted'] === 1) {
+                $_SESSION = [];
+                if (ini_get("session.use_cookies")) {
+                    $params = session_get_cookie_params();
+                    setcookie(session_name(), '', time() - 42000, $params["path"], $params["domain"], $params["secure"], $params["httponly"]);
+                }
+                session_destroy();
+
+                http_response_code(401);
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Tài khoản không còn hợp lệ. Vui lòng đăng nhập lại.'
+                ]);
+                exit;
+            }
+
+            if ($dbUser['trangThai'] === 'Khóa') {
+                http_response_code(403);
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Tài khoản đã bị khóa. Không thể thực hiện hành động này.'
+                ]);
+                exit;
+            }
+
+            // Đồng bộ vai trò theo DB để tránh session cũ
+            $userRole = $dbUser['vaiTro'];
+            $_SESSION['vaiTro'] = $userRole;
+        }
+    }
+
     // Kiểm tra vai trò
     $isAllowed = false;
     

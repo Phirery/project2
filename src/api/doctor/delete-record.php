@@ -7,6 +7,8 @@ require_role('bacsi');
 
 $input = json_decode(file_get_contents('php://input'), true);
 $maHoSo = $input['maHoSo'] ?? '';
+$deleteReason = trim((string)($input['deleteReason'] ?? ($input['lyDo'] ?? '')));
+$deleteReason = $deleteReason !== '' ? $deleteReason : 'Soft delete by doctor';
 
 if (!$maHoSo) {
     echo json_encode(['success' => false, 'message' => 'Thiếu mã hồ sơ']);
@@ -25,17 +27,32 @@ try {
         exit;
     }
 
-    // Verify ownership before deleting
-    $stmt = $conn->prepare("DELETE FROM hosobenhan WHERE maHoSo = ? AND maBacSi = ?");
-    $stmt->bind_param("ss", $maHoSo, $maBacSi);
-    
+    $conn->begin_transaction();
+
+    $stmt = $conn->prepare("
+        UPDATE hosobenhan
+        SET isDeleted = 1,
+            deletedAt = NOW(),
+            deletedBy = ?,
+            deleteReason = ?
+        WHERE maHoSo = ?
+          AND maBacSi = ?
+          AND isDeleted = 0
+        LIMIT 1
+    ");
+    $doctorUserId = (int)$_SESSION['id'];
+    $stmt->bind_param("isss", $doctorUserId, $deleteReason, $maHoSo, $maBacSi);
+
     if ($stmt->execute() && $stmt->affected_rows > 0) {
-        echo json_encode(['success' => true, 'message' => 'Xóa thành công']);
+        $conn->commit();
+        echo json_encode(['success' => true, 'message' => 'Đã thu hồi hồ sơ thành công']);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Xóa thất bại hoặc không có quyền']);
+        $conn->rollback();
+        echo json_encode(['success' => false, 'message' => 'Thu hồi thất bại hoặc không có quyền']);
     }
     $stmt->close();
 } catch (Exception $e) {
+    $conn->rollback();
     echo json_encode(['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()]);
 }
 

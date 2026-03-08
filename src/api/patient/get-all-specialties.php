@@ -62,9 +62,11 @@ try {
         FROM chuyenkhoa ck
         LEFT JOIN khoa k ON ck.maKhoa = k.maKhoa
         LEFT JOIN (
-            SELECT maChuyenKhoa, COUNT(*) AS soBacSi
-            FROM bacsi
-            GROUP BY maChuyenKhoa
+            SELECT bs.maChuyenKhoa, COUNT(*) AS soBacSi
+            FROM bacsi bs
+            JOIN nguoidung nd ON bs.nguoiDungId = nd.id
+            WHERE nd.isDeleted = 0
+            GROUP BY bs.maChuyenKhoa
         ) bs_count ON ck.maChuyenKhoa = bs_count.maChuyenKhoa
     ";
 

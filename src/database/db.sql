@@ -254,7 +254,11 @@ CREATE TABLE hosobenhan (
   ngayTao datetime DEFAULT current_timestamp(),
   ngayHoanThanh datetime DEFAULT NULL,
   ghiChu text DEFAULT NULL,
-  ngayKham datetime DEFAULT NULL
+  ngayKham datetime DEFAULT NULL,
+  isDeleted tinyint(1) NOT NULL DEFAULT 0,
+  deletedAt datetime DEFAULT NULL,
+  deletedBy int(11) DEFAULT NULL,
+  deleteReason text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO hosobenhan (maHoSo, maBenhNhan, maBacSi, maLichKham, chanDoan, dieuTri, trangThai, ngayTao, ngayHoanThanh, ghiChu, ngayKham) VALUES
@@ -645,7 +649,11 @@ CREATE TABLE nguoidung (
   trangThai enum('Hoạt Động','Khóa') NOT NULL DEFAULT 'Hoạt Động',
   ngayCapNhatTaiKhoan datetime DEFAULT NULL,
   ngayCapNhatMatKhau datetime DEFAULT NULL,
-  avatar varchar(255) DEFAULT 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png'
+  avatar varchar(255) DEFAULT 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png',
+  isDeleted tinyint(1) NOT NULL DEFAULT 0,
+  deletedAt datetime DEFAULT NULL,
+  deletedBy int(11) DEFAULT NULL,
+  deleteReason text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO nguoidung (id, tenDangNhap, matKhau, soDienThoai, email, vaiTro, trangThai, ngayCapNhatTaiKhoan, ngayCapNhatMatKhau, avatar) VALUES
@@ -1007,7 +1015,8 @@ ALTER TABLE hosobenhan
   ADD PRIMARY KEY (maHoSo),
   ADD KEY maBenhNhan (maBenhNhan),
   ADD KEY maBacSi (maBacSi),
-  ADD KEY maLichKham (maLichKham);
+  ADD KEY maLichKham (maLichKham),
+  ADD KEY idx_hosobenhan_isDeleted (isDeleted);
 
 ALTER TABLE khoa
   ADD PRIMARY KEY (maKhoa);
@@ -1040,7 +1049,8 @@ ALTER TABLE nguoidung
   ADD PRIMARY KEY (id),
   ADD UNIQUE KEY tenDangNhap (tenDangNhap),
   ADD UNIQUE KEY soDienThoai (soDienThoai),
-  ADD UNIQUE KEY email (email);
+  ADD UNIQUE KEY email (email),
+  ADD KEY idx_nguoidung_isDeleted (isDeleted);
 
 ALTER TABLE quantrivien
   ADD PRIMARY KEY (maQuanTriVien),

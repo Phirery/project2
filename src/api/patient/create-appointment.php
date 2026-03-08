@@ -46,6 +46,23 @@ if ($ngayKham < $today) {
 
 try {
     $conn->begin_transaction();
+
+    // 0. Kiểm tra bác sĩ còn hoạt động
+    $doctorStmt = $conn->prepare("
+        SELECT COUNT(*) AS count
+        FROM bacsi bs
+        JOIN nguoidung nd ON bs.nguoiDungId = nd.id
+        WHERE bs.maBacSi = ?
+          AND nd.isDeleted = 0
+    ");
+    $doctorStmt->bind_param("s", $maBacSi);
+    $doctorStmt->execute();
+    $doctorExists = (int)($doctorStmt->get_result()->fetch_assoc()['count'] ?? 0) > 0;
+    $doctorStmt->close();
+
+    if (!$doctorExists) {
+        throw new Exception('Bác sĩ không tồn tại hoặc đã ngừng hoạt động');
+    }
     
     // 1. Kiểm tra bác sĩ có nghỉ ca này không
     $checkOffStmt = $conn->prepare("
