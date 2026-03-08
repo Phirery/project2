@@ -30,7 +30,7 @@ try {
     }
 
     // Verify ownership before updating - update ghiChu as well
-    $stmt = $conn->prepare("UPDATE hosobenhan SET chanDoan = ?, dieuTri = ?, ghiChu = ?, trangThai = 'Đã hoàn thành', ngayHoanThanh = NOW() WHERE maHoSo = ? AND maBacSi = ?");
+    $stmt = $conn->prepare("UPDATE hosobenhan SET chanDoan = ?, dieuTri = ?, ghiChu = ?, trangThai = 'Đã hoàn thành', ngayHoanThanh = NOW() WHERE maHoSo = ? AND maBacSi = ? AND isDeleted = 0");
     $stmt->bind_param("sssss", $chanDoan, $dieuTri, $ghiChu, $maHoSo, $maBacSi);
     
     if ($stmt->execute() && $stmt->affected_rows > 0) {

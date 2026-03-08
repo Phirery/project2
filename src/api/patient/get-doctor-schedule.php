@@ -14,6 +14,26 @@ if (empty($maBacSi) || empty($ngayKham)) {
 }
 
 try {
+    $doctorStmt = $conn->prepare("
+        SELECT COUNT(*) AS count
+        FROM bacsi bs
+        JOIN nguoidung nd ON bs.nguoiDungId = nd.id
+        WHERE bs.maBacSi = ?
+          AND nd.isDeleted = 0
+    ");
+    $doctorStmt->bind_param("s", $maBacSi);
+    $doctorStmt->execute();
+    $doctorExists = (int)($doctorStmt->get_result()->fetch_assoc()['count'] ?? 0) > 0;
+    $doctorStmt->close();
+
+    if (!$doctorExists) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Bác sĩ không tồn tại hoặc đã ngừng hoạt động'
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
     // Kiểm tra ngày hợp lệ (không quá 14 ngày)
     $timezone = new DateTimeZone('Asia/Ho_Chi_Minh');
     $today = new DateTime('now', $timezone);

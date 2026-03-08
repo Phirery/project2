@@ -44,7 +44,7 @@ try {
     $ngayKham = $result['ngayKham'];
 
     // Check if record already exists for this appointment
-    $stmt = $conn->prepare("SELECT maHoSo FROM hosobenhan WHERE maLichKham = ?");
+    $stmt = $conn->prepare("SELECT maHoSo FROM hosobenhan WHERE maLichKham = ? AND isDeleted = 0");
     $stmt->bind_param("i", $maLichKham);
     $stmt->execute();
     if ($stmt->get_result()->num_rows > 0) {

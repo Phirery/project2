@@ -17,25 +17,25 @@ try {
         exit;
     }
 
-    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM hosobenhan WHERE maBacSi = ?");
+    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM hosobenhan WHERE maBacSi = ? AND isDeleted = 0");
     $stmt->bind_param("s", $maBacSi);
     $stmt->execute();
     $totalRecords = $stmt->get_result()->fetch_assoc()['total'] ?? 0;
     $stmt->close();
 
-    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM hosobenhan WHERE maBacSi = ? AND trangThai = 'Chưa hoàn thành'");
+    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM hosobenhan WHERE maBacSi = ? AND trangThai = 'Chưa hoàn thành' AND isDeleted = 0");
     $stmt->bind_param("s", $maBacSi);
     $stmt->execute();
     $pendingRecords = $stmt->get_result()->fetch_assoc()['total'] ?? 0;
     $stmt->close();
 
-    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM hosobenhan WHERE maBacSi = ? AND trangThai = 'Đã hoàn thành'");
+    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM hosobenhan WHERE maBacSi = ? AND trangThai = 'Đã hoàn thành' AND isDeleted = 0");
     $stmt->bind_param("s", $maBacSi);
     $stmt->execute();
     $completedRecords = $stmt->get_result()->fetch_assoc()['total'] ?? 0;
     $stmt->close();
 
-    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM hosobenhan WHERE maBacSi = ? AND DATE(ngayTao) = CURDATE()");
+    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM hosobenhan WHERE maBacSi = ? AND DATE(ngayTao) = CURDATE() AND isDeleted = 0");
     $stmt->bind_param("s", $maBacSi);
     $stmt->execute();
     $todayRecords = $stmt->get_result()->fetch_assoc()['total'] ?? 0;

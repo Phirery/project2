@@ -28,7 +28,12 @@ try {
             LEFT JOIN suatkham s ON l.maSuat = s.maSuat
             WHERE l.maBacSi = ? 
             AND l.trangThai IN ('Đã đặt', 'Hoàn thành')
-            AND l.maLichKham NOT IN (SELECT maLichKham FROM hosobenhan WHERE maLichKham IS NOT NULL)
+            AND l.maLichKham NOT IN (
+                SELECT maLichKham
+                FROM hosobenhan
+                WHERE maLichKham IS NOT NULL
+                  AND isDeleted = 0
+            )
             ORDER BY l.ngayKham DESC, s.gioBatDau DESC";
     
     $stmt = $conn->prepare($sql);

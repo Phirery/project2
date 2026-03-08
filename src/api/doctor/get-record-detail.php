@@ -32,7 +32,7 @@ try {
             JOIN benhnhan bn ON h.maBenhNhan = bn.maBenhNhan
             LEFT JOIN lichkham l ON h.maLichKham = l.maLichKham
             LEFT JOIN calamviec c ON l.maCa = c.maCa
-            WHERE h.maHoSo = ? AND h.maBacSi = ?";
+            WHERE h.maHoSo = ? AND h.maBacSi = ? AND h.isDeleted = 0";
     
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ss", $maHoSo, $maBacSi);

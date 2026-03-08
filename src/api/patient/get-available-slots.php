@@ -15,6 +15,27 @@ if (empty($maBacSi) || empty($ngayKham) || empty($maCa)) {
 }
 
 try {
+    // Bác sĩ đã xóa mềm thì không trả về slot
+    $doctorStmt = $conn->prepare("
+        SELECT COUNT(*) AS count
+        FROM bacsi bs
+        JOIN nguoidung nd ON bs.nguoiDungId = nd.id
+        WHERE bs.maBacSi = ?
+          AND nd.isDeleted = 0
+    ");
+    $doctorStmt->bind_param("s", $maBacSi);
+    $doctorStmt->execute();
+    $doctorExists = (int)($doctorStmt->get_result()->fetch_assoc()['count'] ?? 0) > 0;
+    $doctorStmt->close();
+
+    if (!$doctorExists) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Bác sĩ không tồn tại hoặc đã ngừng hoạt động'
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
     // Kiểm tra xem bác sĩ có nghỉ ca này không
     $checkStmt = $conn->prepare("
         SELECT COUNT(*) as count 

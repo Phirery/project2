@@ -48,6 +48,7 @@ try {
         JOIN suatkham sk ON lk.maSuat = sk.maSuat
         WHERE hs.maBenhNhan = ?
         AND hs.trangThai = 'Đã hoàn thành'
+        AND hs.isDeleted = 0
         ORDER BY lk.ngayKham DESC, sk.gioBatDau DESC
     ");
     $recordsStmt->bind_param("s", $maBenhNhan);

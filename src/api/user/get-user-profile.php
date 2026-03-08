@@ -14,7 +14,7 @@ try {
                    nd.ngayCapNhatTaiKhoan
             FROM nguoidung nd
             JOIN benhnhan bn ON nd.id = bn.nguoiDungId
-            WHERE nd.id = ?
+            WHERE nd.id = ? AND nd.isDeleted = 0
         ");
     } elseif ($vaiTro === 'bacsi') {
         $stmt = $conn->prepare("
@@ -26,7 +26,7 @@ try {
             JOIN bacsi bs ON nd.id = bs.nguoiDungId
             LEFT JOIN chuyenkhoa ck ON bs.maChuyenKhoa = ck.maChuyenKhoa
             LEFT JOIN khoa k ON ck.maKhoa = k.maKhoa
-            WHERE nd.id = ?
+            WHERE nd.id = ? AND nd.isDeleted = 0
         ");
     } else {
         $stmt = $conn->prepare("
@@ -34,7 +34,7 @@ try {
                    nd.tenDangNhap as hoTen,
                    nd.ngayCapNhatTaiKhoan
             FROM nguoidung nd
-            WHERE nd.id = ?
+            WHERE nd.id = ? AND nd.isDeleted = 0
         ");
     }
 

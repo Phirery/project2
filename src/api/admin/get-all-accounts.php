@@ -56,6 +56,7 @@ LEFT JOIN benhnhan bn ON nd.id = bn.nguoiDungId
 LEFT JOIN bacsi bs ON nd.id = bs.nguoiDungId
 LEFT JOIN chuyenkhoa ck ON bs.maChuyenKhoa = ck.maChuyenKhoa
 LEFT JOIN khoa k ON ck.maKhoa = k.maKhoa
+WHERE nd.isDeleted = 0
 ORDER BY nd.id DESC
 ";
 

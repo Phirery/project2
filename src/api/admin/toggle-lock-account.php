@@ -26,7 +26,7 @@ $defaultReason = $lock
     : 'Tài khoản đã được mở khóa và có thể đăng nhập lại.';
 $reasonToUse = $reason !== '' ? $reason : $defaultReason;
 
-$stmt = $conn->prepare("SELECT id, vaiTro, trangThai FROM nguoidung WHERE id = ? LIMIT 1");
+$stmt = $conn->prepare("SELECT id, vaiTro, trangThai, isDeleted FROM nguoidung WHERE id = ? LIMIT 1");
 if (!$stmt) {
     echo json_encode([
         'success' => false,
@@ -44,6 +44,14 @@ if (!$user) {
     echo json_encode([
         'success' => false,
         'message' => 'Tài khoản không tồn tại'
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+if ((int)($user['isDeleted'] ?? 0) === 1) {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Không thể thao tác với tài khoản đã xóa mềm'
     ], JSON_UNESCAPED_UNICODE);
     exit;
 }

@@ -14,12 +14,28 @@ if (isset($_SESSION['id']) && isset($_SESSION['vaiTro'])) {
     $avatar = '';
 
     try {
-        $avatarStmt = $conn->prepare("SELECT avatar FROM nguoidung WHERE id = ?");
+        $avatarStmt = $conn->prepare("SELECT avatar, isDeleted, trangThai FROM nguoidung WHERE id = ?");
         $avatarStmt->bind_param("i", $userId);
         $avatarStmt->execute();
         $avatarResult = $avatarStmt->get_result();
         if ($avatarResult->num_rows > 0) {
             $avatarRow = $avatarResult->fetch_assoc();
+            if ((int)($avatarRow['isDeleted'] ?? 0) === 1 || ($avatarRow['trangThai'] ?? '') === 'Khóa') {
+                $_SESSION = [];
+                if (ini_get("session.use_cookies")) {
+                    $params = session_get_cookie_params();
+                    setcookie(session_name(), '', time() - 42000, $params["path"], $params["domain"], $params["secure"], $params["httponly"]);
+                }
+                session_destroy();
+
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.'
+                ]);
+                $avatarStmt->close();
+                $conn->close();
+                exit;
+            }
             $avatar = $avatarRow['avatar'] ?? '';
         }
         $avatarStmt->close();

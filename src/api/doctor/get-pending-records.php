@@ -27,7 +27,7 @@ try {
             LEFT JOIN lichkham l ON h.maLichKham = l.maLichKham
             LEFT JOIN calamviec c ON l.maCa = c.maCa
             LEFT JOIN suatkham s ON l.maSuat = s.maSuat
-            WHERE h.maBacSi = ? AND h.trangThai = 'Chưa hoàn thành'
+            WHERE h.maBacSi = ? AND h.trangThai = 'Chưa hoàn thành' AND h.isDeleted = 0
             ORDER BY h.ngayKham DESC, s.gioBatDau DESC";
     
     $stmt = $conn->prepare($sql);

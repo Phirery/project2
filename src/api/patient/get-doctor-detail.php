@@ -33,6 +33,7 @@ try {
         LEFT JOIN khoa k ON ck.maKhoa = k.maKhoa
         LEFT JOIN nguoidung nd ON bs.nguoiDungId = nd.id
         WHERE bs.maBacSi = ?
+          AND nd.isDeleted = 0
     ");
     $stmt->bind_param("s", $maBacSi);
     $stmt->execute();

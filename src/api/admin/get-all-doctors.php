@@ -14,6 +14,7 @@ $sql = "SELECT
         LEFT JOIN chuyenkhoa ck ON bs.maChuyenKhoa = ck.maChuyenKhoa
         LEFT JOIN khoa k ON ck.maKhoa = k.maKhoa
         LEFT JOIN nguoidung nd ON bs.nguoiDungId = nd.id
+        WHERE nd.isDeleted = 0
         ORDER BY bs.tenBacSi ASC";
 
 $result = $conn->query($sql);

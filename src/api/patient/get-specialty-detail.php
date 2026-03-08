@@ -26,7 +26,9 @@ try {
         FROM chuyenkhoa ck
         LEFT JOIN khoa k ON ck.maKhoa = k.maKhoa
         LEFT JOIN bacsi bs ON ck.maChuyenKhoa = bs.maChuyenKhoa
+        LEFT JOIN nguoidung nd ON bs.nguoiDungId = nd.id
         WHERE ck.maChuyenKhoa = ?
+          AND (nd.isDeleted = 0 OR nd.id IS NULL)
         GROUP BY ck.maChuyenKhoa, ck.tenChuyenKhoa, ck.moTa, ck.maKhoa, k.tenKhoa, k.moTa
     ");
     

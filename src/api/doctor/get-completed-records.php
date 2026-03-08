@@ -21,7 +21,7 @@ try {
             bn.tenBenhNhan, bn.ngaySinh, bn.gioiTinh
             FROM hosobenhan h
             JOIN benhnhan bn ON h.maBenhNhan = bn.maBenhNhan
-            WHERE h.maBacSi = ? AND h.trangThai = 'Đã hoàn thành'
+            WHERE h.maBacSi = ? AND h.trangThai = 'Đã hoàn thành' AND h.isDeleted = 0
             ORDER BY h.ngayHoanThanh DESC";
     
     $stmt = $conn->prepare($sql);

@@ -17,6 +17,7 @@ $sql = "SELECT
             nd.tenDangNhap
         FROM benhnhan bn
         LEFT JOIN nguoidung nd ON bn.nguoiDungId = nd.id
+        WHERE nd.isDeleted = 0
         ORDER BY bn.tenBenhNhan ASC";
 
 $result = $conn->query($sql);

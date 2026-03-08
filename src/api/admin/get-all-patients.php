@@ -11,7 +11,7 @@ try {
                 n.tenDangNhap, n.soDienThoai, n.email
             FROM benhnhan b
             JOIN nguoidung n ON b.nguoiDungId = n.id
-            WHERE n.vaiTro = 'benhnhan'
+            WHERE n.vaiTro = 'benhnhan' AND n.isDeleted = 0
             ORDER BY b.maBenhNhan DESC";
 
     $result = $conn->query($sql);

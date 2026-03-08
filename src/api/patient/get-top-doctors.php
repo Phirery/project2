@@ -19,6 +19,7 @@ try {
             LEFT JOIN chuyenkhoa ck ON bs.maChuyenKhoa = ck.maChuyenKhoa
             LEFT JOIN khoa k ON ck.maKhoa = k.maKhoa
             LEFT JOIN lichkham lk ON bs.maBacSi = lk.maBacSi
+            WHERE nd.isDeleted = 0
             GROUP BY bs.maBacSi, bs.tenBacSi, bs.gioiTinh, bs.namLamViec,
                      bs.moTa, ck.tenChuyenKhoa, k.tenKhoa, nd.avatar
             ORDER BY totalAppointments DESC, totalPatients DESC
