@@ -756,6 +756,13 @@ function sendMedicalRecordCompletedEmail(mysqli $conn, string $maHoSo): array {
             bs.tenBacSi,
             lk.ngayKham,
             (
+                SELECT dt.loiDanBacSi
+                FROM donthuoc dt
+                WHERE dt.maLichKham = hs.maLichKham
+                ORDER BY dt.ngayKeDon DESC, dt.maDonThuoc DESC
+                LIMIT 1
+            ) AS loiDanBacSi,
+            (
                 SELECT COUNT(*)
                 FROM donthuoc dt
                 WHERE dt.maLichKham = hs.maLichKham
@@ -784,6 +791,15 @@ function sendMedicalRecordCompletedEmail(mysqli $conn, string $maHoSo): array {
     }
 
     $hasPrescription = ((int)($ctx['prescriptionCount'] ?? 0)) > 0;
+    $diagnosisBlock = trim((string)($ctx['chanDoan'] ?? '')) !== ''
+        ? '<p><strong>Chẩn đoán:</strong> ' . nl2br(htmlspecialchars((string)$ctx['chanDoan'], ENT_QUOTES, 'UTF-8')) . '</p>'
+        : '';
+    $treatmentBlock = trim((string)($ctx['dieuTri'] ?? '')) !== ''
+        ? '<p><strong>Hướng điều trị:</strong> ' . nl2br(htmlspecialchars((string)$ctx['dieuTri'], ENT_QUOTES, 'UTF-8')) . '</p>'
+        : '';
+    $adviceBlock = trim((string)($ctx['loiDanBacSi'] ?? '')) !== ''
+        ? '<p><strong>Lời dặn bác sĩ:</strong> ' . nl2br(htmlspecialchars((string)$ctx['loiDanBacSi'], ENT_QUOTES, 'UTF-8')) . '</p>'
+        : '';
 
     $subject = 'Ho so kham benh da cap nhat #' . $maHoSo;
     $extra = $hasPrescription
@@ -802,11 +818,14 @@ function sendMedicalRecordCompletedEmail(mysqli $conn, string $maHoSo): array {
             <li>Ngay kham: <strong>" . formatVNDate((string)$ctx['ngayKham']) . "</strong></li>
             <li>Ngay cap nhat ho so: <strong>" . formatVNDateTime((string)$ctx['ngayHoanThanh']) . "</strong></li>
         </ul>
+        {$diagnosisBlock}
+        {$treatmentBlock}
+        {$adviceBlock}
         {$extra}
         "
     );
 
-    $eventKey = $maHoSo . ':record_ready:' . (string)$ctx['ngayHoanThanh'];
+    $eventKey = $maHoSo . ':record_ready';
 
     return sendTransactionalMail(
         $conn,

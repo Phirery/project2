@@ -672,7 +672,7 @@
             <div class="stat-card pending">
                 <div class="stat-icon"><i class="fas fa-clock"></i></div>
                 <div class="stat-number" id="pendingCount">0</div>
-                <div class="stat-label">Đã đặt</div>
+                <div class="stat-label">Chưa hoàn tất</div>
             </div>
             <div class="stat-card completed">
                 <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
@@ -738,9 +738,10 @@
                     <div class="col-md-3">
                         <select class="form-select" id="statusFilter" onchange="applyFilters()">
                             <option value="">Tất cả trạng thái</option>
-                            <option value="Đã đặt">Đã đặt</option>
-                            <option value="Hoàn thành">Đã khám</option>
-                            <option value="Hủy">Đã hủy</option>
+                            <option value="booked">Chờ khám</option>
+                            <option value="draft">Chờ hoàn tất hồ sơ</option>
+                            <option value="completed">Đã khám</option>
+                            <option value="cancelled">Đã hủy</option>
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -881,6 +882,50 @@
         let calendarDate = new Date();
         let monthlyAppointments = {};
 
+        function getAppointmentUiStatus(appointment) {
+            if (appointment.trangThai === 'Hủy') {
+                return { value: 'cancelled', label: 'Đã hủy', className: 'status-cancelled' };
+            }
+
+            if (appointment.maHoSo && appointment.trangThaiHoSo === 'Chưa hoàn thành') {
+                return { value: 'draft', label: 'Chờ hoàn tất hồ sơ', className: 'status-waiting' };
+            }
+
+            if (appointment.trangThai === 'Hoàn thành' || appointment.trangThaiHoSo === 'Đã hoàn thành') {
+                return { value: 'completed', label: 'Đã khám', className: 'status-completed' };
+            }
+
+            return { value: 'booked', label: 'Chờ khám', className: 'status-booked' };
+        }
+
+        function getRecordAction(appointment) {
+            if (appointment.trangThai === 'Hủy') {
+                return null;
+            }
+
+            if (!appointment.maHoSo) {
+                return {
+                    title: 'Khởi tạo hồ sơ',
+                    icon: 'fa-file-circle-plus',
+                    url: `ho-so-benh-an.html?createFor=${encodeURIComponent(String(appointment.maLichKham))}`
+                };
+            }
+
+            if (appointment.trangThaiHoSo === 'Chưa hoàn thành') {
+                return {
+                    title: 'Hoàn tất hồ sơ',
+                    icon: 'fa-pen-to-square',
+                    url: `ho-so-benh-an.html?edit=${encodeURIComponent(String(appointment.maHoSo))}`
+                };
+            }
+
+            return null;
+        }
+
+        function openRecordWorkflow(url) {
+            window.location.href = url;
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             updateDateDisplay();
             loadAppointments();
@@ -947,9 +992,12 @@
 
         function updateStats() {
             const total = allAppointments.length;
-            const pending = allAppointments.filter(a => a.trangThai === 'Đã đặt').length;
-            const completed = allAppointments.filter(a => a.trangThai === 'Hoàn thành').length;
-            const cancelled = allAppointments.filter(a => a.trangThai === 'Hủy').length;
+            const pending = allAppointments.filter(a => {
+                const status = getAppointmentUiStatus(a).value;
+                return status === 'booked' || status === 'draft';
+            }).length;
+            const completed = allAppointments.filter(a => getAppointmentUiStatus(a).value === 'completed').length;
+            const cancelled = allAppointments.filter(a => getAppointmentUiStatus(a).value === 'cancelled').length;
 
             animateNumber('totalToday', total);
             animateNumber('pendingCount', pending);
@@ -973,11 +1021,9 @@
 
             tbody.innerHTML = pageData.map(apt => {
                 const age = calculateAge(apt.ngaySinh);
-                const statusClass = apt.trangThai === 'Hoàn thành' ? 'status-completed' :
-                    apt.trangThai === 'Hủy' ? 'status-cancelled' : 'status-booked';
-                const statusText = apt.trangThai === 'Hoàn thành' ? 'Đã khám' :
-                    apt.trangThai === 'Hủy' ? 'Đã hủy' : 'Đã đặt';
-                const disabled = apt.trangThai !== 'Đã đặt';
+                const status = getAppointmentUiStatus(apt);
+                const recordAction = getRecordAction(apt);
+                const canCancel = !apt.maHoSo && (apt.trangThai === 'Chờ' || apt.trangThai === 'Đã đặt');
 
                 return `
                     <tr>
@@ -988,15 +1034,17 @@
                         </td>
                         <td>${apt.gioiTinh}</td>
                         <td>${apt.tenGoi}</td>
-                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td><span class="status-badge ${status.className}">${status.label}</span></td>
                         <td>
                             <button class="btn-action btn-view" onclick="viewAppointment(${apt.maLichKham})" title="Xem chi tiết">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            ${!disabled ? `
-                            <button class="btn-action btn-complete" onclick="completeAppointment(${apt.maLichKham})" title="Hoàn thành">
-                                <i class="fas fa-check"></i>
+                            ${recordAction ? `
+                            <button class="btn-action btn-complete" onclick="openRecordWorkflow('${recordAction.url}')" title="${recordAction.title}">
+                                <i class="fas ${recordAction.icon}"></i>
                             </button>
+                            ` : ''}
+                            ${canCancel ? `
                             <button class="btn-action btn-cancel" onclick="cancelAppointment(${apt.maLichKham})" title="Hủy">
                                 <i class="fas fa-times"></i>
                             </button>` : ''}
@@ -1049,7 +1097,7 @@
                 let match = true;
                 if (search && !apt.tenBenhNhan.toLowerCase().includes(search)) match = false;
                 if (shift && apt.maCa != shift) match = false;
-                if (status && apt.trangThai !== status) match = false;
+                if (status && getAppointmentUiStatus(apt).value !== status) match = false;
                 return match;
             });
 
@@ -1149,6 +1197,12 @@
             const apt = allAppointments.find(a => a.maLichKham === maLichKham);
             if (!apt) return;
             const age = calculateAge(apt.ngaySinh);
+            const status = getAppointmentUiStatus(apt);
+            const recordStatusText = !apt.maHoSo
+                ? 'Chưa tạo hồ sơ'
+                : apt.trangThaiHoSo === 'Đã hoàn thành'
+                    ? 'Đã hoàn thành hồ sơ'
+                    : 'Đang soạn hồ sơ';
             document.getElementById('appointmentDetails').innerHTML = `
                 <div class="row">
                     <div class="col-md-6 mb-3"><strong style="color:#4A90E2"><i class="fas fa-user me-2"></i>Bệnh nhân:</strong><p>${apt.tenBenhNhan}</p></div>
@@ -1157,29 +1211,20 @@
                     <div class="col-md-6 mb-3"><strong style="color:#4A90E2"><i class="fas fa-calendar me-2"></i>Ngày khám:</strong><p>${apt.ngayKham || currentDate.toLocaleDateString('vi-VN')}</p></div>
                     <div class="col-md-6 mb-3"><strong style="color:#4A90E2"><i class="fas fa-clock me-2"></i>Giờ khám:</strong><p>${apt.tenCa} (${apt.gioBatDau} - ${apt.gioKetThuc})</p></div>
                     <div class="col-md-6 mb-3"><strong style="color:#4A90E2"><i class="fas fa-box-open me-2"></i>Gói khám:</strong><p>${apt.tenGoi}</p></div>
-                    <div class="col-md-12 mb-3"><strong style="color:#4A90E2"><i class="fas fa-info-circle me-2"></i>Trạng thái:</strong><p><span class="status-badge ${apt.trangThai === 'Hoàn thành' ? 'status-completed' : apt.trangThai === 'Hủy' ? 'status-cancelled' : 'status-booked'}">${apt.trangThai === 'Hoàn thành' ? 'Đã khám' : apt.trangThai === 'Hủy' ? 'Đã hủy' : 'Đã đặt'}</span></p></div>
+                    <div class="col-md-6 mb-3"><strong style="color:#4A90E2"><i class="fas fa-info-circle me-2"></i>Trạng thái lịch:</strong><p><span class="status-badge ${status.className}">${status.label}</span></p></div>
+                    <div class="col-md-6 mb-3"><strong style="color:#4A90E2"><i class="fas fa-file-medical me-2"></i>Hồ sơ bệnh án:</strong><p>${recordStatusText}</p></div>
                     ${apt.ghiChu ? `<div class="col-md-12 mb-3"><strong style="color:#4A90E2"><i class="fas fa-sticky-note me-2"></i>Ghi chú:</strong><p>${apt.ghiChu}</p></div>` : ''}
                 </div>
             `;
             new bootstrap.Modal(document.getElementById('viewAppointmentModal')).show();
         }
 
-        async function completeAppointment(maLichKham) {
-            const apt = allAppointments.find(a => a.maLichKham === maLichKham);
-            if (!apt || !confirm(`Xác nhận hoàn thành khám cho: ${apt.tenBenhNhan}?`)) return;
-            try {
-                const response = await fetch(`${API_BASE}/complete-appointment.php`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ maLichKham }) });
-                const data = await response.json();
-                if (data.success) { showAlert('success', 'Đã cập nhật trạng thái thành công!'); loadAppointments(); }
-                else { showAlert('error', data.message || 'Không thể cập nhật'); }
-            } catch (error) { console.error('Error completing appointment:', error); showAlert('error', 'Lỗi kết nối server'); }
-        }
-
         async function cancelAppointment(maLichKham) {
             const apt = allAppointments.find(a => a.maLichKham === maLichKham);
             if (!apt || !confirm(`Xác nhận hủy lịch khám cho: ${apt.tenBenhNhan}?`)) return;
+            const lyDo = prompt('Nhập lý do hủy lịch (có thể để trống):', '') ?? '';
             try {
-                const response = await fetch(`${API_BASE}/cancel-appointment.php`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ maLichKham }) });
+                const response = await fetch(`${API_BASE}/cancel-appointment.php`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ maLichKham, lyDo: lyDo.trim() }) });
                 const data = await response.json();
                 if (data.success) { showAlert('success', 'Đã hủy lịch khám!'); loadAppointments(); }
                 else { showAlert('error', data.message || 'Không thể hủy'); }
@@ -1197,7 +1242,30 @@
             try {
                 const response = await fetch(`${API_BASE}/request-leave.php`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ ngayNghi: date, maCa: shift === 'all' ? null : parseInt(shift), lyDo: reason }) });
                 const data = await response.json();
-                if (data.success) { showAlert('success', data.message || 'Gửi yêu cầu nghỉ phép thành công!'); bootstrap.Modal.getInstance(document.getElementById('requestLeaveModal')).hide(); document.getElementById('leaveForm').reset(); }
+                if (data.success) {
+                    let message = data.message || 'Gửi yêu cầu nghỉ phép thành công!';
+                    if (Array.isArray(data.affectedPreview) && data.affectedPreview.length > 0) {
+                        const previewText = data.affectedPreview
+                            .map(item => `${item.tenBenhNhan} (${item.tenCa || 'N/A'}${item.gioBatDau ? ` ${item.gioBatDau.substring(0, 5)}-${item.gioKetThuc.substring(0, 5)}` : ''})`)
+                            .join(', ');
+                        message += ` Các lịch đã hủy: ${previewText}${data.affectedAppointments > data.affectedPreview.length ? ', ...' : ''}.`;
+                    }
+
+                    if (data.mailSummary?.attempted > 0 && data.mailSummary.sent < data.mailSummary.attempted) {
+                        const skipped = Number(data.mailSummary.skipped || 0);
+                        const failed = Number(data.mailSummary.failed || 0);
+                        if (skipped > 0) {
+                            message += ` Một số email không gửi được vì bệnh nhân chưa có email hợp lệ (${skipped}).`;
+                        }
+                        if (failed > 0) {
+                            message += ` Có ${failed} email gặp lỗi gửi, nhưng lịch khám đã được hủy trong hệ thống.`;
+                        }
+                    }
+                    showAlert('success', message);
+                    bootstrap.Modal.getInstance(document.getElementById('requestLeaveModal')).hide();
+                    document.getElementById('leaveForm').reset();
+                    loadAppointments();
+                }
                 else { showAlert('error', data.message || 'Không thể gửi yêu cầu'); }
             } catch (error) { console.error('Error submitting leave request:', error); showAlert('error', 'Lỗi kết nối server'); }
         }

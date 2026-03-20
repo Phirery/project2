@@ -18,9 +18,9 @@ try {
     }
 
     // JOIN with suatkham to get time details
-    $sql = "SELECT h.maHoSo, h.ngayTao, h.chanDoan, h.dieuTri, h.ghiChu, h.ngayKham,
+    $sql = "SELECT h.maHoSo, h.ngayTao, h.chanDoan, h.dieuTri, h.ghiChu,
             bn.tenBenhNhan, bn.ngaySinh, bn.gioiTinh,
-            l.ngayKham, c.tenCa,
+            COALESCE(l.ngayKham, h.ngayKham) AS ngayKham, c.tenCa,
             s.gioBatDau, s.gioKetThuc
             FROM hosobenhan h
             JOIN benhnhan bn ON h.maBenhNhan = bn.maBenhNhan

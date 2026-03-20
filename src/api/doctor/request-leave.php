@@ -3,6 +3,7 @@
 require_once '../../config/cors.php';
 require_once '../../config/dp.php';
 require_once '../../config/session.php';
+require_once '../../includes/mail-events.php';
 
 require_role('bacsi');
 
@@ -37,6 +38,42 @@ if ($ngayNghi < $tomorrow) {
 
 try {
     $conn->begin_transaction();
+
+    $cancelReason = $lyDo !== ''
+        ? 'Bác sĩ nghỉ phép/bận việc: ' . $lyDo
+        : 'Bác sĩ nghỉ phép';
+
+    $affectedAppointments = [];
+    $previewSql = "
+        SELECT
+            lk.maLichKham,
+            bn.tenBenhNhan,
+            ca.tenCa,
+            sk.gioBatDau,
+            sk.gioKetThuc
+        FROM lichkham lk
+        JOIN benhnhan bn ON lk.maBenhNhan = bn.maBenhNhan
+        LEFT JOIN calamviec ca ON lk.maCa = ca.maCa
+        LEFT JOIN suatkham sk ON lk.maSuat = sk.maSuat
+        WHERE lk.maBacSi = ?
+          AND lk.ngayKham = ?
+          AND lk.trangThai IN ('Chờ', 'Đã đặt')
+          " . ($maCa ? " AND lk.maCa = ?" : "") . "
+        ORDER BY lk.maCa ASC, sk.gioBatDau ASC, lk.maLichKham ASC
+    ";
+
+    $previewStmt = $conn->prepare($previewSql);
+    if ($maCa) {
+        $previewStmt->bind_param("ssi", $maBacSi, $ngayNghi, $maCa);
+    } else {
+        $previewStmt->bind_param("ss", $maBacSi, $ngayNghi);
+    }
+    $previewStmt->execute();
+    $previewResult = $previewStmt->get_result();
+    while ($row = $previewResult->fetch_assoc()) {
+        $affectedAppointments[] = $row;
+    }
+    $previewStmt->close();
     
     // Insert vào bảng ngaynghi
     // Trigger 'after_ngaynghi_insert' sẽ tự động tạo thông báo Admin
@@ -46,7 +83,7 @@ try {
             INSERT INTO ngaynghi (maBacSi, ngayNghi, maCa, lyDo) 
             VALUES (?, ?, 1, ?), (?, ?, 2, ?)
         ");
-        $stmt->bind_param("ssisss", $maBacSi, $ngayNghi, $lyDo, $maBacSi, $ngayNghi, $lyDo);
+        $stmt->bind_param("ssssss", $maBacSi, $ngayNghi, $lyDo, $maBacSi, $ngayNghi, $lyDo);
     } else {
         // Nghỉ 1 ca
         $stmt = $conn->prepare("
@@ -61,31 +98,76 @@ try {
     }
     $stmt->close();
     
-    // Đếm số lịch khám bị ảnh hưởng để cảnh báo
-    $checkStmt = $conn->prepare("
-        SELECT COUNT(*) as count FROM lichkham 
-        WHERE maBacSi = ? AND ngayKham = ? AND trangThai = 'Đã đặt'
-        " . ($maCa ? " AND maCa = ?" : "")
-    );
-    
-    if ($maCa) {
-        $checkStmt->bind_param("ssi", $maBacSi, $ngayNghi, $maCa);
-    } else {
-        $checkStmt->bind_param("ss", $maBacSi, $ngayNghi);
+    $cancelledAppointmentIds = [];
+    foreach ($affectedAppointments as $appointment) {
+        $maLichKham = (int)($appointment['maLichKham'] ?? 0);
+        if ($maLichKham <= 0) {
+            continue;
+        }
+
+        $stmt = $conn->prepare("
+            UPDATE lichkham
+            SET trangThai = 'Hủy',
+                nguoiHuy = 'bacsi',
+                ghiChu = CONCAT(COALESCE(ghiChu, ''), '\n[Lý do hủy]: ', ?)
+            WHERE maLichKham = ?
+              AND maBacSi = ?
+              AND trangThai IN ('Chờ', 'Đã đặt')
+        ");
+        $stmt->bind_param("sis", $cancelReason, $maLichKham, $maBacSi);
+
+        if (!$stmt->execute()) {
+            throw new Exception('Không thể hủy lịch khám bị ảnh hưởng: ' . $stmt->error);
+        }
+
+        if ($stmt->affected_rows > 0) {
+            $cancelledAppointmentIds[] = $maLichKham;
+        }
+        $stmt->close();
     }
-    
-    $checkStmt->execute();
-    $count = $checkStmt->get_result()->fetch_assoc()['count'];
-    $checkStmt->close();
     
     $conn->commit();
-    
-    $message = 'Gửi yêu cầu nghỉ phép thành công!';
-    if ($count > 0) {
-        $message .= " Lưu ý: Có $count lịch khám cần sắp xếp lại.";
+
+    $mailSummary = [
+        'attempted' => 0,
+        'sent' => 0,
+        'failed' => 0,
+        'skipped' => 0
+    ];
+
+    foreach ($cancelledAppointmentIds as $appointmentId) {
+        try {
+            $mailSummary['attempted']++;
+            $mailResult = sendAppointmentCancelledEmails($conn, $appointmentId, 'bacsi', $cancelReason);
+            $patientMail = $mailResult['results']['patient'] ?? null;
+
+            if ($patientMail && !empty($patientMail['success'])) {
+                $mailSummary['sent']++;
+            } elseif ($patientMail && (($patientMail['reason'] ?? '') === 'send_failed')) {
+                $mailSummary['failed']++;
+            } else {
+                $mailSummary['skipped']++;
+            }
+        } catch (Throwable $mailError) {
+            $mailSummary['failed']++;
+            error_log('Leave request cancel mail error: ' . $mailError->getMessage());
+        }
     }
     
-    echo json_encode(['success' => true, 'message' => $message, 'affectedAppointments' => $count]);
+    $cancelledCount = count($cancelledAppointmentIds);
+    $message = 'Gửi yêu cầu nghỉ phép thành công!';
+    if ($cancelledCount > 0) {
+        $message .= " Đã hủy $cancelledCount lịch khám bị ảnh hưởng và gửi thông báo cho bệnh nhân.";
+    }
+    
+    echo json_encode([
+        'success' => true,
+        'message' => $message,
+        'affectedAppointments' => $cancelledCount,
+        'affectedPreview' => array_slice($affectedAppointments, 0, 5),
+        'cancelReason' => $cancelReason,
+        'mailSummary' => $mailSummary
+    ]);
     
 } catch (Exception $e) {
     $conn->rollback();

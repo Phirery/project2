@@ -7,12 +7,12 @@ require_role('bacsi');
 
 $input = json_decode(file_get_contents('php://input'), true);
 $maLichKham = $input['maLichKham'] ?? '';
-$chanDoan = $input['chanDoan'] ?? '';
-$dieuTri = $input['dieuTri'] ?? '';
-$ghiChu = $input['ghiChu'] ?? '';
+$chanDoan = trim((string)($input['chanDoan'] ?? ''));
+$dieuTri = trim((string)($input['dieuTri'] ?? ''));
+$ghiChu = trim((string)($input['ghiChu'] ?? ''));
 
-if (!$maLichKham || !$chanDoan || !$dieuTri) {
-    echo json_encode(['success' => false, 'message' => 'Thiếu thông tin bắt buộc']);
+if (!$maLichKham) {
+    echo json_encode(['success' => false, 'message' => 'Thiếu mã lịch khám']);
     exit;
 }
 
@@ -29,7 +29,7 @@ try {
     }
 
     // Verify the appointment belongs to this doctor and get patient + date info
-    $stmt = $conn->prepare("SELECT maBenhNhan, ngayKham FROM lichkham WHERE maLichKham = ? AND maBacSi = ?");
+    $stmt = $conn->prepare("SELECT maBenhNhan, ngayKham, trangThai FROM lichkham WHERE maLichKham = ? AND maBacSi = ?");
     $stmt->bind_param("is", $maLichKham, $maBacSi);
     $stmt->execute();
     $result = $stmt->get_result()->fetch_assoc();
@@ -37,6 +37,11 @@ try {
 
     if (!$result) {
         echo json_encode(['success' => false, 'message' => 'Không tìm thấy lịch khám hoặc không có quyền']);
+        exit;
+    }
+
+    if ($result['trangThai'] === 'Hủy') {
+        echo json_encode(['success' => false, 'message' => 'Không thể tạo hồ sơ cho lịch khám đã hủy']);
         exit;
     }
 
@@ -56,12 +61,12 @@ try {
 
     $maHoSo = 'HS' . date('YmdHis') . rand(100, 999);
     
-    // Insert with ngayKham and ghiChu
+    // Create a draft medical record first; the doctor will complete it later.
     $stmt = $conn->prepare("INSERT INTO hosobenhan (maHoSo, maBenhNhan, maBacSi, maLichKham, chanDoan, dieuTri, ghiChu, trangThai, ngayTao, ngayKham) VALUES (?, ?, ?, ?, ?, ?, ?, 'Chưa hoàn thành', NOW(), ?)");
     $stmt->bind_param("sssissss", $maHoSo, $maBenhNhan, $maBacSi, $maLichKham, $chanDoan, $dieuTri, $ghiChu, $ngayKham);
     
     if ($stmt->execute()) {
-        echo json_encode(['success' => true, 'message' => 'Tạo hồ sơ thành công', 'maHoSo' => $maHoSo]);
+        echo json_encode(['success' => true, 'message' => 'Khởi tạo hồ sơ thành công', 'maHoSo' => $maHoSo]);
     } else {
         echo json_encode(['success' => false, 'message' => 'Tạo hồ sơ thất bại: ' . $stmt->error]);
     }

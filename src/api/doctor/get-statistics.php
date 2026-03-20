@@ -35,7 +35,7 @@ try {
     $completedCount = $stmt->get_result()->fetch_assoc()['total'] ?? 0;
     $stmt->close();
 
-    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM lichkham WHERE maBacSi = ? AND trangThai = 'Đã đặt'");
+    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM lichkham WHERE maBacSi = ? AND trangThai IN ('Chờ', 'Đã đặt')");
     $stmt->bind_param("s", $maBacSi);
     $stmt->execute();
     $pendingCount = $stmt->get_result()->fetch_assoc()['total'] ?? 0;

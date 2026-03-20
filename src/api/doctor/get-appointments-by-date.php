@@ -26,17 +26,20 @@ try {
 
     $stmt = $conn->prepare("
         SELECT 
-            lk.maLichKham, lk.ngayKham, lk.trangThai,
+            lk.maLichKham, lk.ngayKham, lk.trangThai, lk.ghiChu,
             bn.tenBenhNhan, bn.ngaySinh, bn.gioiTinh,
             ca.tenCa, ca.maCa,
             sk.gioBatDau, sk.gioKetThuc,
-            gk.tenGoi
+            gk.tenGoi,
+            h.maHoSo,
+            h.trangThai AS trangThaiHoSo
         FROM lichkham lk
         LEFT JOIN benhnhan bn ON lk.maBenhNhan = bn.maBenhNhan
         LEFT JOIN calamviec ca ON lk.maCa = ca.maCa
         LEFT JOIN suatkham sk ON lk.maSuat = sk.maSuat
         LEFT JOIN goikham gk ON lk.maGoi = gk.maGoi
-        WHERE lk.maBacSi = ? AND lk.ngayKham = ? AND lk.trangThai IN ('Chờ', 'Đã đặt')
+        LEFT JOIN hosobenhan h ON h.maLichKham = lk.maLichKham AND h.isDeleted = 0
+        WHERE lk.maBacSi = ? AND lk.ngayKham = ?
         ORDER BY ca.maCa, sk.gioBatDau
     ");
     

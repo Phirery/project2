@@ -26,16 +26,39 @@ try {
 
     $stmt = $conn->prepare("
         SELECT 
-            lk.ngayKham,
-            lk.trangThai,
+            h.maHoSo,
+            COALESCE(h.ngayKham, lk.ngayKham) AS ngayKham,
+            h.ngayHoanThanh,
+            h.chanDoan,
+            h.dieuTri,
+            h.ghiChu,
             ca.tenCa,
             gk.tenGoi,
-            lk.ghiChu
-        FROM lichkham lk
-        JOIN calamviec ca ON lk.maCa = ca.maCa
-        JOIN goikham gk ON lk.maGoi = gk.maGoi
-        WHERE lk.maBacSi = ? AND lk.maBenhNhan = ?
-        ORDER BY lk.ngayKham DESC
+            sk.gioBatDau,
+            sk.gioKetThuc,
+            (
+                SELECT COUNT(*)
+                FROM chitietdonthuoc ct
+                JOIN donthuoc dt ON dt.maDonThuoc = ct.maDonThuoc
+                WHERE dt.maLichKham = h.maLichKham
+            ) AS soThuoc,
+            (
+                SELECT dt.loiDanBacSi
+                FROM donthuoc dt
+                WHERE dt.maLichKham = h.maLichKham
+                ORDER BY dt.ngayKeDon DESC, dt.maDonThuoc DESC
+                LIMIT 1
+            ) AS loiDanBacSi
+        FROM hosobenhan h
+        LEFT JOIN lichkham lk ON h.maLichKham = lk.maLichKham
+        LEFT JOIN calamviec ca ON lk.maCa = ca.maCa
+        LEFT JOIN goikham gk ON lk.maGoi = gk.maGoi
+        LEFT JOIN suatkham sk ON lk.maSuat = sk.maSuat
+        WHERE h.maBacSi = ?
+          AND h.maBenhNhan = ?
+          AND h.trangThai = 'Đã hoàn thành'
+          AND h.isDeleted = 0
+        ORDER BY COALESCE(h.ngayKham, lk.ngayKham) DESC, h.ngayHoanThanh DESC, h.maHoSo DESC
     ");
     $stmt->bind_param("ss", $maBacSi, $maBenhNhan);
     $stmt->execute();

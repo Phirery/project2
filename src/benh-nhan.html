@@ -241,6 +241,36 @@
             font-size: 0.9rem;
         }
 
+        .contact-text {
+            font-size: 0.9rem;
+            color: #495057;
+            line-height: 1.5;
+        }
+
+        .contact-text .secondary {
+            color: #7b8794;
+            font-size: 0.82rem;
+        }
+
+        .record-snippet {
+            font-size: 0.82rem;
+            color: #6c757d;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        .history-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            background: rgba(74, 144, 226, 0.1);
+            color: #2f6fb2;
+        }
+
         .visit-badge {
             padding: 6px 12px;
             border-radius: 20px;
@@ -438,7 +468,7 @@
                 <div class="row g-3">
                     <div class="col-md-4">
                         <div class="search-box"><i class="fas fa-search"></i><input type="text" class="form-control"
-                                id="searchInput" placeholder="Tìm theo tên, SĐT..."></div>
+                                id="searchInput" placeholder="Tìm theo tên, SĐT, email, chẩn đoán gần nhất..."></div>
                     </div>
                     <div class="col-md-2"><select class="form-select" id="visitTypeFilter">
                             <option value="">Tất cả loại khám</option>
@@ -470,7 +500,7 @@
                             <th>STT</th>
                             <th>Bệnh nhân</th>
                             <th>Giới tính</th>
-                            <th>Số điện thoại</th>
+                            <th>Liên hệ</th>
                             <th>Số lần khám</th>
                             <th>Lần khám gần nhất</th>
                             <th>Thao tác</th>
@@ -499,7 +529,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                     <button type="button" class="btn btn-primary" onclick="viewMedicalHistory()"><i
-                            class="fas fa-history me-1"></i>Xem lịch sử khám</button>
+                            class="fas fa-history me-1"></i>Xem lịch sử bệnh án</button>
                 </div>
             </div>
         </div>
@@ -533,7 +563,15 @@
             try {
                 const response = await fetch(`${API_BASE}/get-patients.php`, { credentials: 'include' });
                 const data = await response.json();
-                if (data.success) { allPatients = data.data; filteredPatients = [...allPatients]; updateStats(); displayPatients(); }
+                if (data.success) {
+                    allPatients = (data.data || []).map(patient => ({
+                        ...patient,
+                        soLanKham: Number(patient.soLanKham || 0)
+                    }));
+                    filteredPatients = [...allPatients];
+                    updateStats();
+                    displayPatients();
+                }
                 else { showError(data.message); handleSessionExpired(data.message); }
             } catch (error) { console.error('Error:', error); showError('Lỗi kết nối server'); handleSessionExpired("fetch_failed"); }
             finally { showLoading(false); }
@@ -544,7 +582,7 @@
             const newP = allPatients.filter(p => p.soLanKham === 1).length;
             const revisitP = allPatients.filter(p => p.soLanKham > 1).length;
             const sevenDaysAgo = new Date(); sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-            const recentP = allPatients.filter(p => new Date(p.lanKhamGanNhat) >= sevenDaysAgo).length;
+            const recentP = allPatients.filter(p => p.lanKhamGanNhat && new Date(p.lanKhamGanNhat) >= sevenDaysAgo).length;
             animateNumber('totalPatients', total);
             animateNumber('newPatients', newP);
             animateNumber('revisitPatients', revisitP);
@@ -560,15 +598,18 @@
             tbody.innerHTML = pageData.map((patient, index) => {
                 const age = calculateAge(patient.ngaySinh);
                 const visitBadge = patient.soLanKham === 1 ? `<span class="visit-badge badge-new"><i class="fas fa-star me-1"></i>Mới</span>` : `<span class="visit-badge badge-revisit"><i class="fas fa-redo me-1"></i>${patient.soLanKham} lần</span>`;
-                const lastVisit = new Date(patient.lanKhamGanNhat).toLocaleDateString('vi-VN');
+                const lastVisit = patient.lanKhamGanNhat ? new Date(patient.lanKhamGanNhat).toLocaleDateString('vi-VN') : 'Chưa có';
+                const contactPhone = patient.soDienThoai || 'Chưa có SĐT';
+                const contactEmail = patient.email || 'Chưa có email';
+                const latestSnippet = patient.chanDoanGanNhat ? truncateText(patient.chanDoanGanNhat, 70) : 'Chưa có chẩn đoán';
                 return `
                     <tr>
                         <td><strong>${start + index + 1}</strong></td>
                         <td><div class="patient-name">${patient.tenBenhNhan}</div><div class="patient-age">${age} tuổi</div></td>
                         <td>${patient.gioiTinh}</td>
-                        <td>${patient.soDienThoai || 'Chưa có'}</td>
+                        <td><div class="contact-text">${contactPhone}<div class="secondary">${contactEmail}</div></div></td>
                         <td>${visitBadge}</td>
-                        <td>${lastVisit}</td>
+                        <td><div>${lastVisit}</div><div class="record-snippet">${latestSnippet}</div></td>
                         <td>
                             <button class="btn-action btn-view" onclick="viewPatient('${patient.maBenhNhan}')" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
                             <button class="btn-action btn-history" onclick="viewHistory('${patient.maBenhNhan}')" title="Lịch sử khám"><i class="fas fa-history"></i></button>
@@ -603,7 +644,10 @@
             const sort = document.getElementById('sortFilter').value;
             filteredPatients = allPatients.filter(patient => {
                 let match = true;
-                if (search) { const searchStr = `${patient.tenBenhNhan} ${patient.soDienThoai}`.toLowerCase(); if (!searchStr.includes(search)) match = false; }
+                if (search) {
+                    const searchStr = `${patient.tenBenhNhan || ''} ${patient.soDienThoai || ''} ${patient.email || ''} ${patient.chanDoanGanNhat || ''}`.toLowerCase();
+                    if (!searchStr.includes(search)) match = false;
+                }
                 if (visitType === '1' && patient.soLanKham !== 1) match = false;
                 if (visitType === '2+' && patient.soLanKham <= 1) match = false;
                 if (gender && patient.gioiTinh.toLowerCase() !== gender) match = false;
@@ -620,15 +664,21 @@
             if (!patient) return;
             currentPatientId = maBenhNhan;
             const age = calculateAge(patient.ngaySinh);
+            const latestVisit = patient.lanKhamGanNhat ? new Date(patient.lanKhamGanNhat).toLocaleDateString('vi-VN') : 'Chưa có';
+            const firstVisit = patient.lanKhamDauTien ? new Date(patient.lanKhamDauTien).toLocaleDateString('vi-VN') : 'Chưa có';
             document.getElementById('patientDetails').innerHTML = `
                 <div class="row">
                     <div class="col-md-6 mb-3"><strong style="color:#4A90E2"><i class="fas fa-user me-2"></i>Họ và tên:</strong><p>${patient.tenBenhNhan}</p></div>
                     <div class="col-md-6 mb-3"><strong style="color:#4A90E2"><i class="fas fa-birthday-cake me-2"></i>Tuổi:</strong><p>${age} tuổi (${new Date(patient.ngaySinh).toLocaleDateString('vi-VN')})</p></div>
                     <div class="col-md-6 mb-3"><strong style="color:#4A90E2"><i class="fas fa-venus-mars me-2"></i>Giới tính:</strong><p>${patient.gioiTinh}</p></div>
                     <div class="col-md-6 mb-3"><strong style="color:#4A90E2"><i class="fas fa-phone me-2"></i>Số điện thoại:</strong><p>${patient.soDienThoai || 'Chưa có'}</p></div>
+                    <div class="col-md-6 mb-3"><strong style="color:#4A90E2"><i class="fas fa-envelope me-2"></i>Email:</strong><p>${patient.email || 'Chưa có'}</p></div>
                     <div class="col-md-6 mb-3"><strong style="color:#4A90E2"><i class="fas fa-id-card me-2"></i>Mã bệnh nhân:</strong><p>${patient.maBenhNhan}</p></div>
-                    <div class="col-md-6 mb-3"><strong style="color:#4A90E2"><i class="fas fa-redo me-2"></i>Số lần khám:</strong><p>${patient.soLanKham} lần</p></div>
-                    <div class="col-md-12 mb-3"><strong style="color:#4A90E2"><i class="fas fa-calendar me-2"></i>Lần khám gần nhất:</strong><p>${new Date(patient.lanKhamGanNhat).toLocaleDateString('vi-VN')}</p></div>
+                    <div class="col-md-6 mb-3"><strong style="color:#4A90E2"><i class="fas fa-redo me-2"></i>Số lần khám hoàn tất:</strong><p>${patient.soLanKham} lần</p></div>
+                    <div class="col-md-6 mb-3"><strong style="color:#4A90E2"><i class="fas fa-calendar-plus me-2"></i>Lần khám đầu tiên:</strong><p>${firstVisit}</p></div>
+                    <div class="col-md-6 mb-3"><strong style="color:#4A90E2"><i class="fas fa-calendar-check me-2"></i>Lần khám gần nhất:</strong><p>${latestVisit}</p></div>
+                    <div class="col-md-6 mb-3"><strong style="color:#4A90E2"><i class="fas fa-file-medical me-2"></i>Hồ sơ gần nhất:</strong><p>${patient.maHoSoGanNhat || 'Chưa có'}</p></div>
+                    <div class="col-md-12 mb-3"><strong style="color:#4A90E2"><i class="fas fa-stethoscope me-2"></i>Chẩn đoán gần nhất:</strong><p>${patient.chanDoanGanNhat || 'Chưa có'}</p></div>
                     ${patient.soTheBHYT ? `<div class="col-md-12 mb-3"><strong style="color:#4A90E2"><i class="fas fa-id-card-alt me-2"></i>Số thẻ BHYT:</strong><p>${patient.soTheBHYT}</p></div>` : ''}
                 </div>
             `;
@@ -649,7 +699,7 @@
         function showHistoryModal(history, maBenhNhan) {
             const patient = allPatients.find(p => p.maBenhNhan === maBenhNhan);
             if (!history || history.length === 0) { showAlert('info', 'Chưa có lịch sử khám bệnh'); return; }
-            let html = `<div class="modal-dialog modal-dialog-centered modal-xl"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="fas fa-history me-2"></i>Lịch sử khám bệnh - ${patient.tenBenhNhan}</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="table-responsive"><table class="table table-hover"><thead><tr><th>Ngày khám</th><th>Ca</th><th>Gói khám</th><th>Trạng thái</th></tr></thead><tbody>${history.map(h => `<tr><td>${new Date(h.ngayKham).toLocaleDateString('vi-VN')}</td><td>${h.tenCa}</td><td>${h.tenGoi}</td><td><span class="badge bg-${h.trangThai === 'Hoàn thành' ? 'success' : 'warning'}">${h.trangThai}</span></td></tr>`).join('')}</tbody></table></div></div></div></div>`;
+            let html = `<div class="modal-dialog modal-dialog-centered modal-xl"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="fas fa-history me-2"></i>Lịch sử bệnh án - ${patient.tenBenhNhan}</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="table-responsive"><table class="table table-hover align-middle"><thead><tr><th>Ngày khám</th><th>Hồ sơ</th><th>Ca / Gói</th><th>Chẩn đoán</th><th>Điều trị</th><th>Toa thuốc</th><th>Thao tác</th></tr></thead><tbody>${history.map(h => `<tr><td><div>${formatDate(h.ngayKham)}</div><div class="record-snippet">${h.ngayHoanThanh ? `Hoàn tất ${formatDateTime(h.ngayHoanThanh)}` : ''}</div></td><td><div class="fw-semibold">${h.maHoSo}</div><div class="record-snippet">${truncateText(h.ghiChu || 'Không có ghi chú', 60)}</div></td><td><div>${h.tenCa || 'N/A'}</div><div class="record-snippet">${h.tenGoi || 'Chưa có gói khám'}${h.gioBatDau ? ` • ${h.gioBatDau.substring(0, 5)} - ${h.gioKetThuc.substring(0, 5)}` : ''}</div></td><td>${truncateText(h.chanDoan || 'Chưa cập nhật', 90)}</td><td>${truncateText(h.dieuTri || 'Chưa cập nhật', 90)}</td><td>${Number(h.soThuoc) > 0 ? `<span class="history-badge"><i class="fas fa-capsules"></i>${Number(h.soThuoc)} thuốc</span>` : '<span class="text-muted">Không có</span>'}${h.loiDanBacSi ? `<div class="record-snippet">${truncateText(h.loiDanBacSi, 70)}</div>` : ''}</td><td><a class="btn btn-sm btn-outline-primary" href="ho-so-benh-an.html?view=${encodeURIComponent(h.maHoSo)}"><i class="fas fa-eye me-1"></i>Xem hồ sơ</a></td></tr>`).join('')}</tbody></table></div></div></div></div>`;
             const existingModal = document.querySelector('#viewPatientModal');
             if (existingModal) bootstrap.Modal.getInstance(existingModal)?.hide();
             const tempDiv = document.createElement('div');
@@ -659,6 +709,9 @@
         }
 
         function calculateAge(birthDate) { const birth = new Date(birthDate); const today = new Date(); let age = today.getFullYear() - birth.getFullYear(); const m = today.getMonth() - birth.getMonth(); if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--; return age; }
+        function truncateText(value, maxLength = 60) { const text = (value || '').toString().trim(); return text.length > maxLength ? `${text.slice(0, maxLength)}...` : (text || ''); }
+        function formatDate(value) { return value ? new Date(value).toLocaleDateString('vi-VN') : 'N/A'; }
+        function formatDateTime(value) { return value ? new Date(value).toLocaleString('vi-VN') : ''; }
         function animateNumber(elementId, targetNumber) { const el = document.getElementById(elementId); if (!el) return; let cur = 0; const inc = targetNumber / 50; const timer = setInterval(() => { cur += inc; if (cur >= targetNumber) { el.textContent = targetNumber; clearInterval(timer); } else { el.textContent = Math.floor(cur); } }, 20); }
         function showLoading(show) { document.getElementById('loadingIndicator').style.display = show ? 'block' : 'none'; document.querySelector('.table-responsive').style.display = show ? 'none' : 'block'; }
         function showError(message) { document.getElementById('patientList').innerHTML = `<tr><td colspan="7" class="text-center py-5 text-danger">${message}</td></tr>`; }

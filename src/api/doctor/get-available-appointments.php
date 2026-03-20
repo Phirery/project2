@@ -27,7 +27,7 @@ try {
             JOIN calamviec c ON l.maCa = c.maCa
             LEFT JOIN suatkham s ON l.maSuat = s.maSuat
             WHERE l.maBacSi = ? 
-            AND l.trangThai IN ('Đã đặt', 'Hoàn thành')
+            AND l.trangThai IN ('Chờ', 'Đã đặt', 'Hoàn thành')
             AND l.maLichKham NOT IN (
                 SELECT maLichKham
                 FROM hosobenhan

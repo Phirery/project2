@@ -415,6 +415,120 @@
             box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.15);
         }
 
+        .prescription-section {
+            margin-top: 20px;
+            border-top: 1px solid #eef2f7;
+            padding-top: 20px;
+        }
+
+        .prescription-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .prescription-title h6 {
+            margin: 0;
+            font-weight: 700;
+            color: #2f3b52;
+        }
+
+        .medicine-search-wrapper {
+            position: relative;
+        }
+
+        .medicine-autocomplete {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: #fff;
+            border: 1px solid #dbe7f3;
+            border-radius: 12px;
+            box-shadow: 0 18px 32px rgba(31, 45, 61, 0.12);
+            max-height: 280px;
+            overflow-y: auto;
+            z-index: 1065;
+            display: none;
+        }
+
+        .medicine-suggestion {
+            padding: 12px 14px;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            border-bottom: 1px solid #eef2f7;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .medicine-suggestion:last-child {
+            border-bottom: none;
+        }
+
+        .medicine-suggestion:hover {
+            background: #f7fbff;
+        }
+
+        .medicine-suggestion-name {
+            font-weight: 600;
+            color: #27364a;
+        }
+
+        .medicine-suggestion-meta {
+            margin-top: 4px;
+            font-size: 0.82rem;
+            color: #6c7a89;
+        }
+
+        .prescription-table-wrapper {
+            border: 1px solid #e9eef5;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .prescription-table-wrapper table {
+            margin: 0;
+        }
+
+        .prescription-table-wrapper thead {
+            background: #f8fbff;
+        }
+
+        .prescription-table-wrapper th {
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: #607086;
+            border-bottom: 1px solid #e9eef5;
+        }
+
+        .prescription-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.08), rgba(82, 196, 26, 0.08));
+            border-radius: 12px;
+            padding: 12px 15px;
+            margin-top: 15px;
+        }
+
+        .prescription-summary strong {
+            color: #234;
+        }
+
+        .prescription-note {
+            margin-top: 12px;
+            color: #67758a;
+            font-size: 0.9rem;
+        }
+
         @media (max-width: 768px) {
             .stats-row {
                 grid-template-columns: 1fr;
@@ -458,6 +572,10 @@
                 flex-direction: column;
                 gap: 15px;
                 align-items: center;
+            }
+
+            .prescription-summary {
+                align-items: flex-start;
             }
         }
     </style>
@@ -509,7 +627,7 @@
                     <div class="col-md-2"><button class="btn btn-secondary w-100" onclick="resetPendingFilters()"><i
                                 class="fas fa-redo me-1"></i>Đặt lại</button></div>
                     <div class="col-md-2"><button class="btn btn-success w-100" onclick="showCreateModal()"><i
-                                class="fas fa-plus me-1"></i>Tạo mới</button></div>
+                                class="fas fa-plus me-1"></i>Khởi tạo</button></div>
                 </div>
             </div>
             <div id="loadingPending" class="loading" style="display: none;">
@@ -605,7 +723,7 @@
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Tạo hồ sơ bệnh án mới</h5>
+                    <h5 class="modal-title">Khởi tạo hồ sơ bệnh án</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -617,19 +735,17 @@
                             </select>
                         </div>
                         <div id="patientInfo" style="display:none;" class="alert alert-info"></div>
-                        <div class="mb-3"><label class="form-label">Chẩn đoán <span
-                                    class="text-danger">*</span></label><textarea class="form-control" id="diagnosis"
-                                rows="3" placeholder="Nhập chẩn đoán..." required></textarea></div>
-                        <div class="mb-3"><label class="form-label">Điều trị <span
-                                    class="text-danger">*</span></label><textarea class="form-control" id="treatment"
-                                rows="3" placeholder="Nhập phương pháp điều trị..." required></textarea></div>
+                        <div class="alert alert-light border">
+                            <i class="fas fa-file-medical me-2 text-primary"></i>
+                            Hồ sơ sẽ được tạo ở trạng thái nháp. Bạn có thể hoàn tất chẩn đoán và điều trị ở bước tiếp theo.
+                        </div>
                         <div class="mb-3"><label class="form-label">Ghi chú</label><textarea class="form-control"
-                                id="notes" rows="2" placeholder="Ghi chú thêm (nếu có)..."></textarea></div>
+                                id="notes" rows="2" placeholder="Ghi chú tiếp nhận ban đầu (nếu có)..."></textarea></div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-primary" onclick="createRecord()">Tạo hồ sơ</button>
+                    <button type="button" class="btn btn-primary" onclick="createRecord()">Khởi tạo hồ sơ</button>
                 </div>
             </div>
         </div>
@@ -637,7 +753,7 @@
 
     <!-- Modal chỉnh sửa -->
     <div class="modal fade" id="editModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Hoàn thành hồ sơ bệnh án</h5>
@@ -656,11 +772,64 @@
                                 required></textarea></div>
                         <div class="mb-3"><label class="form-label">Ghi chú</label><textarea class="form-control"
                                 id="editNotes" rows="2" placeholder="Ghi chú thêm (nếu có)..."></textarea></div>
+
+                        <div class="prescription-section">
+                            <div class="prescription-title">
+                                <h6><i class="fas fa-capsules me-2 text-primary"></i>Toa thuốc</h6>
+                                <span class="badge bg-primary-subtle text-primary" id="selectedMedicineBadge">0 thuốc</span>
+                            </div>
+
+                            <div class="mb-3 medicine-search-wrapper">
+                                <label class="form-label">Tìm thuốc theo thời gian thực</label>
+                                <input type="text" class="form-control" id="medicineSearchInput"
+                                    placeholder="Gõ tên thuốc hoặc nhóm thuốc..." autocomplete="off">
+                                <div class="medicine-autocomplete" id="medicineAutocompleteBox"></div>
+                                <div class="prescription-note">
+                                    Gõ vài ký tự để hệ thống gợi ý thuốc có chứa cụm từ đó, sau đó chọn để thêm vào toa.
+                                </div>
+                            </div>
+
+                            <div class="alert alert-light border mb-0" id="selectedMedicineEmpty">
+                                Chưa có thuốc nào được chọn.
+                            </div>
+
+                            <div class="prescription-table-wrapper mt-3" id="selectedMedicineWrapper" style="display:none;">
+                                <div class="table-responsive">
+                                    <table class="table align-middle">
+                                        <thead>
+                                            <tr>
+                                                <th>Thuốc</th>
+                                                <th style="width: 110px;">Số lượng</th>
+                                                <th>Liều dùng</th>
+                                                <th style="width: 80px;">Xóa</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="selectedMedicineBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="prescription-summary">
+                                <div><strong>Số loại thuốc:</strong> <span id="selectedMedicineCount">0</span></div>
+                                <div><strong>Tạm tính:</strong> <span id="prescriptionTotal">0 đ</span></div>
+                            </div>
+
+                            <div class="mt-3">
+                                <label class="form-label">Lời dặn bác sĩ</label>
+                                <textarea class="form-control" id="doctorAdvice" rows="2"
+                                    placeholder="Ví dụ: Uống thuốc sau ăn, tái khám sau 5 ngày..."></textarea>
+                            </div>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-primary" onclick="updateRecord()">Hoàn thành</button>
+                    <button type="button" class="btn btn-outline-primary" id="saveDraftBtn" onclick="saveRecordDraft()">
+                        <i class="fas fa-save me-1"></i>Lưu nháp
+                    </button>
+                    <button type="button" class="btn btn-primary" id="completeRecordBtn" onclick="updateRecord()">
+                        <i class="fas fa-check-circle me-1"></i>Hoàn thành
+                    </button>
                 </div>
             </div>
         </div>
@@ -682,12 +851,353 @@
         const itemsPerPage = 10;
         let allPending = [], allCompleted = [];
         let filteredPending = [], filteredCompleted = [];
+        let initialActionHandled = false;
+        let selectedMedicines = [];
+        let medicineSuggestions = [];
+        let medicineSearchTimer = null;
 
-        document.addEventListener('DOMContentLoaded', function () {
-            loadStatistics();
-            loadPendingRecords();
-            loadCompletedRecords();
+        document.addEventListener('DOMContentLoaded', async function () {
+            setupMedicineAutocomplete();
+            document.getElementById('editModal').addEventListener('hidden.bs.modal', resetPrescriptionEditor);
+
+            await Promise.all([
+                loadStatistics(),
+                loadPendingRecords(),
+                loadCompletedRecords()
+            ]);
+            handleInitialAction();
         });
+
+        function getPageParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                createFor: params.get('createFor'),
+                edit: params.get('edit'),
+                view: params.get('view')
+            };
+        }
+
+        function clearPageParams() {
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+                maximumFractionDigits: 0
+            }).format(Number(amount || 0));
+        }
+
+        function highlightText(text, keyword) {
+            if (!keyword) return escapeHtml(text);
+            const safeKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            return escapeHtml(text).replace(new RegExp(`(${safeKeyword})`, 'gi'), '<mark>$1</mark>');
+        }
+
+        async function handleInitialAction() {
+            if (initialActionHandled) return;
+            initialActionHandled = true;
+
+            const { createFor, edit, view } = getPageParams();
+
+            if (edit) {
+                clearPageParams();
+                if (allPending.some(record => record.maHoSo === edit)) {
+                    showEditModal(edit);
+                } else if (allCompleted.some(record => record.maHoSo === edit)) {
+                    viewRecord(edit);
+                } else {
+                    showAlert('error', 'Không tìm thấy hồ sơ cần mở.');
+                }
+                return;
+            }
+
+            if (view) {
+                clearPageParams();
+                if (allPending.some(record => record.maHoSo === view) || allCompleted.some(record => record.maHoSo === view)) {
+                    viewRecord(view);
+                } else {
+                    showAlert('error', 'Không tìm thấy hồ sơ cần xem.');
+                }
+                return;
+            }
+
+            if (createFor) {
+                clearPageParams();
+                await showCreateModal(createFor);
+            }
+        }
+
+        function resetPrescriptionEditor() {
+            selectedMedicines = [];
+            medicineSuggestions = [];
+            document.getElementById('doctorAdvice').value = '';
+            document.getElementById('medicineSearchInput').value = '';
+            document.getElementById('medicineAutocompleteBox').style.display = 'none';
+            document.getElementById('medicineAutocompleteBox').innerHTML = '';
+            renderSelectedMedicines();
+        }
+
+        function hydratePrescriptionEditor(prescription) {
+            selectedMedicines = Array.isArray(prescription?.items)
+                ? prescription.items.map(item => ({
+                    maThuoc: Number(item.maThuoc),
+                    tenThuoc: item.tenThuoc || '',
+                    donViTinh: item.donViTinh || '',
+                    soLuong: Number(item.soLuong || 1),
+                    lieuDung: item.lieuDung || item.cachDungMacDinh || '',
+                    giaTien: Number(item.giaTien || 0),
+                    cachDungMacDinh: item.cachDungMacDinh || '',
+                    loaiThuoc: item.loaiThuoc || '',
+                    soLuongTon: Number(item.soLuongTon || 0)
+                }))
+                : [];
+            document.getElementById('doctorAdvice').value = prescription?.loiDanBacSi || '';
+            renderSelectedMedicines();
+        }
+
+        function renderSelectedMedicines() {
+            const emptyState = document.getElementById('selectedMedicineEmpty');
+            const wrapper = document.getElementById('selectedMedicineWrapper');
+            const body = document.getElementById('selectedMedicineBody');
+            const count = selectedMedicines.length;
+            const total = selectedMedicines.reduce((sum, item) => sum + (Number(item.giaTien || 0) * Number(item.soLuong || 0)), 0);
+
+            document.getElementById('selectedMedicineBadge').textContent = `${count} thuốc`;
+            document.getElementById('selectedMedicineCount').textContent = count;
+            document.getElementById('prescriptionTotal').textContent = formatCurrency(total);
+
+            if (count === 0) {
+                emptyState.style.display = 'block';
+                wrapper.style.display = 'none';
+                body.innerHTML = '';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            wrapper.style.display = 'block';
+            body.innerHTML = selectedMedicines.map((item, index) => `
+                <tr>
+                    <td>
+                        <div class="fw-semibold text-dark">${escapeHtml(item.tenThuoc)}</div>
+                        <div class="text-muted small">
+                            ${escapeHtml(item.loaiThuoc || 'Chưa phân loại')} • ${formatCurrency(item.giaTien)} / ${escapeHtml(item.donViTinh || 'đơn vị')}
+                        </div>
+                        <div class="small ${Number(item.soLuongTon || 0) <= 0 ? 'text-danger' : Number(item.soLuong || 0) > Number(item.soLuongTon || 0) ? 'text-warning' : 'text-muted'}">
+                            Tồn kho hiện tại: ${Number(item.soLuongTon || 0)}
+                            ${Number(item.soLuong || 0) > Number(item.soLuongTon || 0) ? ' • Số lượng kê đang vượt tồn kho' : ''}
+                        </div>
+                    </td>
+                    <td>
+                        <input type="number" min="1" class="form-control" value="${item.soLuong}" onchange="updateSelectedMedicineQuantity(${index}, this.value)">
+                    </td>
+                    <td>
+                        <textarea class="form-control" rows="2" oninput="updateSelectedMedicineDosage(${index}, this.value)" placeholder="Nhập liều dùng...">${escapeHtml(item.lieuDung || item.cachDungMacDinh || '')}</textarea>
+                    </td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeSelectedMedicine(${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderMedicineSuggestions(items, keyword) {
+            const box = document.getElementById('medicineAutocompleteBox');
+
+            if (!items.length) {
+                box.style.display = 'none';
+                box.innerHTML = '';
+                return;
+            }
+
+            box.innerHTML = items.map(item => `
+                <div class="medicine-suggestion" onclick="selectMedicineSuggestion(${item.maThuoc})">
+                    <div>
+                        <div class="medicine-suggestion-name">${highlightText(item.tenThuoc, keyword)}</div>
+                        <div class="medicine-suggestion-meta">
+                            ${escapeHtml(item.loaiThuoc || 'Chưa phân loại')} • ${formatCurrency(item.giaTien)} / ${escapeHtml(item.donViTinh || 'đơn vị')}
+                        </div>
+                    </div>
+                    <div class="text-end small ${Number(item.soLuongTon || 0) <= 0 ? 'text-danger' : Number(item.soLuongTon || 0) <= Number(item.nguongCanhBao || 10) ? 'text-warning' : 'text-muted'}">
+                        Tồn kho: ${Number(item.soLuongTon || 0)}
+                    </div>
+                </div>
+            `).join('');
+            box.style.display = 'block';
+        }
+
+        function setupMedicineAutocomplete() {
+            const input = document.getElementById('medicineSearchInput');
+            const box = document.getElementById('medicineAutocompleteBox');
+
+            input.addEventListener('input', () => {
+                clearTimeout(medicineSearchTimer);
+                const keyword = input.value.trim();
+
+                if (keyword.length < 2) {
+                    box.style.display = 'none';
+                    box.innerHTML = '';
+                    return;
+                }
+
+                medicineSearchTimer = setTimeout(async () => {
+                    try {
+                        const response = await fetch(`${API_BASE}/search-medicines.php?q=${encodeURIComponent(keyword)}`, {
+                            credentials: 'include'
+                        });
+                        const data = await response.json();
+
+                        if (!data.success) {
+                            box.style.display = 'none';
+                            box.innerHTML = '';
+                            return;
+                        }
+
+                        medicineSuggestions = data.data || [];
+                        renderMedicineSuggestions(medicineSuggestions, keyword);
+                    } catch (error) {
+                        console.error('Error searching medicines:', error);
+                        box.style.display = 'none';
+                        box.innerHTML = '';
+                    }
+                }, 250);
+            });
+
+            input.addEventListener('keydown', event => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                }
+            });
+
+            document.addEventListener('click', event => {
+                if (!event.target.closest('.medicine-search-wrapper')) {
+                    box.style.display = 'none';
+                }
+            });
+        }
+
+        function selectMedicineSuggestion(maThuoc) {
+            const medicine = medicineSuggestions.find(item => Number(item.maThuoc) === Number(maThuoc));
+            if (!medicine) return;
+
+             if (Number(medicine.soLuongTon || 0) <= 0) {
+                showAlert('error', `Thuốc "${medicine.tenThuoc}" đã hết hàng trong kho.`);
+                return;
+            }
+
+            const existing = selectedMedicines.find(item => Number(item.maThuoc) === Number(maThuoc));
+            if (existing) {
+                if (Number(existing.soLuong || 0) >= Number(medicine.soLuongTon || 0)) {
+                    showAlert('warning', `Thuốc "${medicine.tenThuoc}" chỉ còn ${medicine.soLuongTon} trong kho.`);
+                    return;
+                }
+                existing.soLuong += 1;
+            } else {
+                selectedMedicines.push({
+                    maThuoc: Number(medicine.maThuoc),
+                    tenThuoc: medicine.tenThuoc || '',
+                    donViTinh: medicine.donViTinh || '',
+                    soLuong: 1,
+                    lieuDung: medicine.cachDungMacDinh || '',
+                    giaTien: Number(medicine.giaTien || 0),
+                    cachDungMacDinh: medicine.cachDungMacDinh || '',
+                    loaiThuoc: medicine.loaiThuoc || '',
+                    soLuongTon: Number(medicine.soLuongTon || 0)
+                });
+            }
+
+            document.getElementById('medicineSearchInput').value = '';
+            document.getElementById('medicineAutocompleteBox').style.display = 'none';
+            document.getElementById('medicineAutocompleteBox').innerHTML = '';
+            renderSelectedMedicines();
+        }
+
+        function updateSelectedMedicineQuantity(index, value) {
+            const quantity = Math.max(1, Number(value || 1));
+            if (!selectedMedicines[index]) return;
+            selectedMedicines[index].soLuong = quantity;
+            if (Number(selectedMedicines[index].soLuongTon || 0) > 0 && quantity > Number(selectedMedicines[index].soLuongTon || 0)) {
+                showAlert('warning', `Thuốc "${selectedMedicines[index].tenThuoc}" hiện chỉ còn ${selectedMedicines[index].soLuongTon} trong kho. Bạn vẫn có thể lưu nháp, nhưng sẽ không thể hoàn tất nếu chưa đủ tồn kho.`);
+            }
+            renderSelectedMedicines();
+        }
+
+        function updateSelectedMedicineDosage(index, value) {
+            if (!selectedMedicines[index]) return;
+            selectedMedicines[index].lieuDung = value;
+        }
+
+        function removeSelectedMedicine(index) {
+            selectedMedicines.splice(index, 1);
+            renderSelectedMedicines();
+        }
+
+        function renderPrescriptionPreview(prescription) {
+            const items = Array.isArray(prescription?.items) ? prescription.items : [];
+            const advice = prescription?.loiDanBacSi || '';
+
+            if (!items.length && !advice) {
+                return `
+                    <div class="col-12">
+                        <div class="info-group">
+                            <label><i class="fas fa-capsules me-2"></i>Toa thuốc</label>
+                            <p>Không kê thuốc trong hồ sơ này.</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const tableHtml = items.length
+                ? `
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Thuốc</th>
+                                    <th>Số lượng</th>
+                                    <th>Liều dùng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${items.map(item => `
+                                    <tr>
+                                        <td>
+                                            <div class="fw-semibold">${escapeHtml(item.tenThuoc)}</div>
+                                            <div class="small text-muted">${escapeHtml(item.donViTinh || 'đơn vị')} • ${formatCurrency(item.giaTien)}</div>
+                                        </td>
+                                        <td>${Number(item.soLuong || 0)}</td>
+                                        <td>${escapeHtml(item.lieuDung || item.cachDungMacDinh || 'Chưa có')}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-2"><strong>Tổng tiền thuốc:</strong> ${formatCurrency(prescription?.tongTienThuoc || 0)}</div>
+                `
+                : '<p class="mb-0">Không có thuốc nào được kê.</p>';
+
+            return `
+                <div class="col-12">
+                    <div class="info-group">
+                        <label><i class="fas fa-capsules me-2"></i>Toa thuốc</label>
+                        ${tableHtml}
+                        ${advice ? `<div class="mt-3"><strong>Lời dặn bác sĩ:</strong><p class="mb-0 mt-1">${escapeHtml(advice)}</p></div>` : ''}
+                    </div>
+                </div>
+            `;
+        }
 
         async function loadStatistics() {
             try {
@@ -833,6 +1343,7 @@
                             <div class="col-12"><div class="info-group"><label><i class="fas fa-stethoscope me-2"></i>Chẩn đoán</label><p>${r.chanDoan || 'Chưa có thông tin'}</p></div></div>
                             <div class="col-12"><div class="info-group"><label><i class="fas fa-pills me-2"></i>Điều trị</label><p>${r.dieuTri || 'Chưa có thông tin'}</p></div></div>
                             ${r.ghiChu ? `<div class="col-12"><div class="info-group"><label><i class="fas fa-comment-medical me-2"></i>Ghi chú</label><p>${r.ghiChu}</p></div></div>` : ''}
+                            ${renderPrescriptionPreview(r.toaThuoc)}
                         </div>
                     `;
                     new bootstrap.Modal(document.getElementById('recordModal')).show();
@@ -843,26 +1354,109 @@
         async function showEditModal(maHoSo) {
             const record = allPending.find(r => r.maHoSo === maHoSo);
             if (!record) return;
-            document.getElementById('editMaHoSo').value = maHoSo;
-            document.getElementById('editDiagnosis').value = record.chanDoan || '';
-            document.getElementById('editTreatment').value = record.dieuTri || '';
-            document.getElementById('editNotes').value = record.ghiChu || '';
-            document.getElementById('editPatientInfo').innerHTML = `<strong><i class="fas fa-info-circle me-2"></i>Thông tin bệnh nhân:</strong><br><strong>Tên:</strong> ${record.tenBenhNhan}<br><strong>Giới tính:</strong> ${record.gioiTinh} - <strong>Tuổi:</strong> ${calculateAge(record.ngaySinh)}<br><strong>Lịch khám:</strong> ${formatDate(record.ngayKham)} - ${record.tenCa}`;
-            new bootstrap.Modal(document.getElementById('editModal')).show();
+            resetPrescriptionEditor();
+
+            try {
+                const response = await fetch(`${API_BASE}/get-record-detail.php?maHoSo=${maHoSo}`, { credentials: 'include' });
+                const data = await response.json();
+                if (!data.success) {
+                    showAlert('error', data.message || 'Không thể tải thông tin hồ sơ');
+                    return;
+                }
+
+                const detail = data.data;
+                document.getElementById('editMaHoSo').value = maHoSo;
+                document.getElementById('editDiagnosis').value = detail.chanDoan || '';
+                document.getElementById('editTreatment').value = detail.dieuTri || '';
+                document.getElementById('editNotes').value = detail.ghiChu || '';
+                document.getElementById('editPatientInfo').innerHTML = `<strong><i class="fas fa-info-circle me-2"></i>Thông tin bệnh nhân:</strong><br><strong>Tên:</strong> ${detail.tenBenhNhan}<br><strong>Giới tính:</strong> ${detail.gioiTinh} - <strong>Tuổi:</strong> ${calculateAge(detail.ngaySinh)}<br><strong>Lịch khám:</strong> ${formatDate(detail.ngayKham)} - ${detail.tenCa}<br><strong>Trạng thái hồ sơ:</strong> ${detail.trangThai || 'Chưa hoàn thành'} <span class="text-muted">• Bạn có thể lưu nháp nhiều lần trước khi hoàn tất.</span>`;
+                hydratePrescriptionEditor(detail.toaThuoc);
+                new bootstrap.Modal(document.getElementById('editModal')).show();
+            } catch (error) {
+                console.error('Error loading record detail for edit:', error);
+                showAlert('error', 'Lỗi khi tải dữ liệu hồ sơ');
+            }
         }
 
         async function updateRecord() {
+            await persistRecord('complete');
+        }
+
+        async function saveRecordDraft() {
+            await persistRecord('draft');
+        }
+
+        async function persistRecord(action = 'complete') {
             const maHoSo = document.getElementById('editMaHoSo').value;
             const chanDoan = document.getElementById('editDiagnosis').value.trim();
             const dieuTri = document.getElementById('editTreatment').value.trim();
             const ghiChu = document.getElementById('editNotes').value.trim();
-            if (!chanDoan || !dieuTri) { showAlert('error', 'Vui lòng nhập đầy đủ thông tin bắt buộc!'); return; }
+            const loiDanBacSi = document.getElementById('doctorAdvice').value.trim();
+            const medicines = selectedMedicines.map(item => ({
+                maThuoc: Number(item.maThuoc),
+                soLuong: Number(item.soLuong),
+                lieuDung: (item.lieuDung || '').trim()
+            }));
+
+            if (action === 'complete' && (!chanDoan || !dieuTri)) {
+                showAlert('error', 'Vui lòng nhập đầy đủ thông tin bắt buộc trước khi hoàn thành hồ sơ!');
+                return;
+            }
+
+            const saveDraftBtn = document.getElementById('saveDraftBtn');
+            const completeRecordBtn = document.getElementById('completeRecordBtn');
             try {
-                const response = await fetch(`${API_BASE}/update-record.php`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ maHoSo, chanDoan, dieuTri, ghiChu }) });
+                saveDraftBtn.disabled = true;
+                completeRecordBtn.disabled = true;
+
+                const response = await fetch(`${API_BASE}/update-record.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ maHoSo, chanDoan, dieuTri, ghiChu, loiDanBacSi, medicines, action })
+                });
                 const data = await response.json();
-                if (data.success) { showAlert('success', 'Hoàn thành hồ sơ thành công!'); bootstrap.Modal.getInstance(document.getElementById('editModal')).hide(); document.getElementById('editForm').reset(); loadStatistics(); loadPendingRecords(); loadCompletedRecords(); }
+                if (data.success) {
+                    let successMessage = data.message || (action === 'draft' ? 'Đã lưu nháp hồ sơ!' : 'Hoàn thành hồ sơ thành công!');
+
+                    if (action === 'complete' && data.mailStatus?.attempted && !data.mailStatus.success) {
+                        if (['record_or_email_missing', 'invalid_email'].includes(data.mailStatus.reason)) {
+                            successMessage += ' Email chưa được gửi vì bệnh nhân chưa có email hợp lệ.';
+                        } else if (data.mailStatus.reason && data.mailStatus.reason !== 'duplicate') {
+                            successMessage += ' Email thông báo chưa gửi được, nhưng hồ sơ đã lưu thành công.';
+                        }
+                    }
+
+                    if (action === 'complete' && Array.isArray(data.lowStockMedicines) && data.lowStockMedicines.length > 0) {
+                        const lowStockSummary = data.lowStockMedicines
+                            .map(item => `${item.tenThuoc} (${item.soLuongTon})`)
+                            .join(', ');
+                        successMessage += ` Lưu ý tồn kho thấp: ${lowStockSummary}.`;
+                    }
+
+                    if (action === 'draft') {
+                        showAlert('success', successMessage);
+                    } else {
+                        showAlert('success', successMessage);
+                        bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+                        document.getElementById('editForm').reset();
+                        resetPrescriptionEditor();
+                    }
+
+                    await Promise.all([
+                        loadStatistics(),
+                        loadPendingRecords(),
+                        loadCompletedRecords()
+                    ]);
+                }
                 else { showAlert('error', data.message || 'Không thể cập nhật hồ sơ'); }
-            } catch (error) { console.error('Error updating record:', error); showAlert('error', 'Lỗi kết nối server'); }
+            } catch (error) {
+                console.error('Error updating record:', error);
+                showAlert('error', 'Lỗi kết nối server');
+            } finally {
+                saveDraftBtn.disabled = false;
+                completeRecordBtn.disabled = false;
+            }
         }
 
         async function deleteRecord(maHoSo) {
@@ -875,7 +1469,21 @@
             } catch (error) { console.error('Error deleting record:', error); showAlert('error', 'Lỗi kết nối server'); }
         }
 
-        async function showCreateModal() {
+        function renderSelectedAppointmentInfo(selectElement) {
+            const patientInfo = document.getElementById('patientInfo');
+
+            if (!selectElement.value) {
+                patientInfo.style.display = 'none';
+                patientInfo.innerHTML = '';
+                return;
+            }
+
+            const option = selectElement.options[selectElement.selectedIndex];
+            patientInfo.style.display = 'block';
+            patientInfo.innerHTML = `<strong><i class="fas fa-info-circle me-2"></i>Thông tin bệnh nhân:</strong><br><strong>Tên:</strong> ${option.dataset.name}<br><strong>Giới tính:</strong> ${option.dataset.gender} - <strong>Tuổi:</strong> ${calculateAge(option.dataset.birth)}<br><strong>Lịch khám:</strong> ${formatDate(option.dataset.date)} - ${option.dataset.shift}`;
+        }
+
+        async function showCreateModal(preselectedAppointmentId = '') {
             try {
                 const response = await fetch(`${API_BASE}/get-available-appointments.php`, { credentials: 'include' });
                 const data = await response.json();
@@ -883,10 +1491,23 @@
                     const select = document.getElementById('appointmentSelect');
                     select.innerHTML = '<option value="">-- Chọn lịch khám --</option>' + data.data.map(apt => `<option value="${apt.maLichKham}" data-name="${apt.tenBenhNhan}" data-gender="${apt.gioiTinh}" data-birth="${apt.ngaySinh}" data-date="${apt.ngayKham}" data-shift="${apt.tenCa}">${apt.tenBenhNhan} - ${formatDate(apt.ngayKham)} - ${apt.tenCa}</option>`).join('');
                     select.onchange = function () {
-                        const patientInfo = document.getElementById('patientInfo');
-                        if (this.value) { const o = this.options[this.selectedIndex]; patientInfo.style.display = 'block'; patientInfo.innerHTML = `<strong><i class="fas fa-info-circle me-2"></i>Thông tin bệnh nhân:</strong><br><strong>Tên:</strong> ${o.dataset.name}<br><strong>Giới tính:</strong> ${o.dataset.gender} - <strong>Tuổi:</strong> ${calculateAge(o.dataset.birth)}<br><strong>Lịch khám:</strong> ${formatDate(o.dataset.date)} - ${o.dataset.shift}`; }
-                        else { patientInfo.style.display = 'none'; }
+                        renderSelectedAppointmentInfo(this);
                     };
+
+                    document.getElementById('notes').value = '';
+                    document.getElementById('patientInfo').style.display = 'none';
+                    document.getElementById('patientInfo').innerHTML = '';
+
+                    if (preselectedAppointmentId) {
+                        const matchedOption = Array.from(select.options).find(option => option.value === String(preselectedAppointmentId));
+                        if (matchedOption) {
+                            select.value = matchedOption.value;
+                            renderSelectedAppointmentInfo(select);
+                        } else {
+                            showAlert('error', 'Lịch khám này không còn khả dụng để khởi tạo hồ sơ.');
+                        }
+                    }
+
                     new bootstrap.Modal(document.getElementById('createModal')).show();
                 } else { showAlert('info', 'Không có lịch khám nào có thể tạo hồ sơ.'); }
             } catch (error) { console.error('Error loading appointments:', error); showAlert('error', 'Lỗi khi tải danh sách lịch khám'); }
@@ -894,14 +1515,26 @@
 
         async function createRecord() {
             const maLichKham = document.getElementById('appointmentSelect').value;
-            const chanDoan = document.getElementById('diagnosis').value.trim();
-            const dieuTri = document.getElementById('treatment').value.trim();
             const ghiChu = document.getElementById('notes').value.trim();
-            if (!maLichKham || !chanDoan || !dieuTri) { showAlert('error', 'Vui lòng điền đầy đủ thông tin bắt buộc!'); return; }
+            if (!maLichKham) { showAlert('error', 'Vui lòng chọn lịch khám cần khởi tạo hồ sơ!'); return; }
             try {
-                const response = await fetch(`${API_BASE}/create-record.php`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ maLichKham, chanDoan, dieuTri, ghiChu }) });
+                const response = await fetch(`${API_BASE}/create-record.php`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ maLichKham, ghiChu }) });
                 const data = await response.json();
-                if (data.success) { showAlert('success', 'Tạo hồ sơ bệnh án thành công!'); bootstrap.Modal.getInstance(document.getElementById('createModal')).hide(); document.getElementById('createForm').reset(); document.getElementById('patientInfo').style.display = 'none'; loadStatistics(); loadPendingRecords(); }
+                if (data.success) {
+                    showAlert('success', data.message || 'Khởi tạo hồ sơ bệnh án thành công!');
+                    bootstrap.Modal.getInstance(document.getElementById('createModal')).hide();
+                    document.getElementById('createForm').reset();
+                    document.getElementById('patientInfo').style.display = 'none';
+                    document.getElementById('patientInfo').innerHTML = '';
+                    await Promise.all([
+                        loadStatistics(),
+                        loadPendingRecords(),
+                        loadCompletedRecords()
+                    ]);
+                    if (data.maHoSo) {
+                        showEditModal(data.maHoSo);
+                    }
+                }
                 else { showAlert('error', data.message || 'Không thể tạo hồ sơ'); }
             } catch (error) { console.error('Error creating record:', error); showAlert('error', 'Lỗi kết nối server'); }
         }

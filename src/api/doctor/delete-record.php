@@ -2,6 +2,7 @@
 require_once '../../config/cors.php';
 require_once '../../config/dp.php';
 require_once '../../config/session.php';
+require_once '../../includes/medicine-stock.php';
 
 require_role('bacsi');
 
@@ -28,6 +29,36 @@ try {
     }
 
     $conn->begin_transaction();
+
+    $stmt = $conn->prepare("
+        SELECT maLichKham, trangThai
+        FROM hosobenhan
+        WHERE maHoSo = ? AND maBacSi = ? AND isDeleted = 0
+        LIMIT 1
+    ");
+    $stmt->bind_param("ss", $maHoSo, $maBacSi);
+    $stmt->execute();
+    $record = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    if (!$record) {
+        $conn->rollback();
+        echo json_encode(['success' => false, 'message' => 'Thu hồi thất bại hoặc không có quyền']);
+        exit;
+    }
+
+    if (!empty($record['maLichKham']) && ($record['trangThai'] ?? '') === 'Đã hoàn thành') {
+        $existingPrescriptionItems = getPrescriptionItemsByAppointment($conn, (int)$record['maLichKham']);
+        applyPrescriptionStockDelta(
+            $conn,
+            (int)$record['maLichKham'],
+            $maHoSo,
+            $existingPrescriptionItems,
+            [],
+            true,
+            false
+        );
+    }
 
     $stmt = $conn->prepare("
         UPDATE hosobenhan
