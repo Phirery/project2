@@ -11,19 +11,27 @@
 
     <style>
         :root {
-            --primary-purple: #667eea;
-            --secondary-purple: #764ba2;
+            --primary-blue: #4A90E2;
+            --secondary-green: #52c41a;
+            --primary-blue-rgb: 74, 144, 226;
+            --secondary-green-rgb: 82, 196, 26;
+            --primary-purple: var(--primary-blue);
+            --secondary-purple: var(--secondary-green);
+            --step-circle-size: 42px;
+            --surface-soft: #f4f9ff;
+            --surface-green: #f3fbef;
+            --border-soft: #d8e6f5;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
         }
 
         /* Giữ nguyên background của trang */
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary-blue);
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding-bottom: 20px;
         }
-
-        /* --- ĐÃ XÓA CSS NAVBAR CŨ ĐỂ DÙNG CSS TỪ COMMON.CSS CHO HEADER MỚI --- */
 
         /* Booking Container */
         .booking-wrapper {
@@ -37,7 +45,7 @@
         .booking-card {
             background: #fff;
             border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(30, 41, 59, 0.18);
             overflow: hidden;
             animation: slideUp 0.6s ease-out;
         }
@@ -48,7 +56,7 @@
         }
 
         .booking-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary-blue);
             padding: 40px;
             text-align: center;
             color: white;
@@ -65,31 +73,40 @@
         }
 
         /* Step Indicator */
+        .step-progress-wrapper {
+            margin-bottom: 40px;
+        }
+
         .step-indicator {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 40px;
             position: relative;
+            gap: 10px;
         }
 
         .step-indicator::before {
             content: "";
             position: absolute;
-            top: 20px;
+            top: calc(var(--step-circle-size) / 2);
             left: 0;
             right: 0;
-            height: 3px;
-            background: #e0e0e0;
+            height: 4px;
+            border-radius: 999px;
+            background: #d7e3f1;
+            transform: translateY(-50%);
             z-index: 0;
         }
 
         .progress-line {
             position: absolute;
-            top: 20px;
+            top: calc(var(--step-circle-size) / 2);
             left: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-purple), var(--secondary-purple));
-            transition: width 0.3s ease;
+            width: 0;
+            height: 4px;
+            border-radius: 999px;
+            background: var(--secondary-green);
+            transform: translateY(-50%);
+            transition: left 0.3s ease, width 0.3s ease;
             z-index: 1;
         }
 
@@ -101,35 +118,37 @@
         }
 
         .step-circle {
-            width: 42px;
-            height: 42px;
+            width: var(--step-circle-size);
+            height: var(--step-circle-size);
             border-radius: 50%;
-            background: #e0e0e0;
-            color: #999;
+            background: #edf3f9;
+            color: #8aa0b8;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             font-weight: 600;
             margin-bottom: 8px;
+            border: 2px solid transparent;
             transition: all 0.3s ease;
         }
 
         .step.active .step-circle,
         .step.completed .step-circle {
-            background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+            background: var(--secondary-green);
             color: white;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 6px 18px rgba(var(--primary-blue-rgb), 0.28);
         }
 
         .step-label {
             font-size: 0.85rem;
-            color: #999;
+            color: var(--text-muted);
             font-weight: 500;
+            line-height: 1.35;
         }
 
         .step.active .step-label,
         .step.completed .step-label {
-            color: var(--primary-purple);
+            color: var(--primary-blue);
             font-weight: 600;
         }
 
@@ -151,10 +170,10 @@
         .section-title {
             font-size: 1.4rem;
             font-weight: 700;
-            color: #333;
+            color: var(--text-dark);
             margin-bottom: 24px;
             padding-bottom: 12px;
-            border-bottom: 3px solid var(--primary-purple);
+            border-bottom: 3px solid var(--primary-blue);
             display: inline-block;
         }
 
@@ -167,33 +186,33 @@
         }
 
         .selection-card {
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--border-soft);
             border-radius: 16px;
             padding: 24px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
-            background: #fafafa;
+            background: linear-gradient(180deg, #ffffff 0%, var(--surface-soft) 100%);
             position: relative;
         }
 
         .selection-card:hover {
-            border-color: var(--primary-purple);
+            border-color: var(--primary-blue);
             transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 12px 28px rgba(var(--primary-blue-rgb), 0.16);
         }
 
         .selection-card.selected {
-            border-color: var(--primary-purple);
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            border-color: var(--primary-blue);
+            background: linear-gradient(135deg, rgba(var(--primary-blue-rgb), 0.14));
+            box-shadow: 0 12px 28px rgba(var(--primary-blue-rgb), 0.24);
         }
 
         .card-icon {
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+            background: var(--primary-blue);
             color: white;
             display: inline-flex;
             align-items: center;
@@ -205,13 +224,13 @@
         .card-title {
             font-weight: 700;
             font-size: 1.1rem;
-            color: #333;
+            color: var(--text-dark);
             margin-bottom: 8px;
         }
 
         .card-subtitle {
             font-size: 0.9rem;
-            color: #666;
+            color: var(--text-muted);
         }
 
         .check-icon {
@@ -221,7 +240,7 @@
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            background: var(--primary-purple);
+            background: var(--secondary-green);
             color: white;
             display: none;
             align-items: center;
@@ -241,24 +260,35 @@
         }
 
         .doctor-card {
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--border-soft);
             border-radius: 16px;
             padding: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
-            background: white;
+            background: linear-gradient(180deg, #ffffff 0%, var(--surface-soft) 100%);
         }
 
         .doctor-card:hover {
-            border-color: var(--primary-purple);
+            border-color: var(--primary-blue);
             transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 12px 28px rgba(var(--primary-blue-rgb), 0.16);
         }
 
         .doctor-card.selected {
-            border-color: var(--primary-purple);
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            border-color: var(--primary-blue);
+            background: linear-gradient(135deg, rgba(var(--primary-blue-rgb), 0.14));
+            box-shadow: 0 12px 28px rgba(var(--primary-blue-rgb), 0.24);
+        }
+
+        .doctor-card.disabled {
+            background: #f8fbfe;
+            border-color: #dde7f0;
+        }
+
+        .doctor-card.disabled:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: #dde7f0;
         }
 
         .doctor-header {
@@ -271,7 +301,7 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+            background: var(--primary-blue);
             color: white;
             display: flex;
             align-items: center;
@@ -283,12 +313,12 @@
         .doctor-name {
             font-weight: 700;
             font-size: 1rem;
-            color: #333;
+            color: var(--text-dark);
         }
 
         .doctor-specialty {
             font-size: 0.85rem;
-            color: #666;
+            color: var(--text-muted);
         }
 
         /* Time Slots */
@@ -301,7 +331,7 @@
         .shift-btn {
             flex: 1;
             padding: 16px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--border-soft);
             border-radius: 12px;
             background: white;
             cursor: pointer;
@@ -311,14 +341,15 @@
         }
 
         .shift-btn:hover {
-            border-color: var(--primary-purple);
-            background: rgba(102, 126, 234, 0.05);
+            border-color: var(--primary-blue);
+            background: rgba(var(--primary-blue-rgb), 0.06);
         }
 
         .shift-btn.selected {
-            border-color: var(--primary-purple);
-            background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+            border-color: var(--primary-blue);
+            background: var(--primary-blue);
             color: white;
+            box-shadow: 0 10px 22px rgba(var(--primary-blue-rgb), 0.2);
         }
 
         .time-slots {
@@ -329,7 +360,7 @@
         }
 
         .time-slot {
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--border-soft);
             border-radius: 12px;
             padding: 16px;
             text-align: center;
@@ -337,25 +368,26 @@
             transition: all 0.3s ease;
             background: white;
             font-weight: 600;
-            color: #333;
+            color: var(--text-dark);
         }
 
         .time-slot:hover:not(.disabled) {
-            border-color: var(--primary-purple);
-            transform: translateY(-5px);
+            border-color: var(--primary-blue);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(var(--primary-blue-rgb), 0.14);
         }
 
         .time-slot.selected {
-            border-color: var(--primary-purple);
-            background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+            border-color: var(--primary-blue);
+            background: var(--primary-blue);
             color: white;
-
+            box-shadow: 0 10px 20px rgba(var(--primary-blue-rgb), 0.22);
         }
 
         .time-slot.disabled {
-            opacity: 0.4;
+            opacity: 0.5;
             cursor: not-allowed;
-            background: #f5f5f5;
+            background: #f5f7fa;
         }
 
         /* Navigation Buttons */
@@ -380,21 +412,21 @@
         }
 
         .btn-prev {
-            background: #e0e0e0;
-            color: #666;
+            background: #eaf1f7;
+            color: #486581;
         }
 
         .btn-prev:hover {
-            background: #d0d0d0;
+            background: #dbe7f1;
         }
 
         .btn-next, .btn-submit {
-            background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+            background: var(--secondary-green);
             color: white;
         }
 
         .btn-next:hover, .btn-submit:hover {
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 24px rgba(var(--primary-blue-rgb), 0.3);
             transform: translateY(-2px);
         }
 
@@ -405,17 +437,19 @@
 
         /* Summary */
         .summary-card {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            background: linear-gradient(135deg, rgba(var(--primary-blue-rgb), 0.12), rgba(var(--secondary-green-rgb), 0.1));
             border-radius: 16px;
             padding: 30px;
             margin-bottom: 30px;
+            border: 1px solid rgba(var(--primary-blue-rgb), 0.12);
         }
 
         .summary-item {
             display: flex;
             justify-content: space-between;
             padding: 12px 0;
-            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+            gap: 16px;
+            border-bottom: 1px solid rgba(var(--primary-blue-rgb), 0.15);
         }
 
         .summary-item:last-child {
@@ -424,35 +458,36 @@
 
         .summary-label {
             font-weight: 600;
-            color: #666;
+            color: var(--text-muted);
         }
 
         .summary-value {
             font-weight: 700;
-            color: #333;
+            color: var(--text-dark);
+            text-align: right;
         }
 
         .form-control {
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--border-soft);
             border-radius: 10px;
             padding: 12px;
         }
 
         .form-control:focus {
-            border-color: var(--primary-purple);
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(var(--primary-blue-rgb), 0.12);
         }
 
         .form-label {
             font-weight: 600;
-            color: #333;
+            color: var(--text-dark);
             margin-bottom: 8px;
         }
 
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: #999;
+            color: var(--text-muted);
         }
 
         .loading {
@@ -461,14 +496,217 @@
         }
 
         .spinner-border {
-            color: var(--primary-purple);
+            color: var(--primary-blue);
         }
 
         @media (max-width: 768px) {
-            .booking-header h1 { font-size: 1.5rem; }
-            .booking-body { padding: 24px; }
-            .selection-grid, .doctor-grid { grid-template-columns: 1fr; }
-            .time-slots { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+            :root {
+                --step-circle-size: 36px;
+            }
+
+            .booking-wrapper {
+                margin: 18px auto;
+                padding: 0 12px;
+            }
+
+            .booking-card {
+                border-radius: 20px;
+            }
+
+            .booking-header {
+                padding: 28px 20px;
+            }
+
+            .booking-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .booking-header p {
+                font-size: 0.95rem;
+                margin-top: 10px;
+                margin-bottom: 0;
+            }
+
+            .booking-body {
+                padding: 22px 16px 24px;
+            }
+
+            .step-progress-wrapper {
+                overflow-x: auto;
+                margin: 0 -4px 28px;
+                padding: 0 4px 10px;
+                scrollbar-width: none;
+            }
+
+            .step-progress-wrapper::-webkit-scrollbar,
+            .selection-grid::-webkit-scrollbar,
+            .doctor-grid::-webkit-scrollbar,
+            .shift-selector::-webkit-scrollbar,
+            .time-slots::-webkit-scrollbar {
+                display: none;
+            }
+
+            .step-indicator {
+                min-width: 690px;
+                gap: 0;
+            }
+
+            .step {
+                min-width: 110px;
+            }
+
+            .step-label {
+                font-size: 0.78rem;
+                padding: 0 6px;
+            }
+
+            .section-title {
+                font-size: 1.15rem;
+                margin-bottom: 16px;
+            }
+
+            .selection-grid,
+            .doctor-grid,
+            .time-slots {
+                display: grid;
+                grid-auto-flow: column;
+                overflow-x: auto;
+                overflow-y: hidden;
+                align-items: stretch;
+                padding-bottom: 8px;
+                margin-bottom: 24px;
+                scrollbar-width: none;
+            }
+
+            .selection-grid {
+                grid-template-columns: none;
+                grid-auto-columns: minmax(155px, 170px);
+                gap: 12px;
+            }
+
+            .doctor-grid {
+                grid-template-columns: none;
+                grid-auto-columns: minmax(230px, 250px);
+                gap: 12px;
+            }
+
+            .shift-selector {
+                display: grid;
+                grid-auto-flow: column;
+                grid-auto-columns: minmax(145px, 165px);
+                overflow-x: auto;
+                overflow-y: hidden;
+                gap: 10px;
+                margin-bottom: 18px;
+                padding-bottom: 8px;
+                scrollbar-width: none;
+            }
+
+            .time-slots {
+                grid-template-columns: none;
+                grid-auto-columns: minmax(115px, 128px);
+                gap: 10px;
+            }
+
+            .selection-card,
+            .doctor-card,
+            .shift-btn,
+            .time-slot {
+                padding: 14px 12px;
+                border-radius: 14px;
+            }
+
+            .selection-card {
+                min-height: 160px;
+            }
+
+            .doctor-card {
+                min-height: 108px;
+            }
+
+            .card-icon {
+                width: 48px;
+                height: 48px;
+                margin-bottom: 12px;
+                font-size: 1.4rem;
+            }
+
+            .card-title {
+                font-size: 0.98rem;
+            }
+
+            .card-subtitle,
+            .doctor-specialty,
+            .shift-btn small {
+                font-size: 0.78rem;
+            }
+
+            .check-icon {
+                width: 24px;
+                height: 24px;
+                top: 10px;
+                right: 10px;
+                font-size: 0.75rem;
+            }
+
+            .doctor-header {
+                margin-bottom: 8px;
+            }
+
+            .doctor-avatar {
+                width: 42px;
+                height: 42px;
+                font-size: 1.2rem;
+                margin-right: 10px;
+            }
+
+            .doctor-name {
+                font-size: 0.95rem;
+            }
+
+            .shift-btn,
+            .time-slot {
+                min-height: 86px;
+                font-size: 0.9rem;
+            }
+
+            .time-slot {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                gap: 4px;
+            }
+
+            .nav-buttons {
+                margin-top: 24px;
+                flex-direction: column-reverse;
+            }
+
+            .btn-custom {
+                width: 100%;
+                justify-content: center;
+                padding: 12px 18px;
+                font-size: 0.95rem;
+            }
+
+            .summary-card {
+                padding: 18px;
+                margin-bottom: 22px;
+            }
+
+            .summary-item {
+                padding: 10px 0;
+                align-items: flex-start;
+            }
+
+            .summary-value {
+                max-width: 58%;
+                font-size: 0.95rem;
+            }
+
+            .empty-state {
+                padding: 28px 16px;
+            }
         }
     </style>
 </head>
@@ -511,31 +749,33 @@
             </div>
 
             <div class="booking-body">
-                <div class="step-indicator">
-                    <div class="progress-line" id="progressLine"></div>
-                    <div class="step active" data-step="1">
-                        <div class="step-circle">1</div>
-                        <div class="step-label">Gói Khám</div>
-                    </div>
-                    <div class="step" data-step="2">
-                        <div class="step-circle">2</div>
-                        <div class="step-label">Khoa</div>
-                    </div>
-                    <div class="step" data-step="3">
-                        <div class="step-circle">3</div>
-                        <div class="step-label">Chuyên Khoa</div>
-                    </div>
-                    <div class="step" data-step="4">
-                        <div class="step-circle">4</div>
-                        <div class="step-label">Ngày & Bác Sĩ</div>
-                    </div>
-                    <div class="step" data-step="5">
-                        <div class="step-circle">5</div>
-                        <div class="step-label">Giờ Khám</div>
-                    </div>
-                    <div class="step" data-step="6">
-                        <div class="step-circle">6</div>
-                        <div class="step-label">Xác Nhận</div>
+                <div class="step-progress-wrapper">
+                    <div class="step-indicator">
+                        <div class="progress-line" id="progressLine"></div>
+                        <div class="step active" data-step="1">
+                            <div class="step-circle">1</div>
+                            <div class="step-label">Gói Khám</div>
+                        </div>
+                        <div class="step" data-step="2">
+                            <div class="step-circle">2</div>
+                            <div class="step-label">Khoa</div>
+                        </div>
+                        <div class="step" data-step="3">
+                            <div class="step-circle">3</div>
+                            <div class="step-label">Chuyên Khoa</div>
+                        </div>
+                        <div class="step" data-step="4">
+                            <div class="step-circle">4</div>
+                            <div class="step-label">Ngày & Bác Sĩ</div>
+                        </div>
+                        <div class="step" data-step="5">
+                            <div class="step-circle">5</div>
+                            <div class="step-label">Giờ Khám</div>
+                        </div>
+                        <div class="step" data-step="6">
+                            <div class="step-circle">6</div>
+                            <div class="step-label">Xác Nhận</div>
+                        </div>
                     </div>
                 </div>
 
@@ -649,12 +889,15 @@
             patientId: null
         };
 
+        let currentStep = 1;
+
         // Khởi tạo
         document.addEventListener('DOMContentLoaded', function() {
             // Common.js sẽ tự động load Header
             checkAuth(); // Giữ hàm này để lấy patientId cho luồng đặt lịch
             loadPackages();
             setupDateInput();
+            updateStepProgress(currentStep);
             
             // Check URL params cho package
             const urlParams = new URLSearchParams(window.location.search);
@@ -663,6 +906,8 @@
                 bookingState.packageId = parseInt(packageParam);
             }
         });
+
+        window.addEventListener('resize', () => updateStepProgress(currentStep));
 
         // Kiểm tra đăng nhập (Đã chỉnh sửa để tương thích với Header mới)
         async function checkAuth() {
@@ -1000,6 +1245,8 @@
         // === NAVIGATION ===
 
         function goToStep(stepNumber) {
+            currentStep = stepNumber;
+
             // Hide all sections
             document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
             document.getElementById('step' + stepNumber).classList.add('active');
@@ -1012,15 +1259,40 @@
                 if (step < stepNumber) s.classList.add('completed');
                 if (step === stepNumber) s.classList.add('active');
             });
-            
-            // Update progress line
-            const progressLine = document.getElementById('progressLine');
-            const percent = ((stepNumber - 1) / (steps.length - 1)) * 100;
-            progressLine.style.width = percent + '%';
+
+            updateStepProgress(stepNumber);
             
             // Load data if needed
             if (stepNumber === 2 && !document.querySelector('#departmentGrid .selection-card')) {
                 loadDepartments();
+            }
+        }
+
+        function updateStepProgress(stepNumber) {
+            const indicator = document.querySelector('.step-indicator');
+            const progressLine = document.getElementById('progressLine');
+            const steps = document.querySelectorAll('.step');
+            const firstCircle = steps[0]?.querySelector('.step-circle');
+            const activeCircle = document.querySelector(`.step[data-step="${stepNumber}"] .step-circle`);
+
+            if (!indicator || !progressLine || !firstCircle || !activeCircle) return;
+
+            const indicatorRect = indicator.getBoundingClientRect();
+            const firstRect = firstCircle.getBoundingClientRect();
+            const activeRect = activeCircle.getBoundingClientRect();
+
+            const startX = (firstRect.left - indicatorRect.left) + (firstRect.width / 2);
+            const endX = (activeRect.left - indicatorRect.left) + (activeRect.width / 2);
+
+            progressLine.style.left = `${startX}px`;
+            progressLine.style.width = `${Math.max(0, endX - startX)}px`;
+
+            if (window.innerWidth <= 768) {
+                activeCircle.closest('.step')?.scrollIntoView({
+                    behavior: 'smooth',
+                    inline: 'center',
+                    block: 'nearest'
+                });
             }
         }
 
