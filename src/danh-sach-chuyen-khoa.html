@@ -110,35 +110,30 @@
             margin-bottom: 8px;
         }
 
-        .btn-filter {
-            background: var(--primary-blue);
-            color: white;
-            border: none;
-            padding: 10px 28px;
-            border-radius: 6px;
+        .filter-hint {
+            margin-top: 14px;
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-hint i {
+            color: var(--primary-blue);
+        }
+
+        .filter-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 10px;
+            background: var(--primary-blue-light);
+            color: var(--primary-blue-dark);
+            border-radius: 999px;
             font-weight: 600;
-            transition: all 0.25s;
-            font-size: 0.9rem;
-        }
-
-        .btn-filter:hover {
-            background: var(--primary-blue-dark);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .btn-reset {
-            background: #e0e0e0;
-            color: #666;
-            border: none;
-            padding: 10px 28px;
-            border-radius: 6px;
-            font-weight: 600;
-            transition: all 0.25s;
-            font-size: 0.9rem;
-        }
-
-        .btn-reset:hover {
-            background: #d0d0d0;
+            font-size: 0.8rem;
         }
 
         .table-container {
@@ -303,14 +298,164 @@
             border-color: var(--border-color);
         }
 
+        .page-jump {
+            font-weight: 600;
+            min-width: 44px;
+            text-align: center;
+        }
+
+        .page-jump.current {
+            color: var(--text-secondary);
+            border-color: transparent;
+            background: transparent;
+            pointer-events: none;
+        }
+
         @media (max-width: 768px) {
             .section-title { font-size: 1.6rem; }
-            .header-section { padding: 30px 0 50px; }
-            .filter-box { padding: 20px; }
-            .pagination-container { flex-direction: column; gap: 15px; }
+            .header-section { padding: 30px 0 50px; margin-bottom: -24px; }
+            .section-subtitle { font-size: 0.94rem; }
+            .specialties-container { padding: 0 14px 28px; }
+            .filter-box { padding: 18px; border-radius: 10px; }
+            .filter-box h5 { margin-bottom: 16px; font-size: 1rem; }
+            .form-control, .form-select { padding: 9px 12px; font-size: 0.88rem; }
+            .pagination-container { flex-direction: column; gap: 12px; padding: 16px; }
             .pagination { flex-wrap: wrap; justify-content: center; }
+            .page-link { padding: 6px 12px; font-size: 0.85rem; }
             .table-responsive { border-radius: 12px; }
             .specialty-table thead th, .specialty-table tbody td { padding: 12px 10px; font-size: 0.85rem; }
+        }
+
+        @media (max-width: 576px) {
+            .header-section {
+                padding: 24px 0 42px;
+            }
+
+            .header-badge {
+                font-size: 0.72rem;
+                padding: 5px 14px;
+                letter-spacing: 1px;
+            }
+
+            .section-title {
+                font-size: 1.35rem;
+                margin-bottom: 8px;
+            }
+
+            .section-subtitle {
+                font-size: 0.9rem;
+                max-width: 100%;
+            }
+
+            .specialties-container {
+                padding: 0 10px 24px;
+            }
+
+            .filter-box {
+                padding: 14px;
+                margin-bottom: 8px;
+            }
+
+            .filter-hint {
+                margin-top: 12px;
+                font-size: 0.82rem;
+            }
+
+            .table-container {
+                background: transparent;
+                box-shadow: none;
+                border: none;
+            }
+
+            .table-responsive {
+                overflow: visible;
+            }
+
+            .specialty-table {
+                min-width: 0;
+            }
+
+            .specialty-table thead {
+                display: none;
+            }
+
+            .specialty-table tbody {
+                display: grid;
+                gap: 12px;
+            }
+
+            .specialty-table tbody tr {
+                display: block;
+                background: white;
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                box-shadow: var(--shadow-sm);
+                padding: 12px;
+            }
+
+            .specialty-table tbody td {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 12px;
+                padding: 6px 0;
+                border: none;
+                text-align: left !important;
+            }
+
+            .specialty-table tbody td::before {
+                content: attr(data-label);
+                color: var(--text-secondary);
+                font-size: 0.78rem;
+                font-weight: 700;
+                min-width: 76px;
+                flex-shrink: 0;
+            }
+
+            .specialty-table tbody td .cell-content {
+                flex: 1;
+                text-align: right;
+                min-width: 0;
+            }
+
+            .specialty-description {
+                -webkit-line-clamp: 3;
+                font-size: 0.84rem;
+            }
+
+            .department-badge {
+                padding: 3px 10px;
+                font-size: 0.74rem;
+            }
+
+            .btn-view-detail {
+                width: 100%;
+                padding: 8px 12px;
+                font-size: 0.82rem;
+            }
+
+            .pagination-container {
+                gap: 10px;
+                padding: 14px 12px;
+            }
+
+            .pagination {
+                gap: 4px;
+            }
+
+            .page-link {
+                padding: 6px 10px;
+                min-width: 40px;
+            }
+
+            .empty-state,
+            .loading {
+                padding: 40px 16px;
+            }
+
+            .empty-state i {
+                font-size: 3rem;
+            }
         }
     </style>
 </head>
@@ -350,7 +495,7 @@
     <div class="specialties-container">
         <div class="filter-box">
             <h5><i class="fas fa-filter me-2"></i>Bộ lọc tìm kiếm</h5>
-            <div class="row g-3 mb-3">
+            <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label">Khoa</label>
                     <select class="form-select" id="filterKhoa">
@@ -363,13 +508,9 @@
                            placeholder="Nhập tên chuyên khoa hoặc khoa...">
                 </div>
             </div>
-            <div class="d-flex gap-2">
-                <button class="btn-filter" onclick="applyFilters()">
-                    <i class="fas fa-search me-2"></i>Tìm kiếm
-                </button>
-                <button class="btn-reset" onclick="resetFilters()">
-                    <i class="fas fa-redo me-2"></i>Đặt lại
-                </button>
+            <div class="filter-hint">
+                <span>Kết quả bộ lọc: </span>
+                <span class="filter-status" id="filterStatus">Đang xem toàn bộ</span>
             </div>
         </div>
 
@@ -419,34 +560,45 @@
         const API_BASE_PATIENT_CK = window.API_ENDPOINTS.patient;
         let currentPage = 1;
         const itemsPerPage = 10;
-        let allKhoa = [];
-        let currentCursor = '';
-        let nextCursor = null;
-        let previousCursors = [];
-        let lastKnownTotal = null;
+        let activeSearchTimer = null;
+        let activeRequestController = null;
+        let latestRequestId = 0;
+        let lastTotalPages = 0;
 
         document.addEventListener('DOMContentLoaded', function() {
             loadKhoa();
-            resetPaginationState();
-            loadSpecialties({ includeTotal: true });
+            currentPage = 1;
+            loadSpecialties();
             setupFilterListeners();
         });
 
         function setupFilterListeners() {
+            const khoaSelect = document.getElementById('filterKhoa');
             const searchInput = document.getElementById('filterSearch');
-            if (searchInput) {
-                searchInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') applyFilters();
+
+            if (khoaSelect) {
+                khoaSelect.addEventListener('change', function() {
+                    currentPage = 1;
+                    if (activeSearchTimer) {
+                        clearTimeout(activeSearchTimer);
+                        activeSearchTimer = null;
+                    }
+                    loadSpecialties();
                 });
             }
-        }
 
-        function resetPaginationState() {
-            currentPage = 1;
-            currentCursor = '';
-            nextCursor = null;
-            previousCursors = [];
-            lastKnownTotal = null;
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    currentPage = 1;
+                    if (activeSearchTimer) {
+                        clearTimeout(activeSearchTimer);
+                    }
+                    activeSearchTimer = setTimeout(() => {
+                        activeSearchTimer = null;
+                        loadSpecialties();
+                    }, 250);
+                });
+            }
         }
 
         async function loadKhoa() {
@@ -454,7 +606,6 @@
                 const response = await fetch(`${API_BASE_PATIENT_CK}/get-departments.php`);
                 const data = await response.json();
                 if (data.success) {
-                    allKhoa = data.data;
                     const select = document.getElementById('filterKhoa');
                     if(select) {
                         select.innerHTML = '<option value="">Tất cả khoa</option>' +
@@ -466,41 +617,56 @@
             }
         }
 
-        async function loadSpecialties(options = {}) {
-            const { includeTotal = false } = options;
+        async function loadSpecialties() {
             showLoading(true);
             const maKhoa = document.getElementById('filterKhoa')?.value || '';
-            const search = document.getElementById('filterSearch')?.value || '';
+            const search = document.getElementById('filterSearch')?.value.trim() || '';
             const params = new URLSearchParams();
             if (maKhoa) params.append('maKhoa', maKhoa);
             if (search) params.append('search', search);
-            params.append('mode', 'cursor');
+            params.append('page', currentPage);
             params.append('limit', itemsPerPage);
-            if (currentCursor) params.append('cursor', currentCursor);
-            if (includeTotal) params.append('includeTotal', '1');
-            try {
-                const response = await fetch(`${API_BASE_PATIENT_CK}/get-all-specialties.php?${params.toString()}`);
-                const data = await response.json();
-                const specialties = Array.isArray(data.data) ? data.data : [];
-                const pagination = data.pagination || {};
 
-                if (typeof pagination.total === 'number') {
-                    lastKnownTotal = pagination.total;
+            if (activeRequestController) {
+                activeRequestController.abort();
+            }
+
+            const requestId = ++latestRequestId;
+            activeRequestController = new AbortController();
+
+            try {
+                const response = await fetch(
+                    `${API_BASE_PATIENT_CK}/get-all-specialties.php?${params.toString()}`,
+                    { signal: activeRequestController.signal }
+                );
+                const data = await response.json();
+
+                if (requestId !== latestRequestId) {
+                    return;
                 }
 
-                nextCursor = pagination.nextCursor || null;
+                const specialties = Array.isArray(data.data) ? data.data : [];
+                const pagination = data.pagination || {};
+                updateFilterStatus(maKhoa, search, pagination.total || 0);
 
                 if (data.success && specialties.length > 0) {
                     displaySpecialties(specialties);
-                    updatePagination(Boolean(pagination.hasNext), specialties.length);
+                    updatePagination(pagination);
                 } else {
                     showEmptyState();
                 }
             } catch (error) {
+                if (error.name === 'AbortError') {
+                    return;
+                }
                 console.error('Error loading specialties:', error);
                 showEmptyState();
             } finally {
+                if (requestId !== latestRequestId) {
+                    return;
+                }
                 showLoading(false);
+                activeRequestController = null;
                 const pageLoader = document.getElementById('pageLoader');
                 if (pageLoader) pageLoader.style.display = 'none';
             }
@@ -514,14 +680,26 @@
             const start = (currentPage - 1) * itemsPerPage;
             tbody.innerHTML = specialties.map((specialty, index) => `
                 <tr>
-                    <td class="text-center">${start + index + 1}</td>
-                    <td><div class="specialty-name">${specialty.tenChuyenKhoa}</div></td>
-                    <td><span class="department-badge"><i class="fas fa-hospital me-1"></i>${specialty.tenKhoa || 'N/A'}</span></td>
-                    <td><div class="specialty-description">${specialty.moTa || 'Chưa có mô tả'}</div></td>
-                    <td class="text-center">
+                    <td class="text-center" data-label="STT">
+                        <div class="cell-content">${start + index + 1}</div>
+                    </td>
+                    <td data-label="Chuyên khoa">
+                        <div class="cell-content specialty-name">${specialty.tenChuyenKhoa}</div>
+                    </td>
+                    <td data-label="Khoa">
+                        <div class="cell-content">
+                            <span class="department-badge"><i class="fas fa-hospital me-1"></i>${specialty.tenKhoa || 'N/A'}</span>
+                        </div>
+                    </td>
+                    <td data-label="Mô tả">
+                        <div class="cell-content specialty-description">${specialty.moTa || 'Chưa có mô tả'}</div>
+                    </td>
+                    <td class="text-center" data-label="Thao tác">
+                        <div class="cell-content">
                         <button class="btn-view-detail" onclick="viewSpecialtyDetail('${specialty.maChuyenKhoa}')">
                             <i class="fas fa-eye me-1"></i>Chi tiết
                         </button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
@@ -533,39 +711,83 @@
             window.location.href = `chi-tiet-chuyen-khoa.html?id=${maChuyenKhoa}`;
         }
 
-        function updatePagination(hasNext, recordsOnPage) {
+        function updatePagination(pagination) {
             const container = document.getElementById('paginationContainer');
             const list = document.getElementById('paginationList');
             const recordInfo = document.getElementById('recordInfo');
+            const total = Number(pagination.total || 0);
+            const totalPages = Number(pagination.totalPages || 0);
+            const limit = Number(pagination.limit || itemsPerPage);
+            const page = Number(pagination.page || currentPage);
+            lastTotalPages = totalPages;
+            const recordsOnPage = total > 0
+                ? Math.max(0, Math.min(limit, total - ((page - 1) * limit)))
+                : 0;
 
-            if (recordsOnPage <= 0) {
+            if (total <= 0 || recordsOnPage <= 0) {
                 container.style.display = 'none';
                 return;
             }
 
             container.style.display = 'flex';
 
-            const start = (currentPage - 1) * itemsPerPage + 1;
+            const start = (page - 1) * limit + 1;
             const end = start + recordsOnPage - 1;
-            if (typeof lastKnownTotal === 'number') {
-                recordInfo.textContent = `Hiển thị ${start} - ${end} của ${lastKnownTotal} chuyên khoa`;
-            } else {
-                recordInfo.textContent = `Hiển thị ${start} - ${end} (Trang ${currentPage})`;
-            }
+            recordInfo.textContent = `Hiển thị ${start} - ${end} của ${total} chuyên khoa`;
 
-            const hasPrev = previousCursors.length > 0;
+            const startPage = Math.max(1, page - 2);
+            const endPage = Math.min(totalPages, startPage + 4);
+            const adjustedStartPage = Math.max(1, endPage - 4);
 
-            const html = `
-                <li class="page-item ${hasPrev ? '' : 'disabled'}">
-                    <a class="page-link" href="#" onclick="changePage('prev'); return false;">
+            let html = `
+                <li class="page-item ${page <= 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="changePage(${page - 1}); return false;" aria-label="Trang trước">
                         <i class="fas fa-chevron-left"></i>
                     </a>
                 </li>
-                <li class="page-item active">
-                    <span class="page-link">Trang ${currentPage}</span>
-                </li>
-                <li class="page-item ${hasNext ? '' : 'disabled'}">
-                    <a class="page-link" href="#" onclick="changePage('next'); return false;">
+            `;
+
+            if (adjustedStartPage > 1) {
+                html += `
+                    <li class="page-item">
+                        <a class="page-link page-jump" href="#" onclick="changePage(1); return false;">1</a>
+                    </li>
+                `;
+                if (adjustedStartPage > 2) {
+                    html += `
+                        <li class="page-item">
+                            <span class="page-link page-jump current">...</span>
+                        </li>
+                    `;
+                }
+            }
+
+            for (let pageNumber = adjustedStartPage; pageNumber <= endPage; pageNumber += 1) {
+                html += `
+                    <li class="page-item ${pageNumber === page ? 'active' : ''}">
+                        <a class="page-link page-jump" href="#" onclick="changePage(${pageNumber}); return false;">${pageNumber}</a>
+                    </li>
+                `;
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    html += `
+                        <li class="page-item">
+                            <span class="page-link page-jump current">...</span>
+                        </li>
+                    `;
+                }
+                html += `
+                    <li class="page-item">
+                        <a class="page-link page-jump" href="#" onclick="changePage(${totalPages}); return false;">${totalPages}</a>
+                    </li>
+                `;
+            }
+
+            html += `
+                <li class="page-item ${page >= totalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="changePage(${page + 1}); return false;" aria-label="Trang sau">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 </li>
@@ -574,32 +796,18 @@
             list.innerHTML = html;
         }
 
-        function changePage(direction) {
-            if (direction === 'next') {
-                if (!nextCursor) return;
-                previousCursors.push(currentCursor);
-                currentCursor = nextCursor;
-                currentPage += 1;
-            } else if (direction === 'prev') {
-                if (previousCursors.length === 0) return;
-                currentCursor = previousCursors.pop();
-                currentPage = Math.max(1, currentPage - 1);
+        function changePage(page) {
+            if (!Number.isInteger(page) || page < 1 || page === currentPage) {
+                return;
             }
 
+            if (lastTotalPages > 0 && page > lastTotalPages) {
+                return;
+            }
+
+            currentPage = page;
             loadSpecialties();
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function applyFilters() {
-            resetPaginationState();
-            loadSpecialties({ includeTotal: true });
-        }
-
-        function resetFilters() {
-            const k = document.getElementById('filterKhoa'); if(k) k.value = '';
-            const s = document.getElementById('filterSearch'); if(s) s.value = '';
-            resetPaginationState();
-            loadSpecialties({ includeTotal: true });
         }
 
         function showLoading(show) {
@@ -620,10 +828,32 @@
             const table = document.getElementById('specialtiesTable');
             const pagination = document.getElementById('paginationContainer');
             const emptyState = document.getElementById('emptyState');
+            lastTotalPages = 0;
             if (loading) loading.style.display = 'none';
             if (table) table.style.display = 'none';
             if (pagination) pagination.style.display = 'none';
             if (emptyState) emptyState.style.display = 'block';
+        }
+
+        function updateFilterStatus(maKhoa, search, total) {
+            const status = document.getElementById('filterStatus');
+            if (!status) return;
+
+            if (!maKhoa && !search) {
+                status.textContent = 'Đang xem toàn bộ';
+                return;
+            }
+
+            const parts = [];
+            if (maKhoa) {
+                const khoaText = document.getElementById('filterKhoa')?.selectedOptions?.[0]?.textContent?.trim();
+                if (khoaText) parts.push(khoaText);
+            }
+            if (search) {
+                parts.push(`"${search}"`);
+            }
+
+            status.textContent = `${total} kết quả cho ${parts.join(' • ')}`;
         }
     </script>
 </body>
