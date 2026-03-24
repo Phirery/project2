@@ -819,9 +819,9 @@
     let resendCooldownInterval = null;
     let updateCooldownInterval = null;
 
-    // ══════════════════════════════════════════
+
     //  INIT
-    // ══════════════════════════════════════════
+
     document.addEventListener('DOMContentLoaded', () => {
         syncOtpTimingLabels(FRONTEND_TIMER_CONFIG.otpExpirySecondsFallback);
         initTabs();
@@ -848,9 +848,9 @@
         });
     }
 
-    // ══════════════════════════════════════════
+
     //  LOAD PROFILE
-    // ══════════════════════════════════════════
+
     async function loadProfile() {
         try {
             const res  = await fetch(`${API_USER}/get-user-profile.php`, { credentials: 'include' });
@@ -899,9 +899,9 @@
         }
     }
 
-    // ══════════════════════════════════════════
+
     //  VIEW MODE
-    // ══════════════════════════════════════════
+
     function renderView() {
         const d = userData;
         let rows = '';
@@ -936,9 +936,9 @@
             </div>`;
     }
 
-    // ══════════════════════════════════════════
+
     //  EDIT FORM
-    // ══════════════════════════════════════════
+
     function buildEditForm() {
         const d = userData;
         let html = '<div class="row g-3">';
@@ -949,7 +949,7 @@
         html += field6('Email', `<input class="form-control" value="${escapeHtml(d.email || '')}" disabled>`);
         // SĐT
         html += field6('Số điện thoại',
-            `<input type="tel" class="form-control" name="soDienThoai" value="${escapeHtml(d.soDienThoai || '')}" placeholder="0xxxxxxxxx" pattern="[0-9]{10,11}">`);
+            `<input type="tel" class="form-control" name="soDienThoai" value="${escapeHtml(d.soDienThoai || '')}" disabled>`);
 
         if (d.vaiTro === 'benhnhan') {
             html += field6('Họ và tên *',
@@ -987,9 +987,9 @@
         return `<div class="col-12"><label class="form-label">${label}</label>${input}</div>`;
     }
 
-    // ══════════════════════════════════════════
+
     //  EDIT MODE TOGGLE
-    // ══════════════════════════════════════════
+
     function enterEditMode() {
         document.getElementById('profileView').style.display     = 'none';
         document.getElementById('profileEditWrap').style.display = 'block';
@@ -1058,9 +1058,9 @@
         }
     }
 
-    // ══════════════════════════════════════════
+
     //  AVATAR (BÁC SĨ)
-    // ══════════════════════════════════════════
+
     function triggerAvatarPicker() {
         document.getElementById('avatarFileInput').click();
     }
@@ -1095,12 +1095,6 @@
     }
 
     async function uploadAvatar() {
-        /**
-         * TODO: Khi Cloudinary đã được cấu hình, thay thế phần này:
-         *   - Tạo FormData với pendingAvatarFile
-         *   - POST đến API_USER/update-avatar.php
-         *   - Cập nhật userData.avatar với URL mới
-         */
         const formData = new FormData();
         formData.append('avatar', pendingAvatarFile);
 
@@ -1125,9 +1119,9 @@
         }
     }
 
-    // ══════════════════════════════════════════
+
     //  ROLE UI
-    // ══════════════════════════════════════════
+
     function applyRoleUI() {
         if (userData.vaiTro === 'quantri') {
             // Ẩn card yêu cầu admin và căn giữa ô OTP
@@ -1137,9 +1131,9 @@
         }
     }
 
-    // ══════════════════════════════════════════
+
     //  COOLDOWN
-    // ══════════════════════════════════════════
+
     async function checkUpdateCooldown() {
         try {
             const res  = await fetch(`${API_USER}/get-update-cooldown.php`, { credentials: 'include' });
@@ -1202,9 +1196,9 @@
         } catch {}
     }
 
-    // ══════════════════════════════════════════
+
     //  ĐỔI MẬT KHẨU (Tab mật khẩu)
-    // ══════════════════════════════════════════
+
     function checkStrength(val) {
         const bar = document.getElementById('strengthBar');
         let score = 0;
@@ -1260,9 +1254,9 @@
         }
     }
 
-    // ══════════════════════════════════════════
+
     //  OTP QUA EMAIL (Tab bảo mật)
-    // ══════════════════════════════════════════
+
     function openOtpModal() {
         syncOtpTimingLabels(FRONTEND_TIMER_CONFIG.otpExpirySecondsFallback);
         document.getElementById('otpModal').classList.add('active');
@@ -1438,9 +1432,9 @@
         }
     }
 
-    // ══════════════════════════════════════════
+
     //  ADMIN RESET MODAL
-    // ══════════════════════════════════════════
+
     function openAdminModal()  { document.getElementById('adminModal').classList.add('active'); }
     function closeAdminModal() { document.getElementById('adminModal').classList.remove('active'); }
 
@@ -1469,9 +1463,9 @@
         }
     }
 
-    // ══════════════════════════════════════════
+
     //  HELPERS
-    // ══════════════════════════════════════════
+
     function getRoleLabel(r) {
         return { benhnhan: 'Bệnh nhân', bacsi: 'Bác sĩ', quantri: 'Quản trị viên' }[r] || r;
     }
