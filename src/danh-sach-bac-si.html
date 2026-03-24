@@ -121,35 +121,30 @@
             margin-bottom: 8px;
         }
 
-        .btn-filter {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 10px 28px;
-            border-radius: 12px;
+        .filter-hint {
+            margin-top: 14px;
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-hint i {
+            color: var(--primary-blue);
+        }
+
+        .filter-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 10px;
+            background: var(--primary-blue-light);
+            color: var(--primary-blue-dark);
+            border-radius: 999px;
             font-weight: 600;
-            transition: all 0.3s;
-            font-size: 0.9rem;
-        }
-
-        .btn-filter:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-reset {
-            background: #e0e0e0;
-            color: #666;
-            border: none;
-            padding: 10px 28px;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.3s;
-            font-size: 0.9rem;
-        }
-
-        .btn-reset:hover {
-            background: #d0d0d0;
+            font-size: 0.8rem;
         }
 
         /* Doctors Grid & Card */
@@ -170,6 +165,7 @@
             display: flex;
             flex-direction: column;
             border: 2px solid transparent;
+            min-width: 0;
         }
 
         .doctor-card:hover {
@@ -329,6 +325,18 @@
             border-color: #e8eef5;
         }
 
+        .page-jump {
+            min-width: 44px;
+            text-align: center;
+        }
+
+        .page-jump.current {
+            color: var(--text-secondary);
+            border-color: transparent;
+            background: transparent;
+            pointer-events: none;
+        }
+
         /* Responsive */
         @media (max-width: 1200px) {
             .doctors-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
@@ -338,12 +346,176 @@
         }
         @media (max-width: 768px) {
             .section-title { font-size: 1.6rem; }
-            .header-section { padding: 30px 0 50px; }
-            .filter-box { padding: 20px; }
-            .doctors-grid { grid-template-columns: 1fr; gap: 20px; }
-            .pagination-container { flex-direction: column; gap: 15px; }
+            .header-section { padding: 30px 0 50px; margin-bottom: -24px; }
+            .section-subtitle { font-size: 0.94rem; }
+            .doctors-container { padding: 0 14px 28px; }
+            .filter-box { padding: 18px; border-radius: 14px; }
+            .filter-box h5 { margin-bottom: 16px; }
+            .form-control, .form-select { padding: 9px 12px; font-size: 0.88rem; }
+            .doctors-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+            .pagination-container { flex-direction: column; gap: 12px; padding: 16px; }
             .pagination { flex-wrap: wrap; justify-content: center; }
-            .doctor-image-wrapper { height: 220px; }
+            .doctor-image-wrapper { height: 180px; }
+            .page-link { padding: 6px 12px; font-size: 0.85rem; }
+        }
+
+        @media (max-width: 576px) {
+            .header-section {
+                padding: 24px 0 42px;
+            }
+
+            .header-badge {
+                font-size: 0.72rem;
+                padding: 5px 14px;
+                letter-spacing: 1px;
+            }
+
+            .section-title {
+                font-size: 1.35rem;
+                margin-bottom: 8px;
+            }
+
+            .section-subtitle {
+                font-size: 0.9rem;
+                max-width: 100%;
+            }
+
+            .doctors-container {
+                padding: 0 10px 24px;
+            }
+
+            .filter-box {
+                padding: 14px;
+                margin-bottom: 8px;
+                border-radius: 12px;
+            }
+
+            .filter-hint {
+                margin-top: 12px;
+                font-size: 0.82rem;
+            }
+
+            .doctors-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 8px;
+            }
+
+            .doctor-card {
+                border-radius: 12px;
+            }
+
+            .doctor-image-wrapper {
+                height: 82px;
+            }
+
+            .doctor-content {
+                padding: 8px;
+            }
+
+            .doctor-name {
+                font-size: 0.72rem;
+                line-height: 1.35;
+                margin-bottom: 6px;
+                -webkit-line-clamp: 2;
+                min-height: 1.95rem;
+            }
+
+            .doctor-specialty {
+                padding: 3px 6px;
+                border-radius: 10px;
+                font-size: 0.62rem;
+                margin-bottom: 6px;
+            }
+
+            .doctor-specialty i {
+                display: none;
+            }
+
+            .doctor-experience {
+                gap: 4px;
+                font-size: 0.66rem;
+                margin-bottom: 6px;
+            }
+
+            .doctor-footer {
+                padding-top: 8px;
+                gap: 6px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .department-badge {
+                display: none;
+            }
+
+            .btn-view-detail {
+                width: 100%;
+                justify-content: center;
+                padding: 6px 8px;
+                border-radius: 8px;
+                font-size: 0.68rem;
+                gap: 4px;
+            }
+
+            .btn-view-detail .btn-label {
+                display: none;
+            }
+
+            .pagination-container {
+                gap: 10px;
+                padding: 14px 12px;
+                border-radius: 14px;
+            }
+
+            .pagination {
+                gap: 4px;
+            }
+
+            .page-link {
+                padding: 6px 10px;
+                min-width: 40px;
+            }
+
+            .empty-state,
+            .loading {
+                padding: 40px 16px;
+            }
+
+            .empty-state i {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .doctors-grid {
+                gap: 6px;
+            }
+
+            .doctor-image-wrapper {
+                height: 74px;
+            }
+
+            .doctor-content {
+                padding: 7px 6px;
+            }
+
+            .doctor-name {
+                font-size: 0.68rem;
+            }
+
+            .doctor-specialty {
+                font-size: 0.58rem;
+                padding: 2px 5px;
+            }
+
+            .doctor-experience {
+                font-size: 0.62rem;
+            }
+
+            .btn-view-detail {
+                font-size: 0.64rem;
+                padding: 5px 6px;
+            }
         }
     </style>
 </head>
@@ -394,7 +566,7 @@
     <div class="doctors-container">
         <div class="filter-box reveal">
             <h5><i class="fas fa-filter me-2"></i>Bộ lọc tìm kiếm</h5>
-            <div class="row g-3 mb-3">
+            <div class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label">Khoa</label>
                     <select class="form-select" id="filterKhoa">
@@ -413,13 +585,9 @@
                            placeholder="Nhập tên bác sĩ hoặc chuyên khoa...">
                 </div>
             </div>
-            <div class="d-flex gap-2">
-                <button class="btn-filter" onclick="applyFilters()">
-                    <i class="fas fa-search me-2"></i>Tìm kiếm
-                </button>
-                <button class="btn-reset" onclick="resetFilters()">
-                    <i class="fas fa-redo me-2"></i>Đặt lại
-                </button>
+            <div class="filter-hint">
+                <span>Kết quả bộ lọc: </span>
+                <span class="filter-status" id="filterStatus">Đang xem toàn bộ</span>
             </div>
         </div>
 
@@ -452,22 +620,23 @@
     <script src="assets/js/common.js"></script>
 
     <script>
-        // State management
+        const API_BASE_PATIENT_DOCTORS = window.API_ENDPOINTS.patient;
         let allKhoa = [];
         let allChuyenKhoa = [];
         let currentPage = 1;
         const itemsPerPage = 12;
         let totalDoctors = 0;
         let totalPages = 0;
+        let activeSearchTimer = null;
+        let activeRequestController = null;
+        let latestRequestId = 0;
 
-        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            
             loadKhoa();
             loadChuyenKhoa();
             loadDoctors();
             setupFilterListeners();
-            setupScrollAnimations(); // Kích hoạt hiệu ứng Fade Up
+            setupScrollAnimations();
         });
 
         function setupScrollAnimations() {
@@ -479,7 +648,6 @@
                 });
             }, { threshold: 0.1 });
 
-            // Quan sát các phần tử
             setTimeout(() => {
                 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
             }, 300);
@@ -489,37 +657,47 @@
             const khoaSelect = document.getElementById('filterKhoa');
             const chuyenKhoaSelect = document.getElementById('filterChuyenKhoa');
             const searchInput = document.getElementById('filterSearch');
-            
+
             if (khoaSelect) {
                 khoaSelect.addEventListener('change', handleKhoaChange);
             }
 
             if (chuyenKhoaSelect) {
                 chuyenKhoaSelect.addEventListener('change', function() {
-                    applyFilters();
+                    currentPage = 1;
+                    if (activeSearchTimer) {
+                        clearTimeout(activeSearchTimer);
+                        activeSearchTimer = null;
+                    }
+                    loadDoctors();
                 });
             }
-            
+
             if (searchInput) {
-                searchInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        applyFilters();
+                searchInput.addEventListener('input', function() {
+                    currentPage = 1;
+                    if (activeSearchTimer) {
+                        clearTimeout(activeSearchTimer);
                     }
+                    activeSearchTimer = setTimeout(() => {
+                        activeSearchTimer = null;
+                        loadDoctors();
+                    }, 250);
                 });
             }
         }
 
         async function loadKhoa() {
             try {
-                const response = await fetch(`${API_BASE_PATIENT}/get-departments.php`);
+                const response = await fetch(`${API_BASE_PATIENT_DOCTORS}/get-departments.php`);
                 const data = await response.json();
-                
+
                 if (data.success) {
-                    allKhoa = data.data;
+                    allKhoa = Array.isArray(data.data) ? data.data : [];
                     const select = document.getElementById('filterKhoa');
                     if (select) {
                         select.innerHTML = '<option value="">Tất cả khoa</option>' +
-                            data.data.map(k => `<option value="${k.maKhoa}">${k.tenKhoa}</option>`).join('');
+                            allKhoa.map(k => `<option value="${k.maKhoa}">${k.tenKhoa}</option>`).join('');
                     }
                 }
             } catch (error) {
@@ -529,52 +707,75 @@
 
         async function loadChuyenKhoa() {
             try {
-                const response = await fetch(`${API_BASE_PATIENT}/get-departments.php`);
+                const response = await fetch(`${API_BASE_PATIENT_DOCTORS}/get-departments.php`);
                 const deptData = await response.json();
-                
-                if (!deptData.success) return;
-                
-                const specialtyPromises = deptData.data.map(dept => 
-                    fetch(`${API_BASE_PATIENT}/get-specialties.php?maKhoa=${dept.maKhoa}`)
-                        .then(r => r.json())
-                );
-                
+
+                if (!deptData.success || !Array.isArray(deptData.data)) return;
+
+                const specialtyPromises = deptData.data.map(async dept => {
+                    const specialtyResponse = await fetch(`${API_BASE_PATIENT_DOCTORS}/get-specialties.php?maKhoa=${dept.maKhoa}`);
+                    const specialtyData = await specialtyResponse.json();
+                    if (!specialtyData.success || !Array.isArray(specialtyData.data)) {
+                        return [];
+                    }
+
+                    return specialtyData.data.map(ck => ({
+                        ...ck,
+                        maKhoa: dept.maKhoa
+                    }));
+                });
+
                 const results = await Promise.all(specialtyPromises);
-                allChuyenKhoa = results.flatMap(r => r.success ? r.data : []);
-                
-                updateChuyenKhoaFilter();
+                allChuyenKhoa = results
+                    .flat()
+                    .sort((a, b) => String(a.tenChuyenKhoa || '').localeCompare(String(b.tenChuyenKhoa || ''), 'vi'));
+
+                const selectedKhoa = document.getElementById('filterKhoa')?.value || '';
+                updateChuyenKhoaFilter(selectedKhoa);
             } catch (error) {
                 console.error('Error loading specialties:', error);
             }
         }
 
         function handleKhoaChange() {
-            const selectedKhoa = document.getElementById('filterKhoa').value;
+            const selectedKhoa = document.getElementById('filterKhoa')?.value || '';
             updateChuyenKhoaFilter(selectedKhoa);
-            applyFilters();
+            currentPage = 1;
+
+            if (activeSearchTimer) {
+                clearTimeout(activeSearchTimer);
+                activeSearchTimer = null;
+            }
+
+            loadDoctors();
         }
 
         function updateChuyenKhoaFilter(maKhoa = '') {
             const select = document.getElementById('filterChuyenKhoa');
-            if(!select) return;
-            
-            if (!maKhoa) {
-                select.innerHTML = '<option value="">Tất cả chuyên khoa</option>' +
-                    allChuyenKhoa.map(ck => `<option value="${ck.maChuyenKhoa}">${ck.tenChuyenKhoa}</option>`).join('');
+            if (!select) return;
+
+            const previousValue = select.value;
+            const specialties = maKhoa
+                ? allChuyenKhoa.filter(ck => ck.maKhoa === maKhoa)
+                : allChuyenKhoa;
+
+            select.innerHTML = '<option value="">Tất cả chuyên khoa</option>' +
+                specialties.map(ck => `<option value="${ck.maChuyenKhoa}">${ck.tenChuyenKhoa}</option>`).join('');
+
+            if (specialties.some(ck => ck.maChuyenKhoa === previousValue)) {
+                select.value = previousValue;
             } else {
-                const filtered = allChuyenKhoa.filter(ck => ck.maKhoa === maKhoa);
-                select.innerHTML = '<option value="">Tất cả chuyên khoa</option>' +
-                    filtered.map(ck => `<option value="${ck.maChuyenKhoa}">${ck.tenChuyenKhoa}</option>`).join('');
+                select.value = '';
             }
         }
 
         async function loadDoctors() {
             showLoading(true);
-            
+
             const maKhoa = document.getElementById('filterKhoa')?.value || '';
             const maChuyenKhoa = document.getElementById('filterChuyenKhoa')?.value || '';
-            const search = document.getElementById('filterSearch')?.value || '';
-            
+            const search = document.getElementById('filterSearch')?.value.trim() || '';
+
             const params = new URLSearchParams();
             params.append('mode', 'deferred');
             params.append('page', currentPage);
@@ -582,16 +783,31 @@
             if (maKhoa) params.append('maKhoa', maKhoa);
             if (maChuyenKhoa) params.append('maChuyenKhoa', maChuyenKhoa);
             if (search) params.append('search', search);
-            
+
+            if (activeRequestController) {
+                activeRequestController.abort();
+            }
+
+            const requestId = ++latestRequestId;
+            activeRequestController = new AbortController();
+
             try {
-                const response = await fetch(`${API_BASE_PATIENT}/get_doctors.php?${params.toString()}`);
+                const response = await fetch(
+                    `${API_BASE_PATIENT_DOCTORS}/get_doctors.php?${params.toString()}`,
+                    { signal: activeRequestController.signal }
+                );
                 const data = await response.json();
-                
+
+                if (requestId !== latestRequestId) {
+                    return;
+                }
+
                 if (data.success) {
                     const doctors = Array.isArray(data.data) ? data.data : [];
                     const pagination = data.pagination || {};
                     totalDoctors = Number(pagination.total || 0);
                     totalPages = Number(pagination.totalPages || 0);
+                    updateFilterStatus(maKhoa, maChuyenKhoa, search, totalDoctors);
 
                     if (totalPages > 0 && currentPage > totalPages) {
                         currentPage = totalPages;
@@ -604,13 +820,20 @@
                     showEmptyState();
                 }
             } catch (error) {
+                if (error.name === 'AbortError') {
+                    return;
+                }
                 console.error('Error loading doctors:', error);
                 showEmptyState();
             } finally {
+                if (requestId !== latestRequestId) {
+                    return;
+                }
+
                 showLoading(false);
-                // Tắt Page Loader (nếu common.js chưa tắt)
-                const pageLoader = document.getElementById("pageLoader");
-                if (pageLoader) pageLoader.style.display = "none";
+                activeRequestController = null;
+                const pageLoader = document.getElementById('pageLoader');
+                if (pageLoader) pageLoader.style.display = 'none';
             }
         }
 
@@ -618,7 +841,7 @@
             const grid = document.getElementById('doctorsGrid');
             const emptyState = document.getElementById('emptyState');
             const paginationEl = document.getElementById('paginationContainer');
-            
+
             if (!Array.isArray(doctors) || doctors.length === 0) {
                 grid.style.display = 'none';
                 paginationEl.style.display = 'none';
@@ -629,22 +852,20 @@
             grid.innerHTML = doctors.map(doctor => createDoctorCard(doctor)).join('');
             grid.style.display = 'grid';
             emptyState.style.display = 'none';
-            
             updatePagination(paginationData, doctors.length);
-            
-            // Kích hoạt animation cho Grid nếu nó vừa hiện ra
+
             setTimeout(() => {
-                if(grid.classList.contains('reveal')) grid.classList.add('visible');
+                if (grid.classList.contains('reveal')) grid.classList.add('visible');
             }, 100);
         }
 
         function createDoctorCard(doctor) {
             const currentYear = new Date().getFullYear();
-            const experience = doctor.namLamViec ? currentYear - parseInt(doctor.namLamViec) : 0;
+            const experience = doctor.namLamViec ? currentYear - parseInt(doctor.namLamViec, 10) : 0;
             const experienceText = experience > 0 ? `${experience} năm kinh nghiệm` : 'Mới tham gia';
-            const defaultImg = doctor.gioiTinh === 'nu' ? 
-            'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962514/doctor_female_zvmhtg.png' : 
-            'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962515/doctor_male_pna01s.png';
+            const defaultImg = doctor.gioiTinh === 'nu'
+                ? 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962514/doctor_female_zvmhtg.png'
+                : 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769962515/doctor_male_pna01s.png';
             const hasCustomAvatar = typeof doctor.anhDaiDien === 'string'
                 && doctor.anhDaiDien.trim() !== ''
                 && !doctor.anhDaiDien.includes('samples/paper.png');
@@ -653,8 +874,7 @@
             return `
                 <div class="doctor-card">
                     <div class="doctor-image-wrapper">
-                        <img src="${avatarUrl}" alt="${doctor.tenBacSi}" class="doctor-image" 
-                            onerror="this.src='${defaultImg}'">
+                        <img src="${avatarUrl}" alt="${doctor.tenBacSi}" class="doctor-image" onerror="this.src='${defaultImg}'">
                     </div>
                     <div class="doctor-content">
                         <h3 class="doctor-name">${doctor.tenBacSi}</h3>
@@ -669,8 +889,8 @@
                             <span class="department-badge">
                                 <i class="fas fa-hospital me-1"></i>${doctor.tenKhoa || 'N/A'}
                             </span>
-                            <a href="chi-tiet-bac-si.html?id=${doctor.maBacSi}" class="btn-view-detail">
-                                <i class="fas fa-eye"></i> Chi tiết
+                            <a href="chi-tiet-bac-si.html?id=${doctor.maBacSi}" class="btn-view-detail" aria-label="Xem chi tiết ${doctor.tenBacSi}">
+                                <i class="fas fa-eye"></i><span class="btn-label">Chi tiết</span>
                             </a>
                         </div>
                     </div>
@@ -682,74 +902,95 @@
             const container = document.getElementById('paginationContainer');
             const list = document.getElementById('paginationList');
             const recordInfo = document.getElementById('recordInfo');
-
             const totalPageCount = Number(paginationData?.totalPages || 0);
             const page = Number(paginationData?.page || currentPage);
             const limit = Number(paginationData?.limit || itemsPerPage);
 
-            if (totalPageCount <= 1) {
+            if (totalDoctors <= 0 || recordsOnPage <= 0) {
                 container.style.display = 'none';
                 return;
             }
-            
+
             container.style.display = 'flex';
-            
+
             const start = (page - 1) * limit + 1;
             const end = Math.min(start + recordsOnPage - 1, totalDoctors);
             recordInfo.textContent = `Hiển thị ${start} - ${end} của ${totalDoctors} bác sĩ`;
-            
+
+            if (totalPageCount <= 1) {
+                list.innerHTML = '';
+                return;
+            }
+
+            const startPage = Math.max(1, page - 2);
+            const endPage = Math.min(totalPageCount, startPage + 4);
+            const adjustedStartPage = Math.max(1, endPage - 4);
+
             let html = `
-                <li class="page-item ${page === 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="#" onclick="changePage(${page - 1}); return false;">
+                <li class="page-item ${page <= 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="changePage(${page - 1}); return false;" aria-label="Trang trước">
                         <i class="fas fa-chevron-left"></i>
                     </a>
                 </li>
             `;
-            
-            for (let i = 1; i <= totalPageCount; i++) {
-                if (i === 1 || i === totalPageCount || (i >= page - 1 && i <= page + 1)) {
+
+            if (adjustedStartPage > 1) {
+                html += `
+                    <li class="page-item">
+                        <a class="page-link page-jump" href="#" onclick="changePage(1); return false;">1</a>
+                    </li>
+                `;
+                if (adjustedStartPage > 2) {
                     html += `
-                        <li class="page-item ${i === page ? 'active' : ''}">
-                            <a class="page-link" href="#" onclick="changePage(${i}); return false;">${i}</a>
+                        <li class="page-item">
+                            <span class="page-link page-jump current">...</span>
                         </li>
                     `;
-                } else if (i === page - 2 || i === page + 2) {
-                    html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
                 }
             }
-            
+
+            for (let pageNumber = adjustedStartPage; pageNumber <= endPage; pageNumber += 1) {
+                html += `
+                    <li class="page-item ${pageNumber === page ? 'active' : ''}">
+                        <a class="page-link page-jump" href="#" onclick="changePage(${pageNumber}); return false;">${pageNumber}</a>
+                    </li>
+                `;
+            }
+
+            if (endPage < totalPageCount) {
+                if (endPage < totalPageCount - 1) {
+                    html += `
+                        <li class="page-item">
+                            <span class="page-link page-jump current">...</span>
+                        </li>
+                    `;
+                }
+                html += `
+                    <li class="page-item">
+                        <a class="page-link page-jump" href="#" onclick="changePage(${totalPageCount}); return false;">${totalPageCount}</a>
+                    </li>
+                `;
+            }
+
             html += `
-                <li class="page-item ${page === totalPageCount ? 'disabled' : ''}">
-                    <a class="page-link" href="#" onclick="changePage(${page + 1}); return false;">
+                <li class="page-item ${page >= totalPageCount ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="changePage(${page + 1}); return false;" aria-label="Trang sau">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 </li>
             `;
-            
+
             list.innerHTML = html;
         }
 
         function changePage(page) {
-            if (page >= 1 && page <= totalPages && page !== currentPage) {
-                currentPage = page;
-                loadDoctors();
-                // Smooth scroll to top of grid
-                document.querySelector('.doctors-container').scrollIntoView({behavior: 'smooth'});
+            if (!Number.isInteger(page) || page < 1 || page > totalPages || page === currentPage) {
+                return;
             }
-        }
 
-        function applyFilters() {
-            currentPage = 1;
+            currentPage = page;
             loadDoctors();
-        }
-
-        function resetFilters() {
-            const k = document.getElementById('filterKhoa'); if(k) k.value = '';
-            const ck = document.getElementById('filterChuyenKhoa'); if(ck) ck.value = '';
-            const s = document.getElementById('filterSearch'); if(s) s.value = '';
-            updateChuyenKhoaFilter();
-            currentPage = 1;
-            loadDoctors();
+            document.querySelector('.doctors-container')?.scrollIntoView({ behavior: 'smooth' });
         }
 
         function showLoading(show) {
@@ -757,7 +998,7 @@
             const grid = document.getElementById('doctorsGrid');
             const pagination = document.getElementById('paginationContainer');
             const emptyState = document.getElementById('emptyState');
-            
+
             if (loading) loading.style.display = show ? 'block' : 'none';
             if (show) {
                 if (grid) grid.style.display = 'none';
@@ -771,11 +1012,38 @@
             const grid = document.getElementById('doctorsGrid');
             const pagination = document.getElementById('paginationContainer');
             const emptyState = document.getElementById('emptyState');
-            
+
+            totalDoctors = 0;
+            totalPages = 0;
             if (loading) loading.style.display = 'none';
             if (grid) grid.style.display = 'none';
             if (pagination) pagination.style.display = 'none';
             if (emptyState) emptyState.style.display = 'block';
+        }
+
+        function updateFilterStatus(maKhoa, maChuyenKhoa, search, total) {
+            const status = document.getElementById('filterStatus');
+            if (!status) return;
+
+            if (!maKhoa && !maChuyenKhoa && !search) {
+                status.textContent = 'Đang xem toàn bộ';
+                return;
+            }
+
+            const parts = [];
+            if (maKhoa) {
+                const khoaText = document.getElementById('filterKhoa')?.selectedOptions?.[0]?.textContent?.trim();
+                if (khoaText) parts.push(khoaText);
+            }
+            if (maChuyenKhoa) {
+                const specialtyText = document.getElementById('filterChuyenKhoa')?.selectedOptions?.[0]?.textContent?.trim();
+                if (specialtyText) parts.push(specialtyText);
+            }
+            if (search) {
+                parts.push(`"${search}"`);
+            }
+
+            status.textContent = `${total} kết quả cho ${parts.join(' • ')}`;
         }
     </script>
 </body>
