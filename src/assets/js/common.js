@@ -538,10 +538,6 @@ function getTimeAgo(dateString) {
     return past.toLocaleDateString('vi-VN');
 }
 
-// ========================================
-// MOBILE MENU
-// ========================================
-
 function setupMobileMenu() {
     const menuToggle = document.getElementById('menuToggle');
     const mobileSidebar = document.getElementById('mobileSidebar');
@@ -572,10 +568,6 @@ function setupMobileMenu() {
     });
 }
 
-// ========================================
-// SCROLL EFFECTS
-// ========================================
-
 function setupScrollEffects() {
     const scrollBtn = document.getElementById('scrollTopBtn');
     
@@ -586,23 +578,32 @@ function setupScrollEffects() {
     });
 }
 
-// ========================================
-// SET ACTIVE NAV LINK
-// ========================================
-
 function setActiveNavLink() {
-    const currentPage = window.location.pathname.split('/').pop();
-    
+    const currentFile = window.location.pathname.split('/').pop() || 'index.html';
+    const currentPage = currentFile.replace('.html', '').toLowerCase();
+    const pageMap = {
+        index: 'index',
+        'danh-sach-chuyen-khoa': 'danhsachchuyenkhoa',
+        'chi-tiet-chuyen-khoa': 'danhsachchuyenkhoa',
+        'danh-sach-bac-si': 'danhsachbacsi',
+        'chi-tiet-bac-si': 'danhsachbacsi',
+        'dashboard-doctor': 'dashboard',
+        'lich-kham-ca-nhan': 'lichkham',
+        'dat-lich': 'lichkham',
+        'ho-so-benh-an-ca-nhan': 'hosobenhan',
+        'tai-khoan-ca-nhan': 'hosobenhan',
+        'lien-he': 'lienhe'
+    };
+    const activePage = pageMap[currentPage];
+
     document.querySelectorAll('.nav-link-header, .mobile-menu a').forEach(link => {
+        link.classList.remove('active');
+
         const linkPage = link.getAttribute('data-page');
-        if (linkPage && currentPage.includes(linkPage)) {
+        if (activePage && linkPage === activePage) {
             link.classList.add('active');
         }
     });
 }
-
-// ========================================
-// INIT ON PAGE LOAD
-// ========================================
 
 document.addEventListener('DOMContentLoaded', loadComponents);
