@@ -101,12 +101,13 @@
         /* Latest Record Card */
         .latest-record-card {
             background: white;
-            border-radius: 15px;
+            border-radius: 16px;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            padding: 30px;
+            padding: 24px;
             margin-bottom: 40px;
             position: relative;
             overflow: hidden;
+            border: 1px solid #e8eef5;
         }
 
         .latest-record-card::before {
@@ -114,49 +115,61 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 5px;
-            height: 100%;
-            background: var(--primary-blue);
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue), var(--secondary-green));
         }
 
         .record-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #f0f0f0;
+            gap: 14px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f0f3f8;
         }
 
-        .record-title {flex: 1;}
-        .record-title h4 { font-size: 1.3rem; font-weight: 700; color: #333; margin-bottom: 8px; }
-
-        .record-meta { display: flex; flex-wrap: wrap; gap: 15px; color: #666; font-size: 0.9rem; }
-        .record-meta span { display: flex; align-items: center; gap: 5px; }
+        .record-title { flex: 1; }
+        .record-title h4 { font-size: 1.25rem; font-weight: 700; color: #1f2937; margin-bottom: 10px; }
+        .record-meta { display: flex; flex-wrap: wrap; gap: 10px; }
+        .record-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #f3f7ff;
+            border: 1px solid #dbeafe;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 0.84rem;
+            color: #475569;
+            font-weight: 500;
+        }
         .record-meta i { color: var(--primary-blue); }
 
         .record-badge {
-            background: linear-gradient(135deg, #d4edda, #c3e6cb);
-            color: #155724;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+            color: #166534;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 0.83rem;
+            font-weight: 700;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
+            white-space: nowrap;
         }
 
-        .record-body {
+        .record-layout {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
+            grid-template-columns: 1.35fr 1fr;
+            gap: 16px;
         }
 
         .info-section {
             background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
+            padding: 16px;
+            border-radius: 12px;
             border-left: 4px solid var(--primary-blue);
         }
 
@@ -164,14 +177,90 @@
             font-size: 1rem;
             font-weight: 700;
             color: #333;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
         .info-section h5 i { color: var(--primary-blue); font-size: 1.1rem; }
-        .info-section p { color: #555; line-height: 1.8; margin: 0; white-space: pre-line; }
+        .info-section p { color: #555; line-height: 1.7; margin: 0; white-space: pre-line; }
+
+        .latest-columns { display: grid; gap: 14px; }
+        .prescription-panel {
+            background: #f8fbff;
+            border: 1px solid #dbeafe;
+            border-radius: 12px;
+            padding: 16px;
+            height: 100%;
+        }
+        .prescription-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .prescription-head h5 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1e40af;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .prescription-total {
+            font-size: 0.84rem;
+            color: #334155;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-weight: 600;
+        }
+        .prescription-note {
+            margin: 0 0 12px;
+            font-size: 0.86rem;
+            color: #475569;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+        .medicine-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 280px;
+            overflow: auto;
+        }
+        .medicine-item {
+            background: white;
+            border: 1px solid #dbeafe;
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+        .medicine-item .name {
+            font-size: 0.9rem;
+            color: #1e293b;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+        .medicine-item .meta {
+            font-size: 0.82rem;
+            color: #64748b;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .medicine-empty {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #64748b;
+            font-style: italic;
+        }
 
         /* Section Card & Filter */
         .section-card { background: white; border-radius: 15px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); overflow: hidden; }
@@ -247,7 +336,7 @@
             .header-section { padding: 30px 0 50px; }
             .latest-record-card { padding: 20px; }
             .record-header { flex-direction: column; gap: 15px; }
-            .record-body { grid-template-columns: 1fr; gap: 15px; }
+            .record-layout { grid-template-columns: 1fr; }
             .info-section { padding: 15px; }
             .modal-info-grid { grid-template-columns: 1fr; gap: 15px; }
             .filter-bar { padding: 15px; }
@@ -255,6 +344,7 @@
             .record-table { font-size: 0.85rem; }
             .record-table thead th, .record-table tbody td { padding: 10px 8px; }
             .pagination-container { flex-direction: column; gap: 15px; text-align: center; }
+            .prescription-panel { padding: 14px; }
         }
     </style>
 </head>
@@ -304,7 +394,7 @@
     <div class="records-container">
         <div id="latestRecordSection" class="reveal" style="display: none;">
             <div class="section-header mt-5">
-                <h3><i class="fas fa-star text-warning me-2"></i>Kết quả khám bệnh mới nhất của bạn</p></h3>
+                <h3><i class="fas fa-star text-warning me-2"></i>Kết quả khám bệnh mới nhất của bạn</h3>
             </div>
             
             <div class="latest-record-card" id="latestRecordCard">
@@ -327,12 +417,12 @@
             <div class="section-card">
                 <div class="filter-bar">
                     <div class="row g-3">
-                        <div class="col-md-4">
+                        <div class="col-md-7">
                             <div class="search-box">
                                 <i class="fas fa-search"></i>
                                 <input type="text" class="form-control" id="searchInput" 
                                        placeholder="Tìm kiếm theo chẩn đoán, bác sĩ..." 
-                                       oninput="applyFilters()">
+                                       oninput="onSearchInput()">
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -340,13 +430,8 @@
                                 <option value="">Tất cả bác sĩ</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
-                            <input type="date" class="form-control" id="dateFilter" onchange="applyFilters()">
-                        </div>
                         <div class="col-md-2">
-                            <button class="btn btn-secondary w-100" onclick="resetFilters()">
-                                <i class="fas fa-redo me-1"></i>Đặt lại
-                            </button>
+                            <input type="date" class="form-control" id="dateFilter" onchange="applyFilters()">
                         </div>
                     </div>
                 </div>
@@ -420,25 +505,37 @@
 
     <script>
         // Global State
-        let allRecords = [];
-        let filteredRecords = [];
+        const RECORDS_PER_PAGE = 10;
+        let recordsOnPage = [];
+        let latestRecord = null;
+        let availableDoctors = [];
         let currentPage = 1;
-        const recordsPerPage = 10;
-        let uniqueDoctors = [];
+        let searchDebounceTimer = null;
+        let requestController = null;
+        let hasAnyRecord = false;
+        const filters = {
+            search: '',
+            doctor: '',
+            date: ''
+        };
+        const paginationState = {
+            total: 0,
+            page: 1,
+            limit: RECORDS_PER_PAGE,
+            totalPages: 0
+        };
 
-        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             checkStrictAuth();
         });
 
-        // ===== AUTHENTICATION =====
         async function checkStrictAuth() {
             try {
                 const response = await fetch(`${API_BASE_PATIENT}/check-auth.php`, {
                     credentials: 'include'
                 });
                 const data = await response.json();
-                
+
                 if (!data.success || data.role !== 'benhnhan') {
                     showAlert('error', 'Vui lòng đăng nhập với tài khoản bệnh nhân!');
                     setTimeout(() => {
@@ -446,14 +543,15 @@
                     }, 500);
                     return;
                 }
-                
-                // Đã login -> Load dữ liệu
-                loadMedicalRecords();
-                setupScrollAnimations();
 
+                setupScrollAnimations();
+                await loadMedicalRecords(1);
             } catch (error) {
                 console.error('Auth error:', error);
                 window.location.href = 'login.html';
+            } finally {
+                const pageLoader = document.getElementById('pageLoader');
+                if (pageLoader) pageLoader.style.display = 'none';
             }
         }
 
@@ -473,42 +571,74 @@
             });
         }
 
-        // ===== LOAD DATA =====
-        async function loadMedicalRecords() {
+        async function loadMedicalRecords(page = 1) {
+            const loading = document.getElementById('historyLoading');
+            const table = document.getElementById('historyTable');
+            const empty = document.getElementById('historyEmpty');
+            const pagination = document.getElementById('paginationContainer');
+            const historySection = document.getElementById('historySection');
+
+            if (requestController) {
+                requestController.abort();
+            }
+            requestController = new AbortController();
+
+            if (loading) loading.style.display = 'block';
+            if (table) table.style.display = 'none';
+            if (empty) empty.style.display = 'none';
+            if (pagination) pagination.style.display = 'none';
+            if (historySection) historySection.style.display = 'block';
+
             try {
-                const response = await fetch(`${API_BASE_PATIENT}/get-medical-records.php`, {
-                    credentials: 'include'
+                const params = new URLSearchParams({
+                    page: String(page),
+                    limit: String(RECORDS_PER_PAGE),
+                    search: filters.search,
+                    doctor: filters.doctor,
+                    date: filters.date
+                });
+
+                const response = await fetch(`${API_BASE_PATIENT}/get-medical-records.php?${params.toString()}`, {
+                    credentials: 'include',
+                    signal: requestController.signal
                 });
                 const data = await response.json();
-                
-                if (data.success) {
-                    allRecords = data.records || [];
-                    
-                    if (allRecords.length === 0) {
-                        showNoRecordsState();
-                        return;
-                    }
-                    
-                    // Extract unique doctors for filter
-                    uniqueDoctors = [...new Set(allRecords.map(r => r.tenBacSi))].sort();
-                    populateDoctorFilter();
-                    
-                    // Show latest record
-                    renderLatestRecord(data.latest);
-                    
-                    // Show history
-                    filteredRecords = [...allRecords];
-                    renderHistory();
-                } else {
-                    showError(data.message);
+
+                if (!data.success) {
+                    throw new Error(data.message || 'Không thể tải hồ sơ bệnh án');
                 }
+
+                hasAnyRecord = Number(data.overview?.totalRecords || 0) > 0;
+                if (!hasAnyRecord) {
+                    showNoRecordsState();
+                    return;
+                }
+
+                document.getElementById('noRecordsState').style.display = 'none';
+                document.getElementById('historySection').style.display = 'block';
+
+                recordsOnPage = Array.isArray(data.records) ? data.records : [];
+                latestRecord = data.latest || null;
+                availableDoctors = Array.isArray(data.filters?.doctors) ? data.filters.doctors : [];
+
+                paginationState.total = Number(data.pagination?.total || 0);
+                paginationState.page = Number(data.pagination?.page || 1);
+                paginationState.limit = Number(data.pagination?.limit || RECORDS_PER_PAGE);
+                paginationState.totalPages = Number(data.pagination?.totalPages || 0);
+                currentPage = paginationState.page;
+
+                populateDoctorFilter();
+                renderLatestRecord(latestRecord);
+                renderHistory();
             } catch (error) {
+                if (error.name === 'AbortError') return;
                 console.error('Load error:', error);
-                showError('Lỗi tải dữ liệu. Vui lòng thử lại!');
+                showError(error.message || 'Lỗi tải dữ liệu. Vui lòng thử lại!');
             } finally {
-                // Hide Page Loader
+                if (loading) loading.style.display = 'none';
+                requestController = null;
                 const pageLoader = document.getElementById('pageLoader');
-                if(pageLoader) pageLoader.style.display = 'none';
+                if (pageLoader) pageLoader.style.display = 'none';
             }
         }
 
@@ -529,22 +659,28 @@
             `;
         }
 
-        // ===== RENDER LATEST RECORD =====
         function renderLatestRecord(record) {
-            if (!record) return;
-            
             const section = document.getElementById('latestRecordSection');
             const card = document.getElementById('latestRecordCard');
-            
+            if (!record) {
+                section.style.display = 'none';
+                card.innerHTML = '';
+                return;
+            }
+
+            const donThuoc = record.donThuoc || {};
+            const thuocList = Array.isArray(donThuoc.thuoc) ? donThuoc.thuoc : [];
+
             const html = `
                 <div class="record-header">
                     <div class="record-title">
-                        <h4><i class="fas fa-file-medical-alt me-2"></i>Hồ Sơ #${record.maHoSo}</h4>
+                        <h4><i class="fas fa-file-medical-alt me-2"></i>Hồ sơ #${escapeHtml(record.maHoSo)}</h4>
                         <div class="record-meta">
-                            <span><i class="fas fa-calendar"></i>${record.ngayKham}</span>
-                            <span><i class="fas fa-clock"></i>${record.gioKham}</span>
-                            <span><i class="fas fa-user-md"></i>BS. ${record.tenBacSi}</span>
-                            <span><i class="fas fa-hospital"></i>${record.tenChuyenKhoa}</span>
+                            <span><i class="fas fa-calendar"></i>${escapeHtml(record.ngayKham)}</span>
+                            <span><i class="fas fa-clock"></i>${escapeHtml(record.gioKham)}</span>
+                            <span><i class="fas fa-user-md"></i>BS. ${escapeHtml(record.tenBacSi)}</span>
+                            <span><i class="fas fa-hospital"></i>${escapeHtml(record.tenChuyenKhoa)}</span>
+                            ${record.ngayHoanThanh ? `<span><i class="fas fa-check"></i>Hoàn thành: ${escapeHtml(record.ngayHoanThanh)}</span>` : ''}
                         </div>
                     </div>
                     <div class="record-badge">
@@ -552,235 +688,308 @@
                         Đã hoàn thành
                     </div>
                 </div>
-                <div class="record-body">
-                    <div class="info-section">
-                        <h5><i class="fas fa-stethoscope"></i>Chẩn đoán</h5>
-                        <p>${record.chanDoan || 'Chưa có thông tin'}</p>
+                <div class="record-layout">
+                    <div class="latest-columns">
+                        <div class="info-section">
+                            <h5><i class="fas fa-stethoscope"></i>Chẩn đoán</h5>
+                            <p>${formatText(record.chanDoan || 'Chưa có thông tin')}</p>
+                        </div>
+                        <div class="info-section">
+                            <h5><i class="fas fa-notes-medical"></i>Hướng điều trị</h5>
+                            <p>${formatText(record.dieuTri || 'Chưa có thông tin')}</p>
+                        </div>
+                        ${record.ghiChu ? `
+                        <div class="info-section">
+                            <h5><i class="fas fa-sticky-note"></i>Ghi chú thêm</h5>
+                            <p>${formatText(record.ghiChu)}</p>
+                        </div>
+                        ` : ''}
                     </div>
-                    <div class="info-section">
-                        <h5><i class="fas fa-pills"></i>Điều trị & Kê đơn</h5>
-                        <p>${record.dieuTri || 'Chưa có thông tin'}</p>
+
+                    <div class="prescription-panel">
+                        <div class="prescription-head">
+                            <h5><i class="fas fa-pills"></i>Đơn thuốc</h5>
+                            <span class="prescription-total">${formatCurrency(donThuoc.tongTienThuoc || 0)}</span>
+                        </div>
+                        ${donThuoc.loiDanBacSi ? `<p class="prescription-note"><strong>Lời dặn:</strong> ${formatText(donThuoc.loiDanBacSi)}</p>` : ''}
+                        ${thuocList.length ? `
+                            <ul class="medicine-list">
+                                ${thuocList.map(item => `
+                                    <li class="medicine-item">
+                                        <div class="name">${escapeHtml(item.tenThuoc)}</div>
+                                        <div class="meta">
+                                            <span><i class="fas fa-boxes me-1"></i>${escapeHtml(item.soLuong)} ${escapeHtml(item.donViTinh || '')}</span>
+                                            ${item.lieuDung ? `<span><i class="fas fa-prescription-bottle-alt me-1"></i>${escapeHtml(item.lieuDung)}</span>` : ''}
+                                        </div>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        ` : `
+                            <p class="medicine-empty">Chưa có đơn thuốc cho lần khám này.</p>
+                        `}
                     </div>
-                    ${record.ghiChu ? `
-                    <div class="info-section">
-                        <h5><i class="fas fa-sticky-note"></i>Ghi chú</h5>
-                        <p>${record.ghiChu}</p>
-                    </div>
-                    ` : ''}
                 </div>
             `;
-            
+
             card.innerHTML = html;
             section.style.display = 'block';
         }
-
-        // ===== POPULATE DOCTOR FILTER =====
+        
         function populateDoctorFilter() {
             const select = document.getElementById('doctorFilter');
-            uniqueDoctors.forEach(doctor => {
+            if (!select) return;
+
+            const currentValue = filters.doctor;
+            select.innerHTML = '<option value="">Tất cả bác sĩ</option>';
+
+            availableDoctors.forEach(doctor => {
                 const option = document.createElement('option');
                 option.value = doctor;
                 option.textContent = 'BS. ' + doctor;
                 select.appendChild(option);
             });
+
+            select.value = currentValue;
         }
 
-        // ===== FILTERS =====
+        function onSearchInput() {
+            filters.search = document.getElementById('searchInput').value.trim();
+            if (searchDebounceTimer) {
+                clearTimeout(searchDebounceTimer);
+            }
+            searchDebounceTimer = setTimeout(() => {
+                loadMedicalRecords(1);
+            }, 250);
+        }
+
         function applyFilters() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const doctorFilter = document.getElementById('doctorFilter').value;
-            const dateFilter = document.getElementById('dateFilter').value;
-            
-            filteredRecords = allRecords.filter(record => {
-                // Search filter
-                const matchesSearch = !searchTerm || 
-                    record.chanDoan.toLowerCase().includes(searchTerm) ||
-                    record.tenBacSi.toLowerCase().includes(searchTerm) ||
-                    record.tenChuyenKhoa.toLowerCase().includes(searchTerm);
-                
-                // Doctor filter
-                const matchesDoctor = !doctorFilter || record.tenBacSi === doctorFilter;
-                
-                // Date filter (compare with raw date YYYY-MM-DD)
-                const matchesDate = !dateFilter || record.ngayKhamRaw === dateFilter;
-                
-                return matchesSearch && matchesDoctor && matchesDate;
-            });
-            
+            filters.search = document.getElementById('searchInput').value.trim();
+            filters.doctor = document.getElementById('doctorFilter').value;
+            filters.date = document.getElementById('dateFilter').value;
+            if (searchDebounceTimer) {
+                clearTimeout(searchDebounceTimer);
+            }
             currentPage = 1;
-            renderHistory();
+            loadMedicalRecords(1);
         }
 
-        function resetFilters() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('doctorFilter').value = '';
-            document.getElementById('dateFilter').value = '';
-            filteredRecords = [...allRecords];
-            currentPage = 1;
-            renderHistory();
-        }
-
-        // ===== RENDER HISTORY =====
         function renderHistory() {
-            const loading = document.getElementById('historyLoading');
             const empty = document.getElementById('historyEmpty');
             const table = document.getElementById('historyTable');
             const pagination = document.getElementById('paginationContainer');
             const historySection = document.getElementById('historySection');
-            
-            loading.style.display = 'none';
+
             historySection.style.display = 'block';
-            
-            if (filteredRecords.length === 0) {
+
+            if (!recordsOnPage.length) {
+                const hasFilter = filters.search !== '' || filters.doctor !== '' || filters.date !== '';
+                empty.querySelector('h4').textContent = hasFilter ? 'Không tìm thấy kết quả' : 'Chưa có dữ liệu';
+                empty.querySelector('p').textContent = hasFilter
+                    ? 'Không có hồ sơ nào phù hợp với bộ lọc của bạn'
+                    : 'Chưa có hồ sơ bệnh án nào để hiển thị';
                 empty.style.display = 'block';
                 table.style.display = 'none';
                 pagination.style.display = 'none';
                 return;
             }
-            
+
             empty.style.display = 'none';
             table.style.display = 'block';
-            
-            // Pagination
-            const totalPages = Math.ceil(filteredRecords.length / recordsPerPage);
-            const startIndex = (currentPage - 1) * recordsPerPage;
-            const endIndex = Math.min(startIndex + recordsPerPage, filteredRecords.length);
-            const pageRecords = filteredRecords.slice(startIndex, endIndex);
-            
-            // Render table
+
             const tbody = document.getElementById('historyTableBody');
-            tbody.innerHTML = pageRecords.map(record => `
+            tbody.innerHTML = recordsOnPage.map(record => `
                 <tr>
-                    <td><strong>${record.ngayKham}</strong></td>
-                    <td>${record.gioKham}</td>
-                    <td>BS. ${record.tenBacSi}</td>
-                    <td>${record.tenChuyenKhoa}</td>
+                    <td><strong>${escapeHtml(record.ngayKham)}</strong></td>
+                    <td>${escapeHtml(record.gioKham)}</td>
+                    <td>BS. ${escapeHtml(record.tenBacSi)}</td>
+                    <td>${escapeHtml(record.tenChuyenKhoa)}</td>
                     <td>${truncateText(record.chanDoan, 50)}</td>
                     <td>
-                        <button class="btn-view" onclick="showRecordDetail('${record.maHoSo}')">
+                        <button class="btn-view" onclick="showRecordDetail('${encodeURIComponent(record.maHoSo)}')">
                             <i class="fas fa-eye"></i> Xem
                         </button>
                     </td>
                 </tr>
             `).join('');
-            
-            // Update pagination
-            renderPagination(totalPages, startIndex, endIndex);
-            
-            // Update record info
-            document.getElementById('recordInfo').textContent = 
-                `Hiển thị ${startIndex + 1} - ${endIndex} của ${filteredRecords.length} hồ sơ`;
-            
+
+            renderPagination();
             pagination.style.display = 'flex';
         }
 
-        function truncateText(text, maxLength) {
-            if (!text) return '-';
-            return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
-        }
-
-        // ===== PAGINATION =====
-        function renderPagination(totalPages, startIndex, endIndex) {
+        function renderPagination() {
             const list = document.getElementById('paginationList');
-            
+            const totalPages = paginationState.totalPages;
+            const page = paginationState.page;
+
+            const startIndex = paginationState.total === 0 ? 0 : (page - 1) * paginationState.limit + 1;
+            const endIndex = Math.min(page * paginationState.limit, paginationState.total);
+            document.getElementById('recordInfo').textContent = `Hiển thị ${startIndex} - ${endIndex} của ${paginationState.total} hồ sơ`;
+
+            if (totalPages <= 1) {
+                list.innerHTML = '';
+                return;
+            }
+
             let html = '';
-            
             html += `
-                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="#" onclick="changePage(${currentPage - 1}); return false;">
+                <li class="page-item ${page === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="changePage(${page - 1}); return false;">
                         <i class="fas fa-chevron-left"></i>
                     </a>
                 </li>
             `;
-            
+
             for (let i = 1; i <= totalPages; i++) {
-                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                if (i === 1 || i === totalPages || (i >= page - 1 && i <= page + 1)) {
                     html += `
-                        <li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <li class="page-item ${i === page ? 'active' : ''}">
                             <a class="page-link" href="#" onclick="changePage(${i}); return false;">${i}</a>
                         </li>
                     `;
-                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                } else if (i === page - 2 || i === page + 2) {
                     html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
                 }
             }
-            
+
             html += `
-                <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                    <a class="page-link" href="#" onclick="changePage(${currentPage + 1}); return false;">
+                <li class="page-item ${page === totalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="changePage(${page + 1}); return false;">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 </li>
             `;
-            
+
             list.innerHTML = html;
         }
 
         function changePage(page) {
-            const totalPages = Math.ceil(filteredRecords.length / recordsPerPage);
+            const totalPages = paginationState.totalPages;
             if (page < 1 || page > totalPages) return;
             currentPage = page;
-            renderHistory();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            loadMedicalRecords(page);
+            const historySection = document.getElementById('historySection');
+            if (historySection) {
+                window.scrollTo({ top: historySection.offsetTop - 90, behavior: 'smooth' });
+            }
         }
 
-        // ===== SHOW DETAIL MODAL =====
-        function showRecordDetail(maHoSo) {
-            const record = allRecords.find(r => r.maHoSo === maHoSo);
+        function showRecordDetail(encodedMaHoSo) {
+            const maHoSo = decodeURIComponent(encodedMaHoSo);
+            const record = recordsOnPage.find(r => r.maHoSo === maHoSo)
+                || (latestRecord && latestRecord.maHoSo === maHoSo ? latestRecord : null);
             if (!record) return;
-            
+
+            const donThuoc = record.donThuoc || {};
+            const thuocList = Array.isArray(donThuoc.thuoc) ? donThuoc.thuoc : [];
             const modalBody = document.getElementById('modalBody');
-            
+
             const html = `
                 <div class="modal-info-grid">
                     <div class="modal-info-item">
                         <label><i class="fas fa-hashtag"></i> Mã hồ sơ</label>
-                        <div class="value">${record.maHoSo}</div>
+                        <div class="value">${escapeHtml(record.maHoSo)}</div>
                     </div>
                     <div class="modal-info-item">
                         <label><i class="fas fa-calendar"></i> Ngày khám</label>
-                        <div class="value">${record.ngayKham}</div>
+                        <div class="value">${escapeHtml(record.ngayKham)}</div>
                     </div>
                     <div class="modal-info-item">
                         <label><i class="fas fa-clock"></i> Giờ khám</label>
-                        <div class="value">${record.gioKham}</div>
+                        <div class="value">${escapeHtml(record.gioKham)}</div>
                     </div>
                     <div class="modal-info-item">
                         <label><i class="fas fa-user-md"></i> Bác sĩ khám</label>
-                        <div class="value">BS. ${record.tenBacSi}</div>
+                        <div class="value">BS. ${escapeHtml(record.tenBacSi)}</div>
                     </div>
                     <div class="modal-info-item">
                         <label><i class="fas fa-hospital"></i> Chuyên khoa</label>
-                        <div class="value">${record.tenChuyenKhoa}</div>
+                        <div class="value">${escapeHtml(record.tenChuyenKhoa)}</div>
                     </div>
                     <div class="modal-info-item">
-                        <label><i class="fas fa-check-circle"></i> Trạng thái</label>
-                        <div class="value">Đã hoàn thành</div>
+                        <label><i class="fas fa-calendar-check"></i> Hoàn thành lúc</label>
+                        <div class="value">${escapeHtml(record.ngayHoanThanh || 'N/A')}</div>
                     </div>
                 </div>
                 
                 <div class="modal-section">
                     <h6><i class="fas fa-stethoscope"></i> Chẩn đoán</h6>
-                    <div class="content">${record.chanDoan || 'Chưa có thông tin'}</div>
+                    <div class="content">${formatText(record.chanDoan || 'Chưa có thông tin')}</div>
                 </div>
                 
                 <div class="modal-section">
-                    <h6><i class="fas fa-pills"></i> Điều trị & Kê đơn</h6>
-                    <div class="content">${record.dieuTri || 'Chưa có thông tin'}</div>
+                    <h6><i class="fas fa-notes-medical"></i> Hướng điều trị</h6>
+                    <div class="content">${formatText(record.dieuTri || 'Chưa có thông tin')}</div>
                 </div>
                 
+                <div class="modal-section">
+                    <h6><i class="fas fa-pills"></i> Đơn thuốc</h6>
+                    <div class="content">
+                        <div class="d-flex flex-wrap gap-3 mb-3">
+                            <span><strong>Số thuốc:</strong> ${thuocList.length}</span>
+                            <span><strong>Tổng tiền:</strong> ${formatCurrency(donThuoc.tongTienThuoc || 0)}</span>
+                        </div>
+                        ${donThuoc.loiDanBacSi ? `<p class="mb-3"><strong>Lời dặn bác sĩ:</strong><br>${formatText(donThuoc.loiDanBacSi)}</p>` : ''}
+                        ${thuocList.length ? `
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Tên thuốc</th>
+                                            <th>Số lượng</th>
+                                            <th>Liều dùng</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${thuocList.map(item => `
+                                            <tr>
+                                                <td>${escapeHtml(item.tenThuoc)}</td>
+                                                <td>${escapeHtml(item.soLuong)} ${escapeHtml(item.donViTinh || '')}</td>
+                                                <td>${escapeHtml(item.lieuDung || '-')}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ` : '<p class="mb-0">Chưa có dữ liệu đơn thuốc.</p>'}
+                    </div>
+                </div>
+
                 ${record.ghiChu ? `
                 <div class="modal-section">
                     <h6><i class="fas fa-sticky-note"></i> Ghi chú của bác sĩ</h6>
-                    <div class="content">${record.ghiChu}</div>
+                    <div class="content">${formatText(record.ghiChu)}</div>
                 </div>
                 ` : ''}
             `;
-            
+
             modalBody.innerHTML = html;
-            
             const modal = new bootstrap.Modal(document.getElementById('detailModal'));
             modal.show();
+        }
+
+        function truncateText(text, maxLength) {
+            const value = String(text || '').trim();
+            if (!value) return '-';
+            const safe = escapeHtml(value);
+            return safe.length > maxLength ? `${safe.substring(0, maxLength)}...` : safe;
+        }
+
+        function formatCurrency(value) {
+            const amount = Number(value || 0);
+            return `${amount.toLocaleString('vi-VN')}đ`;
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function formatText(value) {
+            return escapeHtml(value).replace(/\n/g, '<br>');
         }
     </script>
 </body>
