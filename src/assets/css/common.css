@@ -832,6 +832,16 @@ body.loaded {
     width: 20px;
 }
 
+.footer-quick-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 20px;
+}
+
+.footer-col {
+    min-width: 0;
+}
+
 .social-icons {
     display: flex;
     gap: 12px;
@@ -918,8 +928,18 @@ body.loaded {
     .navbar-right .auth-buttons,
     .navbar-right .logout-header {
         display: none !important;
+}
+
+@media (max-width: 576px) {
+    .footer-quick-group {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
     }
-    
+    .footer h5 { margin-bottom: 14px; }
+    .footer-links li { margin-bottom: 8px; }
+    .footer { padding: 20px 0 8px; }
+}
+
     .mobile-sidebar {
         width: 70%;
         max-width: 320px;
