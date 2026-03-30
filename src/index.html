@@ -7,811 +7,783 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css">
-    
-    <!-- Google Fonts - Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="assets/css/common.css">
-
     <style>
-        :root {
-            /* Primary Colors - Soft Blue Medical */
-            --primary-blue: #4A90E2;
-            --primary-blue-dark: #357ABD;
-            --primary-blue-light: #E3F2FD;
-            
-            /* Secondary Colors - Fresh Green */
-            --secondary-green: #52c41a;
-            --secondary-green-dark: #389e0d;
-            --secondary-green-light: #f6ffed;
-            
-            /* Neutral Colors */
-            --text-primary: #2C3E50;
-            --text-secondary: #5A6C7D;
-            --text-light: #8899A6;
-            --border-color: #E1E8ED;
-            --bg-light: #F7F9FC;
-            --bg-white: #FFFFFF;
-            
-            /* Shadows */
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
-            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-        }
-
-        /* === GLOBAL TYPOGRAPHY === */
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            color: var(--text-primary);
-            background: var(--bg-white);
-            line-height: 1.6;
-        }
-
-        h1, h2, h3, h4, h5, h6 {
-            font-weight: 700;
-            color: var(--text-primary);
-            line-height: 1.3;
-        }
-
-        /* === BANNER SECTION === */
-        .banner-section {
-            background: linear-gradient(to bottom, #FFFFFF 0%, var(--bg-light) 100%);
-            padding: 60px 0 80px;
-            position: relative;
+        .home-page {
+            background: linear-gradient(180deg, #fff 0%, #f5faff 35%, #fff 100%);
             overflow: hidden;
         }
 
-        /* Subtle background pattern */
-        .banner-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(135deg, var(--primary-blue-light) 0%, transparent 100%);
-            opacity: 0.3;
-            z-index: 0;
-        }
-
-        .banner-content {
+        .hero {
             position: relative;
-            z-index: 2;
-            padding-top: 40px;
+            padding: 52px 0 76px;
+            background:
+                radial-gradient(circle at 12% 18%, rgba(82, 196, 26, 0.16), transparent 34%),
+                radial-gradient(circle at 84% 8%, rgba(74, 144, 226, 0.2), transparent 38%),
+                linear-gradient(180deg, #fff 0%, #f2f8ff 100%);
         }
 
-        .banner-content .badge-welcome {
-            display: inline-block;
-            padding: 8px 20px;
-            background: var(--secondary-green-light);
-            color: var(--secondary-green-dark);
-            border-radius: 50px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            border: 1px solid var(--secondary-green);
-        }
-
-        .banner-content h1 {
-            font-size: 2.75rem;
-            font-weight: 800;
-            margin-bottom: 20px;
-            color: var(--text-primary);
-        }
-
-        .banner-content .highlight {
-            color: var(--primary-blue);
-            position: relative;
-        }
-
-        .banner-content .highlight::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: var(--secondary-green);
-            border-radius: 2px;
-        }
-
-        .banner-content p.lead {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-            margin-bottom: 35px;
-            line-height: 1.7;
-            max-width: 90%;
-        }
-
-        /* Banner Buttons */
-        .banner-buttons {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            margin-bottom: 50px;
-        }
-
-        .btn-primary-action,
-        .btn-secondary-action {
-            padding: 14px 32px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.25s ease;
-            text-decoration: none;
+        .hero-pill {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            border: none;
+            padding: 7px 14px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--secondary-green-dark);
+            border: 1px solid rgba(82, 196, 26, 0.35);
+            background: var(--secondary-green-light);
+            margin-bottom: 14px;
         }
 
-        .btn-primary-action {
+        .hero h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            line-height: 1.18;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+
+        .hero h1 span {
+            color: var(--primary-blue);
+        }
+
+        .hero .lead {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.72;
+            margin-bottom: 24px;
+            max-width: 600px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .hero-btn,
+        .hero-btn-alt {
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 700;
+            padding: 11px 18px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s ease;
+        }
+
+        .hero-btn {
             background: var(--primary-blue);
-            color: white;
+            color: #fff;
+            box-shadow: 0 12px 26px rgba(74, 144, 226, 0.24);
+        }
+
+        .hero-btn:hover {
+            color: #fff;
+            background: var(--primary-blue-dark);
+            transform: translateY(-2px);
+        }
+
+        .hero-btn-alt {
+            border: 1px solid rgba(74, 144, 226, 0.35);
+            color: var(--primary-blue);
+            background: #fff;
+        }
+
+        .hero-btn-alt:hover {
+            color: var(--primary-blue-dark);
+            border-color: var(--primary-blue);
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .hero-stat {
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.93);
+            border-radius: 12px;
+            padding: 12px 10px;
             box-shadow: var(--shadow-sm);
         }
 
-        .btn-primary-action:hover {
-            background: var(--primary-blue-dark);
-            box-shadow: var(--shadow-md);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary-action {
-            background: white;
-            color: var(--primary-blue);
-            border: 2px solid var(--primary-blue);
-        }
-
-        .btn-secondary-action:hover {
-            background: var(--primary-blue-light);
-            color: var(--primary-blue-dark);
-            transform: translateY(-2px);
-        }
-
-        /* Trust Indicators */
-        .trust-indicators {
-            display: flex;
-            gap: 48px;
-            padding: 30px 0;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .trust-item {
-            text-align: left;
-        }
-
-        .trust-item .number {
-            font-size: 2.25rem;
-            font-weight: 800;
-            color: var(--primary-blue);
+        .hero-stat strong {
             display: block;
-            line-height: 1;
-            margin-bottom: 8px;
+            font-size: clamp(1.3rem, 2.5vw, 1.9rem);
+            line-height: 1.1;
+            color: var(--primary-blue);
         }
 
-        .trust-item .label {
+        .hero-stat span {
             color: var(--text-secondary);
-            font-size: 0.9rem;
-            font-weight: 500;
+            font-size: 0.78rem;
+            font-weight: 600;
         }
 
-        /* Banner Image */
-        .banner-image-wrapper {
+        .hero-media {
             position: relative;
-            z-index: 2;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 7px solid rgba(255, 255, 255, 0.92);
+            box-shadow: 0 22px 54px rgba(34, 81, 143, 0.22);
         }
 
-        .banner-image {
-            border-radius: 12px;
-            box-shadow: var(--shadow-lg);
+        .hero-media img {
             width: 100%;
-            height: auto;
-            max-height: 550px;
+            height: 520px;
             object-fit: cover;
         }
 
-        /* Remove floating badges - too playful for professional medical site */
-        .floating-badge {
-            display: none;
+        .hero-note {
+            position: absolute;
+            left: 14px;
+            right: 14px;
+            bottom: 14px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.94);
+            border: 1px solid rgba(74, 144, 226, 0.2);
+            padding: 10px;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
         }
 
-        /* === INFO SECTION === */
-        .info-section {
-            background: var(--bg-light);
-            padding: 70px 0;
+        .quick-wrap {
+            margin-top: -28px;
+            position: relative;
+            z-index: 3;
+            padding-bottom: 24px;
         }
 
-        .info-card {
-            background: white;
-            border-radius: 8px;
-            padding: 32px 24px;
-            text-align: center;
-            transition: all 0.25s ease;
-            box-shadow: var(--shadow-sm);
+        .quick-box {
+            background: #fff;
             border: 1px solid var(--border-color);
-            height: 100%;
-        }
-
-        .info-card:hover {
+            border-radius: 16px;
             box-shadow: var(--shadow-md);
-            transform: translateY(-4px);
-            border-color: var(--primary-blue);
+            padding: 14px;
         }
 
-        .info-card i {
-            font-size: 2.5rem;
-            color: var(--primary-blue);
-            background: var(--primary-blue-light);
-            padding: 20px;
-            border-radius: 8px;
-            transition: all 0.25s ease;
-            display: inline-block;
-            margin-bottom: 20px;
+        .quick-track {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
         }
 
-        .info-card:hover i {
-            background: var(--primary-blue);
-            color: white;
-        }
-
-        .info-card h5 {
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 12px;
-            font-size: 1.125rem;
-        }
-
-        .info-card p {
-            font-size: 0.9375rem;
-            color: var(--text-secondary);
-            line-height: 1.6;
-            margin: 0;
-        }
-
-        /* === SECTION HEADER === */
-        .section-header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .section-badge {
-            display: inline-block;
-            padding: 6px 16px;
-            background: var(--secondary-green-light);
-            color: var(--secondary-green-dark);
-            border-radius: 4px;
-            font-size: 0.8125rem;
-            font-weight: 600;
-            margin-bottom: 16px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border: 1px solid var(--secondary-green);
-        }
-
-        .section-header h2 {
-            font-size: 2.25rem;
-            font-weight: 800;
-            color: var(--text-primary);
-            margin-bottom: 16px;
-        }
-
-        .section-header p {
-            color: var(--text-secondary);
-            font-size: 1.0625rem;
-            max-width: 700px;
-            margin: 0 auto;
-            line-height: 1.7;
-        }
-
-        /* === SPECIALTY SECTION === */
-        .specialty-section {
-            max-width: 1200px;
-            margin: 70px auto;
-            padding: 0 20px;
-        }
-
-        .service-card {
-            border-radius: 8px;
-            padding: 20px 24px;
-            background: white;
-            box-shadow: var(--shadow-sm);
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            transition: all 0.25s ease;
+        .quick-link {
             text-decoration: none;
             color: var(--text-primary);
-            font-weight: 600;
-            font-size: 1.0625rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .service-card:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-3px);
-            border-color: var(--primary-blue);
-            color: var(--primary-blue);
-        }
-
-        .service-icon {
-            width: 52px;
-            height: 52px;
-            background: var(--primary-blue-light);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-blue);
-            font-size: 1.5rem;
-            transition: all 0.25s;
-            flex-shrink: 0;
-        }
-
-        .service-card:hover .service-icon {
-            background: var(--primary-blue);
-            color: white;
-        }
-
-        /* === PACKAGE SECTION === */
-        .package-section {
-            background: white;
-            padding: 70px 0;
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .package-card-modern {
-            background: white;
-            border-radius: 8px;
-            padding: 40px 32px;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.25s;
-            position: relative;
-            border: 2px solid var(--border-color);
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .package-card-modern:hover {
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-6px);
-            border-color: var(--primary-blue);
-        }
-
-        /* Popular badge - more subtle */
-        .popular-badge {
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--secondary-green);
-            color: white;
-            padding: 6px 18px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .package-type-badge {
-            display: inline-block;
-            background: var(--primary-blue-light);
-            color: var(--primary-blue);
-            padding: 6px 14px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            letter-spacing: 0.5px;
-        }
-
-        .package-icon {
-            width: 70px;
-            height: 70px;
-            background: var(--primary-blue-light);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 24px;
-            transition: all 0.25s;
-        }
-
-        .package-card-modern:hover .package-icon {
-            background: var(--primary-blue);
-        }
-
-        .package-icon i {
-            font-size: 2rem;
-            color: var(--primary-blue);
-            transition: all 0.25s;
-        }
-
-        .package-card-modern:hover .package-icon i {
-            color: white;
-        }
-
-        .package-title {
-            font-size: 1.375rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 12px;
-            text-align: center;
-        }
-
-        .package-desc {
-            color: var(--text-secondary);
-            font-size: 0.9375rem;
-            text-align: center;
-            line-height: 1.6;
-            margin-bottom: 24px;
-        }
-
-        .package-features {
-            list-style: none;
-            padding: 0;
-            margin: 24px 0;
-            flex-grow: 1;
-        }
-
-        .package-features li {
-            padding: 10px 0;
-            color: var(--text-secondary);
+            border-radius: 12px;
+            border: 1px solid transparent;
+            background: #fff;
+            padding: 11px;
             display: flex;
             align-items: flex-start;
-            gap: 12px;
-            font-size: 0.9375rem;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+        .quick-link:hover {
+            color: var(--primary-blue);
+            border-color: rgba(74, 144, 226, 0.35);
+            background: rgba(227, 242, 253, 0.45);
         }
 
-        .package-features li i {
-            color: var(--secondary-green);
-            font-size: 1rem;
-            margin-top: 3px;
+        .quick-link i {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(74, 144, 226, 0.12);
+            color: var(--primary-blue);
             flex-shrink: 0;
         }
 
-        .package-price {
-            text-align: center;
-            margin: 28px 0 24px;
-            padding-top: 24px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .price-amount {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--primary-blue);
-            line-height: 1;
+        .quick-link b {
             display: block;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .quick-link small {
+            color: var(--text-secondary);
+            font-size: 0.76rem;
+        }
+
+        .home-section {
+            padding: 26px 0 56px;
+        }
+
+        .section-head {
+            margin-bottom: 20px;
+        }
+
+        .section-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.74rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--primary-blue-dark);
+            background: rgba(74, 144, 226, 0.13);
+            padding: 6px 12px;
+            border-radius: 999px;
+            margin-bottom: 10px;
+        }
+
+        .section-head h2 {
+            font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+            font-weight: 800;
             margin-bottom: 8px;
+            color: var(--text-primary);
         }
 
-        .price-period {
-            color: var(--text-light);
-            font-size: 0.875rem;
+        .section-head p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            max-width: 700px;
         }
 
-        .btn-book-package {
-            width: 100%;
-            padding: 14px;
-            background: var(--primary-blue);
-            border: none;
-            border-radius: 6px;
-            color: white;
-            font-weight: 600;
-            transition: all 0.25s;
-            cursor: pointer;
+        .card-track {
+            display: grid;
+            gap: 12px;
         }
 
-        .btn-book-package:hover {
-            background: var(--primary-blue-dark);
-            box-shadow: var(--shadow-md);
+        .track-4 {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .track-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .home-card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px 14px;
+            box-shadow: var(--shadow-sm);
+            min-width: 0;
+            height: 100%;
+        }
+
+        .home-card .icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--primary-blue);
+            background: rgba(74, 144, 226, 0.12);
+        }
+
+        .home-card h3 {
+            font-size: 0.98rem;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        .home-card p {
+            margin: 0;
+            font-size: 0.83rem;
+            color: var(--text-secondary);
+            line-height: 1.56;
+        }
+
+        .specialty-card {
+            text-decoration: none;
+            color: var(--text-primary);
+            position: relative;
+            transition: all 0.25s ease;
+        }
+
+        .specialty-card .icon {
+            background: rgba(82, 196, 26, 0.15);
+            color: var(--secondary-green-dark);
+        }
+
+        .specialty-card:hover {
+            color: var(--primary-blue);
+            border-color: rgba(74, 144, 226, 0.35);
             transform: translateY(-2px);
         }
 
-        /* === RESPONSIVE === */
-        @media (max-width: 992px) {
-            .banner-content h1 { 
-                font-size: 2.25rem; 
+        .specialty-card .go {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            color: rgba(74, 144, 226, 0.35);
+            font-size: 0.95rem;
+        }
+
+        .package-card {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .package-card.featured {
+            border-color: rgba(74, 144, 226, 0.42);
+            box-shadow: 0 16px 34px rgba(74, 144, 226, 0.15);
+        }
+
+        .package-tag {
+            width: fit-content;
+            font-size: 0.73rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: 999px;
+            background: rgba(74, 144, 226, 0.12);
+            color: var(--primary-blue-dark);
+        }
+
+        .package-card.featured .package-tag {
+            background: rgba(82, 196, 26, 0.15);
+            color: var(--secondary-green-dark);
+        }
+
+        .package-price {
+            margin-top: auto;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+            font-size: 1.85rem;
+            font-weight: 800;
+            line-height: 1;
+            color: var(--primary-blue);
+        }
+
+        .package-price span {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .package-btn {
+            text-decoration: none;
+            text-align: center;
+            border-radius: 9px;
+            padding: 10px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #fff;
+            background: var(--primary-blue);
+        }
+
+        .package-btn:hover {
+            color: #fff;
+            background: var(--primary-blue-dark);
+        }
+
+        .cta {
+            padding: 14px 0 70px;
+        }
+
+        .cta-box {
+            border-radius: 20px;
+            background:
+                radial-gradient(circle at 16% 20%, rgba(82, 196, 26, 0.28), rgba(82, 196, 26, 0) 42%),
+                linear-gradient(130deg, #2f7fd8 0%, #4a90e2 56%, #59a5f2 100%);
+            box-shadow: 0 22px 48px rgba(35, 89, 153, 0.3);
+            color: #fff;
+            padding: clamp(20px, 3vw, 34px);
+        }
+
+        .cta-box h2 {
+            font-size: clamp(1.35rem, 2.4vw, 1.95rem);
+            font-weight: 800;
+            margin-bottom: 9px;
+        }
+
+        .cta-box p {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.92);
+            line-height: 1.7;
+            max-width: 700px;
+        }
+
+        .cta-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+        }
+
+        .cta-actions a {
+            text-decoration: none;
+            border-radius: 9px;
+            padding: 10px 15px;
+            font-size: 0.86rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .cta-main {
+            background: #fff;
+            color: var(--primary-blue-dark);
+        }
+
+        .cta-alt {
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.68);
+        }
+
+        @media (max-width: 1199px) {
+            .track-4 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
-            .trust-indicators { 
-                gap: 32px; 
-            }
-            .section-header h2 {
-                font-size: 1.875rem;
+
+            .hero-media img {
+                height: 480px;
             }
         }
 
-        @media (max-width: 768px) {
-            .banner-section { 
-                padding: 40px 0 60px; 
+        @media (max-width: 991px) {
+            .hero {
+                padding: 38px 0 60px;
             }
-            .banner-content h1 { 
-                font-size: 1.875rem; 
+
+            .hero-media img {
+                height: 380px;
             }
-            .banner-content p.lead {
-                font-size: 1rem;
-                max-width: 100%;
-            }
-            .trust-indicators { 
-                gap: 24px; 
-                flex-wrap: wrap; 
-                justify-content: center; 
-            }
-            .trust-item .number { 
-                font-size: 1.875rem; 
-            }
-            .section-header h2 { 
-                font-size: 1.625rem; 
-            }
-            .banner-buttons {
-                flex-direction: column;
-            }
-            .btn-primary-action,
-            .btn-secondary-action {
-                width: 100%;
-                justify-content: center;
+
+            .track-3 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
 
+        @media (max-width: 767px) {
+            .hero {
+                padding: 30px 0 52px;
+            }
+
+            .hero .lead {
+                font-size: 0.92rem;
+            }
+
+            .hero-btn,
+            .hero-btn-alt {
+                font-size: 0.84rem;
+                padding: 9px 14px;
+            }
+
+            .hero-stat {
+                padding: 10px 8px;
+            }
+
+            .hero-stat span {
+                font-size: 0.72rem;
+            }
+
+            .hero-media {
+                border-radius: 16px;
+                border-width: 5px;
+            }
+
+            .hero-media img {
+                height: 300px;
+            }
+
+            .quick-wrap {
+                margin-top: -22px;
+            }
+
+            .quick-box {
+                border-radius: 13px;
+                padding: 11px;
+            }
+
+            .quick-track,
+            .card-track {
+                display: flex;
+                overflow-x: auto;
+                overflow-y: hidden;
+                gap: 10px;
+                padding-bottom: 3px;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .quick-track::-webkit-scrollbar,
+            .card-track::-webkit-scrollbar {
+                height: 4px;
+            }
+
+            .quick-track::-webkit-scrollbar-thumb,
+            .card-track::-webkit-scrollbar-thumb {
+                border-radius: 999px;
+                background: rgba(74, 144, 226, 0.35);
+            }
+
+            .quick-link,
+            .home-card {
+                flex: 0 0 82%;
+                scroll-snap-align: start;
+            }
+
+            .home-section {
+                padding: 22px 0 46px;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .hero-stat {
+                padding: 9px 6px;
+            }
+
+            .hero-stat span {
+                font-size: 0.68rem;
+            }
+
+            .quick-link,
+            .home-card {
+                flex-basis: 86%;
+            }
+        }
     </style>
 </head>
 <body>
-    <div id="pageLoader" style="
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background: white;
-        z-index: 99999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    ">
+    <div id="pageLoader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 99999; display: flex; align-items: center; justify-content: center;">
         <div class="spinner-border" style="width: 3rem; height: 3rem; color: var(--primary-blue);"></div>
     </div>
 
     <div id="header-placeholder" class="sticky-top" style="z-index: 1020;"></div>
 
-    <!-- BANNER SECTION -->
-    <section class="banner-section">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
-                    <div class="banner-content">
-                        <span class="badge-welcome">
-                            <i class="fas fa-stethoscope me-2"></i>CHÀO MỪNG ĐÉN VỚI EDEN HEALTH
-                        </span>
-                        <h1>Chăm Sóc Sức Khỏe<br><span class="highlight">Chuyên Nghiệp & Tận Tâm</span></h1>
-                        <p class="lead">Hệ thống đặt lịch khám bệnh trực tuyến với đội ngũ bác sĩ giàu kinh nghiệm. Chúng tôi cam kết mang đến dịch vụ y tế chất lượng cao, an toàn và tiện lợi cho mọi người.</p>
-                        <div class="banner-buttons">
-                            <a href="dat-lich.html" class="btn-primary-action">
-                                <i class="fas fa-calendar-check"></i>
-                                Đặt Lịch Khám
-                            </a>
-                            <a href="ve-chung-toi.html" class="btn-secondary-action">
-                                <i class="fas fa-info-circle"></i>
-                                Tìm Hiểu Thêm
-                            </a>
+    <main class="home-page">
+        <section class="hero">
+            <div class="container">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-6">
+                        <span class="hero-pill"><i class="fas fa-heartbeat"></i> Chăm sóc y tế toàn diện</span>
+                        <h1>Đặt khám <span>nhanh và chuẩn</span> cho cả gia đình</h1>
+                        <p class="lead">Eden Health kết nối bạn với đúng chuyên khoa, giảm thời gian chờ, và quản lý lịch khám tập trung trên một giao diện dễ dùng.</p>
+                        <div class="hero-actions">
+                            <a href="dat-lich.html" class="hero-btn"><i class="fas fa-calendar-check"></i> Đặt lịch ngay</a>
+                            <a href="danh-sach-bac-si.html" class="hero-btn-alt"><i class="fas fa-user-md"></i> Chọn bác sĩ</a>
                         </div>
-                        <div class="trust-indicators">
-                            <div class="trust-item">
-                                <span class="number" id="statPatients">0+</span>
-                                <span class="label">Bệnh nhân tin tưởng</span>
+                        <div class="hero-stats">
+                            <div class="hero-stat">
+                                <strong id="statPatients">0+</strong>
+                                <span>Bệnh nhân đã hỗ trợ</span>
                             </div>
-                            <div class="trust-item">
-                                <span class="number" id="statDoctors">0+</span>
-                                <span class="label">Bác sĩ chuyên khoa</span>
+                            <div class="hero-stat">
+                                <strong id="statDoctors">0+</strong>
+                                <span>Bác sĩ chuyên môn cao</span>
                             </div>
-                            <div class="trust-item">
-                                <span class="number" id="statSpecialties">0+</span>
-                                <span class="label">Chuyên khoa đa dạng</span>
+                            <div class="hero-stat">
+                                <strong id="statSpecialties">0+</strong>
+                                <span>Chuyên khoa đang mở</span>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-6 mt-5 mt-lg-0">
-                    <div class="banner-image-wrapper">
-                        <img src="https://res.cloudinary.com/dlnevod7e/image/upload/v1769964723/3d1cceee-b035-4a7d-b6fc-3_b9a331.png" class="img-fluid banner-image" alt="Ảnh Banner trang chủ">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="info-section">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-md-3 col-sm-6">
-                    <div class="info-card">
-                        <i class="fas fa-stethoscope"></i>
-                        <h5>Chẩn Đoán Chính Xác</h5>
-                        <p>Đội ngũ bác sĩ giàu kinh nghiệm cùng trang thiết bị y tế hiện đại đảm bảo kết quả tin cậy.</p>
-                    </div>
-                </div>
-
-                <div class="col-md-3 col-sm-6">
-                    <div class="info-card">
-                        <i class="fas fa-hospital-user"></i>
-                        <h5>Chăm Sóc Tận Tâm</h5>
-                        <p>Luôn lắng nghe và hỗ trợ người bệnh với sự chu đáo, trách nhiệm trong từng dịch vụ.</p>
-                    </div>
-                </div>
-
-                <div class="col-md-3 col-sm-6">
-                    <div class="info-card">
-                        <i class="fas fa-heartbeat"></i>
-                        <h5>Điều Trị Hiệu Quả</h5>
-                        <p>Phác đồ điều trị được cá nhân hóa, theo dõi sát sao quá trình phục hồi sức khỏe.</p>
-                    </div>
-                </div>
-
-                <div class="col-md-3 col-sm-6">
-                    <div class="info-card">
-                        <i class="fas fa-clock"></i>
-                        <h5>Hỗ Trợ Nhanh Chóng</h5>
-                        <p>Đội ngũ hỗ trợ sẵn sàng phản hồi 24/7, đảm bảo người bệnh được giúp đỡ kịp thời.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SPECIALTY SECTION -->
-    <section class="specialty-section">
-        <div class="section-header">
-            <span class="section-badge">
-                <i class="fas fa-hospital me-2"></i>Chuyên Khoa
-            </span>
-            <h2>Các Chuyên Khoa Điều Trị</h2>
-            <p>Chúng tôi cung cấp đầy đủ các chuyên khoa với đội ngũ bác sĩ chuyên môn cao, sẵn sàng chăm sóc sức khỏe toàn diện cho bạn và gia đình.</p>
-        </div>
-        <div class="row g-4">
-            <div class="col-md-6 col-lg-4">
-                <a href="chuyenkhoa.html?khoa=tim-mach" class="service-card">
-                    <div class="service-icon"><i class="ri-heart-pulse-fill"></i></div>
-                    <span>Tim mạch</span>
-                </a>
-            </div>
-            <div class="col-md-6 col-lg-4">
-                <a href="chuyenkhoa.html?khoa=than-kinh" class="service-card">
-                    <div class="service-icon"><i class="ri-brain-fill"></i></div>
-                    <span>Thần kinh</span>
-                </a>
-            </div>
-            <div class="col-md-6 col-lg-4">
-                <a href="chuyenkhoa.html?khoa=noi-tong-quat" class="service-card">
-                    <div class="service-icon"><i class="ri-stethoscope-fill"></i></div>
-                    <span>Nội tổng quát</span>
-                </a>
-            </div>
-            <div class="col-md-6 col-lg-4">
-                <a href="chuyenkhoa.html?khoa=mat" class="service-card">
-                    <div class="service-icon"><i class="ri-eye-fill"></i></div>
-                    <span>Mắt</span>
-                </a>
-            </div>
-            <div class="col-md-6 col-lg-4">
-                <a href="chuyenkhoa.html?khoa=san-phu-khoa" class="service-card">
-                    <div class="service-icon"><i class="ri-parent-fill"></i></div>
-                    <span>Sản phụ khoa</span>
-                </a>
-            </div>
-            <div class="col-md-6 col-lg-4">
-                <a href="chuyenkhoa.html?khoa=nhi" class="service-card">
-                    <div class="service-icon"><i class="ri-user-heart-fill"></i></div>
-                    <span>Nhi khoa</span>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- PACKAGE SECTION -->
-    <section class="package-section">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-badge">
-                    <i class="fas fa-box-open me-2"></i>Gói Khám
-                </span>
-                <h2>Gói Khám Sức Khỏe</h2>
-                <p>Lựa chọn gói khám phù hợp với nhu cầu của bạn. Tất cả các gói đều bao gồm khám tổng quát và tư vấn chi tiết từ đội ngũ bác sĩ chuyên khoa.</p>
-            </div>
-            <div class="row g-4 justify-content-center">
-                <div class="col-lg-5 col-md-6">
-                    <div class="package-card-modern">
-                        <span class="package-type-badge">Gói Cơ Bản</span>
-                        <div class="package-icon"><i class="fas fa-heartbeat"></i></div>
-                        <h3 class="package-title">Khám Với Bác Sĩ Tổng Quát</h3>
-                        <p class="package-desc">Phù hợp cho khám sức khỏe định kỳ, tầm soát các bệnh lý thông thường và tư vấn chăm sóc sức khỏe.</p>
-                        <ul class="package-features">
-                            <li><i class="fas fa-check-circle"></i> Khám lâm sàng tổng quát</li>
-                            <li><i class="fas fa-check-circle"></i> Bác sĩ nội tổng quát</li>
-                            <li><i class="fas fa-check-circle"></i> Thời gian khám: 40 phút</li>
-                            <li><i class="fas fa-check-circle"></i> Đo huyết áp, nhịp tim</li>
-                            <li><i class="fas fa-check-circle"></i> Tư vấn sức khỏe cơ bản</li>
-                            <li><i class="fas fa-check-circle"></i> Kê đơn thuốc (nếu cần)</li>
-                        </ul>
-                        <div class="package-price">
-                            <span class="price-amount">150.000₫</span>
-                            <span class="price-period">/ lần khám</span>
+                    <div class="col-lg-6">
+                        <div class="hero-media">
+                            <img src="https://res.cloudinary.com/dlnevod7e/image/upload/v1769962598/banner2_a7egwb.jpg" alt="Minh họa y khoa không lộ khuôn mặt">
+                            <div class="hero-note">
+                                <i class="fas fa-clock me-1"></i> Khung giờ hôm nay: 07:00 - 11:30 và 13:00 - 17:00
+                            </div>
                         </div>
-                        <button class="btn-book-package" onclick="window.location.href='dat-lich.html'">
-                            <i class="fas fa-calendar-check me-2"></i>Đặt lịch ngay
-                        </button>
-                    </div>
-                </div>
-                <div class="col-lg-5 col-md-6">
-                    <div class="package-card-modern">
-                        <span class="popular-badge">Được Ưa Chuộng Nhất</span>
-                        <span class="package-type-badge" style="background: var(--secondary-green-light); color: var(--secondary-green-dark);">Gói Nâng Cao</span>
-                        <div class="package-icon"><i class="fas fa-user-md"></i></div>
-                        <h3 class="package-title">Khám Với Bác Sĩ Chuyên Khoa</h3>
-                        <p class="package-desc">Khám chuyên sâu với bác sĩ chuyên khoa giàu kinh nghiệm, phù hợp cho các vấn đề sức khỏe phức tạp.</p>
-                        <ul class="package-features">
-                            <li><i class="fas fa-check-circle"></i> Khám chuyên khoa chi tiết</li>
-                            <li><i class="fas fa-check-circle"></i> Bác sĩ chuyên gia đầu ngành</li>
-                            <li><i class="fas fa-check-circle"></i> Thời gian khám: 40 phút</li>
-                            <li><i class="fas fa-check-circle"></i> Chẩn đoán chuyên sâu</li>
-                            <li><i class="fas fa-check-circle"></i> Tư vấn điều trị chi tiết</li>
-                            <li><i class="fas fa-check-circle"></i> Ưu tiên đặt lịch khám</li>
-                        </ul>
-                        <div class="package-price">
-                            <span class="price-amount">250.000₫</span>
-                            <span class="price-period">/ lần khám</span>
-                        </div>
-                        <button class="btn-book-package" onclick="window.location.href='dat-lich.html'">
-                            <i class="fas fa-calendar-check me-2"></i>Đặt lịch ngay
-                        </button>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <section class="quick-wrap">
+            <div class="container">
+                <div class="quick-box">
+                    <div class="quick-track">
+                        <a href="dat-lich.html" class="quick-link">
+                            <i class="fas fa-calendar-plus"></i>
+                            <span><b>Đặt khám 24/7</b><small>Xác nhận lịch tự động trong vài bước.</small></span>
+                        </a>
+                        <a href="danh-sach-chuyen-khoa.html" class="quick-link">
+                            <i class="fas fa-hospital"></i>
+                            <span><b>Đa dạng chuyên khoa</b><small>Tìm nhanh chuyên khoa phù hợp triệu chứng.</small></span>
+                        </a>
+                        <a href="ho-so-benh-an-ca-nhan.html" class="quick-link">
+                            <i class="fas fa-file-medical"></i>
+                            <span><b>Hồ sơ tập trung</b><small>Xem lịch sử khám và kết quả gọn gàng.</small></span>
+                        </a>
+                        <a href="lien-he.html" class="quick-link">
+                            <i class="fas fa-headset"></i>
+                            <span><b>Hỗ trợ tức thì</b><small>Đội ngũ tư vấn luôn sẵn sàng phản hồi.</small></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="home-section">
+            <div class="container">
+                <header class="section-head">
+                    <span class="section-kicker"><i class="fas fa-star"></i> Điểm mạnh hệ thống</span>
+                    <h2>Trải nghiệm khám bệnh hiện đại và mạch lạc</h2>
+                    <p>Thiết kế lại để người dùng đi từ tìm bác sĩ đến theo dõi hồ sơ một cách trực quan, ít bước hơn và dễ thao tác hơn.</p>
+                </header>
+                <div class="card-track track-4">
+                    <article class="home-card">
+                        <div class="icon"><i class="ri-pulse-line"></i></div>
+                        <h3>Sàng lọc thông minh</h3>
+                        <p>Đề xuất chuyên khoa phù hợp dựa trên thông tin bạn cung cấp trước buổi khám.</p>
+                    </article>
+                    <article class="home-card">
+                        <div class="icon"><i class="ri-shield-check-line"></i></div>
+                        <h3>Bảo mật thông tin</h3>
+                        <p>Hồ sơ được quản lý tập trung, giúp bác sĩ truy cập dữ liệu cần thiết nhanh chóng.</p>
+                    </article>
+                    <article class="home-card">
+                        <div class="icon"><i class="ri-time-line"></i></div>
+                        <h3>Tiết kiệm thời gian</h3>
+                        <p>Đặt lịch trước, nhận nhắc hẹn theo thời gian thực và hạn chế chờ đợi tại quầy.</p>
+                    </article>
+                    <article class="home-card">
+                        <div class="icon"><i class="ri-heart-2-line"></i></div>
+                        <h3>Theo dõi sau khám</h3>
+                        <p>Nhắc tái khám và quản lý kế hoạch điều trị dài hạn trực tiếp trên hệ thống.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="home-section">
+            <div class="container">
+                <header class="section-head d-flex flex-wrap justify-content-between align-items-end gap-3">
+                    <div>
+                        <span class="section-kicker"><i class="fas fa-stethoscope"></i> Chuyên khoa nổi bật</span>
+                        <h2>Mạng lưới chuyên khoa đa dạng</h2>
+                        <p>Ưu tiên những chuyên khoa có nhu cầu cao để bệnh nhân dễ tiếp cận khám sớm.</p>
+                    </div>
+                    <a href="danh-sach-chuyen-khoa.html" class="hero-btn-alt">Xem tất cả <i class="fas fa-arrow-right"></i></a>
+                </header>
+
+                <div class="card-track track-3">
+                    <a href="danh-sach-chuyen-khoa.html" class="home-card specialty-card">
+                        <span class="go"><i class="fas fa-arrow-up-right-from-square"></i></span>
+                        <div class="icon"><i class="ri-heart-pulse-line"></i></div>
+                        <h3>Tim mạch</h3>
+                        <p>Tầm soát bệnh tim mạch và tư vấn thay đổi lối sống theo từng nhóm tuổi.</p>
+                    </a>
+                    <a href="danh-sach-chuyen-khoa.html" class="home-card specialty-card">
+                        <span class="go"><i class="fas fa-arrow-up-right-from-square"></i></span>
+                        <div class="icon"><i class="ri-brain-line"></i></div>
+                        <h3>Thần kinh</h3>
+                        <p>Chẩn đoán chuyên sâu và xây dựng lộ trình theo dõi triệu chứng thần kinh.</p>
+                    </a>
+                    <a href="danh-sach-chuyen-khoa.html" class="home-card specialty-card">
+                        <span class="go"><i class="fas fa-arrow-up-right-from-square"></i></span>
+                        <div class="icon"><i class="ri-parent-line"></i></div>
+                        <h3>Sản phụ khoa</h3>
+                        <p>Theo dõi sức khỏe phụ nữ, thai kỳ và tư vấn định kỳ an toàn.</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="home-section">
+            <div class="container">
+                <header class="section-head">
+                    <span class="section-kicker"><i class="fas fa-box-open"></i> Gói khám phổ biến</span>
+                    <h2>Chọn gói phù hợp với nhu cầu của bạn</h2>
+                    <p>Mức phí tham khảo minh bạch và dễ so sánh trước khi đặt lịch.</p>
+                </header>
+
+                <div class="card-track track-3">
+                    <article class="home-card package-card">
+                        <span class="package-tag">Gói cơ bản</span>
+                        <h3>Khám tổng quát định kỳ</h3>
+                        <p>Phù hợp kiểm tra sức khỏe thường xuyên và phát hiện sớm các dấu hiệu bất thường.</p>
+                        <div class="package-price">150.000đ <span>/ lượt khám</span></div>
+                        <a href="dat-lich.html" class="package-btn">Đặt lịch gói cơ bản</a>
+                    </article>
+                    <article class="home-card package-card featured">
+                        <span class="package-tag">Gói nâng cao</span>
+                        <h3>Khám chuyên khoa chuyên sâu</h3>
+                        <p>Dành cho bệnh nhân cần tư vấn chuyên môn sâu và theo dõi bệnh lý cụ thể.</p>
+                        <div class="package-price">250.000đ <span>/ lượt khám</span></div>
+                        <a href="dat-lich.html" class="package-btn">Đặt lịch gói nâng cao</a>
+                    </article>
+                    <article class="home-card package-card">
+                        <span class="package-tag">Gói gia đình</span>
+                        <h3>Khám theo nhóm thành viên</h3>
+                        <p>Tối ưu lịch khám cho nhiều thành viên trong gia đình cùng một khung thời gian.</p>
+                        <div class="package-price">Tùy chọn <span>/ theo lịch</span></div>
+                        <a href="lien-he.html" class="package-btn">Nhận tư vấn gói</a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta">
+            <div class="container">
+                <div class="cta-box">
+                    <h2>Sẵn sàng bắt đầu hành trình chăm sóc sức khỏe chủ động?</h2>
+                    <p>Đặt lịch trong 1 phút, theo dõi lịch sử khám trên cùng giao diện và nhận hỗ trợ nhanh từ đội ngũ Eden Health.</p>
+                    <div class="cta-actions">
+                        <a href="dat-lich.html" class="cta-main"><i class="fas fa-calendar-check"></i> Đặt lịch khám</a>
+                        <a href="lien-he.html" class="cta-alt"><i class="fas fa-phone-alt"></i> Tư vấn trực tiếp</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <div id="footer-placeholder"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/api-config.js"></script>
     <script src="assets/js/common.js"></script>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // common.js tự gọi loadComponents() -> initAfterLoad()
             loadStatistics();
-            // setupScrollAnimations() - REMOVED for professional look
         });
 
-        // 2. Tải thống kê
         async function loadStatistics() {
             try {
-                // Sử dụng API_BASE_PATIENT từ common.js
                 const response = await fetch(`${API_BASE_PATIENT}/get-statistics.php`);
                 const data = await response.json();
-                
-                if (data.success) {
-                    animateNumber('statPatients', data.data.patients, 10);
-                    animateNumber('statDoctors', data.data.doctors, 10);
-                    animateNumber('statSpecialties', data.data.specialties, 10);
+
+                if (data.success && data.data) {
+                    animateNumber('statPatients', Number(data.data.patients || 0), 10);
+                    animateNumber('statDoctors', Number(data.data.doctors || 0), 10);
+                    animateNumber('statSpecialties', Number(data.data.specialties || 0), 10);
+                    return;
                 }
             } catch (error) {
                 console.error('Error stats:', error);
             }
+
+            animateNumber('statPatients', 12000, 10);
+            animateNumber('statDoctors', 150, 10);
+            animateNumber('statSpecialties', 35, 5);
         }
 
         function animateNumber(elementId, target, roundTo) {
             const element = document.getElementById(elementId);
-            if(!element) return;
-            
-            const roundedTarget = Math.ceil(target / roundTo) * roundTo;
+            if (!element) return;
+
+            const safeTarget = Number.isFinite(target) && target > 0 ? target : 0;
+            const roundedTarget = Math.ceil(safeTarget / roundTo) * roundTo;
             let current = 0;
-            const increment = Math.ceil(roundedTarget / 40);
-            
+            const increment = Math.max(1, Math.ceil(roundedTarget / 40));
+
             const timer = setInterval(() => {
                 current += increment;
                 if (current >= roundedTarget) {
@@ -822,7 +794,6 @@
                 }
             }, 1500 / 40);
         }
-
     </script>
 </body>
 </html>
