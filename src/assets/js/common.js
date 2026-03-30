@@ -11,6 +11,7 @@ const API_BASE = window.API_ENDPOINTS || {};
 const API_BASE_PATIENT = API_BASE.patient || `${FALLBACK_API_ROOT}/patient`;
 const API_BASE_AUTH    = API_BASE.auth    || `${FALLBACK_API_ROOT}/auth`;
 const DEFAULT_DB_AVATAR_KEY = 'samples/paper.png';
+const SUPPORT_CHAT_SCROLL_OFFSET = 250;
 
 function hasCustomAvatar(avatarUrl) {
     return typeof avatarUrl === 'string'
@@ -67,6 +68,42 @@ function setMenuItemVisible(item, visible) {
     item.style.display = visible ? 'list-item' : 'none';
 }
 
+function getCurrentPageFile() {
+    return window.location.pathname.split('/').pop() || 'index.html';
+}
+
+function shouldEnableSupportChat() {
+    if (document.body?.dataset?.disableSupportChat === 'true') return false;
+
+    const currentFile = getCurrentPageFile().toLowerCase();
+    const excludedPages = new Set(['login.html', 'register.html']);
+    const hasSharedHeader = Boolean(document.getElementById('header-placeholder'));
+
+    return hasSharedHeader && !excludedPages.has(currentFile);
+}
+
+async function loadSupportChatComponent() {
+    if (!shouldEnableSupportChat()) return;
+    if (document.getElementById('supportChatWidget')) {
+        document.body.classList.add('chat-support-mounted');
+        return;
+    }
+
+    try {
+        const response = await fetch('components/chat-support.html');
+        if (!response.ok) {
+            console.warn('Chat support component not found, skipping...');
+            return;
+        }
+
+        const chatHTML = await response.text();
+        document.body.insertAdjacentHTML('beforeend', chatHTML);
+        document.body.classList.add('chat-support-mounted');
+    } catch (error) {
+        console.warn('Unable to load chat support component:', error);
+    }
+}
+
 // Load Header và Footer vào trang
 async function loadComponents() {
     try {
@@ -93,6 +130,8 @@ async function loadComponents() {
             }
         }
 
+        await loadSupportChatComponent();
+
         // Init sau khi load xong
         initAfterLoad();
     } catch (error) {
@@ -106,6 +145,7 @@ function initAfterLoad() {
     checkLoginStatus();
     setupMobileMenu();
     setupScrollEffects();
+    setupSupportChat();
     setActiveNavLink();
     
     // Event listeners
@@ -142,6 +182,7 @@ async function checkLoginStatus() {
         if (data.success) {
             const fullName = data.data.fullName || data.data.username || 'Người dùng';
             const normalizedRole = normalizeRole(data.data.role);
+            const shouldShowSupportChat = normalizedRole !== 'bacsi' && normalizedRole !== 'quantri';
 
             // Desktop
             if (authButtons) authButtons.style.display = 'none';
@@ -167,6 +208,7 @@ async function checkLoginStatus() {
 
             applyRoleNavigation(normalizedRole);
             updateProfileLink(normalizedRole);
+            setSupportChatVisibility(shouldShowSupportChat);
 
         } else {
             // Not logged in
@@ -179,6 +221,7 @@ async function checkLoginStatus() {
             if (mobileUserInfo) mobileUserInfo.classList.remove('active');
             mobileMenuLoggedIn.forEach(item => setMenuItemVisible(item, false));
             applyRoleNavigation(null);
+            setSupportChatVisibility(true);
         }
 
     } catch (error) {
@@ -578,8 +621,106 @@ function setupScrollEffects() {
     });
 }
 
+function setupSupportChat() {
+    const widget = document.getElementById('supportChatWidget');
+    const toggleBtn = document.getElementById('supportChatToggle');
+    const panel = document.getElementById('supportChatPanel');
+
+    if (!widget || !toggleBtn || !panel) return;
+    if (widget.dataset.initialized === 'true') return;
+    widget.dataset.initialized = 'true';
+
+    toggleBtn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const currentlyOpen = widget.classList.contains('open');
+        setSupportChatPanelState(!currentlyOpen);
+    });
+
+    document.getElementById('supportChatClose')?.addEventListener('click', () => setSupportChatPanelState(false));
+
+    document.addEventListener('click', (event) => {
+        if (!widget.contains(event.target)) {
+            setSupportChatPanelState(false);
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            setSupportChatPanelState(false);
+        }
+    });
+
+    panel.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => setSupportChatPanelState(false));
+    });
+
+    if (widget.dataset.scrollBound !== 'true') {
+        window.addEventListener('scroll', updateSupportChatScrollState, { passive: true });
+        window.addEventListener('resize', updateSupportChatScrollState);
+        widget.dataset.scrollBound = 'true';
+    }
+
+    updateSupportChatScrollState();
+}
+
+function setSupportChatVisibility(visible) {
+    const widget = document.getElementById('supportChatWidget');
+    if (!widget) return;
+
+    widget.style.display = visible ? '' : 'none';
+    document.body.classList.toggle('chat-support-mounted', visible);
+
+    if (!visible) {
+        setSupportChatPanelState(false);
+        return;
+    }
+
+    updateSupportChatScrollState();
+}
+
+function setSupportChatPanelState(isOpen) {
+    const widget = document.getElementById('supportChatWidget');
+    const toggleBtn = document.getElementById('supportChatToggle');
+    const panel = document.getElementById('supportChatPanel');
+    if (!widget || !toggleBtn || !panel) return;
+
+    widget.classList.toggle('open', isOpen);
+    toggleBtn.setAttribute('aria-expanded', String(isOpen));
+    panel.setAttribute('aria-hidden', String(!isOpen));
+}
+
+function updateSupportChatScrollState() {
+    const widget = document.getElementById('supportChatWidget');
+    if (!widget || widget.style.display === 'none') return;
+
+    const shouldShow = window.scrollY > SUPPORT_CHAT_SCROLL_OFFSET;
+    widget.classList.toggle('support-chat-hidden', !shouldShow);
+
+    if (!shouldShow && widget.classList.contains('open')) {
+        setSupportChatPanelState(false);
+    }
+}
+
+function openSupportChatPanel() {
+    const widget = document.getElementById('supportChatWidget');
+    if (!widget || widget.style.display === 'none') return;
+
+    if (window.scrollY <= SUPPORT_CHAT_SCROLL_OFFSET) {
+        window.scrollTo({ top: SUPPORT_CHAT_SCROLL_OFFSET + 30, behavior: 'smooth' });
+        window.setTimeout(() => {
+            updateSupportChatScrollState();
+            setSupportChatPanelState(true);
+        }, 280);
+        return;
+    }
+
+    setSupportChatPanelState(true);
+}
+
+window.openSupportChatPanel = openSupportChatPanel;
+
 function setActiveNavLink() {
-    const currentFile = window.location.pathname.split('/').pop() || 'index.html';
+    const currentFile = getCurrentPageFile();
     const currentPage = currentFile.replace('.html', '').toLowerCase();
     const pageMap = {
         index: 'index',
