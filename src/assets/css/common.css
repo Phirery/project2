@@ -78,11 +78,27 @@ body.loaded {
     color: var(--primary-blue) !important;
     text-decoration: none;
     transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
 }
 
 .navbar-brand-header:hover {
     color: var(--primary-blue-dark) !important;
     transform: scale(1.03);
+}
+
+.brand-logo {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.brand-logo-sm {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    flex-shrink: 0;
 }
 
 .nav-link-header {
@@ -582,6 +598,8 @@ body.loaded {
     margin: 0;
     font-size: 1.2rem;
     font-weight: 700;
+    display: inline-flex;
+    align-items: center;
 }
 
 .close-sidebar {
@@ -764,10 +782,8 @@ body.loaded {
     font-size: 1.5rem;
     font-weight: 700;
     margin-bottom: 15px;
-}
-
-.footer-brand i {
-    color: var(--primary-blue);
+    display: inline-flex;
+    align-items: center;
 }
 
 .footer-desc {
