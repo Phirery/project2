@@ -10,136 +10,60 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link id="sidebar-admin-css" rel="stylesheet" href="assets/css/sidebar-admin.css">
+    <link rel="stylesheet" href="assets/css/admin-summary.css">
     <style>
-.stats-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+        .summary-chip.all {
+            background: rgba(102, 126, 234, 0.12);
+            border-color: rgba(102, 126, 234, 0.32);
         }
 
-        .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
+        .summary-chip.patients {
+            background: rgba(0, 174, 239, 0.12);
+            border-color: rgba(0, 174, 239, 0.28);
         }
 
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
+        .summary-chip.doctors {
+            background: rgba(40, 167, 69, 0.12);
+            border-color: rgba(40, 167, 69, 0.28);
         }
 
-        .stat-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100px;
-            height: 100px;
-            border-radius: 0 0 0 100%;
-            opacity: 0.1;
+        .summary-chip.admins {
+            background: rgba(255, 193, 7, 0.14);
+            border-color: rgba(255, 193, 7, 0.32);
         }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
-        }
-
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-        }
-
-        .stat-card.all::after {background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));}
-        .stat-card.patients::after {background: linear-gradient(135deg, #00AEEF, #0088cc);}
-        .stat-card.doctors::after {background: linear-gradient(135deg, #28a745, #20c997);}
-        .stat-card.admins::after {background: linear-gradient(135deg, #ffc107, #ff9800);}
-        .stat-card.all::before {background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));}
-        .stat-card.patients::before {background: linear-gradient(135deg, #00AEEF, #0088cc);}
-        .stat-card.doctors::before {background: linear-gradient(135deg, #28a745, #20c997);}
-        .stat-card.admins::before {background: linear-gradient(135deg, #ffc107, #ff9800);}
-
-        .stat-card.all .stat-icon {
-            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
-            color: white;
-        }
-
-        .stat-card.patients .stat-icon {
-            background: linear-gradient(135deg, #00AEEF, #0088cc);
-            color: white;
-        }
-
-        .stat-card.doctors .stat-icon {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-        }
-
-        .stat-card.admins .stat-icon {
-            background: linear-gradient(135deg, #ffc107, #ff9800);
-            color: white;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #333;
-        }
-
-        .stat-label {
-            color: #666;
-            font-size: 0.95rem;
+        .summary-chip.visible {
+            background: rgba(23, 162, 184, 0.12);
+            border-color: rgba(23, 162, 184, 0.28);
         }
 
         .filter-section {
             background: white;
             border-radius: 12px;
-            padding: 20px 25px;
-            margin-bottom: 25px;
+            padding: 16px 18px;
+            margin-bottom: 18px;
             box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
         }
 
-        .role-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+        .filter-grid .form-label {
+            font-size: 0.8rem;
+            margin-bottom: 6px;
+            color: #5a6472;
         }
 
-        .role-tab {
-            padding: 10px 25px;
-            border: 2px solid #e9ecef;
-            background: white;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-            color: #666;
+        .filter-grid .form-control,
+        .filter-grid .form-select {
+            min-height: 38px;
+            font-size: 0.9rem;
+            padding: 7px 12px;
         }
 
-        .role-tab:hover {
-            border-color: var(--primary-purple);
-            color: var(--primary-purple);
+        .filter-grid .filter-control-wrap .form-control {
+            padding-right: 36px;
         }
 
-        .role-tab.active {
-            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
-            color: white;
-            border-color: transparent;
+        .table-header h5 {
+            margin: 0;
         }
 
         .table-section {
@@ -367,28 +291,9 @@
             border-color: var(--primary-purple);
         }
 
-@media (max-width: 768px) {
-
-.stats-row {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-
-            .stat-card {
-                padding: 20px;
-            }
-
+        @media (max-width: 768px) {
             .filter-section {
-                padding: 15px;
-            }
-
-            .role-tabs {
-                gap: 8px;
-            }
-
-            .role-tab {
-                padding: 8px 15px;
-                font-size: 0.85rem;
+                padding: 14px;
             }
 
             .table-section {
@@ -403,38 +308,6 @@
             .custom-table tbody td {
                 padding: 10px 8px;
             }
-
-        }
-            /* mobile-stat-row-fix */
-        @media (max-width: 768px) {
-            .stats-row {
-                grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-                gap: 8px !important;
-            }
-
-            .stat-card {
-                padding: 10px 8px !important;
-                border-radius: 12px;
-            }
-
-            .stat-icon {
-                width: 36px;
-                height: 36px;
-                font-size: 1rem;
-                border-radius: 8px;
-                margin-bottom: 8px;
-            }
-
-            .stat-number {
-                font-size: 1.05rem !important;
-                margin: 6px 0 !important;
-                line-height: 1.2;
-            }
-
-            .stat-label {
-                font-size: 0.72rem !important;
-                line-height: 1.25;
-            }
         }
     </style>
 </head>
@@ -442,64 +315,62 @@
     <div id="sidebar-placeholder"></div>
 
     <div id="page-content" style="display:none;">
-        <div class="stats-row">
-            <div class="stat-card all">
-                <div class="stat-icon"><i class="fas fa-users"></i></div>
-                <div class="stat-number" id="totalAccounts">0</div>
-                <div class="stat-label">Tổng tài khoản</div>
+        <div class="summary-bar" aria-label="Tổng quan tài khoản">
+            <div class="summary-chip all is-clickable" data-role-chip="all" onclick="quickFilterRole('all')">
+                <i class="fas fa-users"></i>
+                <span class="summary-label">Tổng tài khoản</span>
+                <span class="summary-value" id="totalAccounts">0</span>
             </div>
-            <div class="stat-card patients">
-                <div class="stat-icon"><i class="fas fa-user-injured"></i></div>
-                <div class="stat-number" id="totalPatients">0</div>
-                <div class="stat-label">Bệnh nhân</div>
+            <div class="summary-chip patients is-clickable" data-role-chip="benhnhan" onclick="quickFilterRole('benhnhan')">
+                <i class="fas fa-user-injured"></i>
+                <span class="summary-label">Bệnh nhân</span>
+                <span class="summary-value" id="totalPatients">0</span>
             </div>
-            <div class="stat-card doctors">
-                <div class="stat-icon"><i class="fas fa-user-md"></i></div>
-                <div class="stat-number" id="totalDoctors">0</div>
-                <div class="stat-label">Bác sĩ</div>
+            <div class="summary-chip doctors is-clickable" data-role-chip="bacsi" onclick="quickFilterRole('bacsi')">
+                <i class="fas fa-user-md"></i>
+                <span class="summary-label">Bác sĩ</span>
+                <span class="summary-value" id="totalDoctors">0</span>
             </div>
-            <div class="stat-card admins">
-                <div class="stat-icon"><i class="fas fa-user-shield"></i></div>
-                <div class="stat-number" id="totalAdmins">0</div>
-                <div class="stat-label">Quản trị viên</div>
+            <div class="summary-chip admins is-clickable" data-role-chip="quantri" onclick="quickFilterRole('quantri')">
+                <i class="fas fa-user-shield"></i>
+                <span class="summary-label">Quản trị viên</span>
+                <span class="summary-value" id="totalAdmins">0</span>
+            </div>
+            <div class="summary-chip visible">
+                <i class="fas fa-filter"></i>
+                <span class="summary-label">Đang hiển thị</span>
+                <span class="summary-value" id="visibleAccounts">0</span>
             </div>
         </div>
 
         <div class="filter-section">
-            <h6 class="fw-bold mb-3"><i class="fas fa-filter me-2"></i>Lọc theo vai trò</h6>
-            <div class="role-tabs">
-                <button class="role-tab active" onclick="filterByRole('all', this)">
-                    <i class="fas fa-users me-2"></i>Tất cả
-                </button>
-                <button class="role-tab" onclick="filterByRole('benhnhan', this)">
-                    <i class="fas fa-user-injured me-2"></i>Bệnh nhân
-                </button>
-                <button class="role-tab" onclick="filterByRole('bacsi', this)">
-                    <i class="fas fa-user-md me-2"></i>Bác sĩ
-                </button>
-                <button class="role-tab" onclick="filterByRole('quantri', this)">
-                    <i class="fas fa-user-shield me-2"></i>Quản trị viên
-                </button>
-            </div>
-            <div class="row g-3 align-items-end">
-                <div class="col-md-6">
+            <div class="row g-2 filter-grid align-items-end">
+                <div class="col-12 col-lg-6">
                     <label class="form-label">Tìm kiếm</label>
-                    <input type="text" class="form-control" id="searchInput" 
-                           placeholder="Tên đăng nhập, họ tên, số điện thoại, email..." 
-                           oninput="applyFilters()">
+                    <div class="filter-control-wrap">
+                        <input type="text" class="form-control" id="searchInput"
+                            placeholder="Tên đăng nhập, họ tên, số điện thoại, email...">
+                        <button type="button" class="filter-clear-btn" aria-label="Xóa từ khóa tìm kiếm">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <label class="form-label">Vai trò</label>
+                    <select class="form-select" id="roleFilter">
+                        <option value="all">Tất cả</option>
+                        <option value="benhnhan">Bệnh nhân</option>
+                        <option value="bacsi">Bác sĩ</option>
+                        <option value="quantri">Quản trị viên</option>
+                    </select>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
                     <label class="form-label">Trạng thái</label>
-                    <select class="form-select" id="statusFilter" onchange="applyFilters()">
+                    <select class="form-select" id="statusFilter">
                         <option value="">Tất cả</option>
                         <option value="active">Hoạt động</option>
                         <option value="locked">Đã khóa</option>
                     </select>
-                </div>
-                <div class="col-md-3">
-                    <button class="btn btn-secondary w-100" onclick="resetFilters()">
-                        <i class="fas fa-redo me-2"></i>Đặt lại
-                    </button>
                 </div>
             </div>
         </div>
@@ -697,12 +568,13 @@
     <script src="assets/js/api-config.js"></script>
     <script src="assets/js/config-admin.js"></script>
     <script src="assets/js/sidebar-admin.js"></script>
+    <script src="assets/js/admin-summary.js"></script>
     <script>
 let currentPage = 1;
         const itemsPerPage = 10;
         let allAccounts = [];
         let filteredAccounts = [];
-        let currentRoleFilter = 'all';
+        let filterSearchTimer;
         let allDepartments = [];
         let allSpecialties = [];
         const DEFAULT_LOCK_REASON = 'Vi phạm chính sách sử dụng của hệ thống.';
@@ -713,6 +585,7 @@ let currentPage = 1;
             loadDepartments();
             loadSpecialties();
             document.getElementById('accountForm').addEventListener('submit', handleFormSubmit);
+            setupRealtimeFilters();
 
             const currentYear = new Date().getFullYear();
             document.getElementById('doctorWorkYear').setAttribute('max', currentYear);
@@ -723,6 +596,38 @@ let currentPage = 1;
             // Scroll to top
             // Auto refresh notification count
         });
+
+        function setupRealtimeFilters() {
+            const searchInput = document.getElementById('searchInput');
+            const roleFilter = document.getElementById('roleFilter');
+            const statusFilter = document.getElementById('statusFilter');
+
+            searchInput?.addEventListener('input', queueSearchFilter);
+            roleFilter?.addEventListener('change', () => applyFilters());
+            statusFilter?.addEventListener('change', () => applyFilters());
+
+            updateRoleChipState();
+            window.AdminSummary?.refreshClearableFilters?.();
+        }
+
+        function queueSearchFilter() {
+            clearTimeout(filterSearchTimer);
+            filterSearchTimer = setTimeout(() => applyFilters(), 180);
+        }
+
+        function quickFilterRole(role) {
+            const roleFilter = document.getElementById('roleFilter');
+            if (!roleFilter) return;
+            roleFilter.value = (roleFilter.value === role && role !== 'all') ? 'all' : role;
+            applyFilters();
+        }
+
+        function updateRoleChipState() {
+            const selectedRole = document.getElementById('roleFilter')?.value || 'all';
+            document.querySelectorAll('.summary-chip[data-role-chip]').forEach((chip) => {
+                chip.classList.toggle('is-active', chip.getAttribute('data-role-chip') === selectedRole);
+            });
+        }
 
         async function loadStatistics() {
             try {
@@ -756,9 +661,8 @@ let currentPage = 1;
                 const data = await response.json();
                 
                 if (data.success) {
-                    allAccounts = data.data;
-                    filteredAccounts = [...allAccounts];
-                    displayAccounts();
+                    allAccounts = Array.isArray(data.data) ? data.data : [];
+                    applyFilters();
                 } else {
                     showAlert('error', 'Không thể tải dữ liệu: ' + data.message);
                     handleSessionExpired(data.message);
@@ -778,9 +682,11 @@ let currentPage = 1;
             const start = (currentPage - 1) * itemsPerPage;
             const end = start + itemsPerPage;
             const pageData = filteredAccounts.slice(start, end);
+            updateVisibleSummary();
 
             if (filteredAccounts.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5">Không có tài khoản nào</td></tr>';
+                updatePagination();
                 return;
             }
             
@@ -823,9 +729,19 @@ let currentPage = 1;
             updatePagination();
         }
 
+        function updateVisibleSummary() {
+            const visible = document.getElementById('visibleAccounts');
+            if (visible) visible.textContent = filteredAccounts.length.toLocaleString('vi-VN');
+        }
+
         function updatePagination() {
             const totalPages = Math.ceil(filteredAccounts.length / itemsPerPage);
             const container = document.getElementById('paginationContainer');
+            if (filteredAccounts.length === 0) {
+                document.getElementById('recordInfo').textContent = 'Hiển thị 0 - 0 của 0 bản ghi';
+                container.innerHTML = '';
+                return;
+            }
             const start = (currentPage - 1) * itemsPerPage + 1;
             const end = Math.min(currentPage * itemsPerPage, filteredAccounts.length);
             
@@ -870,25 +786,15 @@ let currentPage = 1;
             }
         }
 
-        function filterByRole(role, clickedBtn) {
-            currentRoleFilter = role;
-            
-            document.querySelectorAll('.role-tab').forEach(btn => btn.classList.remove('active'));
-            if (clickedBtn) {
-                clickedBtn.classList.add('active');
-            }
-            
-            applyFilters();
-        }
-
         function applyFilters() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
+            const search = document.getElementById('searchInput').value.toLowerCase().trim();
+            const role = document.getElementById('roleFilter').value;
             const status = document.getElementById('statusFilter').value;
             
             filteredAccounts = allAccounts.filter(acc => {
                 let match = true;
                 
-                if (currentRoleFilter !== 'all' && acc.vaiTro !== currentRoleFilter) {
+                if (role !== 'all' && acc.vaiTro !== role) {
                     match = false;
                 }
                 
@@ -905,19 +811,15 @@ let currentPage = 1;
             
             currentPage = 1;
             displayAccounts();
+            updateRoleChipState();
+            window.AdminSummary?.refreshClearableFilters?.();
         }
 
         function resetFilters() {
             document.getElementById('searchInput').value = '';
+            document.getElementById('roleFilter').value = 'all';
             document.getElementById('statusFilter').value = '';
-            currentRoleFilter = 'all';
-            
-            document.querySelectorAll('.role-tab').forEach(btn => btn.classList.remove('active'));
-            document.querySelector('.role-tab').classList.add('active');
-            
-            filteredAccounts = [...allAccounts];
-            currentPage = 1;
-            displayAccounts();
+            applyFilters();
         }
 
         async function loadDepartments() {
