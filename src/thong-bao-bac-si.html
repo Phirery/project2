@@ -424,8 +424,15 @@
 
         let currentPage = 1;
         const itemsPerPage = 10;
-        let allNotifications = [];
-        let filteredNotifications = [];
+        let currentNotifications = [];
+        let totalNotificationsFiltered = 0;
+        let currentStats = {
+            totalNotifications: 0,
+            unreadNotifications: 0,
+            bookingNotifications: 0,
+            cancelNotifications: 0,
+            passwordNotifications: 0
+        };
         let autoRefreshInterval;
         let lastNotificationCount = 0;
 
@@ -442,20 +449,46 @@
             catch (error) { console.error('Error marking notifications as viewed:', error); }
         }
 
-        function startAutoRefresh() { autoRefreshInterval = setInterval(() => { loadNotifications(true); }, 5000); }
+        function startAutoRefresh() { autoRefreshInterval = setInterval(() => { loadNotifications(true, currentPage); }, 5000); }
         function stopAutoRefresh() { if (autoRefreshInterval) clearInterval(autoRefreshInterval); }
 
-        async function loadNotifications(silent = false) {
+        function buildNotificationsQuery(page = 1) {
+            const params = new URLSearchParams();
+            params.set('page', String(page));
+            params.set('limit', String(itemsPerPage));
+
+            const search = document.getElementById('searchInput')?.value?.trim() || '';
+            const type = document.getElementById('typeFilter')?.value || '';
+            const status = document.getElementById('statusFilter')?.value || '';
+
+            if (search) params.set('search', search);
+            if (type) params.set('type', type);
+            if (status) params.set('status', status);
+
+            return params.toString();
+        }
+
+        async function loadNotifications(silent = false, page = currentPage) {
             if (!silent) showLoading(true);
             try {
-                const response = await fetch(`${API_BASE}/get-notifications.php`, { credentials: 'include' });
+                const response = await fetch(`${API_BASE}/get-notifications.php?${buildNotificationsQuery(page)}`, { credentials: 'include' });
                 const data = await response.json();
                 if (data.success) {
-                    const newCount = data.data.filter(n => !n.daXem).length;
-                    if (!silent && newCount > lastNotificationCount && lastNotificationCount > 0) playNotificationSound();
-                    lastNotificationCount = newCount;
-                    allNotifications = data.data;
-                    filteredNotifications = [...allNotifications];
+                    const unreadCount = Number(data.stats?.unreadNotifications || 0);
+                    if (!silent && unreadCount > lastNotificationCount && lastNotificationCount > 0) playNotificationSound();
+                    lastNotificationCount = unreadCount;
+
+                    currentNotifications = data.data || [];
+                    totalNotificationsFiltered = Number(data.pagination?.total || 0);
+                    currentPage = Number(data.pagination?.page || page || 1);
+                    currentStats = {
+                        totalNotifications: Number(data.stats?.totalNotifications || 0),
+                        unreadNotifications: unreadCount,
+                        bookingNotifications: Number(data.stats?.bookingNotifications || 0),
+                        cancelNotifications: Number(data.stats?.cancelNotifications || 0),
+                        passwordNotifications: Number(data.stats?.passwordNotifications || 0)
+                    };
+
                     updateStatistics();
                     displayNotifications();
                 } else {
@@ -468,26 +501,18 @@
         }
 
         function updateStatistics() {
-            const total = allNotifications.length;
-            const unread = allNotifications.filter(n => !n.daXem).length;
-            const booking = allNotifications.filter(n => n.loai === 'Đặt lịch').length;
-            const cancel = allNotifications.filter(n => n.loai === 'Hủy lịch').length;
-            const password = allNotifications.filter(n => n.loai === 'Cấp lại mật khẩu').length;
-            animateNumber('totalNotifications', total);
-            animateNumber('unreadNotifications', unread);
-            animateNumber('bookingNotifications', booking);
-            animateNumber('cancelNotifications', cancel);
-            animateNumber('passwordNotifications', password);
+            animateNumber('totalNotifications', currentStats.totalNotifications);
+            animateNumber('unreadNotifications', currentStats.unreadNotifications);
+            animateNumber('bookingNotifications', currentStats.bookingNotifications);
+            animateNumber('cancelNotifications', currentStats.cancelNotifications);
+            animateNumber('passwordNotifications', currentStats.passwordNotifications);
         }
 
         function displayNotifications() {
             const container = document.getElementById('notificationsList');
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const pageData = filteredNotifications.slice(start, end);
-            document.getElementById('totalDisplay').textContent = filteredNotifications.length;
-            if (pageData.length === 0) { container.innerHTML = '<div class="text-center py-5 text-muted"><i class="fas fa-inbox fa-3x mb-3"></i><p>Không có thông báo</p></div>'; updatePagination(); return; }
-            container.innerHTML = pageData.map(notif => {
+            document.getElementById('totalDisplay').textContent = totalNotificationsFiltered;
+            if (currentNotifications.length === 0) { container.innerHTML = '<div class="text-center py-5 text-muted"><i class="fas fa-inbox fa-3x mb-3"></i><p>Không có thông báo</p></div>'; updatePagination(); return; }
+            container.innerHTML = currentNotifications.map(notif => {
                 const isUnread = !notif.daXem;
                 let typeClass, icon;
                 if (notif.loai === 'Đặt lịch') { typeClass = 'booking'; icon = 'fa-calendar-plus'; }
@@ -520,11 +545,17 @@
         }
 
         function updatePagination() {
-            const totalPages = Math.ceil(filteredNotifications.length / itemsPerPage);
+            const totalPages = totalNotificationsFiltered > 0 ? Math.ceil(totalNotificationsFiltered / itemsPerPage) : 0;
             const container = document.getElementById('paginationContainer');
+            if (totalNotificationsFiltered === 0) {
+                document.getElementById('recordInfo').textContent = 'Hiển thị 0 - 0 của 0 thông báo';
+                container.innerHTML = '';
+                return;
+            }
+
             const start = (currentPage - 1) * itemsPerPage + 1;
-            const end = Math.min(currentPage * itemsPerPage, filteredNotifications.length);
-            document.getElementById('recordInfo').textContent = `Hiển thị ${start} - ${end} của ${filteredNotifications.length} thông báo`;
+            const end = Math.min(currentPage * itemsPerPage, totalNotificationsFiltered);
+            document.getElementById('recordInfo').textContent = `Hiển thị ${start} - ${end} của ${totalNotificationsFiltered} thông báo`;
             let html = `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}"><a class="page-link" href="#" onclick="changePage(${currentPage - 1}); return false;"><i class="fas fa-chevron-left"></i></a></li>`;
             for (let i = 1; i <= totalPages; i++) {
                 if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) html += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" href="#" onclick="changePage(${i}); return false;">${i}</a></li>`;
@@ -534,30 +565,31 @@
             container.innerHTML = html;
         }
 
-        function changePage(page) { const totalPages = Math.ceil(filteredNotifications.length / itemsPerPage); if (page >= 1 && page <= totalPages) { currentPage = page; displayNotifications(); window.scrollTo({ top: 0, behavior: 'smooth' }); } }
-
-        function applyFilters() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const type = document.getElementById('typeFilter').value;
-            const status = document.getElementById('statusFilter').value;
-            filteredNotifications = allNotifications.filter(notif => {
-                let match = true;
-                if (search && !(notif.tieuDe.toLowerCase().includes(search) || notif.noiDung.toLowerCase().includes(search) || (notif.tenBenhNhan && notif.tenBenhNhan.toLowerCase().includes(search)))) match = false;
-                if (type && notif.loai !== type) match = false;
-                if (status === 'unread' && notif.daXem) match = false;
-                if (status === 'read' && !notif.daXem) match = false;
-                return match;
-            });
-            currentPage = 1; displayNotifications();
+        function changePage(page) {
+            const totalPages = totalNotificationsFiltered > 0 ? Math.ceil(totalNotificationsFiltered / itemsPerPage) : 0;
+            if (page >= 1 && page <= totalPages) {
+                loadNotifications(false, page);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         }
 
-        function resetFilters() { document.getElementById('searchInput').value = ''; document.getElementById('typeFilter').value = ''; document.getElementById('statusFilter').value = ''; filteredNotifications = [...allNotifications]; currentPage = 1; displayNotifications(); }
+        function applyFilters() {
+            currentPage = 1;
+            loadNotifications(false, 1);
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('typeFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            currentPage = 1;
+            loadNotifications(false, 1);
+        }
 
         async function markAsRead(maThongBao) {
             try {
                 await fetch(`${API_BASE}/mark-notification-read.php`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ maThongBao }) });
-                const notification = allNotifications.find(n => n.maThongBao === maThongBao);
-                if (notification && !notification.daXem) { notification.daXem = true; updateStatistics(); displayNotifications(); }
+                loadNotifications(true, currentPage);
             } catch (error) { console.error('Error marking as read:', error); }
         }
 

@@ -755,8 +755,8 @@
 
         let pendingPage = 1, completedPage = 1;
         const itemsPerPage = 10;
-        let allPending = [], allCompleted = [];
-        let filteredPending = [], filteredCompleted = [];
+        let pendingRecords = [], completedRecords = [];
+        let totalPendingRecords = 0, totalCompletedRecords = 0;
         let initialActionHandled = false;
         let selectedMedicines = [];
         let medicineSuggestions = [];
@@ -818,23 +818,13 @@
 
             if (edit) {
                 clearPageParams();
-                if (allPending.some(record => record.maHoSo === edit)) {
-                    showEditModal(edit);
-                } else if (allCompleted.some(record => record.maHoSo === edit)) {
-                    viewRecord(edit);
-                } else {
-                    showAlert('error', 'Không tìm thấy hồ sơ cần mở.');
-                }
+                showEditModal(edit);
                 return;
             }
 
             if (view) {
                 clearPageParams();
-                if (allPending.some(record => record.maHoSo === view) || allCompleted.some(record => record.maHoSo === view)) {
-                    viewRecord(view);
-                } else {
-                    showAlert('error', 'Không tìm thấy hồ sơ cần xem.');
-                }
+                viewRecord(view);
                 return;
             }
 
@@ -1118,23 +1108,57 @@
             } catch (error) { console.error('Error loading statistics:', error); handleSessionExpired("fetch_failed"); }
         }
 
-        async function loadPendingRecords() {
+        function buildPendingQuery(page = 1) {
+            const params = new URLSearchParams();
+            params.set('page', String(page));
+            params.set('limit', String(itemsPerPage));
+
+            const search = document.getElementById('searchPending')?.value?.trim() || '';
+            const sort = document.getElementById('sortPending')?.value || 'newest';
+            if (search) params.set('search', search);
+            if (sort) params.set('sort', sort);
+            return params.toString();
+        }
+
+        function buildCompletedQuery(page = 1) {
+            const params = new URLSearchParams();
+            params.set('page', String(page));
+            params.set('limit', String(itemsPerPage));
+
+            const search = document.getElementById('searchCompleted')?.value?.trim() || '';
+            const sort = document.getElementById('sortCompleted')?.value || 'newest';
+            if (search) params.set('search', search);
+            if (sort) params.set('sort', sort);
+            return params.toString();
+        }
+
+        async function loadPendingRecords(page = pendingPage) {
             showLoading('loadingPending', true);
             try {
-                const response = await fetch(`${API_BASE}/get-pending-records.php`, { credentials: 'include' });
+                const response = await fetch(`${API_BASE}/get-pending-records.php?${buildPendingQuery(page)}`, { credentials: 'include' });
                 const data = await response.json();
-                if (data.success) { allPending = data.data; filteredPending = [...allPending]; displayPendingRecords(); }
+                if (data.success) {
+                    pendingRecords = data.data || [];
+                    totalPendingRecords = Number(data.pagination?.total || 0);
+                    pendingPage = Number(data.pagination?.page || page || 1);
+                    displayPendingRecords();
+                }
                 else { showEmptyState('pendingList', 'Không có hồ sơ cần hoàn thành', 6); handleSessionExpired(data.message); }
             } catch (error) { console.error('Error loading pending records:', error); showError('pendingList', 'Lỗi kết nối server', 6); handleSessionExpired("fetch_failed"); }
             finally { showLoading('loadingPending', false); }
         }
 
-        async function loadCompletedRecords() {
+        async function loadCompletedRecords(page = completedPage) {
             showLoading('loadingCompleted', true);
             try {
-                const response = await fetch(`${API_BASE}/get-completed-records.php`, { credentials: 'include' });
+                const response = await fetch(`${API_BASE}/get-completed-records.php?${buildCompletedQuery(page)}`, { credentials: 'include' });
                 const data = await response.json();
-                if (data.success) { allCompleted = data.data; filteredCompleted = [...allCompleted]; displayCompletedRecords(); }
+                if (data.success) {
+                    completedRecords = data.data || [];
+                    totalCompletedRecords = Number(data.pagination?.total || 0);
+                    completedPage = Number(data.pagination?.page || page || 1);
+                    displayCompletedRecords();
+                }
                 else { showEmptyState('completedList', 'Chưa có hồ sơ đã hoàn thành', 5); handleSessionExpired(data.message); }
             } catch (error) { console.error('Error loading completed records:', error); showError('completedList', 'Lỗi kết nối server', 5); handleSessionExpired("fetch_failed"); }
             finally { showLoading('loadingCompleted', false); }
@@ -1142,12 +1166,9 @@
 
         function displayPendingRecords() {
             const container = document.getElementById('pendingList');
-            const start = (pendingPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const pageData = filteredPending.slice(start, end);
-            document.getElementById('pendingBadge').textContent = filteredPending.length;
-            if (pageData.length === 0) { showEmptyState('pendingList', filteredPending.length === 0 ? 'Không có hồ sơ cần hoàn thành' : 'Không tìm thấy kết quả phù hợp', 6); updatePagination('pending'); return; }
-            container.innerHTML = pageData.map(record => `
+            document.getElementById('pendingBadge').textContent = totalPendingRecords;
+            if (pendingRecords.length === 0) { showEmptyState('pendingList', totalPendingRecords === 0 ? 'Không có hồ sơ cần hoàn thành' : 'Không tìm thấy kết quả phù hợp', 6); updatePagination('pending'); return; }
+            container.innerHTML = pendingRecords.map(record => `
                 <tr>
                     <td><span class="record-id">${record.maHoSo}</span></td>
                     <td><div class="patient-name">${record.tenBenhNhan}</div><div class="patient-info">${record.gioiTinh} - ${calculateAge(record.ngaySinh)} tuổi</div></td>
@@ -1165,11 +1186,8 @@
 
         function displayCompletedRecords() {
             const container = document.getElementById('completedList');
-            const start = (completedPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const pageData = filteredCompleted.slice(start, end);
-            if (pageData.length === 0) { showEmptyState('completedList', filteredCompleted.length === 0 ? 'Chưa có hồ sơ đã hoàn thành' : 'Không tìm thấy kết quả phù hợp', 5); updatePagination('completed'); return; }
-            container.innerHTML = pageData.map(record => `
+            if (completedRecords.length === 0) { showEmptyState('completedList', totalCompletedRecords === 0 ? 'Chưa có hồ sơ đã hoàn thành' : 'Không tìm thấy kết quả phù hợp', 5); updatePagination('completed'); return; }
+            container.innerHTML = completedRecords.map(record => `
                 <tr>
                     <td><span class="record-id">${record.maHoSo}</span></td>
                     <td><div class="patient-name">${record.tenBenhNhan}</div><div class="patient-info">${record.gioiTinh} - ${calculateAge(record.ngaySinh)} tuổi</div></td>
@@ -1186,15 +1204,15 @@
 
         function updatePagination(type) {
             const isPending = type === 'pending';
-            const data = isPending ? filteredPending : filteredCompleted;
             const currentPage = isPending ? pendingPage : completedPage;
-            const totalPages = Math.ceil(data.length / itemsPerPage);
+            const total = isPending ? totalPendingRecords : totalCompletedRecords;
+            const totalPages = total > 0 ? Math.ceil(total / itemsPerPage) : 0;
             const container = document.getElementById(isPending ? 'pendingPagination' : 'completedPagination');
             const info = document.getElementById(isPending ? 'pendingInfo' : 'completedInfo');
             const start = (currentPage - 1) * itemsPerPage + 1;
-            const end = Math.min(currentPage * itemsPerPage, data.length);
-            if (data.length === 0) { info.textContent = 'Hiển thị 0 - 0 của 0 hồ sơ'; container.innerHTML = ''; return; }
-            info.textContent = `Hiển thị ${start} - ${end} của ${data.length} hồ sơ`;
+            const end = Math.min(currentPage * itemsPerPage, total);
+            if (total === 0) { info.textContent = 'Hiển thị 0 - 0 của 0 hồ sơ'; container.innerHTML = ''; return; }
+            info.textContent = `Hiển thị ${start} - ${end} của ${total} hồ sơ`;
             let html = `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}"><a class="page-link" href="#" onclick="changePage('${type}', ${currentPage - 1}); return false;"><i class="fas fa-chevron-left"></i></a></li>`;
             for (let i = 1; i <= totalPages; i++) {
                 if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) html += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" href="#" onclick="changePage('${type}', ${i}); return false;">${i}</a></li>`;
@@ -1206,29 +1224,41 @@
 
         function changePage(type, page) {
             const isPending = type === 'pending';
-            const totalPages = Math.ceil((isPending ? filteredPending : filteredCompleted).length / itemsPerPage);
-            if (page >= 1 && page <= totalPages) { if (isPending) { pendingPage = page; displayPendingRecords(); } else { completedPage = page; displayCompletedRecords(); } window.scrollTo({ top: 0, behavior: 'smooth' }); }
+            const total = isPending ? totalPendingRecords : totalCompletedRecords;
+            const totalPages = total > 0 ? Math.ceil(total / itemsPerPage) : 0;
+            if (page >= 1 && page <= totalPages) {
+                if (isPending) {
+                    loadPendingRecords(page);
+                } else {
+                    loadCompletedRecords(page);
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         }
 
         function applyPendingFilters() {
-            const search = document.getElementById('searchPending').value.toLowerCase();
-            const sort = document.getElementById('sortPending').value;
-            filteredPending = allPending.filter(r => r.tenBenhNhan.toLowerCase().includes(search));
-            filteredPending.sort((a, b) => { if (sort === 'newest') return new Date(b.ngayKham) - new Date(a.ngayKham); if (sort === 'oldest') return new Date(a.ngayKham) - new Date(b.ngayKham); if (sort === 'name') return a.tenBenhNhan.localeCompare(b.tenBenhNhan); return 0; });
-            pendingPage = 1; displayPendingRecords();
+            pendingPage = 1;
+            loadPendingRecords(1);
         }
 
-        function resetPendingFilters() { document.getElementById('searchPending').value = ''; document.getElementById('sortPending').value = 'newest'; filteredPending = [...allPending]; pendingPage = 1; displayPendingRecords(); }
+        function resetPendingFilters() {
+            document.getElementById('searchPending').value = '';
+            document.getElementById('sortPending').value = 'newest';
+            pendingPage = 1;
+            loadPendingRecords(1);
+        }
 
         function applyCompletedFilters() {
-            const search = document.getElementById('searchCompleted').value.toLowerCase();
-            const sort = document.getElementById('sortCompleted').value;
-            filteredCompleted = allCompleted.filter(r => r.tenBenhNhan.toLowerCase().includes(search));
-            filteredCompleted.sort((a, b) => { if (sort === 'newest') return new Date(b.ngayHoanThanh) - new Date(a.ngayHoanThanh); if (sort === 'oldest') return new Date(a.ngayHoanThanh) - new Date(b.ngayHoanThanh); if (sort === 'name') return a.tenBenhNhan.localeCompare(b.tenBenhNhan); return 0; });
-            completedPage = 1; displayCompletedRecords();
+            completedPage = 1;
+            loadCompletedRecords(1);
         }
 
-        function resetCompletedFilters() { document.getElementById('searchCompleted').value = ''; document.getElementById('sortCompleted').value = 'newest'; filteredCompleted = [...allCompleted]; completedPage = 1; displayCompletedRecords(); }
+        function resetCompletedFilters() {
+            document.getElementById('searchCompleted').value = '';
+            document.getElementById('sortCompleted').value = 'newest';
+            completedPage = 1;
+            loadCompletedRecords(1);
+        }
 
         async function viewRecord(maHoSo) {
             try {
@@ -1258,8 +1288,6 @@
         }
 
         async function showEditModal(maHoSo) {
-            const record = allPending.find(r => r.maHoSo === maHoSo);
-            if (!record) return;
             resetPrescriptionEditor();
 
             try {
@@ -1271,6 +1299,11 @@
                 }
 
                 const detail = data.data;
+                if (detail.trangThai === 'Đã hoàn thành') {
+                    showAlert('info', 'Hồ sơ đã hoàn thành, mở ở chế độ xem.');
+                    viewRecord(maHoSo);
+                    return;
+                }
                 document.getElementById('editMaHoSo').value = maHoSo;
                 document.getElementById('editDiagnosis').value = detail.chanDoan || '';
                 document.getElementById('editTreatment').value = detail.dieuTri || '';

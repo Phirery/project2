@@ -449,8 +449,8 @@
 
         let currentPage = 1;
         const itemsPerPage = 10;
-        let allAppointments = [];
-        let filteredAppointments = [];
+        let currentAppointments = [];
+        let totalAppointments = 0;
 
         function getAppointmentUiStatus(appointment) {
             if (appointment.trangThai === 'Hủy') {
@@ -498,7 +498,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             loadStatistics();
-            loadTodayAppointments();
+            loadTodayAppointments(1);
         });
 
         async function loadStatistics() {
@@ -522,18 +522,35 @@
             }
         }
 
-        async function loadTodayAppointments() {
+        function buildAppointmentsQuery(page = 1) {
+            const params = new URLSearchParams();
+            params.set('page', String(page));
+            params.set('limit', String(itemsPerPage));
+
+            const search = document.getElementById('searchInput')?.value?.trim() || '';
+            const shift = document.getElementById('shiftFilter')?.value || '';
+            const status = document.getElementById('statusFilter')?.value || '';
+
+            if (search) params.set('search', search);
+            if (shift) params.set('shift', shift);
+            if (status) params.set('status', status);
+
+            return params.toString();
+        }
+
+        async function loadTodayAppointments(page = 1) {
             showLoading(true);
 
             try {
-                const response = await fetch(`${API_BASE}/get-today-appointments.php`, {
+                const response = await fetch(`${API_BASE}/get-today-appointments.php?${buildAppointmentsQuery(page)}`, {
                     credentials: 'include'
                 });
                 const data = await response.json();
 
                 if (data.success) {
-                    allAppointments = data.data;
-                    filteredAppointments = [...allAppointments];
+                    currentAppointments = data.data || [];
+                    totalAppointments = Number(data.pagination?.total || 0);
+                    currentPage = Number(data.pagination?.page || page || 1);
                     displayAppointments();
                 } else {
                     showError(data.message || 'Không thể tải dữ liệu');
@@ -550,19 +567,16 @@
 
         function displayAppointments() {
             const container = document.getElementById('patientList');
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const pageData = filteredAppointments.slice(start, end);
 
-            document.getElementById('totalToday').textContent = filteredAppointments.length;
+            document.getElementById('totalToday').textContent = totalAppointments;
 
-            if (pageData.length === 0) {
+            if (currentAppointments.length === 0) {
                 container.innerHTML = '<tr><td colspan="6" class="text-center py-5">Không có lịch khám</td></tr>';
                 updatePagination();
                 return;
             }
 
-            container.innerHTML = pageData.map(apt => {
+            container.innerHTML = currentAppointments.map(apt => {
                 const age = calculateAge(apt.ngaySinh);
                 const status = getAppointmentUiStatus(apt);
                 const recordAction = getRecordAction(apt);
@@ -594,13 +608,19 @@
         }
 
         function updatePagination() {
-            const totalPages = Math.ceil(filteredAppointments.length / itemsPerPage);
+            const totalPages = totalAppointments > 0 ? Math.ceil(totalAppointments / itemsPerPage) : 0;
             const container = document.getElementById('paginationContainer');
+            if (totalAppointments === 0) {
+                document.getElementById('recordInfo').textContent = 'Hiển thị 0 - 0 của 0 lịch';
+                container.innerHTML = '';
+                return;
+            }
+
             const start = (currentPage - 1) * itemsPerPage + 1;
-            const end = Math.min(currentPage * itemsPerPage, filteredAppointments.length);
+            const end = Math.min(currentPage * itemsPerPage, totalAppointments);
 
             document.getElementById('recordInfo').textContent =
-                `Hiển thị ${start} - ${end} của ${filteredAppointments.length} lịch`;
+                `Hiển thị ${start} - ${end} của ${totalAppointments} lịch`;
 
             let html = `
                 <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
@@ -632,44 +652,28 @@
         }
 
         function changePage(page) {
-            const totalPages = Math.ceil(filteredAppointments.length / itemsPerPage);
+            const totalPages = totalAppointments > 0 ? Math.ceil(totalAppointments / itemsPerPage) : 0;
             if (page >= 1 && page <= totalPages) {
-                currentPage = page;
-                displayAppointments();
+                loadTodayAppointments(page);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
 
         function applyFilters() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const shift = document.getElementById('shiftFilter').value;
-            const status = document.getElementById('statusFilter').value;
-
-            filteredAppointments = allAppointments.filter(apt => {
-                let match = true;
-
-                if (search && !apt.tenBenhNhan.toLowerCase().includes(search)) match = false;
-                if (shift && apt.maCa != shift) match = false;
-                if (status && getAppointmentUiStatus(apt).value !== status) match = false;
-
-                return match;
-            });
-
             currentPage = 1;
-            displayAppointments();
+            loadTodayAppointments(1);
         }
 
         function resetFilters() {
             document.getElementById('searchInput').value = '';
             document.getElementById('shiftFilter').value = '';
             document.getElementById('statusFilter').value = '';
-            filteredAppointments = [...allAppointments];
             currentPage = 1;
-            displayAppointments();
+            loadTodayAppointments(1);
         }
 
         async function viewAppointment(maLichKham) {
-            const apt = allAppointments.find(a => a.maLichKham === maLichKham);
+            const apt = currentAppointments.find(a => String(a.maLichKham) === String(maLichKham));
             if (!apt) return;
 
             const age = calculateAge(apt.ngaySinh);

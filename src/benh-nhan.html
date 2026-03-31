@@ -459,27 +459,46 @@
 
         let currentPage = 1;
         const itemsPerPage = 10;
-        let allPatients = [];
-        let filteredPatients = [];
+        let currentPatients = [];
+        let totalPatientsCount = 0;
         let currentPatientId = null;
 
         document.addEventListener('DOMContentLoaded', function () {
-            loadPatients();
+            loadPatients(1);
             document.getElementById('searchInput').addEventListener('input', () => { applyFilters(); });
         });
 
-        async function loadPatients() {
+        function buildPatientQuery(page = 1) {
+            const params = new URLSearchParams();
+            params.set('page', String(page));
+            params.set('limit', String(itemsPerPage));
+
+            const search = document.getElementById('searchInput')?.value?.trim() || '';
+            const visitType = document.getElementById('visitTypeFilter')?.value || '';
+            const gender = document.getElementById('genderFilter')?.value || '';
+            const sort = document.getElementById('sortFilter')?.value || 'recent';
+
+            if (search) params.set('search', search);
+            if (visitType) params.set('visitType', visitType);
+            if (gender) params.set('gender', gender);
+            if (sort) params.set('sort', sort);
+
+            return params.toString();
+        }
+
+        async function loadPatients(page = 1) {
             showLoading(true);
             try {
-                const response = await fetch(`${API_BASE}/get-patients.php`, { credentials: 'include' });
+                const response = await fetch(`${API_BASE}/get-patients.php?${buildPatientQuery(page)}`, { credentials: 'include' });
                 const data = await response.json();
                 if (data.success) {
-                    allPatients = (data.data || []).map(patient => ({
+                    currentPatients = (data.data || []).map(patient => ({
                         ...patient,
                         soLanKham: Number(patient.soLanKham || 0)
                     }));
-                    filteredPatients = [...allPatients];
-                    updateStats();
+                    totalPatientsCount = Number(data.pagination?.total || 0);
+                    currentPage = Number(data.pagination?.page || page || 1);
+                    updateStats(data.stats || {});
                     displayPatients();
                 }
                 else { showError(data.message); handleSessionExpired(data.message); }
@@ -487,25 +506,23 @@
             finally { showLoading(false); }
         }
 
-        function updateStats() {
-            const total = allPatients.length;
-            const newP = allPatients.filter(p => p.soLanKham === 1).length;
-            const revisitP = allPatients.filter(p => p.soLanKham > 1).length;
-            const sevenDaysAgo = new Date(); sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-            const recentP = allPatients.filter(p => p.lanKhamGanNhat && new Date(p.lanKhamGanNhat) >= sevenDaysAgo).length;
-            animateNumber('totalPatients', total);
-            animateNumber('newPatients', newP);
-            animateNumber('revisitPatients', revisitP);
-            animateNumber('recentPatients', recentP);
+        function updateStats(stats) {
+            animateNumber('totalPatients', Number(stats.totalPatients || 0));
+            animateNumber('newPatients', Number(stats.newPatients || 0));
+            animateNumber('revisitPatients', Number(stats.revisitPatients || 0));
+            animateNumber('recentPatients', Number(stats.recentPatients || 0));
         }
 
         function displayPatients() {
             const tbody = document.getElementById('patientList');
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const pageData = filteredPatients.slice(start, end);
-            if (pageData.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="text-center py-5">Không có bệnh nhân</td></tr>'; return; }
-            tbody.innerHTML = pageData.map((patient, index) => {
+            if (currentPatients.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-5">Không có bệnh nhân</td></tr>';
+                updatePagination();
+                return;
+            }
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            tbody.innerHTML = currentPatients.map((patient, index) => {
                 const age = calculateAge(patient.ngaySinh);
                 const visitBadge = patient.soLanKham === 1 ? `<span class="visit-badge badge-new"><i class="fas fa-star me-1"></i>Mới</span>` : `<span class="visit-badge badge-revisit"><i class="fas fa-redo me-1"></i>${patient.soLanKham} lần</span>`;
                 const lastVisit = patient.lanKhamGanNhat ? new Date(patient.lanKhamGanNhat).toLocaleDateString('vi-VN') : 'Chưa có';
@@ -514,7 +531,7 @@
                 const latestSnippet = patient.chanDoanGanNhat ? truncateText(patient.chanDoanGanNhat, 70) : 'Chưa có chẩn đoán';
                 return `
                     <tr>
-                        <td><strong>${start + index + 1}</strong></td>
+                        <td><strong>${startIndex + index + 1}</strong></td>
                         <td><div class="patient-name">${patient.tenBenhNhan}</div><div class="patient-age">${age} tuổi</div></td>
                         <td>${patient.gioiTinh}</td>
                         <td><div class="contact-text">${contactPhone}<div class="secondary">${contactEmail}</div></div></td>
@@ -531,11 +548,17 @@
         }
 
         function updatePagination() {
-            const totalPages = Math.ceil(filteredPatients.length / itemsPerPage);
+            const totalPages = totalPatientsCount > 0 ? Math.ceil(totalPatientsCount / itemsPerPage) : 0;
             const container = document.getElementById('paginationContainer');
+            if (totalPatientsCount === 0) {
+                document.getElementById('recordInfo').textContent = 'Hiển thị 0 - 0 của 0 bệnh nhân';
+                container.innerHTML = '';
+                return;
+            }
+
             const start = (currentPage - 1) * itemsPerPage + 1;
-            const end = Math.min(currentPage * itemsPerPage, filteredPatients.length);
-            document.getElementById('recordInfo').textContent = `Hiển thị ${start} - ${end} của ${filteredPatients.length} bệnh nhân`;
+            const end = Math.min(currentPage * itemsPerPage, totalPatientsCount);
+            document.getElementById('recordInfo').textContent = `Hiển thị ${start} - ${end} của ${totalPatientsCount} bệnh nhân`;
             let html = `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}"><a class="page-link" href="#" onclick="changePage(${currentPage - 1}); return false;"><i class="fas fa-chevron-left"></i></a></li>`;
             for (let i = 1; i <= totalPages; i++) {
                 if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) html += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" href="#" onclick="changePage(${i}); return false;">${i}</a></li>`;
@@ -545,32 +568,21 @@
             container.innerHTML = html;
         }
 
-        function changePage(page) { const totalPages = Math.ceil(filteredPatients.length / itemsPerPage); if (page >= 1 && page <= totalPages) { currentPage = page; displayPatients(); window.scrollTo({ top: 0, behavior: 'smooth' }); } }
+        function changePage(page) {
+            const totalPages = totalPatientsCount > 0 ? Math.ceil(totalPatientsCount / itemsPerPage) : 0;
+            if (page >= 1 && page <= totalPages) {
+                loadPatients(page);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
 
         function applyFilters() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const visitType = document.getElementById('visitTypeFilter').value;
-            const gender = document.getElementById('genderFilter').value;
-            const sort = document.getElementById('sortFilter').value;
-            filteredPatients = allPatients.filter(patient => {
-                let match = true;
-                if (search) {
-                    const searchStr = `${patient.tenBenhNhan || ''} ${patient.soDienThoai || ''} ${patient.email || ''} ${patient.chanDoanGanNhat || ''}`.toLowerCase();
-                    if (!searchStr.includes(search)) match = false;
-                }
-                if (visitType === '1' && patient.soLanKham !== 1) match = false;
-                if (visitType === '2+' && patient.soLanKham <= 1) match = false;
-                if (gender && patient.gioiTinh.toLowerCase() !== gender) match = false;
-                return match;
-            });
-            if (sort === 'name') filteredPatients.sort((a, b) => a.tenBenhNhan.localeCompare(b.tenBenhNhan));
-            else if (sort === 'visits') filteredPatients.sort((a, b) => b.soLanKham - a.soLanKham);
-            else if (sort === 'recent') filteredPatients.sort((a, b) => new Date(b.lanKhamGanNhat) - new Date(a.lanKhamGanNhat));
-            currentPage = 1; displayPatients();
+            currentPage = 1;
+            loadPatients(1);
         }
 
         async function viewPatient(maBenhNhan) {
-            const patient = allPatients.find(p => p.maBenhNhan === maBenhNhan);
+            const patient = currentPatients.find(p => String(p.maBenhNhan) === String(maBenhNhan));
             if (!patient) return;
             currentPatientId = maBenhNhan;
             const age = calculateAge(patient.ngaySinh);
@@ -607,9 +619,10 @@
         function viewMedicalHistory() { if (currentPatientId) viewHistory(currentPatientId); }
 
         function showHistoryModal(history, maBenhNhan) {
-            const patient = allPatients.find(p => p.maBenhNhan === maBenhNhan);
+            const patient = currentPatients.find(p => String(p.maBenhNhan) === String(maBenhNhan));
             if (!history || history.length === 0) { showAlert('info', 'Chưa có lịch sử khám bệnh'); return; }
-            let html = `<div class="modal-dialog modal-dialog-centered modal-xl"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="fas fa-history me-2"></i>Lịch sử bệnh án - ${patient.tenBenhNhan}</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="table-responsive"><table class="table table-hover align-middle"><thead><tr><th>Ngày khám</th><th>Hồ sơ</th><th>Ca / Gói</th><th>Chẩn đoán</th><th>Điều trị</th><th>Toa thuốc</th><th>Thao tác</th></tr></thead><tbody>${history.map(h => `<tr><td><div>${formatDate(h.ngayKham)}</div><div class="record-snippet">${h.ngayHoanThanh ? `Hoàn tất ${formatDateTime(h.ngayHoanThanh)}` : ''}</div></td><td><div class="fw-semibold">${h.maHoSo}</div><div class="record-snippet">${truncateText(h.ghiChu || 'Không có ghi chú', 60)}</div></td><td><div>${h.tenCa || 'N/A'}</div><div class="record-snippet">${h.tenGoi || 'Chưa có gói khám'}${h.gioBatDau ? ` • ${h.gioBatDau.substring(0, 5)} - ${h.gioKetThuc.substring(0, 5)}` : ''}</div></td><td>${truncateText(h.chanDoan || 'Chưa cập nhật', 90)}</td><td>${truncateText(h.dieuTri || 'Chưa cập nhật', 90)}</td><td>${Number(h.soThuoc) > 0 ? `<span class="history-badge"><i class="fas fa-capsules"></i>${Number(h.soThuoc)} thuốc</span>` : '<span class="text-muted">Không có</span>'}${h.loiDanBacSi ? `<div class="record-snippet">${truncateText(h.loiDanBacSi, 70)}</div>` : ''}</td><td><a class="btn btn-sm btn-outline-primary" href="ho-so-benh-an.html?view=${encodeURIComponent(h.maHoSo)}"><i class="fas fa-eye me-1"></i>Xem hồ sơ</a></td></tr>`).join('')}</tbody></table></div></div></div></div>`;
+            const patientName = patient?.tenBenhNhan || maBenhNhan;
+            let html = `<div class="modal-dialog modal-dialog-centered modal-xl"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="fas fa-history me-2"></i>Lịch sử bệnh án - ${patientName}</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="table-responsive"><table class="table table-hover align-middle"><thead><tr><th>Ngày khám</th><th>Hồ sơ</th><th>Ca / Gói</th><th>Chẩn đoán</th><th>Điều trị</th><th>Toa thuốc</th><th>Thao tác</th></tr></thead><tbody>${history.map(h => `<tr><td><div>${formatDate(h.ngayKham)}</div><div class="record-snippet">${h.ngayHoanThanh ? `Hoàn tất ${formatDateTime(h.ngayHoanThanh)}` : ''}</div></td><td><div class="fw-semibold">${h.maHoSo}</div><div class="record-snippet">${truncateText(h.ghiChu || 'Không có ghi chú', 60)}</div></td><td><div>${h.tenCa || 'N/A'}</div><div class="record-snippet">${h.tenGoi || 'Chưa có gói khám'}${h.gioBatDau ? ` • ${h.gioBatDau.substring(0, 5)} - ${h.gioKetThuc.substring(0, 5)}` : ''}</div></td><td>${truncateText(h.chanDoan || 'Chưa cập nhật', 90)}</td><td>${truncateText(h.dieuTri || 'Chưa cập nhật', 90)}</td><td>${Number(h.soThuoc) > 0 ? `<span class="history-badge"><i class="fas fa-capsules"></i>${Number(h.soThuoc)} thuốc</span>` : '<span class="text-muted">Không có</span>'}${h.loiDanBacSi ? `<div class="record-snippet">${truncateText(h.loiDanBacSi, 70)}</div>` : ''}</td><td><a class="btn btn-sm btn-outline-primary" href="ho-so-benh-an.html?view=${encodeURIComponent(h.maHoSo)}"><i class="fas fa-eye me-1"></i>Xem hồ sơ</a></td></tr>`).join('')}</tbody></table></div></div></div></div>`;
             const existingModal = document.querySelector('#viewPatientModal');
             if (existingModal) bootstrap.Modal.getInstance(existingModal)?.hide();
             const tempDiv = document.createElement('div');
