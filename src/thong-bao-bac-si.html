@@ -9,112 +9,33 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link id="sidebar-doctor-css" rel="stylesheet" href="assets/css/sidebar-doctor.css">
     <style>
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-        }
-
-        .stat-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100px;
-            height: 100px;
-            border-radius: 0 0 0 100%;
-            opacity: 0.1;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(74, 144, 226, 0.2);
-        }
-
-        .stat-card.total::before {
-            background: #3498db;
-        }
-
-        .stat-card.pending::before {
-            background: #f39c12;
-        }
-
-        .stat-card.completed::before {
-            background: #2ecc71;
-        }
-
-        .stat-card.cancelled::before {
-            background: #e74c3c;
-        }
-
-        .stat-card.password::before {
-            background: #9b59b6;
-        }
-
-        .stat-card.total::after {
-            background: #3498db;
-        }
-
-        .stat-card.pending::after {
-            background: #f39c12;
-        }
-
-        .stat-card.completed::after {
-            background: #2ecc71;
-        }
-
-        .stat-card.cancelled::after {
-            background: #e74c3c;
-        }
-
-        .stat-card.password::after {
-            background: #9b59b6;
-        }
-
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            margin: 0 0 15px;
-            border-radius: 12px;
+        .summary-chips {
             display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .summary-chip {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            background: linear-gradient(135deg, rgba(74, 144, 226, 0.1), rgba(82, 196, 26, 0.1));
+            gap: 8px;
+            padding: 9px 14px;
+            border-radius: 999px;
+            background: #f8f9fb;
+            border: 1px solid #e9ecef;
+            color: #4c5665;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .summary-chip i {
             color: var(--primary-blue, #4A90E2);
         }
 
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            color: #666;
-            font-size: 0.95rem;
+        .summary-chip strong {
+            color: #1f2a37;
+            font-size: 1rem;
         }
 
         .section-card {
@@ -380,14 +301,7 @@
         }
 
         @media (max-width: 768px) {
-            .stats-row {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-
-            .stat-card {
-                padding: 20px;
-            }
+            .summary-chips { gap: 8px; margin-bottom: 15px; }
 
             .section-card {
                 padding: 15px;
@@ -435,32 +349,12 @@
     <div id="sidebar-placeholder"></div>
 
     <div id="page-content" style="display:none;">
-        <div class="stats-row">
-            <div class="stat-card total">
-                <div class="stat-icon"><i class="fas fa-bell"></i></div>
-                <div class="stat-number" id="totalNotifications">0</div>
-                <div class="stat-label">Tổng thông báo</div>
-            </div>
-            <div class="stat-card pending">
-                <div class="stat-icon"><i class="fas fa-envelope"></i></div>
-                <div class="stat-number" id="unreadNotifications">0</div>
-                <div class="stat-label">Chưa đọc</div>
-            </div>
-            <div class="stat-card completed">
-                <div class="stat-icon"><i class="fas fa-calendar-plus"></i></div>
-                <div class="stat-number" id="bookingNotifications">0</div>
-                <div class="stat-label">Đặt lịch</div>
-            </div>
-            <div class="stat-card cancelled">
-                <div class="stat-icon"><i class="fas fa-calendar-times"></i></div>
-                <div class="stat-number" id="cancelNotifications">0</div>
-                <div class="stat-label">Hủy lịch</div>
-            </div>
-            <div class="stat-card password" style="display: none;">
-                <div class="stat-icon"><i class="fas fa-key"></i></div>
-                <div class="stat-number" id="passwordNotifications">0</div>
-                <div class="stat-label">Cấp lại mật khẩu</div>
-            </div>
+        <div class="summary-chips">
+            <div class="summary-chip"><i class="fas fa-bell"></i>Tổng thông báo: <strong id="totalNotifications">0</strong></div>
+            <div class="summary-chip"><i class="fas fa-envelope"></i>Chưa đọc: <strong id="unreadNotifications">0</strong></div>
+            <div class="summary-chip"><i class="fas fa-calendar-plus"></i>Đặt lịch: <strong id="bookingNotifications">0</strong></div>
+            <div class="summary-chip"><i class="fas fa-calendar-times"></i>Hủy lịch: <strong id="cancelNotifications">0</strong></div>
+            <div class="summary-chip" style="display: none;"><i class="fas fa-key"></i>Cấp lại mật khẩu: <strong id="passwordNotifications">0</strong></div>
         </div>
 
         <div class="section-card">
