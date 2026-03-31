@@ -11,6 +11,7 @@ try {
     $search   = trim($_GET['search']   ?? '');
     $loai     = trim($_GET['loai']     ?? '');
     $lowStock = isset($_GET['lowStock']) && $_GET['lowStock'] === '1';
+    $expiring = isset($_GET['expiring']) && $_GET['expiring'] === '1';
 
     $where  = [];
     $params = [];
@@ -28,6 +29,9 @@ try {
     }
     if ($lowStock) {
         $where[] = 'soLuongTon <= COALESCE(nguongCanhBao, 10)';
+    }
+    if ($expiring) {
+        $where[] = 'hanSuDung IS NOT NULL AND hanSuDung BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)';
     }
 
     $whereClause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
