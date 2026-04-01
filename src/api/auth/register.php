@@ -1,7 +1,6 @@
 <?php
 require_once '../../config/cors.php';
 require_once '../../config/dp.php';
-require_once '../../config/session.php';
 require_once '../../includes/send-mail.php';
 require_once '../../includes/mail-events.php';
 
@@ -9,7 +8,7 @@ require_once '../../includes/mail-events.php';
 $input = json_decode(file_get_contents("php://input"), true);
 
 // Validate required fields
-if (!isset($input['fullname'], $input['phone'], $input['email'], $input['gender'], $input['birthdate'], $input['username'], $input['password'], $input['otp'])) {
+if (!isset($input['fullname'], $input['phone'], $input['email'], $input['gender'], $input['birthdate'], $input['username'], $input['password'])) {
     echo json_encode([
         'success' => false,
         'message' => 'Thiếu thông tin đăng ký'
@@ -25,7 +24,6 @@ $birthdate = $input['birthdate'];
 $bhyt = isset($input['bhyt']) && !empty($input['bhyt']) ? trim($input['bhyt']) : null;
 $username = trim($input['username']);
 $password = $input['password'];
-$otp = trim((string)$input['otp']);
 
 // Validate email
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -50,15 +48,6 @@ if (strlen($password) < 6) {
     echo json_encode([
         'success' => false,
         'message' => 'Mật khẩu phải có ít nhất 6 ký tự'
-    ]);
-    exit;
-}
-
-// Validate OTP
-if (!preg_match('/^[0-9]{6}$/', $otp)) {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Mã OTP không hợp lệ'
     ]);
     exit;
 }
@@ -102,57 +91,6 @@ if ($birth > $today) {
 }
 
 try {
-    $normalizedEmail = strtolower($email);
-
-    // Validate register OTP in session
-    if (
-        !isset($_SESSION['register_otp']) ||
-        !isset($_SESSION['register_otp_email']) ||
-        !isset($_SESSION['register_otp_expiry'])
-    ) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Bạn chưa yêu cầu mã OTP đăng ký. Vui lòng gửi mã OTP trước.'
-        ]);
-        $conn->close();
-        exit;
-    }
-
-    if (time() > (int)$_SESSION['register_otp_expiry']) {
-        unset(
-            $_SESSION['register_otp'],
-            $_SESSION['register_otp_email'],
-            $_SESSION['register_otp_expiry'],
-            $_SESSION['register_otp_last_request']
-        );
-
-        echo json_encode([
-            'success' => false,
-            'message' => 'Mã OTP đã hết hạn. Vui lòng gửi lại mã mới.'
-        ]);
-        $conn->close();
-        exit;
-    }
-
-    $otpEmail = strtolower((string)$_SESSION['register_otp_email']);
-    if ($otpEmail !== $normalizedEmail) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Email đã thay đổi sau khi gửi OTP. Vui lòng gửi lại mã OTP.'
-        ]);
-        $conn->close();
-        exit;
-    }
-
-    if (!hash_equals((string)$_SESSION['register_otp'], $otp)) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Mã OTP không chính xác'
-        ]);
-        $conn->close();
-        exit;
-    }
-
     // Check if username already exists
     $stmt = $conn->prepare("SELECT id FROM nguoidung WHERE tenDangNhap = ?");
     $stmt->bind_param("s", $username);
@@ -271,13 +209,6 @@ try {
             'success' => true,
             'message' => 'Đăng ký thành công! Email chào mừng đã được gửi.'
         ]);
-
-        unset(
-            $_SESSION['register_otp'],
-            $_SESSION['register_otp_email'],
-            $_SESSION['register_otp_expiry'],
-            $_SESSION['register_otp_last_request']
-        );
         
     } catch (Exception $e) {
         $conn->rollback();

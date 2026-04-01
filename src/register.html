@@ -308,156 +308,6 @@
             cursor: not-allowed;
         }
 
-        /* === OTP MODAL (same style as login.html) === */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal-content-custom {
-            background: white;
-            border-radius: 16px;
-            padding: 35px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: var(--shadow-lg);
-            animation: modalSlideIn 0.3s ease-out;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        @keyframes modalSlideIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .modal-header-custom {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .modal-header-custom h3 {
-            color: var(--text-primary);
-            font-weight: 800;
-            font-size: 1.4rem;
-            margin-bottom: 8px;
-        }
-
-        .modal-header-custom p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .email-sent-box {
-            background: var(--secondary-green-light);
-            border: 1px solid var(--secondary-green);
-            color: #389e0d;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-
-        .email-sent-box strong {
-            color: var(--secondary-green-dark);
-        }
-
-        .timer-box {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 12px;
-            border-radius: 6px;
-            margin: 15px 0;
-            text-align: center;
-            font-size: 0.85rem;
-            color: #856404;
-        }
-
-        .timer-box i {
-            color: #ffc107;
-            margin-right: 5px;
-        }
-
-        .btn-primary-custom {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
-            border: none;
-            border-radius: 6px;
-            color: white;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.25s;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-        }
-
-        .btn-primary-custom:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-primary-custom:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .btn-secondary-custom {
-            width: 100%;
-            padding: 12px;
-            background: #6c757d;
-            border: none;
-            border-radius: 6px;
-            color: white;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.25s;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-        }
-
-        .btn-secondary-custom:hover:not(:disabled) {
-            background: #5a6268;
-        }
-
-        .btn-resend {
-            width: 100%;
-            padding: 10px;
-            background: transparent;
-            border: 2px solid var(--secondary-green);
-            border-radius: 6px;
-            color: var(--secondary-green);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.25s;
-            margin-bottom: 10px;
-            font-size: 0.85rem;
-        }
-
-        .btn-resend:hover:not(:disabled) {
-            background: var(--secondary-green);
-            color: white;
-        }
-
-        .btn-resend:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
         .login-link {
             text-align: center;
             margin-top: 15px;
@@ -700,52 +550,11 @@
         </div>
     </div>
 
-    <!-- REGISTER OTP MODAL -->
-    <div class="modal-overlay" id="registerOtpModal">
-        <div class="modal-content-custom">
-            <div class="modal-header-custom">
-                <h3><i class="fas fa-envelope-open-text" style="color: var(--secondary-green);"></i> Xác Thực Email</h3>
-                <p>Nhập mã OTP được gửi đến email của bạn để hoàn tất đăng ký</p>
-            </div>
-
-            <div class="email-sent-box">
-                <i class="fas fa-check-circle"></i> Mã OTP đã được gửi đến <strong id="displayRegisterEmail"></strong>
-            </div>
-
-            <div class="timer-box" id="registerTimerBox">
-                <i class="fas fa-clock"></i> Mã có hiệu lực: <strong id="registerCountdown">05:00</strong>
-            </div>
-
-            <form id="verifyRegisterOtpForm" onsubmit="verifyRegisterOtp(event)">
-                <div class="form-group">
-                    <label for="registerOtpInput">Nhập mã OTP (6 chữ số)</label>
-                    <input type="text" class="form-control" id="registerOtpInput" placeholder="000000" maxlength="6" pattern="[0-9]{6}" required>
-                </div>
-
-                <button type="submit" class="btn-primary-custom" id="btnVerifyRegisterOtp">
-                    <i class="fas fa-check me-2"></i>Xác thực và đăng ký
-                </button>
-
-                <button type="button" class="btn-resend" id="btnResendRegisterOtp" onclick="resendRegisterOTP()">
-                    <i class="fas fa-redo me-2"></i>Gửi lại mã OTP <span id="registerResendCountdown"></span>
-                </button>
-
-                <button type="button" class="btn-secondary-custom" onclick="closeRegisterOtpModal()">
-                    <i class="fas fa-times me-2"></i>Hủy
-                </button>
-            </form>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/api-config.js"></script>
     <script src="assets/js/common.js"></script>
     <script>
         let currentStep = 1;
-        let pendingRegisterData = null;
-        let registerEmail = '';
-        let registerCountdownInterval = null;
-        let registerResendCooldownInterval = null;
 
         // Toggle password visibility
         function togglePassword(inputId) {
@@ -919,194 +728,30 @@
                 return;
             }
 
-            pendingRegisterData = collectRegisterData();
-            registerEmail = pendingRegisterData.email;
+            const registerData = collectRegisterData();
 
             btnRegister.disabled = true;
-            btnRegister.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang gửi OTP...';
-
-            try {
-                openRegisterOtpModal();
-                await requestRegisterOTP(false);
-            } catch (error) {
-                console.error('Error:', error);
-                showAlert('Có lỗi xảy ra. Vui lòng thử lại!', 'error');
-            } finally {
-                btnRegister.disabled = false;
-                btnRegister.innerHTML = 'Đăng Ký <i class="fas fa-check ms-1"></i>';
-            }
-        });
-
-        function openRegisterOtpModal() {
-            document.getElementById('registerOtpModal').classList.add('active');
-            document.getElementById('verifyRegisterOtpForm').reset();
-            document.getElementById('displayRegisterEmail').textContent = registerEmail || '';
-            document.getElementById('registerTimerBox').innerHTML = '<i class="fas fa-clock"></i> Mã có hiệu lực: <strong id="registerCountdown">05:00</strong>';
-        }
-
-        function closeRegisterOtpModal() {
-            document.getElementById('registerOtpModal').classList.remove('active');
-            clearInterval(registerCountdownInterval);
-            clearInterval(registerResendCooldownInterval);
-            const resendCountdownEl = document.getElementById('registerResendCountdown');
-            if (resendCountdownEl) {
-                resendCountdownEl.textContent = '';
-            }
-            const btnResend = document.getElementById('btnResendRegisterOtp');
-            btnResend.disabled = false;
-            btnResend.innerHTML = '<i class="fas fa-redo me-2"></i>Gửi lại mã OTP <span id="registerResendCountdown"></span>';
-        }
-
-        async function requestRegisterOTP(isResend) {
-            const btnResend = document.getElementById('btnResendRegisterOtp');
-
-            if (!registerEmail) {
-                showAlert('Không tìm thấy email để gửi OTP!', 'error');
-                return false;
-            }
-
-            if (isResend) {
-                btnResend.disabled = true;
-                btnResend.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang gửi lại...';
-            }
-
-            try {
-                const response = await fetch(`${API_BASE_AUTH}/request-register-otp.php`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ email: registerEmail })
-                });
-
-                const data = await response.json();
-
-                if (!data.success) {
-                    showAlert(data.message || 'Không thể gửi mã OTP!', 'error');
-
-                    if (data.cooldown) {
-                        startRegisterResendCooldown(Number(data.cooldown));
-                    } else if (isResend) {
-                        btnResend.disabled = false;
-                        btnResend.innerHTML = '<i class="fas fa-redo me-2"></i>Gửi lại mã OTP <span id="registerResendCountdown"></span>';
-                    }
-
-                    return false;
-                }
-
-                const displayEmail = data.maskedEmail || registerEmail;
-                document.getElementById('displayRegisterEmail').textContent = displayEmail;
-
-                const expirySeconds = Number(data.expirySeconds) || 300;
-                startRegisterCountdown(expirySeconds);
-                startRegisterResendCooldown(Number(data.cooldown) || 60);
-
-                showAlert('Mã OTP đã được gửi đến email của bạn!', 'success');
-                document.getElementById('registerOtpInput').focus();
-                return true;
-            } catch (error) {
-                console.error('Error:', error);
-                showAlert('Có lỗi xảy ra khi gửi OTP. Vui lòng thử lại!', 'error');
-
-                if (isResend) {
-                    btnResend.disabled = false;
-                    btnResend.innerHTML = '<i class="fas fa-redo me-2"></i>Gửi lại mã OTP <span id="registerResendCountdown"></span>';
-                }
-                return false;
-            }
-        }
-
-        async function resendRegisterOTP() {
-            await requestRegisterOTP(true);
-        }
-
-        function startRegisterCountdown(seconds) {
-            clearInterval(registerCountdownInterval);
-            let remaining = Math.max(0, Number(seconds) || 0);
-
-            const updateTimer = () => {
-                const mins = Math.floor(remaining / 60);
-                const secs = remaining % 60;
-                const countdownEl = document.getElementById('registerCountdown');
-                if (countdownEl) {
-                    countdownEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-                }
-
-                if (remaining <= 0) {
-                    clearInterval(registerCountdownInterval);
-                    document.getElementById('registerTimerBox').innerHTML =
-                        '<i class="fas fa-exclamation-triangle"></i> <strong>Mã OTP đã hết hạn!</strong>';
-                }
-                remaining -= 1;
-            };
-
-            updateTimer();
-            registerCountdownInterval = setInterval(updateTimer, 1000);
-        }
-
-        function startRegisterResendCooldown(seconds) {
-            const btnResend = document.getElementById('btnResendRegisterOtp');
-            clearInterval(registerResendCooldownInterval);
-
-            let remaining = Math.max(0, Number(seconds) || 0);
-            btnResend.disabled = remaining > 0;
-            btnResend.innerHTML = '<i class="fas fa-redo me-2"></i>Gửi lại mã OTP <span id="registerResendCountdown"></span>';
-
-            const updateCooldown = () => {
-                const countdownEl = document.getElementById('registerResendCountdown');
-                if (remaining <= 0) {
-                    clearInterval(registerResendCooldownInterval);
-                    btnResend.disabled = false;
-                    if (countdownEl) countdownEl.textContent = '';
-                    return;
-                }
-
-                if (countdownEl) {
-                    countdownEl.textContent = `(${remaining}s)`;
-                }
-                remaining -= 1;
-            };
-
-            updateCooldown();
-            registerResendCooldownInterval = setInterval(updateCooldown, 1000);
-        }
-
-        async function verifyRegisterOtp(event) {
-            event.preventDefault();
-
-            if (!pendingRegisterData) {
-                showAlert('Không tìm thấy dữ liệu đăng ký. Vui lòng thử lại!', 'error');
-                closeRegisterOtpModal();
-                return;
-            }
-
-            const otp = document.getElementById('registerOtpInput').value.trim();
-            const btnVerify = document.getElementById('btnVerifyRegisterOtp');
-
-            if (!/^[0-9]{6}$/.test(otp)) {
-                showAlert('Vui lòng nhập OTP gồm 6 chữ số!', 'error');
-                return;
-            }
-
-            btnVerify.disabled = true;
-            btnVerify.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xác thực...';
+            btnRegister.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang đăng ký...';
 
             try {
                 const response = await fetch(`${API_BASE_AUTH}/register.php`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
-                    body: JSON.stringify({ ...pendingRegisterData, otp })
+                    body: JSON.stringify(registerData)
                 });
 
                 const data = await response.json();
 
                 if (!data.success) {
-                    showAlert(data.message || 'Xác thực OTP thất bại!', 'error');
+                    showAlert(data.message || 'Đăng ký thất bại!', 'error');
                     return;
                 }
 
-                closeRegisterOtpModal();
                 showAlert('Đăng ký thành công! Đang chuyển đến trang đăng nhập...', 'success');
+                document.getElementById('registerForm').reset();
+                currentStep = 1;
+                updateStepDisplay();
 
                 setTimeout(() => {
                     window.location.href = 'login.html';
@@ -1115,10 +760,10 @@
                 console.error('Error:', error);
                 showAlert('Có lỗi xảy ra. Vui lòng thử lại!', 'error');
             } finally {
-                btnVerify.disabled = false;
-                btnVerify.innerHTML = '<i class="fas fa-check me-2"></i>Xác thực và đăng ký';
+                btnRegister.disabled = false;
+                btnRegister.innerHTML = 'Đăng Ký <i class="fas fa-check ms-1"></i>';
             }
-        }
+        });
 
         function ensureShowAlertStyles() {
             if (document.getElementById('showAlertLoginStyle')) return;
@@ -1190,17 +835,6 @@
             this.value = this.value.toUpperCase();
         });
 
-        // Keep OTP input numeric only
-        document.getElementById('registerOtpInput').addEventListener('input', function() {
-            this.value = this.value.replace(/\D/g, '');
-        });
-
-        // Close modal when clicking outside
-        document.getElementById('registerOtpModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeRegisterOtpModal();
-            }
-        });
     </script>
 </body>
 </html>
