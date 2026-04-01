@@ -17,8 +17,8 @@ $appointmentsTrend = getAppointmentsTrend($conn, $filter, $dateCondition);
 $patientsTrend = getPatientsTrend($conn, $filter, $dateCondition);
 $departmentsData = getDepartmentsData($conn, $dateCondition);
 $statusData = getStatusData($conn, $dateCondition);
-$revenueTrend = getRevenueTrend($conn, $filter, $dateCondition);
-$revenueTrendActual = getRevenueTrendActual($conn, $filter, $dateCondition);
+$revenueTrend = getRevenueTrend($conn, $filter, $dateCondition, $dateFrom, $dateTo);
+$revenueTrendActual = getRevenueTrendActual($conn, $filter, $dateCondition, $dateFrom, $dateTo);
 $topDoctors = getTopDoctors($conn, $dateCondition);
 
 echo json_encode([
@@ -95,14 +95,14 @@ function getSummaryData($conn, $dateCondition, $previousDateCondition) {
     $sql = "SELECT COALESCE(SUM(gk.gia), 0) as total 
             FROM lichkham lk 
             LEFT JOIN goikham gk ON lk.maGoi = gk.maGoi 
-            WHERE lk.trangThai != 'Hủy' AND $dateCondition";
+            WHERE lk.trangThai IN ('Đã đặt', 'Hoàn thành') AND $dateCondition";
     $result = $conn->query($sql);
     $revenueEstimated = (int)$result->fetch_assoc()['total'];
     
     $sql = "SELECT COALESCE(SUM(gk.gia), 0) as total 
             FROM lichkham lk 
             LEFT JOIN goikham gk ON lk.maGoi = gk.maGoi 
-            WHERE lk.trangThai != 'Hủy' AND $previousDateCondition";
+            WHERE lk.trangThai IN ('Đã đặt', 'Hoàn thành') AND $previousDateCondition";
     $result = $conn->query($sql);
     $previousRevenue = $result->fetch_assoc()['total'];
     
@@ -240,13 +240,15 @@ function getStatusData($conn, $dateCondition) {
     ];
 }
 
-function getRevenueTrend($conn, $filter, $dateCondition) {
-    $appointmentsTrend = getAppointmentsTrend($conn, $filter, $dateCondition);
-    $values = array_map(function($count) { return $count * 150000; }, $appointmentsTrend['values']);
-    return ['labels' => $appointmentsTrend['labels'], 'values' => $values];
+function getRevenueTrend($conn, $filter, $dateCondition, $dateFrom = null, $dateTo = null) {
+    return buildRevenueTrend($conn, $filter, $dateCondition, $dateFrom, $dateTo, "lk.trangThai IN ('Đã đặt', 'Hoàn thành')");
 }
 
-function getRevenueTrendActual($conn, $filter, $dateCondition) {
+function getRevenueTrendActual($conn, $filter, $dateCondition, $dateFrom = null, $dateTo = null) {
+    return buildRevenueTrend($conn, $filter, $dateCondition, $dateFrom, $dateTo, "lk.trangThai = 'Hoàn thành'");
+}
+
+function buildRevenueTrend($conn, $filter, $dateCondition, $dateFrom, $dateTo, $statusCondition) {
     $labels = [];
     $values = [];
     
@@ -258,7 +260,7 @@ function getRevenueTrendActual($conn, $filter, $dateCondition) {
             $sql = "SELECT COALESCE(SUM(gk.gia), 0) as total 
                     FROM lichkham lk 
                     LEFT JOIN goikham gk ON lk.maGoi = gk.maGoi 
-                    WHERE lk.trangThai = 'Hoàn thành' AND lk.ngayKham = '$date'";
+                    WHERE $statusCondition AND lk.ngayKham = '$date'";
             $result = $conn->query($sql);
             $values[] = (int)$result->fetch_assoc()['total'];
         }
@@ -270,19 +272,51 @@ function getRevenueTrendActual($conn, $filter, $dateCondition) {
             $sql = "SELECT COALESCE(SUM(gk.gia), 0) as total 
                     FROM lichkham lk 
                     LEFT JOIN goikham gk ON lk.maGoi = gk.maGoi 
-                    WHERE lk.trangThai = 'Hoàn thành' AND lk.ngayKham BETWEEN '$endDate' AND '$startDate'";
+                    WHERE $statusCondition AND lk.ngayKham BETWEEN '$endDate' AND '$startDate'";
             $result = $conn->query($sql);
             $values[] = (int)$result->fetch_assoc()['total'];
         }
-    } else {
+    } elseif ($filter == 'year') {
         for ($i = 1; $i <= 12; $i++) {
             $labels[] = "T" . $i;
             $sql = "SELECT COALESCE(SUM(gk.gia), 0) as total 
                     FROM lichkham lk 
                     LEFT JOIN goikham gk ON lk.maGoi = gk.maGoi 
-                    WHERE lk.trangThai = 'Hoàn thành' AND YEAR(lk.ngayKham) = ".date('Y')." AND MONTH(lk.ngayKham) = $i";
+                    WHERE $statusCondition AND YEAR(lk.ngayKham) = ".date('Y')." AND MONTH(lk.ngayKham) = $i";
             $result = $conn->query($sql);
             $values[] = (int)$result->fetch_assoc()['total'];
+        }
+    } elseif ($filter == 'custom' && $dateFrom && $dateTo) {
+        $startTimestamp = strtotime($dateFrom);
+        $endTimestamp = strtotime($dateTo);
+
+        if ($startTimestamp > $endTimestamp) {
+            $temp = $startTimestamp;
+            $startTimestamp = $endTimestamp;
+            $endTimestamp = $temp;
+        }
+
+        for ($timestamp = $startTimestamp; $timestamp <= $endTimestamp; $timestamp += 86400) {
+            $date = date('Y-m-d', $timestamp);
+            $labels[] = date('d/m', $timestamp);
+            $sql = "SELECT COALESCE(SUM(gk.gia), 0) as total 
+                    FROM lichkham lk 
+                    LEFT JOIN goikham gk ON lk.maGoi = gk.maGoi 
+                    WHERE $statusCondition AND lk.ngayKham = '$date'";
+            $result = $conn->query($sql);
+            $values[] = (int)$result->fetch_assoc()['total'];
+        }
+    } else {
+        $sql = "SELECT YEAR(lk.ngayKham) as year, COALESCE(SUM(gk.gia), 0) as total
+                FROM lichkham lk
+                LEFT JOIN goikham gk ON lk.maGoi = gk.maGoi
+                WHERE $statusCondition AND $dateCondition
+                GROUP BY YEAR(lk.ngayKham)
+                ORDER BY year";
+        $result = $conn->query($sql);
+        while($row = $result->fetch_assoc()) {
+            $labels[] = "Năm " . $row['year'];
+            $values[] = (int)$row['total'];
         }
     }
     
