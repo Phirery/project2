@@ -363,16 +363,33 @@ CREATE TRIGGER `after_lichkham_insert` AFTER INSERT ON `lichkham` FOR EACH ROW B
     DECLARE appointmentDate VARCHAR(20);
     DECLARE shiftName VARCHAR(50);
     DECLARE noteText TEXT DEFAULT '';
+    DECLARE messageText TEXT DEFAULT '';
     
-    -- Lấy thông tin cơ bản
-    SELECT tenBenhNhan INTO patientName FROM benhnhan WHERE maBenhNhan = NEW.maBenhNhan;
-    SELECT tenCa INTO shiftName FROM calamviec WHERE maCa = NEW.maCa;
+    -- Lấy thông tin cơ bản, luôn trả về 1 dòng để tránh NULL ngoài ý muốn
+    SELECT COALESCE(MAX(tenBenhNhan), 'Không rõ bệnh nhân')
+    INTO patientName
+    FROM benhnhan
+    WHERE maBenhNhan = NEW.maBenhNhan;
+
+    SELECT COALESCE(MAX(tenCa), 'Không rõ ca')
+    INTO shiftName
+    FROM calamviec
+    WHERE maCa = NEW.maCa;
+
     SET appointmentDate = IFNULL(DATE_FORMAT(NEW.ngayKham, '%d/%m/%Y'), '(chưa có ngày)');
     
     -- Xử lý ghi chú: Nếu có ghi chú thì thêm vào nội dung
     IF NEW.ghiChu IS NOT NULL AND NEW.ghiChu != '' THEN
         SET noteText = CONCAT('. Ghi chú: ', NEW.ghiChu);
     END IF;
+
+    -- Nối chuỗi theo từng bước để tương thích tốt hơn trên host
+    SET messageText = CONCAT('Bệnh nhân ', patientName);
+    SET messageText = CONCAT(messageText, ' đã đặt lịch khám vào ngày ');
+    SET messageText = CONCAT(messageText, appointmentDate);
+    SET messageText = CONCAT(messageText, ' - ');
+    SET messageText = CONCAT(messageText, shiftName);
+    SET messageText = CONCAT(messageText, noteText);
     
     INSERT INTO thongbaolichkham (maBacSi, maLichKham, loai, tieuDe, noiDung, thoiGian, daXem)
     VALUES (
@@ -380,12 +397,7 @@ CREATE TRIGGER `after_lichkham_insert` AFTER INSERT ON `lichkham` FOR EACH ROW B
         NEW.maLichKham,
         'Đặt lịch',
         'Lịch khám mới',
-        CONCAT(
-            'Bệnh nhân ', patientName, 
-            ' đã đặt lịch khám vào ngày ', appointmentDate, 
-            ' - ', shiftName,
-            noteText -- Thêm phần ghi chú vào đây
-        ),
+        messageText,
         NOW(),
         0
     );
