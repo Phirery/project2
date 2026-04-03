@@ -359,35 +359,53 @@ INSERT INTO lichkham (maLichKham, maBacSi, maBenhNhan, ngayKham, maCa, maSuat, m
 (78, 'BS20251121022', 'bn1', '2026-02-24', 1, 4, 2, 'Hủy', '', 'bacsi');
 DELIMITER $$
 CREATE TRIGGER `after_lichkham_insert` AFTER INSERT ON `lichkham` FOR EACH ROW BEGIN
-    DECLARE patientName VARCHAR(100);
-    DECLARE appointmentDate VARCHAR(20);
-    DECLARE shiftName VARCHAR(50);
-    DECLARE noteText TEXT DEFAULT '';
-    DECLARE messageText TEXT DEFAULT '';
+    DECLARE patientName VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    DECLARE appointmentDate VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    DECLARE shiftName VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    DECLARE noteText TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '';
+    DECLARE messageText TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '';
     
     -- Lấy thông tin cơ bản, luôn trả về 1 dòng để tránh NULL ngoài ý muốn
-    SELECT COALESCE(MAX(tenBenhNhan), 'Không rõ bệnh nhân')
+    SELECT COALESCE(
+        CONVERT(MAX(tenBenhNhan) USING utf8mb4) COLLATE utf8mb4_unicode_ci,
+        _utf8mb4'Không rõ bệnh nhân' COLLATE utf8mb4_unicode_ci
+    )
     INTO patientName
     FROM benhnhan
     WHERE maBenhNhan = NEW.maBenhNhan;
 
-    SELECT COALESCE(MAX(tenCa), 'Không rõ ca')
+    SELECT COALESCE(
+        CONVERT(MAX(tenCa) USING utf8mb4) COLLATE utf8mb4_unicode_ci,
+        _utf8mb4'Không rõ ca' COLLATE utf8mb4_unicode_ci
+    )
     INTO shiftName
     FROM calamviec
     WHERE maCa = NEW.maCa;
 
-    SET appointmentDate = IFNULL(DATE_FORMAT(NEW.ngayKham, '%d/%m/%Y'), '(chưa có ngày)');
+    SET appointmentDate = COALESCE(
+        CONVERT(DATE_FORMAT(NEW.ngayKham, '%d/%m/%Y') USING utf8mb4) COLLATE utf8mb4_unicode_ci,
+        _utf8mb4'(chưa có ngày)' COLLATE utf8mb4_unicode_ci
+    );
     
     -- Xử lý ghi chú: Nếu có ghi chú thì thêm vào nội dung
     IF NEW.ghiChu IS NOT NULL AND NEW.ghiChu != '' THEN
-        SET noteText = CONCAT('. Ghi chú: ', NEW.ghiChu);
+        SET noteText = CONCAT(
+            _utf8mb4'. Ghi chú: ' COLLATE utf8mb4_unicode_ci,
+            CONVERT(NEW.ghiChu USING utf8mb4) COLLATE utf8mb4_unicode_ci
+        );
     END IF;
 
     -- Nối chuỗi theo từng bước để tương thích tốt hơn trên host
-    SET messageText = CONCAT('Bệnh nhân ', patientName);
-    SET messageText = CONCAT(messageText, ' đã đặt lịch khám vào ngày ');
+    SET messageText = CONCAT(
+        _utf8mb4'Bệnh nhân ' COLLATE utf8mb4_unicode_ci,
+        patientName
+    );
+    SET messageText = CONCAT(
+        messageText,
+        _utf8mb4' đã đặt lịch khám vào ngày ' COLLATE utf8mb4_unicode_ci
+    );
     SET messageText = CONCAT(messageText, appointmentDate);
-    SET messageText = CONCAT(messageText, ' - ');
+    SET messageText = CONCAT(messageText, _utf8mb4' - ' COLLATE utf8mb4_unicode_ci);
     SET messageText = CONCAT(messageText, shiftName);
     SET messageText = CONCAT(messageText, noteText);
     
@@ -406,30 +424,37 @@ $$
 DELIMITER ;
 DELIMITER $$
 CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW BEGIN
-    DECLARE patientName VARCHAR(100);
-    DECLARE doctorName VARCHAR(100);
-    DECLARE appointmentDate VARCHAR(20);
-    DECLARE shiftName VARCHAR(50);
-    DECLARE slotTime VARCHAR(50);
-    DECLARE cancelSource VARCHAR(50);
-    DECLARE cancelActor VARCHAR(20);
-    DECLARE reason TEXT DEFAULT '';
+    DECLARE patientName VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    DECLARE doctorName VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    DECLARE appointmentDate VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    DECLARE shiftName VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    DECLARE slotTime VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    DECLARE cancelSource VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    DECLARE cancelActor VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    DECLARE reason TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '';
 
     IF NEW.trangThai = 'Hủy' AND OLD.trangThai != 'Hủy' THEN
-        SELECT tenBenhNhan INTO patientName FROM benhnhan WHERE maBenhNhan = NEW.maBenhNhan;
-        SELECT tenBacSi INTO doctorName FROM bacsi WHERE maBacSi = NEW.maBacSi;
-        SELECT tenCa INTO shiftName FROM calamviec WHERE maCa = NEW.maCa;
-        SELECT CONCAT(SUBSTRING(gioBatDau, 1, 5), ' - ', SUBSTRING(gioKetThuc, 1, 5))
+        SELECT CONVERT(tenBenhNhan USING utf8mb4) COLLATE utf8mb4_unicode_ci
+        INTO patientName FROM benhnhan WHERE maBenhNhan = NEW.maBenhNhan;
+        SELECT CONVERT(tenBacSi USING utf8mb4) COLLATE utf8mb4_unicode_ci
+        INTO doctorName FROM bacsi WHERE maBacSi = NEW.maBacSi;
+        SELECT CONVERT(tenCa USING utf8mb4) COLLATE utf8mb4_unicode_ci
+        INTO shiftName FROM calamviec WHERE maCa = NEW.maCa;
+        SELECT CONCAT(
+            CONVERT(SUBSTRING(gioBatDau, 1, 5) USING utf8mb4) COLLATE utf8mb4_unicode_ci,
+            _utf8mb4' - ' COLLATE utf8mb4_unicode_ci,
+            CONVERT(SUBSTRING(gioKetThuc, 1, 5) USING utf8mb4) COLLATE utf8mb4_unicode_ci
+        )
         INTO slotTime FROM suatkham WHERE maSuat = NEW.maSuat;
-        SET appointmentDate = DATE_FORMAT(NEW.ngayKham, '%d/%m/%Y');
+        SET appointmentDate = CONVERT(DATE_FORMAT(NEW.ngayKham, '%d/%m/%Y') USING utf8mb4) COLLATE utf8mb4_unicode_ci;
 
         IF NEW.ghiChu LIKE '%[Lý do hủy]:%' THEN
-            SET reason = SUBSTRING_INDEX(NEW.ghiChu, '[Lý do hủy]: ', -1);
+            SET reason = CONVERT(SUBSTRING_INDEX(NEW.ghiChu, '[Lý do hủy]: ', -1) USING utf8mb4) COLLATE utf8mb4_unicode_ci;
         ELSE
-            SET reason = 'Không có lý do cụ thể';
+            SET reason = _utf8mb4'Không có lý do cụ thể' COLLATE utf8mb4_unicode_ci;
         END IF;
 
-        SET cancelActor = LOWER(TRIM(COALESCE(NEW.nguoiHuy, '')));
+        SET cancelActor = LOWER(TRIM(COALESCE(CONVERT(NEW.nguoiHuy USING utf8mb4) COLLATE utf8mb4_unicode_ci, '')));
 
         IF cancelActor = 'benhnhan' THEN
             IF NOT EXISTS (
@@ -448,9 +473,10 @@ CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW B
                     'Hủy lịch',
                     'Lịch khám đã hủy',
                     CONCAT(
-                        'Bệnh nhân ', patientName,
-                        ' đã hủy lịch khám ngày ', appointmentDate, ' - ', shiftName,
-                        '. Lý do: ', reason
+                        _utf8mb4'Bệnh nhân ' COLLATE utf8mb4_unicode_ci, patientName,
+                        _utf8mb4' đã hủy lịch khám ngày ' COLLATE utf8mb4_unicode_ci, appointmentDate,
+                        _utf8mb4' - ' COLLATE utf8mb4_unicode_ci, shiftName,
+                        _utf8mb4'. Lý do: ' COLLATE utf8mb4_unicode_ci, reason
                     ),
                     NOW(),
                     0
@@ -458,10 +484,10 @@ CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW B
             END IF;
         ELSEIF cancelActor IN ('bacsi', 'quantri', 'hethong') THEN
             SET cancelSource = CASE
-                WHEN cancelActor = 'bacsi' THEN 'Bác sĩ'
-                WHEN cancelActor = 'quantri' THEN 'Quản trị viên'
-                WHEN cancelActor = 'hethong' THEN 'Hệ thống'
-                ELSE 'Bệnh viện'
+                WHEN cancelActor = 'bacsi' THEN _utf8mb4'Bác sĩ' COLLATE utf8mb4_unicode_ci
+                WHEN cancelActor = 'quantri' THEN _utf8mb4'Quản trị viên' COLLATE utf8mb4_unicode_ci
+                WHEN cancelActor = 'hethong' THEN _utf8mb4'Hệ thống' COLLATE utf8mb4_unicode_ci
+                ELSE _utf8mb4'Bệnh viện' COLLATE utf8mb4_unicode_ci
             END;
 
             IF NOT EXISTS (
@@ -480,10 +506,10 @@ CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW B
                     'Lịch khám',
                     'Lịch khám bị hủy',
                     CONCAT(
-                        'Lịch khám ngày ', appointmentDate,
-                        ' đã bị hủy bởi ', cancelSource,
-                        '. Lý do: ', reason,
-                        '. Vui lòng đặt lịch mới.'
+                        _utf8mb4'Lịch khám ngày ' COLLATE utf8mb4_unicode_ci, appointmentDate,
+                        _utf8mb4' đã bị hủy bởi ' COLLATE utf8mb4_unicode_ci, cancelSource,
+                        _utf8mb4'. Lý do: ' COLLATE utf8mb4_unicode_ci, reason,
+                        _utf8mb4'. Vui lòng đặt lịch mới.' COLLATE utf8mb4_unicode_ci
                     ),
                     NOW(),
                     0
