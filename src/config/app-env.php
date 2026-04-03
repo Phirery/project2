@@ -85,13 +85,7 @@ function loadDotEnvIfExists(string $filePath): void
 $host = $_SERVER['HTTP_HOST'] ?? '';
 $isLocalHost = strpos($host, 'localhost') !== false || $host === 'localhost:5500';
 
-// Nạp .env theo môi trường để không phải sửa tay khi chuyển local/host
-if ($isLocalHost) {
-    loadDotEnvIfExists(dirname(__DIR__) . '/.env.local');
-} else {
-    loadDotEnvIfExists(dirname(__DIR__) . '/.env.host');
-}
-// File .env dùng như fallback chung
+// Chỉ dùng một file .env cho cả local/host (mỗi môi trường tự có bản .env riêng)
 loadDotEnvIfExists(dirname(__DIR__) . '/.env');
 
 $appEnv = getConfigValue('APP_ENV');
