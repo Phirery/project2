@@ -1,9 +1,4 @@
 (function (global) {
-    var ENV_CONFIG = {
-        local: 'http://localhost/DO_AN/src',
-        host: 'https://domainex.id.vn'
-    };
-
     function trimTrailingSlash(url) {
         return String(url || '').replace(/\/+$/, '');
     }
@@ -17,9 +12,24 @@
         return 'host';
     }
 
+    function detectBaseUrl(activeEnv) {
+        var origin = window.location.origin;
+        var path = window.location.pathname || '/';
+
+        // Cho local: ưu tiên /DO_AN/src, fallback theo origin hiện tại
+        if (activeEnv === 'local') {
+            return path.indexOf('/DO_AN/src/') === 0 || path === '/DO_AN/src' || path === '/DO_AN/src/'
+                ? origin + '/DO_AN/src'
+                : origin;
+        }
+
+        // Cho host: dùng origin thực tế để không phải sửa cứng domain
+        return origin;
+    }
+
     function buildConfig() {
         var activeEnv = localStorage.getItem('APP_ENV') || detectEnv();
-        var configuredBaseUrl = trimTrailingSlash(ENV_CONFIG[activeEnv]);
+        var configuredBaseUrl = trimTrailingSlash(detectBaseUrl(activeEnv));
         var apiRoot = configuredBaseUrl + '/api';
 
         return {

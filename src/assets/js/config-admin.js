@@ -3,8 +3,13 @@ if (!window.API_ENDPOINTS) {
     console.error('Missing API config. Please include assets/js/api-config.js before config-admin.js');
 }
 
-const API_BASE_ADMIN = window.API_ENDPOINTS?.admin || 'http://localhost/DO_AN/src/api/admin';
-const API_BASE_AUTH = window.API_ENDPOINTS?.auth || 'http://localhost/DO_AN/src/api/auth';
+const currentOrigin = window.location.origin;
+const pathSegments = window.location.pathname.split('/');
+const projectPath = pathSegments.includes('DO_AN') ? '/DO_AN/src' : '';
+const FALLBACK_API_ROOT = `${currentOrigin}${projectPath}/api`;
+
+const API_BASE_ADMIN = window.API_ENDPOINTS?.admin || `${FALLBACK_API_ROOT}/admin`;
+const API_BASE_AUTH = window.API_ENDPOINTS?.auth || `${FALLBACK_API_ROOT}/auth`;
 
 // Component Paths (relative to admin pages)
 const COMPONENT_PATH = 'components/';
