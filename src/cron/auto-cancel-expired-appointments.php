@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/dp.php';
+require_once __DIR__ . '/../includes/mail-events.php';
 
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 
@@ -41,32 +42,64 @@ if (!isAuthorizedHttpRequest()) {
 
 $summary = [
     'timestamp' => date('Y-m-d H:i:s'),
-    'affectedRows' => 0
+    'affectedRows' => 0,
+    'mailSent' => 0
 ];
 
 try {
-    $sql = "
-        UPDATE lichkham
-        SET
-            trangThai = 'Hủy',
-            nguoiHuy = 'hethong',
-            ghiChu = CASE
-                WHEN ghiChu IS NULL OR TRIM(ghiChu) = '' THEN
-                    '[Lý do hủy]: Quá thời gian khám trong ngày'
-                WHEN ghiChu LIKE '%[Lý do hủy]:%' THEN
-                    ghiChu
-                ELSE
-                    CONCAT(ghiChu, '\n[Lý do hủy]: Quá thời gian khám trong ngày')
-            END
-        WHERE
-            ngayKham <= CURDATE()
-            AND trangThai NOT IN ('Hoàn thành', 'Hủy')
+    $selectSql = "
+        SELECT maLichKham
+        FROM lichkham
+        WHERE ngayKham <= CURDATE()
+          AND trangThai NOT IN ('Hoàn thành', 'Hủy')
     ";
+    $selectStmt = $conn->prepare($selectSql);
+    $selectStmt->execute();
+    $result = $selectStmt->get_result();
+    $appointmentIds = [];
+    while ($row = $result->fetch_assoc()) {
+        $appointmentIds[] = (int)$row['maLichKham'];
+    }
+    $selectStmt->close();
 
-    $stmt = $conn->prepare($sql);
-    $stmt->execute();
-    $summary['affectedRows'] = $stmt->affected_rows;
-    $stmt->close();
+    if (!empty($appointmentIds)) {
+        $sql = "
+            UPDATE lichkham
+            SET
+                trangThai = 'Hủy',
+                nguoiHuy = 'hethong',
+                ghiChu = CASE
+                    WHEN ghiChu IS NULL OR TRIM(ghiChu) = '' THEN
+                        '[Lý do hủy]: Quá thời gian khám trong ngày'
+                    WHEN ghiChu LIKE '%[Lý do hủy]:%' THEN
+                        ghiChu
+                    ELSE
+                        CONCAT(ghiChu, '\n[Lý do hủy]: Quá thời gian khám trong ngày')
+                END
+            WHERE
+                ngayKham <= CURDATE()
+                AND trangThai NOT IN ('Hoàn thành', 'Hủy')
+        ";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $summary['affectedRows'] = $stmt->affected_rows;
+        $stmt->close();
+
+        if ($summary['affectedRows'] > 0) {
+            foreach ($appointmentIds as $maLichKham) {
+                $mailResult = sendAppointmentCancelledEmails(
+                    $conn,
+                    $maLichKham,
+                    'hethong',
+                    'Quá thời gian khám trong ngày'
+                );
+                if (!empty($mailResult['success'])) {
+                    $summary['mailSent']++;
+                }
+            }
+        }
+    }
 
     if (PHP_SAPI === 'cli') {
         echo '[' . $summary['timestamp'] . '] Auto-cancel summary: ' . json_encode($summary, JSON_UNESCAPED_UNICODE) . PHP_EOL;

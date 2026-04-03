@@ -308,22 +308,22 @@ function sendAppointmentBookedEmails(mysqli $conn, int $maLichKham): array {
     $price = isset($ctx['gia']) ? formatVNCurrency($ctx['gia']) : 'N/A';
 
     if (!empty($ctx['emailBenhNhan'])) {
-        $subject = 'Xac nhan dat lich kham #' . $ctx['maLichKham'];
+        $subject = 'Xác nhận đặt lịch khám #' . $ctx['maLichKham'];
         $html = buildEmailLayout(
-            'Xac nhan dat lich',
+            'Xác nhận đặt lịch',
             "
-            <h2 style='margin:0 0 12px;'>Dat lich thanh cong</h2>
-            <p>Xin chao <strong>" . htmlspecialchars((string)$ctx['tenBenhNhan'], ENT_QUOTES, 'UTF-8') . "</strong>,</p>
-            <p>Ban da dat lich kham thanh cong tai <strong>" . htmlspecialchars(mailSiteName(), ENT_QUOTES, 'UTF-8') . "</strong>.</p>
+            <h2 style='margin:0 0 12px;'>Đặt lịch thành công</h2>
+            <p>Xin chào <strong>" . htmlspecialchars((string)$ctx['tenBenhNhan'], ENT_QUOTES, 'UTF-8') . "</strong>,</p>
+            <p>Bạn đã đặt lịch khám thành công tại <strong>" . htmlspecialchars(mailSiteName(), ENT_QUOTES, 'UTF-8') . "</strong>.</p>
             <ul>
-                <li>Ma lich kham: <strong>#" . (int)$ctx['maLichKham'] . "</strong></li>
-                <li>Bac si: <strong>" . htmlspecialchars((string)$ctx['tenBacSi'], ENT_QUOTES, 'UTF-8') . "</strong></li>
-                <li>Ngay kham: <strong>{$dateLabel}</strong></li>
-                <li>Khung gio: <strong>{$timeLabel}</strong></li>
-                <li>Goi kham: <strong>" . htmlspecialchars((string)$package, ENT_QUOTES, 'UTF-8') . "</strong></li>
-                <li>Chi phi du kien: <strong>{$price}</strong></li>
+                <li>Mã lịch khám: <strong>#" . (int)$ctx['maLichKham'] . "</strong></li>
+                <li>Bác sĩ: <strong>" . htmlspecialchars((string)$ctx['tenBacSi'], ENT_QUOTES, 'UTF-8') . "</strong></li>
+                <li>Ngày khám: <strong>{$dateLabel}</strong></li>
+                <li>Khung giờ: <strong>{$timeLabel}</strong></li>
+                <li>Gói khám: <strong>" . htmlspecialchars((string)$package, ENT_QUOTES, 'UTF-8') . "</strong></li>
+                <li>Chi phí dự kiến: <strong>{$price}</strong></li>
             </ul>
-            <p>Neu can thay doi, vui long quan ly lich kham trong tai khoan ca nhan.</p>
+            <p>Nếu cần thay đổi, vui lòng quản lý lịch khám trong tài khoản cá nhân.</p>
             "
         );
 
@@ -339,19 +339,19 @@ function sendAppointmentBookedEmails(mysqli $conn, int $maLichKham): array {
     }
 
     if (!empty($ctx['emailBacSi'])) {
-        $subject = 'Thong bao co lich kham moi #' . $ctx['maLichKham'];
+        $subject = 'Thông báo có lịch khám mới #' . $ctx['maLichKham'];
         $html = buildEmailLayout(
-            'Lich kham moi',
+            'Lịch khám mới',
             "
-            <h2 style='margin:0 0 12px;'>Ban co lich kham moi</h2>
-            <p>Bac si <strong>" . htmlspecialchars((string)$ctx['tenBacSi'], ENT_QUOTES, 'UTF-8') . "</strong>,</p>
-            <p>He thong vua ghi nhan lich kham moi.</p>
+            <h2 style='margin:0 0 12px;'>Bạn có lịch khám mới</h2>
+            <p>Bác sĩ <strong>" . htmlspecialchars((string)$ctx['tenBacSi'], ENT_QUOTES, 'UTF-8') . "</strong>,</p>
+            <p>Hệ thống vừa ghi nhận lịch khám mới.</p>
             <ul>
-                <li>Ma lich kham: <strong>#" . (int)$ctx['maLichKham'] . "</strong></li>
-                <li>Benh nhan: <strong>" . htmlspecialchars((string)$ctx['tenBenhNhan'], ENT_QUOTES, 'UTF-8') . "</strong></li>
-                <li>Ngay kham: <strong>{$dateLabel}</strong></li>
-                <li>Khung gio: <strong>{$timeLabel}</strong></li>
-                <li>Ghi chu: <strong>" . htmlspecialchars((string)($ctx['ghiChu'] ?? 'Khong co'), ENT_QUOTES, 'UTF-8') . "</strong></li>
+                <li>Mã lịch khám: <strong>#" . (int)$ctx['maLichKham'] . "</strong></li>
+                <li>Bệnh nhân: <strong>" . htmlspecialchars((string)$ctx['tenBenhNhan'], ENT_QUOTES, 'UTF-8') . "</strong></li>
+                <li>Ngày khám: <strong>{$dateLabel}</strong></li>
+                <li>Khung giờ: <strong>{$timeLabel}</strong></li>
+                <li>Ghi chú: <strong>" . htmlspecialchars((string)($ctx['ghiChu'] ?? 'Không có'), ENT_QUOTES, 'UTF-8') . "</strong></li>
             </ul>
             "
         );
@@ -373,18 +373,18 @@ function sendAppointmentBookedEmails(mysqli $conn, int $maLichKham): array {
 function cancellationActorLabel(string $actor): string {
     $actor = strtolower(trim($actor));
     if ($actor === 'benhnhan') {
-        return 'Benh nhan';
+        return 'Bệnh nhân';
     }
     if ($actor === 'bacsi') {
-        return 'Bac si';
+        return 'Bác sĩ';
     }
     if ($actor === 'quantri') {
-        return 'Quan tri vien';
+        return 'Quản trị viên';
     }
     if ($actor === 'hethong') {
-        return 'He thong';
+        return 'Hệ thống';
     }
-    return 'Don vi y te';
+    return 'Đơn vị y tế';
 }
 
 function sendAppointmentCancelledEmails(mysqli $conn, int $maLichKham, string $cancelledBy, string $reason = ''): array {
@@ -394,7 +394,7 @@ function sendAppointmentCancelledEmails(mysqli $conn, int $maLichKham, string $c
     }
 
     $actorLabel = cancellationActorLabel($cancelledBy);
-    $reasonText = trim($reason) !== '' ? trim($reason) : 'Khong co ly do cu the';
+    $reasonText = trim($reason) !== '' ? trim($reason) : 'Không có lý do cụ thể';
     $dateLabel = formatVNDate($ctx['ngayKham']);
     $timeLabel = appointmentTimeRange($ctx);
     $eventKey = $ctx['maLichKham'] . ':cancel:' . $ctx['ngayKham'] . ':' . md5($cancelledBy . ':' . $reasonText);
@@ -402,21 +402,21 @@ function sendAppointmentCancelledEmails(mysqli $conn, int $maLichKham, string $c
     $results = [];
 
     if (!empty($ctx['emailBenhNhan'])) {
-        $subject = 'Thong bao huy lich kham #' . $ctx['maLichKham'];
+        $subject = 'Thông báo hủy lịch khám #' . $ctx['maLichKham'];
         $html = buildEmailLayout(
-            'Huy lich kham',
+            'Hủy lịch khám',
             "
-            <h2 style='margin:0 0 12px;'>Lich kham da duoc huy</h2>
-            <p>Xin chao <strong>" . htmlspecialchars((string)$ctx['tenBenhNhan'], ENT_QUOTES, 'UTF-8') . "</strong>,</p>
-            <p>Lich kham cua ban da duoc huy boi <strong>{$actorLabel}</strong>.</p>
+            <h2 style='margin:0 0 12px;'>Lịch khám đã được hủy</h2>
+            <p>Xin chào <strong>" . htmlspecialchars((string)$ctx['tenBenhNhan'], ENT_QUOTES, 'UTF-8') . "</strong>,</p>
+            <p>Lịch khám của bạn đã được hủy bởi <strong>{$actorLabel}</strong>.</p>
             <ul>
-                <li>Ma lich kham: <strong>#" . (int)$ctx['maLichKham'] . "</strong></li>
-                <li>Bac si: <strong>" . htmlspecialchars((string)$ctx['tenBacSi'], ENT_QUOTES, 'UTF-8') . "</strong></li>
-                <li>Ngay kham: <strong>{$dateLabel}</strong></li>
-                <li>Khung gio: <strong>{$timeLabel}</strong></li>
-                <li>Ly do: <strong>" . htmlspecialchars($reasonText, ENT_QUOTES, 'UTF-8') . "</strong></li>
+                <li>Mã lịch khám: <strong>#" . (int)$ctx['maLichKham'] . "</strong></li>
+                <li>Bác sĩ: <strong>" . htmlspecialchars((string)$ctx['tenBacSi'], ENT_QUOTES, 'UTF-8') . "</strong></li>
+                <li>Ngày khám: <strong>{$dateLabel}</strong></li>
+                <li>Khung giờ: <strong>{$timeLabel}</strong></li>
+                <li>Lý do: <strong>" . htmlspecialchars($reasonText, ENT_QUOTES, 'UTF-8') . "</strong></li>
             </ul>
-            <p>Vui long dat lich moi neu ban van co nhu cau kham.</p>
+            <p>Vui lòng đặt lịch mới nếu bạn vẫn có nhu cầu khám.</p>
             "
         );
 
@@ -431,19 +431,19 @@ function sendAppointmentCancelledEmails(mysqli $conn, int $maLichKham, string $c
     }
 
     if (!empty($ctx['emailBacSi'])) {
-        $subject = 'Thong bao huy lich kham benh nhan #' . $ctx['maLichKham'];
+        $subject = 'Thông báo hủy lịch khám bệnh nhân #' . $ctx['maLichKham'];
         $html = buildEmailLayout(
-            'Huy lich kham',
+            'Hủy lịch khám',
             "
-            <h2 style='margin:0 0 12px;'>Lich kham da bi huy</h2>
-            <p>Bac si <strong>" . htmlspecialchars((string)$ctx['tenBacSi'], ENT_QUOTES, 'UTF-8') . "</strong>,</p>
-            <p>Lich kham benh nhan da duoc huy boi <strong>{$actorLabel}</strong>.</p>
+            <h2 style='margin:0 0 12px;'>Lịch khám đã bị hủy</h2>
+            <p>Bác sĩ <strong>" . htmlspecialchars((string)$ctx['tenBacSi'], ENT_QUOTES, 'UTF-8') . "</strong>,</p>
+            <p>Lịch khám bệnh nhân đã được hủy bởi <strong>{$actorLabel}</strong>.</p>
             <ul>
-                <li>Ma lich kham: <strong>#" . (int)$ctx['maLichKham'] . "</strong></li>
-                <li>Benh nhan: <strong>" . htmlspecialchars((string)$ctx['tenBenhNhan'], ENT_QUOTES, 'UTF-8') . "</strong></li>
-                <li>Ngay kham: <strong>{$dateLabel}</strong></li>
-                <li>Khung gio: <strong>{$timeLabel}</strong></li>
-                <li>Ly do: <strong>" . htmlspecialchars($reasonText, ENT_QUOTES, 'UTF-8') . "</strong></li>
+                <li>Mã lịch khám: <strong>#" . (int)$ctx['maLichKham'] . "</strong></li>
+                <li>Bệnh nhân: <strong>" . htmlspecialchars((string)$ctx['tenBenhNhan'], ENT_QUOTES, 'UTF-8') . "</strong></li>
+                <li>Ngày khám: <strong>{$dateLabel}</strong></li>
+                <li>Khung giờ: <strong>{$timeLabel}</strong></li>
+                <li>Lý do: <strong>" . htmlspecialchars($reasonText, ENT_QUOTES, 'UTF-8') . "</strong></li>
             </ul>
             "
         );
@@ -473,21 +473,21 @@ function sendAppointmentReminderEmail(mysqli $conn, int $maLichKham, string $rem
     $dateLabel = formatVNDate($ctx['ngayKham']);
     $timeLabel = appointmentTimeRange($ctx);
 
-    $titleLead = $normalizedType === '2h' ? 'Nhac lich kham truoc 2 gio' : 'Nhac lich kham truoc 24 gio';
+    $titleLead = $normalizedType === '2h' ? 'Nhắc lịch khám trước 2 giờ' : 'Nhắc lịch khám trước 24 giờ';
     $subject = $titleLead . ' #' . $ctx['maLichKham'];
 
     $html = buildEmailLayout(
-        'Nhac lich kham',
+        'Nhắc lịch khám',
         "
         <h2 style='margin:0 0 12px;'>{$titleLead}</h2>
-        <p>Xin chao <strong>" . htmlspecialchars((string)$ctx['tenBenhNhan'], ENT_QUOTES, 'UTF-8') . "</strong>,</p>
-        <p>Ban co lich kham sap toi, vui long den dung gio.</p>
+        <p>Xin chào <strong>" . htmlspecialchars((string)$ctx['tenBenhNhan'], ENT_QUOTES, 'UTF-8') . "</strong>,</p>
+        <p>Bạn có lịch khám sắp tới, vui lòng đến đúng giờ.</p>
         <ul>
-            <li>Ma lich kham: <strong>#" . (int)$ctx['maLichKham'] . "</strong></li>
-            <li>Bac si: <strong>" . htmlspecialchars((string)$ctx['tenBacSi'], ENT_QUOTES, 'UTF-8') . "</strong></li>
-            <li>Ngay kham: <strong>{$dateLabel}</strong></li>
-            <li>Khung gio: <strong>{$timeLabel}</strong></li>
-            <li>Goi kham: <strong>" . htmlspecialchars((string)($ctx['tenGoi'] ?? 'N/A'), ENT_QUOTES, 'UTF-8') . "</strong></li>
+            <li>Mã lịch khám: <strong>#" . (int)$ctx['maLichKham'] . "</strong></li>
+            <li>Bác sĩ: <strong>" . htmlspecialchars((string)$ctx['tenBacSi'], ENT_QUOTES, 'UTF-8') . "</strong></li>
+            <li>Ngày khám: <strong>{$dateLabel}</strong></li>
+            <li>Khung giờ: <strong>{$timeLabel}</strong></li>
+            <li>Gói khám: <strong>" . htmlspecialchars((string)($ctx['tenGoi'] ?? 'N/A'), ENT_QUOTES, 'UTF-8') . "</strong></li>
         </ul>
         "
     );
@@ -525,18 +525,18 @@ function sendAppointmentRescheduledEmails(mysqli $conn, int $maLichKham, array $
     $results = [];
 
     if (!empty($newContext['emailBenhNhan'])) {
-        $subject = 'Thong bao cap nhat lich kham #' . $maLichKham;
+        $subject = 'Thông báo cập nhật lịch khám #' . $maLichKham;
         $html = buildEmailLayout(
-            'Cap nhat lich kham',
+            'Cập nhật lịch khám',
             "
-            <h2 style='margin:0 0 12px;'>Lich kham da duoc cap nhat</h2>
-            <p>Xin chao <strong>" . htmlspecialchars((string)$newContext['tenBenhNhan'], ENT_QUOTES, 'UTF-8') . "</strong>,</p>
-            <p>Lich kham cua ban da duoc dieu chinh boi <strong>{$actorLabel}</strong>.</p>
+            <h2 style='margin:0 0 12px;'>Lịch khám đã được cập nhật</h2>
+            <p>Xin chào <strong>" . htmlspecialchars((string)$newContext['tenBenhNhan'], ENT_QUOTES, 'UTF-8') . "</strong>,</p>
+            <p>Lịch khám của bạn đã được điều chỉnh bởi <strong>{$actorLabel}</strong>.</p>
             <table width='100%' cellpadding='6' cellspacing='0' style='border-collapse:collapse;border:1px solid #e6ebf2;'>
-                <tr><td style='border:1px solid #e6ebf2;'><strong>Noi dung</strong></td><td style='border:1px solid #e6ebf2;'><strong>Truoc</strong></td><td style='border:1px solid #e6ebf2;'><strong>Sau</strong></td></tr>
-                <tr><td style='border:1px solid #e6ebf2;'>Ngay kham</td><td style='border:1px solid #e6ebf2;'>{$oldDate}</td><td style='border:1px solid #e6ebf2;'>{$newDate}</td></tr>
-                <tr><td style='border:1px solid #e6ebf2;'>Khung gio</td><td style='border:1px solid #e6ebf2;'>{$oldSlot}</td><td style='border:1px solid #e6ebf2;'>{$newSlot}</td></tr>
-                <tr><td style='border:1px solid #e6ebf2;'>Bac si</td><td style='border:1px solid #e6ebf2;'>" . htmlspecialchars($oldDoctor, ENT_QUOTES, 'UTF-8') . "</td><td style='border:1px solid #e6ebf2;'>" . htmlspecialchars($newDoctor, ENT_QUOTES, 'UTF-8') . "</td></tr>
+                <tr><td style='border:1px solid #e6ebf2;'><strong>Nội dung</strong></td><td style='border:1px solid #e6ebf2;'><strong>Trước</strong></td><td style='border:1px solid #e6ebf2;'><strong>Sau</strong></td></tr>
+                <tr><td style='border:1px solid #e6ebf2;'>Ngày khám</td><td style='border:1px solid #e6ebf2;'>{$oldDate}</td><td style='border:1px solid #e6ebf2;'>{$newDate}</td></tr>
+                <tr><td style='border:1px solid #e6ebf2;'>Khung giờ</td><td style='border:1px solid #e6ebf2;'>{$oldSlot}</td><td style='border:1px solid #e6ebf2;'>{$newSlot}</td></tr>
+                <tr><td style='border:1px solid #e6ebf2;'>Bác sĩ</td><td style='border:1px solid #e6ebf2;'>" . htmlspecialchars($oldDoctor, ENT_QUOTES, 'UTF-8') . "</td><td style='border:1px solid #e6ebf2;'>" . htmlspecialchars($newDoctor, ENT_QUOTES, 'UTF-8') . "</td></tr>
             </table>
             "
         );
@@ -552,17 +552,17 @@ function sendAppointmentRescheduledEmails(mysqli $conn, int $maLichKham, array $
     }
 
     if (!empty($newContext['emailBacSi'])) {
-        $subject = 'Thong bao cap nhat lich kham bac si #' . $maLichKham;
+        $subject = 'Thông báo cập nhật lịch khám bác sĩ #' . $maLichKham;
         $html = buildEmailLayout(
-            'Cap nhat lich kham',
+            'Cập nhật lịch khám',
             "
-            <h2 style='margin:0 0 12px;'>Lich kham da duoc cap nhat</h2>
-            <p>Bac si <strong>" . htmlspecialchars((string)$newContext['tenBacSi'], ENT_QUOTES, 'UTF-8') . "</strong>,</p>
-            <p>Lich kham #{$maLichKham} vua duoc dieu chinh.</p>
+            <h2 style='margin:0 0 12px;'>Lịch khám đã được cập nhật</h2>
+            <p>Bác sĩ <strong>" . htmlspecialchars((string)$newContext['tenBacSi'], ENT_QUOTES, 'UTF-8') . "</strong>,</p>
+            <p>Lịch khám #{$maLichKham} vừa được điều chỉnh.</p>
             <ul>
-                <li>Benh nhan: <strong>" . htmlspecialchars((string)$newContext['tenBenhNhan'], ENT_QUOTES, 'UTF-8') . "</strong></li>
-                <li>Ngay cu: <strong>{$oldDate}</strong> - {$oldSlot}</li>
-                <li>Ngay moi: <strong>{$newDate}</strong> - {$newSlot}</li>
+                <li>Bệnh nhân: <strong>" . htmlspecialchars((string)$newContext['tenBenhNhan'], ENT_QUOTES, 'UTF-8') . "</strong></li>
+                <li>Ngày cũ: <strong>{$oldDate}</strong> - {$oldSlot}</li>
+                <li>Ngày mới: <strong>{$newDate}</strong> - {$newSlot}</li>
             </ul>
             "
         );
@@ -587,17 +587,17 @@ function sendContactReceivedEmail(
     string $hoTen,
     string $chuDe
 ): array {
-    $subject = 'Da tiep nhan lien he #' . $maLienHe;
+    $subject = 'Đã tiếp nhận liên hệ #' . $maLienHe;
     $html = buildEmailLayout(
-        'Tiep nhan lien he',
+        'Tiếp nhận liên hệ',
         "
-        <h2 style='margin:0 0 12px;'>He thong da tiep nhan yeu cau cua ban</h2>
-        <p>Xin chao <strong>" . htmlspecialchars($hoTen, ENT_QUOTES, 'UTF-8') . "</strong>,</p>
-        <p>Chung toi da nhan duoc lien he cua ban va se phan hoi som nhat.</p>
+        <h2 style='margin:0 0 12px;'>Hệ thống đã tiếp nhận yêu cầu của bạn</h2>
+        <p>Xin chào <strong>" . htmlspecialchars($hoTen, ENT_QUOTES, 'UTF-8') . "</strong>,</p>
+        <p>Chúng tôi đã nhận được liên hệ của bạn và sẽ phản hồi sớm nhất.</p>
         <ul>
-            <li>Ma lien he: <strong>#{$maLienHe}</strong></li>
-            <li>Chu de: <strong>" . htmlspecialchars($chuDe, ENT_QUOTES, 'UTF-8') . "</strong></li>
-            <li>Thoi gian tiep nhan: <strong>" . date('d/m/Y H:i') . "</strong></li>
+            <li>Mã liên hệ: <strong>#{$maLienHe}</strong></li>
+            <li>Chủ đề: <strong>" . htmlspecialchars($chuDe, ENT_QUOTES, 'UTF-8') . "</strong></li>
+            <li>Thời gian tiếp nhận: <strong>" . date('d/m/Y H:i') . "</strong></li>
         </ul>
         "
     );
@@ -634,21 +634,21 @@ function sendContactProcessedEmail(
         $finalResponse = trim((string)($contact['ghiChu'] ?? ''));
     }
     if ($finalResponse === '') {
-        $finalResponse = 'Da tiep nhan va xu ly';
+        $finalResponse = 'Đã tiếp nhận và xử lý';
     }
 
-    $subject = 'Lien he #' . $maLienHe . ' da duoc xu ly';
+    $subject = 'Liên hệ #' . $maLienHe . ' đã được xử lý';
     $html = buildEmailLayout(
-        'Lien he da xu ly',
+        'Liên hệ đã xử lý',
         "
-        <h2 style='margin:0 0 12px;'>Yeu cau lien he da duoc xu ly</h2>
-        <p>Xin chao <strong>" . htmlspecialchars((string)$contact['hoTen'], ENT_QUOTES, 'UTF-8') . "</strong>,</p>
-        <p>Yeu cau lien he cua ban da duoc bo phan ho tro xu ly.</p>
+        <h2 style='margin:0 0 12px;'>Yêu cầu liên hệ đã được xử lý</h2>
+        <p>Xin chào <strong>" . htmlspecialchars((string)$contact['hoTen'], ENT_QUOTES, 'UTF-8') . "</strong>,</p>
+        <p>Yêu cầu liên hệ của bạn đã được bộ phận hỗ trợ xử lý.</p>
         <ul>
-            <li>Ma lien he: <strong>#{$maLienHe}</strong></li>
-            <li>Chu de: <strong>" . htmlspecialchars((string)$contact['chuDe'], ENT_QUOTES, 'UTF-8') . "</strong></li>
-            <li>Thoi gian xu ly: <strong>" . formatVNDateTime((string)$contact['thoiGianXuLy']) . "</strong></li>
-            <li>Phan hoi: <strong>" . htmlspecialchars($finalResponse, ENT_QUOTES, 'UTF-8') . "</strong></li>
+            <li>Mã liên hệ: <strong>#{$maLienHe}</strong></li>
+            <li>Chủ đề: <strong>" . htmlspecialchars((string)$contact['chuDe'], ENT_QUOTES, 'UTF-8') . "</strong></li>
+            <li>Thời gian xử lý: <strong>" . formatVNDateTime((string)$contact['thoiGianXuLy']) . "</strong></li>
+            <li>Phản hồi: <strong>" . htmlspecialchars($finalResponse, ENT_QUOTES, 'UTF-8') . "</strong></li>
         </ul>
         "
     );
@@ -705,27 +705,27 @@ function sendPaymentStatusEmail(mysqli $conn, int $maHoaDon, string $status, str
     $eventCode = $isSuccess ? 'payment_success' : 'payment_failed';
 
     $subject = $isSuccess
-        ? 'Thanh toan thanh cong hoa don #' . $maHoaDon
-        : 'Thanh toan that bai hoa don #' . $maHoaDon;
+        ? 'Thanh toán thành công hóa đơn #' . $maHoaDon
+        : 'Thanh toán thất bại hóa đơn #' . $maHoaDon;
 
-    $title = $isSuccess ? 'Thanh toan thanh cong' : 'Thanh toan chua thanh cong';
+    $title = $isSuccess ? 'Thanh toán thành công' : 'Thanh toán chưa thành công';
 
     $reasonBlock = '';
     if (!$isSuccess && trim($reason) !== '') {
-        $reasonBlock = '<p><strong>Ly do:</strong> ' . htmlspecialchars(trim($reason), ENT_QUOTES, 'UTF-8') . '</p>';
+        $reasonBlock = '<p><strong>Lý do:</strong> ' . htmlspecialchars(trim($reason), ENT_QUOTES, 'UTF-8') . '</p>';
     }
 
     $html = buildEmailLayout(
         $title,
         "
         <h2 style='margin:0 0 12px;'>{$title}</h2>
-        <p>Xin chao <strong>" . htmlspecialchars((string)$ctx['tenBenhNhan'], ENT_QUOTES, 'UTF-8') . "</strong>,</p>
+        <p>Xin chào <strong>" . htmlspecialchars((string)$ctx['tenBenhNhan'], ENT_QUOTES, 'UTF-8') . "</strong>,</p>
         <ul>
-            <li>Ma hoa don: <strong>#{$maHoaDon}</strong></li>
-            <li>Ma lich kham: <strong>#" . (int)($ctx['maLichKham'] ?? 0) . "</strong></li>
-            <li>So tien: <strong>" . formatVNCurrency((float)($ctx['soTien'] ?? 0)) . "</strong></li>
-            <li>Phuong thuc: <strong>" . htmlspecialchars((string)($ctx['phuongThuc'] ?? 'N/A'), ENT_QUOTES, 'UTF-8') . "</strong></li>
-            <li>Trang thai: <strong>" . htmlspecialchars((string)$status, ENT_QUOTES, 'UTF-8') . "</strong></li>
+            <li>Mã hóa đơn: <strong>#{$maHoaDon}</strong></li>
+            <li>Mã lịch khám: <strong>#" . (int)($ctx['maLichKham'] ?? 0) . "</strong></li>
+            <li>Số tiền: <strong>" . formatVNCurrency((float)($ctx['soTien'] ?? 0)) . "</strong></li>
+            <li>Phương thức: <strong>" . htmlspecialchars((string)($ctx['phuongThuc'] ?? 'N/A'), ENT_QUOTES, 'UTF-8') . "</strong></li>
+            <li>Trạng thái: <strong>" . htmlspecialchars((string)$status, ENT_QUOTES, 'UTF-8') . "</strong></li>
         </ul>
         {$reasonBlock}
         "
@@ -801,22 +801,22 @@ function sendMedicalRecordCompletedEmail(mysqli $conn, string $maHoSo): array {
         ? '<p><strong>Lời dặn bác sĩ:</strong> ' . nl2br(htmlspecialchars((string)$ctx['loiDanBacSi'], ENT_QUOTES, 'UTF-8')) . '</p>'
         : '';
 
-    $subject = 'Ho so kham benh da cap nhat #' . $maHoSo;
+    $subject = 'Hồ sơ khám bệnh đã cập nhật #' . $maHoSo;
     $extra = $hasPrescription
-        ? '<p>Don thuoc da duoc tao cho lich kham nay. Vui long dang nhap de xem chi tiet.</p>'
-        : '<p>Hien chua co don thuoc dinh kem cho lich kham nay.</p>';
+        ? '<p>Đơn thuốc đã được tạo cho lịch khám này. Vui lòng đăng nhập để xem chi tiết.</p>'
+        : '<p>Hiện chưa có đơn thuốc đính kèm cho lịch khám này.</p>';
 
     $html = buildEmailLayout(
-        'Ho so kham benh da san sang',
+        'Hồ sơ khám bệnh đã sẵn sàng',
         "
-        <h2 style='margin:0 0 12px;'>Ho so kham benh da duoc hoan tat</h2>
-        <p>Xin chao <strong>" . htmlspecialchars((string)$ctx['tenBenhNhan'], ENT_QUOTES, 'UTF-8') . "</strong>,</p>
+        <h2 style='margin:0 0 12px;'>Hồ sơ khám bệnh đã được hoàn tất</h2>
+        <p>Xin chào <strong>" . htmlspecialchars((string)$ctx['tenBenhNhan'], ENT_QUOTES, 'UTF-8') . "</strong>,</p>
         <ul>
-            <li>Ma ho so: <strong>" . htmlspecialchars($maHoSo, ENT_QUOTES, 'UTF-8') . "</strong></li>
-            <li>Ma lich kham: <strong>#" . (int)($ctx['maLichKham'] ?? 0) . "</strong></li>
-            <li>Bac si: <strong>" . htmlspecialchars((string)$ctx['tenBacSi'], ENT_QUOTES, 'UTF-8') . "</strong></li>
-            <li>Ngay kham: <strong>" . formatVNDate((string)$ctx['ngayKham']) . "</strong></li>
-            <li>Ngay cap nhat ho so: <strong>" . formatVNDateTime((string)$ctx['ngayHoanThanh']) . "</strong></li>
+            <li>Mã hồ sơ: <strong>" . htmlspecialchars($maHoSo, ENT_QUOTES, 'UTF-8') . "</strong></li>
+            <li>Mã lịch khám: <strong>#" . (int)($ctx['maLichKham'] ?? 0) . "</strong></li>
+            <li>Bác sĩ: <strong>" . htmlspecialchars((string)$ctx['tenBacSi'], ENT_QUOTES, 'UTF-8') . "</strong></li>
+            <li>Ngày khám: <strong>" . formatVNDate((string)$ctx['ngayKham']) . "</strong></li>
+            <li>Ngày cập nhật hồ sơ: <strong>" . formatVNDateTime((string)$ctx['ngayHoanThanh']) . "</strong></li>
         </ul>
         {$diagnosisBlock}
         {$treatmentBlock}
@@ -840,15 +840,15 @@ function sendMedicalRecordCompletedEmail(mysqli $conn, string $maHoSo): array {
 function roleLabelForAccountMail(string $role): string {
     $role = strtolower(trim($role));
     if ($role === 'benhnhan') {
-        return 'Benh nhan';
+        return 'Bệnh nhân';
     }
     if ($role === 'bacsi') {
-        return 'Bac si';
+        return 'Bác sĩ';
     }
     if ($role === 'quantri') {
-        return 'Quan tri vien';
+        return 'Quản trị viên';
     }
-    return 'Nguoi dung';
+    return 'Người dùng';
 }
 
 function getAccountMailContext(mysqli $conn, int $userId): ?array {
@@ -898,28 +898,28 @@ function sendAccountStatusChangedEmail(mysqli $conn, int $userId, string $newSta
     $isLocked = trim($newStatus) === 'Khóa';
     $eventCode = $isLocked ? 'account_locked' : 'account_unlocked';
     $subject = $isLocked
-        ? 'Thong bao khoa tai khoan'
-        : 'Thong bao mo khoa tai khoan';
+        ? 'Thông báo khóa tài khoản'
+        : 'Thông báo mở khóa tài khoản';
 
-    $statusLabel = $isLocked ? 'Da khoa' : 'Hoat dong';
+    $statusLabel = $isLocked ? 'Đã khóa' : 'Hoạt động';
     $defaultReason = $isLocked
-        ? 'Vi pham chinh sach su dung cua he thong.'
-        : 'Tai khoan da duoc mo khoa va co the su dung lai.';
+        ? 'Vi phạm chính sách sử dụng của hệ thống.'
+        : 'Tài khoản đã được mở khóa và có thể sử dụng lại.';
     $reasonText = trim($reason) !== '' ? trim($reason) : $defaultReason;
 
     $html = buildEmailLayout(
-        $isLocked ? 'Tai khoan da bi khoa' : 'Tai khoan da duoc mo khoa',
+        $isLocked ? 'Tài khoản đã bị khóa' : 'Tài khoản đã được mở khóa',
         "
-        <h2 style='margin:0 0 12px;'>" . ($isLocked ? 'Tai khoan cua ban da bi khoa' : 'Tai khoan cua ban da duoc mo khoa') . "</h2>
-        <p>Xin chao <strong>" . htmlspecialchars((string)($ctx['hoTen'] ?? $ctx['tenDangNhap']), ENT_QUOTES, 'UTF-8') . "</strong>,</p>
-        <p>He thong " . htmlspecialchars(mailSiteName(), ENT_QUOTES, 'UTF-8') . " vua cap nhat trang thai tai khoan cua ban.</p>
+        <h2 style='margin:0 0 12px;'>" . ($isLocked ? 'Tài khoản của bạn đã bị khóa' : 'Tài khoản của bạn đã được mở khóa') . "</h2>
+        <p>Xin chào <strong>" . htmlspecialchars((string)($ctx['hoTen'] ?? $ctx['tenDangNhap']), ENT_QUOTES, 'UTF-8') . "</strong>,</p>
+        <p>Hệ thống " . htmlspecialchars(mailSiteName(), ENT_QUOTES, 'UTF-8') . " vừa cập nhật trạng thái tài khoản của bạn.</p>
         <ul>
-            <li>Ten dang nhap: <strong>" . htmlspecialchars((string)$ctx['tenDangNhap'], ENT_QUOTES, 'UTF-8') . "</strong></li>
-            <li>Vai tro: <strong>" . htmlspecialchars(roleLabelForAccountMail((string)$ctx['vaiTro']), ENT_QUOTES, 'UTF-8') . "</strong></li>
-            <li>Trang thai moi: <strong>{$statusLabel}</strong></li>
-            <li>Ly do: <strong>" . htmlspecialchars($reasonText, ENT_QUOTES, 'UTF-8') . "</strong></li>
+            <li>Tên đăng nhập: <strong>" . htmlspecialchars((string)$ctx['tenDangNhap'], ENT_QUOTES, 'UTF-8') . "</strong></li>
+            <li>Vai trò: <strong>" . htmlspecialchars(roleLabelForAccountMail((string)$ctx['vaiTro']), ENT_QUOTES, 'UTF-8') . "</strong></li>
+            <li>Trạng thái mới: <strong>{$statusLabel}</strong></li>
+            <li>Lý do: <strong>" . htmlspecialchars($reasonText, ENT_QUOTES, 'UTF-8') . "</strong></li>
         </ul>
-        <p>Neu can ho tro, vui long lien he bo phan quan tri he thong.</p>
+        <p>Nếu cần hỗ trợ, vui lòng liên hệ bộ phận quản trị hệ thống.</p>
         "
     );
 

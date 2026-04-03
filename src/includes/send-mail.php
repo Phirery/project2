@@ -3,9 +3,6 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
 
-require __DIR__ . '/../PHPMailer/src/Exception.php';
-require __DIR__ . '/../PHPMailer/src/PHPMailer.php';
-require __DIR__ . '/../PHPMailer/src/SMTP.php';
 require_once __DIR__ . '/../config/app-env.php';
 
 $mailConfig = require __DIR__ . '/../config/mail.php';
@@ -29,6 +26,28 @@ function getLastMailError(): ?string {
 function getMailConfigValue(string $key, $default = null) {
     global $mailConfig;
     return array_key_exists($key, $mailConfig) ? $mailConfig[$key] : $default;
+}
+
+function ensurePhpMailerLoaded(): bool {
+    if (class_exists(PHPMailer::class) && class_exists(Exception::class) && class_exists(SMTP::class)) {
+        return true;
+    }
+
+    $base = __DIR__ . '/../PHPMailer/src/';
+    $exceptionFile = $base . 'Exception.php';
+    $phpMailerFile = $base . 'PHPMailer.php';
+    $smtpFile = $base . 'SMTP.php';
+
+    if (!file_exists($exceptionFile) || !file_exists($phpMailerFile) || !file_exists($smtpFile)) {
+        setLastMailError('PHPMailer files not found');
+        return false;
+    }
+
+    require_once $exceptionFile;
+    require_once $phpMailerFile;
+    require_once $smtpFile;
+
+    return class_exists(PHPMailer::class) && class_exists(Exception::class) && class_exists(SMTP::class);
 }
 
 function resolveSmtpHost(string $host, bool $forceIpv4): string {
@@ -68,7 +87,7 @@ function sendEmailViaBrevoApi(string $toEmail, string $subject, string $htmlCont
     }
 
     $username = (string)getMailConfigValue('username', '');
-    $fromName = (string)getMailConfigValue('from_name', 'Eden Health - Phong Kham');
+    $fromName = (string)getMailConfigValue('from_name', 'Eden Health - Phòng khám');
     $fromEmail = (string)getMailConfigValue('from_email', $username);
     $timeout = (int)getMailConfigValue('timeout', 20);
 
@@ -167,6 +186,12 @@ function sendEmailViaBrevoApi(string $toEmail, string $subject, string $htmlCont
 }
 
 function sendEmailViaSmtp(string $toEmail, string $subject, string $htmlContent, string $textContent = ''): bool {
+    if (!ensurePhpMailerLoaded()) {
+        $errorDetail = getLastMailError() ?: 'Unable to load PHPMailer';
+        error_log("Email Error: {$errorDetail}");
+        return false;
+    }
+
     $mail = new PHPMailer(true);
 
     try {
@@ -177,7 +202,7 @@ function sendEmailViaSmtp(string $toEmail, string $subject, string $htmlContent,
         $smtpAuth = (bool)getMailConfigValue('smtp_auth', true);
         $timeout = (int)getMailConfigValue('timeout', 20);
         $forceIpv4 = (bool)getMailConfigValue('force_ipv4', true);
-        $fromName = (string)getMailConfigValue('from_name', 'Eden Health - Phong Kham');
+        $fromName = (string)getMailConfigValue('from_name', 'Eden Health - Phòng khám');
         $fromEmail = (string)getMailConfigValue('from_email', $username);
         $encryption = strtolower((string)getMailConfigValue('encryption', 'tls'));
 
