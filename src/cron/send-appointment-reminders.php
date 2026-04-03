@@ -4,6 +4,16 @@ require_once __DIR__ . '/../includes/mail-events.php';
 
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 
+function writeCronLog(string $fileName, array $payload): void {
+    $logDir = __DIR__ . '/logs';
+    if (!is_dir($logDir)) {
+        @mkdir($logDir, 0755, true);
+    }
+
+    $line = date('Y-m-d H:i:s') . ' ' . json_encode($payload, JSON_UNESCAPED_UNICODE) . PHP_EOL;
+    @file_put_contents($logDir . '/' . $fileName, $line, FILE_APPEND);
+}
+
 function collectAppointmentIdsForReminder(mysqli $conn, int $minMinutes, int $maxMinutes): array {
     $sql = "
         SELECT lk.maLichKham
@@ -68,7 +78,17 @@ try {
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['success' => true, 'data' => $summary], JSON_UNESCAPED_UNICODE);
     }
+
+    writeCronLog('send-appointment-reminders.log', [
+        'status' => 'success',
+        'summary' => $summary
+    ]);
 } catch (Throwable $e) {
+    writeCronLog('send-appointment-reminders.log', [
+        'status' => 'error',
+        'message' => $e->getMessage()
+    ]);
+
     if (PHP_SAPI === 'cli') {
         echo "Error: " . $e->getMessage() . PHP_EOL;
     } else {

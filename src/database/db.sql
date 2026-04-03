@@ -521,6 +521,31 @@ END
 $$
 DELIMITER ;
 
+DELIMITER $$
+CREATE EVENT `auto_cancel_expired_appointments`
+ON SCHEDULE EVERY 1 DAY
+STARTS TIMESTAMP(CURRENT_DATE, '17:05:00')
+DO
+BEGIN
+    UPDATE lichkham
+    SET
+        trangThai = 'Hủy',
+        nguoiHuy = 'hethong',
+        ghiChu = CASE
+            WHEN ghiChu IS NULL OR TRIM(ghiChu) = '' THEN
+                '[Lý do hủy]: Quá thời gian khám trong ngày'
+            WHEN ghiChu LIKE '%[Lý do hủy]:%' THEN
+                ghiChu
+            ELSE
+                CONCAT(ghiChu, '\n[Lý do hủy]: Quá thời gian khám trong ngày')
+        END
+    WHERE
+        ngayKham <= CURDATE()
+        AND trangThai NOT IN ('Hoàn thành', 'Hủy');
+END
+$$
+DELIMITER ;
+
 CREATE TABLE lienhe (
   maLienHe int(11) NOT NULL,
   hoTen varchar(100) NOT NULL,
