@@ -1,7 +1,7 @@
 <?php
 require_once '../../config/cors.php';
 require_once '../../config/session.php';
-require_once '../../config/dp.php';
+require_once '../../config/db.php';
 require_once '../../includes/mail-events.php';
 
 // Kiểm tra quyền admin

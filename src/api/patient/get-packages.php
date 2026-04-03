@@ -1,6 +1,6 @@
 <?php
 require_once '../../config/cors.php';
-require_once '../../config/dp.php';
+require_once '../../config/db.php';
 
 try {
     $sql = "SELECT maGoi, tenGoi, moTa, gia FROM goikham ORDER BY gia";

@@ -6,7 +6,7 @@
     // TỰ ĐỘNG NHẬN DIỆN MÔI TRƯỜNG
     function detectEnv() {
         var hostname = window.location.hostname;
-        if (hostname === 'localhost' || hostname === 'localhost:5500') {
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
             return 'local';
         }
         return 'host';
@@ -14,21 +14,29 @@
 
     function detectBaseUrl(activeEnv) {
         var origin = window.location.origin;
+        var hostname = window.location.hostname;
+        var port = window.location.port || '';
         var path = window.location.pathname || '/';
 
-        // Cho local: ưu tiên /DO_AN/src, fallback theo origin hiện tại
+        // Local dev:
+        // - Nếu chạy UI bằng Live Server (:5500), API phải gọi qua Apache/XAMPP (:80)
+        // - Nếu mở trực tiếp qua Apache, vẫn dùng /DO_AN/src
         if (activeEnv === 'local') {
+            if (port === '5500') {
+                return window.location.protocol + '//' + hostname + '/DO_AN/src';
+            }
+
             return path.indexOf('/DO_AN/src/') === 0 || path === '/DO_AN/src' || path === '/DO_AN/src/'
                 ? origin + '/DO_AN/src'
-                : origin;
+                : (window.location.protocol + '//' + hostname + '/DO_AN/src');
         }
 
-        // Cho host: dùng origin thực tế để không phải sửa cứng domain
+        // Host: dùng origin thực tế để không phải sửa cứng domain
         return origin;
     }
 
     function buildConfig() {
-        var activeEnv = localStorage.getItem('APP_ENV') || detectEnv();
+        var activeEnv = detectEnv();
         var configuredBaseUrl = trimTrailingSlash(detectBaseUrl(activeEnv));
         var apiRoot = configuredBaseUrl + '/api';
 
