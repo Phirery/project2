@@ -82,10 +82,17 @@ function loadDotEnvIfExists(string $filePath): void
     }
 }
 
-loadDotEnvIfExists(dirname(__DIR__) . '/.env');
-
 $host = $_SERVER['HTTP_HOST'] ?? '';
 $isLocalHost = strpos($host, 'localhost') !== false || $host === 'localhost:5500';
+
+// Nạp .env theo môi trường để không phải sửa tay khi chuyển local/host
+if ($isLocalHost) {
+    loadDotEnvIfExists(dirname(__DIR__) . '/.env.local');
+} else {
+    loadDotEnvIfExists(dirname(__DIR__) . '/.env.host');
+}
+// File .env dùng như fallback chung
+loadDotEnvIfExists(dirname(__DIR__) . '/.env');
 
 $appEnv = getConfigValue('APP_ENV');
 if ($appEnv === null || $appEnv === '') {
