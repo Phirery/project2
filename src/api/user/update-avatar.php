@@ -5,8 +5,7 @@ require_once '../../config/session.php';
 require_once '../../includes/cloudinary-upload.php'; // helper cURL
 
 // Chỉ bác sĩ được đổi avatar
-require_role('bacsi');
-
+$vaiTro = $_SESSION['vaiTro'];
 $nguoiDungId = $_SESSION['id'];
 
 // ── Kiểm tra file upload ──────────────────────────────────

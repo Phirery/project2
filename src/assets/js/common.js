@@ -255,12 +255,25 @@ function ensureShowAlertStyles() {
         .alert-custom {
             padding: 12px 15px;
             border-radius: 8px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             font-size: 0.85rem;
             display: flex;
             align-items: center;
             gap: 10px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+        .alert-stack-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 99999;
+            width: min(420px, calc(100vw - 24px));
+            pointer-events: none;
+        }
+        .alert-stack-container .alert-custom {
+            min-width: 0;
+            max-width: 100%;
+            pointer-events: auto;
         }
         .alert-custom.alert-success {
             background: #d1fae5;
@@ -284,12 +297,24 @@ function ensureShowAlertStyles() {
     document.head.appendChild(style);
 }
 
+function getAlertContainer() {
+    let container = document.getElementById('alertStackContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'alertStackContainer';
+        container.className = 'alert-stack-container';
+        document.body.appendChild(container);
+    }
+    return container;
+}
+
 function showAlert(type, message) {
     ensureShowAlertStyles();
+    const container = getAlertContainer();
 
     const alertDiv = document.createElement('div');
-    alertDiv.className = `alert-custom alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
-    alertDiv.style.cssText = 'top: 80px; right: 20px; z-index: 99999; min-width: 320px; max-width: 420px; animation: showAlertSlideIn 0.3s;';
+    alertDiv.className = `alert-custom alert-${type === 'success' ? 'success' : 'danger'}`;
+    alertDiv.style.animation = 'showAlertSlideIn 0.3s';
 
     const icon = document.createElement('i');
     icon.className = `fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}`;
@@ -299,11 +324,14 @@ function showAlert(type, message) {
 
     alertDiv.appendChild(icon);
     alertDiv.appendChild(content);
-    document.body.appendChild(alertDiv);
+    container.appendChild(alertDiv);
 
     setTimeout(() => {
         alertDiv.style.animation = 'showAlertSlideOut 0.3s';
-        setTimeout(() => alertDiv.remove(), 300);
+        setTimeout(() => {
+            alertDiv.remove();
+            if (!container.children.length) container.remove();
+        }, 300);
     }, 4000);
 }
 

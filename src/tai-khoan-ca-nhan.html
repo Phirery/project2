@@ -949,6 +949,7 @@
     function buildEditForm() {
         const d = userData;
         let html = '<div class="row g-3">';
+        const canCorrectGender = d.vaiTro === 'benhnhan' && d.gioiTinh === 'khac';
 
         // Tên đăng nhập (disabled)
         html += field6('Tên đăng nhập', `<input class="form-control" value="${escapeHtml(d.tenDangNhap)}" disabled>`);
@@ -960,28 +961,33 @@
 
         if (d.vaiTro === 'benhnhan') {
             html += field6('Họ và tên *',
-                `<input type="text" class="form-control" name="hoTen" value="${escapeHtml(d.hoTen)}" required>`);
+                `<input type="text" class="form-control" name="hoTen" value="${escapeHtml(d.hoTen)}" disabled>`);
             html += field6('Ngày sinh',
-                `<input type="date" class="form-control" name="ngaySinh" value="${d.ngaySinh || ''}" max="${new Date().toISOString().split('T')[0]}">`);
+                `<input type="date" class="form-control" name="ngaySinh" value="${d.ngaySinh || ''}" max="${new Date().toISOString().split('T')[0]}" disabled>`);
             html += field6('Giới tính',
-                `<select class="form-control" name="gioiTinh">
-                    <option value="nam" ${d.gioiTinh==='nam'?'selected':''}>Nam</option>
-                    <option value="nu"  ${d.gioiTinh==='nu'?'selected':''}>Nữ</option>
-                    <option value="khac" ${d.gioiTinh==='khac'?'selected':''}>Khác</option>
-                </select>`);
+                canCorrectGender
+                    ? `<select class="form-control" name="gioiTinh" required>
+                        <option value="" selected disabled>Chọn giới tính mới</option>
+                        <option value="nam">Nam</option>
+                        <option value="nu">Nữ</option>
+                      </select>
+                      <small class="text-muted">Tài khoản đang để "Khác", vui lòng chọn lại Nam hoặc Nữ.</small>`
+                    : `<select class="form-control" name="gioiTinh" disabled>
+                        <option value="nam" ${d.gioiTinh==='nam'?'selected':''}>Nam</option>
+                        <option value="nu"  ${d.gioiTinh==='nu'?'selected':''}>Nữ</option>
+                      </select>`);
             html += field12('Số thẻ BHYT',
                 `<input type="text" class="form-control" name="soTheBHYT" value="${escapeHtml(d.soTheBHYT || '')}">`);
 
         } else if (d.vaiTro === 'bacsi') {
             html += field6('Họ và tên *',
-                `<input type="text" class="form-control" name="hoTen" value="${escapeHtml(d.hoTen)}" required>`);
+                `<input type="text" class="form-control" name="hoTen" value="${escapeHtml(d.hoTen)}" disabled>`);
             // Chuyên khoa và khoa: readonly
             html += field6('Chuyên khoa', `<input class="form-control" value="${escapeHtml(d.tenChuyenKhoa||'')}" disabled>`);
             html += field6('Khoa', `<input class="form-control" value="${escapeHtml(d.tenKhoa||'')}" disabled>`);
             html += field12('Mô tả / Giới thiệu',
                 `<textarea class="form-control" name="moTa" rows="3">${escapeHtml(d.moTa||'')}</textarea>`);
         }
-        // quantri: chỉ sđt (đã render ở trên)
 
         html += '</div>';
         document.getElementById('profileForm').innerHTML = html;
@@ -1031,6 +1037,16 @@
         const form = document.getElementById('profileForm');
         const fd   = new FormData(form);
         const body = Object.fromEntries(fd);
+
+        // Chỉ cho phép đổi giới tính khi tài khoản bệnh nhân đang để "khac"
+        if (userData.vaiTro === 'benhnhan') {
+            if (userData.gioiTinh !== 'khac') {
+                delete body.gioiTinh;
+            } else if (!['nam', 'nu'].includes(body.gioiTinh || '')) {
+                showAlert('error', 'Vui lòng chọn lại giới tính Nam hoặc Nữ');
+                return;
+            }
+        }
 
         const btn = document.getElementById('btnSave');
         btn.disabled = true;
@@ -1540,12 +1556,25 @@
             .alert-custom {
                 padding: 12px 15px;
                 border-radius: 8px;
-                margin-bottom: 15px;
+                margin-bottom: 10px;
                 font-size: 0.85rem;
                 display: flex;
                 align-items: center;
                 gap: 10px;
                 box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            }
+            .alert-stack-container {
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                z-index: 99999;
+                width: min(420px, calc(100vw - 24px));
+                pointer-events: none;
+            }
+            .alert-stack-container .alert-custom {
+                min-width: 0;
+                max-width: 100%;
+                pointer-events: auto;
             }
             .alert-custom.alert-success {
                 background: #d1fae5;
@@ -1568,6 +1597,16 @@
         `;
         document.head.appendChild(style);
     }
+    function getAlertContainer() {
+        let container = document.getElementById('alertStackContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'alertStackContainer';
+            container.className = 'alert-stack-container';
+            document.body.appendChild(container);
+        }
+        return container;
+    }
     function goBack1Step() {
         if (document.referrer !== "") {
             window.history.back();
@@ -1578,10 +1617,11 @@
 
     function showAlert(type, msg) {
         ensureShowAlertStyles();
+        const container = getAlertContainer();
 
         const alertDiv = document.createElement('div');
-        alertDiv.className = `alert-custom alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
-        alertDiv.style.cssText = 'top: 80px; right: 20px; z-index: 99999; min-width: 320px; max-width: 420px; animation: showAlertSlideIn 0.3s;';
+        alertDiv.className = `alert-custom alert-${type === 'success' ? 'success' : 'danger'}`;
+        alertDiv.style.animation = 'showAlertSlideIn 0.3s';
 
         const icon = document.createElement('i');
         icon.className = `fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}`;
@@ -1591,11 +1631,14 @@
 
         alertDiv.appendChild(icon);
         alertDiv.appendChild(content);
-        document.body.appendChild(alertDiv);
+        container.appendChild(alertDiv);
 
         setTimeout(() => {
             alertDiv.style.animation = 'showAlertSlideOut 0.3s';
-            setTimeout(() => alertDiv.remove(), 300);
+            setTimeout(() => {
+                alertDiv.remove();
+                if (!container.children.length) container.remove();
+            }, 300);
         }, 4000);
     }
 </script>
