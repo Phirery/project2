@@ -60,7 +60,7 @@ try {
     }
 
     if ($type !== '') {
-        $allowedTypes = ['Đặt lịch', 'Hủy lịch', 'Cấp lại mật khẩu'];
+        $allowedTypes = ['Đặt lịch', 'Hủy lịch', 'Cấp lại mật khẩu', 'Cập nhật lịch biểu'];
         if (in_array($type, $allowedTypes, true)) {
             $whereSql .= " AND $loaiExpr = ? ";
             $whereTypes .= 's';
@@ -155,7 +155,8 @@ try {
             SUM(CASE WHEN t.daXem = 0 THEN 1 ELSE 0 END) AS unreadNotifications,
             SUM(CASE WHEN $loaiExpr = 'Đặt lịch' THEN 1 ELSE 0 END) AS bookingNotifications,
             SUM(CASE WHEN $loaiExpr = 'Hủy lịch' THEN 1 ELSE 0 END) AS cancelNotifications,
-            SUM(CASE WHEN $loaiExpr = 'Cấp lại mật khẩu' THEN 1 ELSE 0 END) AS passwordNotifications
+            SUM(CASE WHEN $loaiExpr = 'Cấp lại mật khẩu' THEN 1 ELSE 0 END) AS passwordNotifications,
+            SUM(CASE WHEN $loaiExpr = 'Cập nhật lịch biểu' THEN 1 ELSE 0 END) AS scheduleNotifications
         FROM thongbaolichkham t
         LEFT JOIN lichkham l ON t.maLichKham = l.maLichKham
         LEFT JOIN benhnhan bn ON l.maBenhNhan = bn.maBenhNhan
@@ -182,6 +183,7 @@ try {
             'bookingNotifications' => (int)($stats['bookingNotifications'] ?? 0),
             'cancelNotifications' => (int)($stats['cancelNotifications'] ?? 0),
             'passwordNotifications' => (int)($stats['passwordNotifications'] ?? 0),
+            'scheduleNotifications' => (int)($stats['scheduleNotifications'] ?? 0),
         ]
     ]);
 } catch (Exception $e) {

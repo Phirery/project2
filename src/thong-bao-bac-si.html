@@ -199,6 +199,11 @@
             color: #6c3483;
         }
 
+        .notification-type.system {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
         .notification-time {
             color: #6c757d;
             font-size: 0.85rem;
@@ -358,6 +363,7 @@
             <div class="summary-chip"><i class="fas fa-calendar-plus"></i>Đặt lịch: <strong id="bookingNotifications">0</strong></div>
             <div class="summary-chip"><i class="fas fa-calendar-times"></i>Hủy lịch: <strong id="cancelNotifications">0</strong></div>
             <div class="summary-chip" style="display: none;"><i class="fas fa-key"></i>Cấp lại mật khẩu: <strong id="passwordNotifications">0</strong></div>
+            <div class="summary-chip"><i class="fas fa-bell"></i>Cập nhật lịch biểu: <strong id="scheduleNotifications">0</strong></div>
         </div>
 
         <div class="section-card">
@@ -383,6 +389,7 @@
                             <option value="Đặt lịch">Đặt lịch</option>
                             <option value="Hủy lịch">Hủy lịch</option>
                             <option value="Cấp lại mật khẩu">Cấp lại mật khẩu</option>
+                            <option value="Cập nhật lịch biểu">Cập nhật lịch biểu</option>
                         </select></div>
                     <div class="col-md-2"><select class="form-select" id="statusFilter" onchange="applyFilters()">
                             <option value="">Tất cả</option>
@@ -428,7 +435,8 @@
             unreadNotifications: 0,
             bookingNotifications: 0,
             cancelNotifications: 0,
-            passwordNotifications: 0
+            passwordNotifications: 0,
+            scheduleNotifications: 0
         };
         let autoRefreshInterval;
         let lastNotificationCount = 0;
@@ -487,7 +495,8 @@
                         unreadNotifications: unreadCount,
                         bookingNotifications: Number(data.stats?.bookingNotifications || 0),
                         cancelNotifications: Number(data.stats?.cancelNotifications || 0),
-                        passwordNotifications: Number(data.stats?.passwordNotifications || 0)
+                        passwordNotifications: Number(data.stats?.passwordNotifications || 0),
+                        scheduleNotifications: Number(data.stats?.scheduleNotifications || 0)
                     };
 
                     updateStatistics();
@@ -507,6 +516,7 @@
             animateNumber('bookingNotifications', currentStats.bookingNotifications);
             animateNumber('cancelNotifications', currentStats.cancelNotifications);
             animateNumber('passwordNotifications', currentStats.passwordNotifications);
+            animateNumber('scheduleNotifications', currentStats.scheduleNotifications);
         }
 
         function displayNotifications() {
@@ -519,6 +529,7 @@
                 if (notif.loai === 'Đặt lịch') { typeClass = 'booking'; icon = 'fa-calendar-plus'; }
                 else if (notif.loai === 'Hủy lịch') { typeClass = 'cancel'; icon = 'fa-calendar-times'; }
                 else if (notif.loai === 'Cấp lại mật khẩu') { typeClass = 'password'; icon = 'fa-key'; }
+                else if (notif.loai === 'Cập nhật lịch biểu') { typeClass = 'system'; icon = 'fa-calendar-day'; }
                 else { typeClass = 'booking'; icon = 'fa-bell'; }
                 return `
                     <div class="notification-item ${isUnread ? 'unread' : ''}" onclick="markAsRead(${notif.maThongBao})">

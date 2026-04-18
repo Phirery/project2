@@ -82,7 +82,7 @@ try {
         throw new Exception('Bác sĩ nghỉ trong ca này. Vui lòng chọn bác sĩ hoặc ca khác!');
     }
     
-    $selectedSlot = getSlotRowById($conn, $maSuat);
+    $selectedSlot = getSlotRowById($conn, $maSuat, $ngayKham);
     if (!$selectedSlot || $selectedSlot['maCa'] !== $maCa) {
         throw new Exception('Suất khám không tồn tại hoặc không thuộc ca đã chọn');
     }

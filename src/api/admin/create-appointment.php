@@ -27,7 +27,7 @@ try {
     ensureScheduleManagementSchema($conn);
     $conn->begin_transaction();
 
-    $selectedSlot = getSlotRowById($conn, $maSuat);
+    $selectedSlot = getSlotRowById($conn, $maSuat, $ngayKham);
     if (!$selectedSlot || $selectedSlot['maCa'] !== $maCa) {
         throw new Exception('Suất khám không tồn tại hoặc không thuộc ca đã chọn');
     }

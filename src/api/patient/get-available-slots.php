@@ -51,57 +51,36 @@ try {
     $isOff = $checkResult->fetch_assoc()['count'] > 0;
     $checkStmt->close();
     
-    // Lấy TẤT CẢ các suất khám của ca, kèm trạng thái
-    $stmt = $conn->prepare("
-        SELECT 
-            sk.maSuat, 
-            sk.gioBatDau, 
-            sk.gioKetThuc,
-            CASE 
-                -- Nếu bác sĩ nghỉ ca này -> tất cả suất đều unavailable
-                WHEN ? = 1 THEN 0
-                -- Kiểm tra lịch khám đã đặt có chồng thời gian với slot hiện tại không
-                WHEN EXISTS (
-                    SELECT 1
-                    FROM lichkham lk
-                    JOIN suatkham bookedSk ON lk.maSuat = bookedSk.maSuat
-                    WHERE lk.maBacSi = ?
-                      AND lk.ngayKham = ?
-                      AND lk.trangThai != 'Hủy'
-                      AND (
-                          (bookedSk.gioBatDau >= sk.gioBatDau AND bookedSk.gioBatDau < sk.gioKetThuc)
-                          OR (bookedSk.gioKetThuc > sk.gioBatDau AND bookedSk.gioKetThuc <= sk.gioKetThuc)
-                          OR (bookedSk.gioBatDau <= sk.gioBatDau AND bookedSk.gioKetThuc >= sk.gioKetThuc)
-                      )
-                ) THEN 0
-                ELSE 1
-            END as available
-        FROM suatkham sk
-        WHERE sk.maCa = ?
-          AND sk.isActive = 1
-        ORDER BY sk.gioBatDau
-    ");
-    $stmt->bind_param("issi", $isOff, $maBacSi, $ngayKham, $maCa);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $slots = array_values(array_filter(
+        getScheduleSlotsForDate($conn, $ngayKham),
+        function ($slot) use ($maCa) {
+            return (int)$slot['maCa'] === (int)$maCa;
+        }
+    ));
     
-    $slots = [];
-    while ($row = $result->fetch_assoc()) {
-        $slots[] = [
+    $availableSlots = [];
+    foreach ($slots as $row) {
+        $isBooked = findDoctorOverlap(
+            $conn,
+            $maBacSi,
+            $ngayKham,
+            $row['gioBatDau'],
+            $row['gioKetThuc']
+        ) !== null;
+
+        $availableSlots[] = [
             'maSuat' => $row['maSuat'],
             'gioBatDau' => $row['gioBatDau'],
             'gioKetThuc' => $row['gioKetThuc'],
-            'available' => (bool)$row['available']
+            'available' => !$isOff && !$isBooked
         ];
     }
     
     echo json_encode([
         'success' => true,
-        'data' => $slots,
+        'data' => $availableSlots,
         'doctorOff' => $isOff
     ], JSON_UNESCAPED_UNICODE);
-    
-    $stmt->close();
 } catch (Exception $e) {
     echo json_encode([
         'success' => false,

@@ -76,47 +76,22 @@ try {
     }
     $offStmt->close();
     
-    // Lấy TẤT CẢ suất khám active của cấu hình hiện hành
-    $stmt = $conn->prepare("
-        SELECT 
-            sk.maSuat,
-            sk.maCa,
-            sk.gioBatDau,
-            sk.gioKetThuc,
-            c.tenCa,
-            CASE
-                WHEN EXISTS (
-                    SELECT 1
-                    FROM lichkham lk
-                    JOIN suatkham bookedSk ON lk.maSuat = bookedSk.maSuat
-                    WHERE lk.maBacSi = ?
-                      AND lk.ngayKham = ?
-                      AND lk.trangThai != 'Hủy'
-                      AND (
-                          (bookedSk.gioBatDau >= sk.gioBatDau AND bookedSk.gioBatDau < sk.gioKetThuc)
-                          OR (bookedSk.gioKetThuc > sk.gioBatDau AND bookedSk.gioKetThuc <= sk.gioKetThuc)
-                          OR (bookedSk.gioBatDau <= sk.gioBatDau AND bookedSk.gioKetThuc >= sk.gioKetThuc)
-                      )
-                ) THEN 1
-                ELSE 0
-            END AS isBooked
-        FROM suatkham sk
-        JOIN calamviec c ON sk.maCa = c.maCa
-        WHERE sk.isActive = 1
-        ORDER BY sk.maCa, sk.gioBatDau
-    ");
-    $stmt->bind_param("ss", $maBacSi, $ngayKham);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $scheduleSlots = getScheduleSlotsForDate($conn, $ngayKham);
     
     $schedule = [
         'caSang' => [],
         'caChieu' => []
     ];
     
-    while ($row = $result->fetch_assoc()) {
+    foreach ($scheduleSlots as $row) {
         $maCa = (int)$row['maCa'];
-        $isBooked = (int)($row['isBooked'] ?? 0) === 1;
+        $isBooked = findDoctorOverlap(
+            $conn,
+            $maBacSi,
+            $ngayKham,
+            $row['gioBatDau'],
+            $row['gioKetThuc']
+        ) !== null;
         $isDoctorOff = $offAllDay || in_array($maCa, $offShifts);
         
         // Xác định trạng thái
@@ -146,8 +121,6 @@ try {
             $schedule['caChieu'][] = $slot;
         }
     }
-    
-    $stmt->close();
     
     echo json_encode([
         'success' => true,

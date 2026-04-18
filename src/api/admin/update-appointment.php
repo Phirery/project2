@@ -106,7 +106,7 @@ try {
 
     $oldSnapshot = extractAppointmentSnapshotFromDbRow($oldRow);
 
-    $selectedSlot = getSlotRowById($conn, $maSuat);
+    $selectedSlot = getSlotRowById($conn, $maSuat, $ngayKham);
     if (!$selectedSlot || $selectedSlot['maCa'] !== $maCa) {
         echo json_encode([
             'success' => false,

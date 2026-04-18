@@ -7,6 +7,7 @@ require_once '../../includes/schedule-management.php';
 require_role('quantri');
 
 $maCa = isset($_GET['maCa']) ? intval($_GET['maCa']) : 0;
+$ngayKham = $_GET['ngayKham'] ?? null;
 $includeInactive = isset($_GET['includeInactive']) && $_GET['includeInactive'] === '1';
 
 if (!$maCa) {
@@ -16,29 +17,23 @@ if (!$maCa) {
 
 ensureScheduleManagementSchema($conn);
 
-$sql = "SELECT
-            maSuat,
-            maCa,
-            TIME_FORMAT(gioBatDau, '%H:%i:%s') AS gioBatDau,
-            TIME_FORMAT(gioKetThuc, '%H:%i:%s') AS gioKetThuc,
-            isActive
-        FROM suatkham
-        WHERE maCa = ?" . ($includeInactive ? '' : ' AND isActive = 1') . "
-        ORDER BY isActive DESC, gioBatDau, maSuat";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param('i', $maCa);
-$stmt->execute();
-$result = $stmt->get_result();
-$slots = [];
+$allSlots = getScheduleSlotsForDate($conn, $ngayKham);
+$slots = array_values(array_filter($allSlots, function ($slot) use ($maCa) {
+    return (int)$slot['maCa'] === (int)$maCa;
+}));
+$slotsOut = [];
 
-if ($result && $result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
-        $row['isActive'] = (int)($row['isActive'] ?? 1);
-        $slots[] = $row;
+foreach ($slots as $row) {
+    if (!$includeInactive && (int)($row['isActive'] ?? 1) !== 1) {
+        continue;
     }
+
+    $row['isActive'] = (int)($row['isActive'] ?? 1);
+    $row['effectiveFrom'] = $row['effectiveFrom'] ?? null;
+    $row['effectiveTo'] = $row['effectiveTo'] ?? null;
+    $slotsOut[] = $row;
 }
 
-echo json_encode(['success' => true, 'data' => $slots], JSON_UNESCAPED_UNICODE);
-$stmt->close();
+echo json_encode(['success' => true, 'data' => $slotsOut ?? []], JSON_UNESCAPED_UNICODE);
 $conn->close();
 ?>

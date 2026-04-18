@@ -12,6 +12,10 @@
     <link id="sidebar-admin-css" rel="stylesheet" href="assets/css/sidebar-admin.css">
     <link rel="stylesheet" href="assets/css/admin-summary.css">
     <style>
+        .summary-bar { display: flex; flex-wrap: wrap; gap: 10px; }
+        .summary-chip { display: flex; align-items: center; gap: 8px; min-height: 58px; flex-wrap: nowrap; }
+        .summary-chip .summary-text { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; white-space: nowrap; }
+        .summary-label, .summary-value { display: inline; white-space: nowrap; }
         .summary-chip.preset { background: rgba(102, 126, 234, 0.12); border-color: rgba(102, 126, 234, 0.3); }
         .summary-chip.morning { background: rgba(255, 193, 7, 0.12); border-color: rgba(255, 193, 7, 0.28); }
         .summary-chip.afternoon { background: rgba(0, 174, 239, 0.12); border-color: rgba(0, 174, 239, 0.26); }
@@ -42,24 +46,27 @@
         .slot-list { padding: 18px 20px 20px; display: flex; flex-wrap: wrap; gap: 10px; }
         .slot-pill { padding: 8px 12px; border-radius: 999px; background: #eef4ff; color: #32405a; font-weight: 600; font-size: 0.84rem; }
         .empty-state { padding: 32px 18px; text-align: center; color: #8a94a6; font-size: 0.92rem; }
-        .table-card { background: #fff; border-radius: 16px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); padding: 24px; }
-        .table-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 18px; }
-        .table-header h5 { margin: 0; font-weight: 700; color: #243042; }
-        .table-header p { margin: 6px 0 0; color: #667085; font-size: 0.92rem; }
+        .table-section { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 3px 15px rgba(0,0,0,0.08); }
+        .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .table-header h5 { color: #333; font-weight: 700; margin: 0; }
+        .table-header p { margin: 6px 0 0; color: #666; font-size: 0.9rem; }
         .toolbar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 18px; }
         .toolbar .form-control { min-width: 260px; border-radius: 12px; border: 1px solid #dde4ee; padding: 10px 14px; }
-        .custom-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
-        .custom-table thead th { padding: 12px 14px; font-size: 0.84rem; text-transform: uppercase; letter-spacing: 0.04em; color: #607086; }
-        .custom-table tbody tr { background: #fff; box-shadow: 0 4px 14px rgba(19, 34, 55, 0.06); }
-        .custom-table tbody td { padding: 16px 14px; vertical-align: middle; }
-        .custom-table tbody tr td:first-child { border-radius: 14px 0 0 14px; }
-        .custom-table tbody tr td:last-child { border-radius: 0 14px 14px 0; }
+        .custom-table { width: 100%; border-collapse: separate; border-spacing: 0 6px; }
+        .custom-table thead th { background: linear-gradient(135deg,#f8f9fa,#e9ecef); color: #495057; font-weight: 600; padding: 14px 15px; border: none; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .custom-table thead th:first-child { border-radius: 8px 0 0 8px; }
+        .custom-table thead th:last-child { border-radius: 0 8px 8px 0; }
+        .custom-table tbody tr { background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: all 0.25s; }
+        .custom-table tbody tr:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.1); }
+        .custom-table tbody td { padding: 14px 15px; border: none; vertical-align: middle; }
+        .custom-table tbody tr td:first-child { border-radius: 8px 0 0 8px; }
+        .custom-table tbody tr td:last-child { border-radius: 0 8px 8px 0; }
         .package-name { font-weight: 700; color: #1f2937; }
         .package-description { color: #667085; font-size: 0.88rem; line-height: 1.45; }
         .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; font-size: 0.82rem; font-weight: 700; }
         .status-pill.active { background: rgba(76, 175, 80, 0.14); color: #1f7a33; }
         .status-pill.inactive { background: rgba(255, 152, 0, 0.14); color: #9c5b00; }
-        .btn-action { border: none; border-radius: 10px; padding: 8px 12px; font-size: 0.88rem; font-weight: 600; margin-right: 6px; }
+        .btn-action { padding: 6px 11px; border-radius: 6px; border: none; cursor: pointer; font-size: 0.88rem; margin: 0 2px; transition: all 0.25s; }
         .btn-edit { background: #fff7df; color: #8b6508; }
         .btn-toggle { background: #edf4ff; color: #275db3; }
         .btn-toggle.off { background: #fff1e6; color: #ad5b09; }
@@ -81,10 +88,10 @@
     <div id="page-content" style="display:none;">
         <div class="container-fluid">
             <div class="summary-bar">
-                <div class="summary-chip preset"><i class="fas fa-stopwatch"></i><div><div class="summary-label">Preset hiện tại</div><div class="summary-value" id="summaryPreset">--</div></div></div>
-                <div class="summary-chip morning"><i class="fas fa-sun"></i><div><div class="summary-label">Ca sáng</div><div class="summary-value" id="summaryMorning">--</div></div></div>
-                <div class="summary-chip afternoon"><i class="fas fa-cloud-sun"></i><div><div class="summary-label">Ca chiều</div><div class="summary-value" id="summaryAfternoon">--</div></div></div>
-                <div class="summary-chip packages"><i class="fas fa-briefcase-medical"></i><div><div class="summary-label">Gói khám hoạt động</div><div class="summary-value" id="summaryPackages">--</div></div></div>
+                <div class="summary-chip preset"><i class="fas fa-stopwatch"></i><div class="summary-text"><span class="summary-label">Preset hiện tại</span><span class="summary-value" id="summaryPreset">--</span></div></div>
+                <div class="summary-chip morning"><i class="fas fa-sun"></i><div class="summary-text"><span class="summary-label">Ca sáng</span><span class="summary-value" id="summaryMorning">--</span></div></div>
+                <div class="summary-chip afternoon"><i class="fas fa-cloud-sun"></i><div class="summary-text"><span class="summary-label">Ca chiều</span><span class="summary-value" id="summaryAfternoon">--</span></div></div>
+                <div class="summary-chip packages"><i class="fas fa-briefcase-medical"></i><div class="summary-text"><span class="summary-label">Gói khám hoạt động</span><span class="summary-value" id="summaryPackages">--</span></div></div>
             </div>
 
             <div class="dashboard-grid">
@@ -94,7 +101,6 @@
                             <h5><i class="fas fa-calendar-alt me-2"></i>Cấu Hình Suất Khám</h5>
                             <p>Giữ nguyên 2 ca sáng và chiều, chỉ đổi preset thời lượng để hệ thống tự sinh lại suất khám.</p>
                         </div>
-                        <span class="preset-badge" id="currentPresetBadge">Preset --</span>
                     </div>
                     <div class="card-body">
                         <div id="scheduleLoading" class="loading-block"><div class="spinner-border text-primary mb-3" role="status"></div><div>Đang tải cấu hình lịch biểu...</div></div>
@@ -121,7 +127,7 @@
                     </div>
                 </div>
             </div>
-            <div class="table-card">
+            <div class="table-section">
                 <div class="table-header">
                     <div>
                         <h5><i class="fas fa-box-open me-2"></i>Quản Lý Gói Khám</h5>
@@ -274,15 +280,12 @@
         }
         function renderScheduleSummary() {
             const currentPreset = scheduleConfig?.currentDurationMinutes || '--';
-            const shifts = scheduleConfig?.shifts || [];
-            const morning = shifts.find(shift => Number(shift.maCa) === 1);
-            const afternoon = shifts.find(shift => Number(shift.maCa) === 2);
+            const nextEffective = scheduleConfig?.nextEffectiveFrom ? formatDate(scheduleConfig.nextEffectiveFrom) : 'Chưa xác định';
 
             document.getElementById('summaryPreset').textContent = `${currentPreset} phút`;
-            document.getElementById('currentPresetBadge').textContent = `Preset ${currentPreset} phút`;
-            document.getElementById('summaryMorning').textContent = `${morning?.soSuat ?? 0} suất`;
-            document.getElementById('summaryAfternoon').textContent = `${afternoon?.soSuat ?? 0} suất`;
-            document.getElementById('presetHint').textContent = `Preset ${selectedPreset} phút sẽ tạo ${(240 / selectedPreset).toFixed(0)} suất mỗi ca trong khung giờ cố định.`;
+            document.getElementById('summaryMorning').textContent = `${countPreviewSlots(1, currentPreset)} suất`;
+            document.getElementById('summaryAfternoon').textContent = `${countPreviewSlots(2, currentPreset)} suất`;
+            document.getElementById('presetHint').textContent = `Preset đang chọn: ${selectedPreset} phút. Nếu áp dụng, hệ thống sẽ bắt đầu từ ${nextEffective}.`;
             updatePackageDurationNote();
         }
 
@@ -314,17 +317,18 @@
         function renderSchedulePreview() {
             const container = document.getElementById('schedulePreview');
             const shifts = scheduleConfig?.shifts || [];
+            const previewDuration = Number(selectedPreset || scheduleConfig?.currentDurationMinutes || 40);
 
             container.innerHTML = shifts.map(shift => {
-                const slotHtml = shift.slots.length
-                    ? shift.slots.map(slot => `<span class="slot-pill">${slot.gioBatDau} - ${slot.gioKetThuc}</span>`).join('')
-                    : '<div class="empty-state">Chưa có suất khám active cho ca này.</div>';
+                const slotHtml = buildPreviewSlots(shift.gioBatDau, shift.gioKetThuc, previewDuration)
+                    .map(slot => `<span class="slot-pill">${slot.start} - ${slot.end}</span>`)
+                    .join('');
 
                 return `
                     <div class="shift-card">
                         <div class="shift-card-header">
                             <h6>${shift.tenCa}</h6>
-                            <p>${shift.gioBatDau} - ${shift.gioKetThuc} • ${shift.soSuat} suất</p>
+                            <p>${shift.gioBatDau} - ${shift.gioKetThuc} • ${countSlotsForShift(shift.gioBatDau, shift.gioKetThuc, previewDuration)} suất • preview ${previewDuration} phút</p>
                         </div>
                         <div class="slot-list">${slotHtml}</div>
                     </div>
@@ -389,6 +393,7 @@
             selectedPreset = Number(durationMinutes);
             renderPresetGrid();
             renderScheduleSummary();
+            renderSchedulePreview();
         }
 
         async function handleApplyPreset() {
@@ -543,8 +548,43 @@
             return ((endHour * 60) + endMinute) - ((startHour * 60) + startMinute);
         }
 
+        function buildPreviewSlots(startTime, endTime, durationMinutes) {
+            const preview = [];
+            const [startHour, startMinute] = startTime.split(':').map(Number);
+            const [endHour, endMinute] = endTime.split(':').map(Number);
+            let cursor = (startHour * 60) + startMinute;
+            const limit = (endHour * 60) + endMinute;
+
+            while (cursor < limit) {
+                const next = cursor + durationMinutes;
+                preview.push({
+                    start: `${String(Math.floor(cursor / 60)).padStart(2, '0')}:${String(cursor % 60).padStart(2, '0')}`,
+                    end: `${String(Math.floor(next / 60)).padStart(2, '0')}:${String(next % 60).padStart(2, '0')}`
+                });
+                cursor = next;
+            }
+
+            return preview;
+        }
+
+        function countSlotsForShift(startTime, endTime, durationMinutes) {
+            return Math.floor(calculateMinutes(startTime, endTime) / durationMinutes);
+        }
+
+        function countPreviewSlots(shiftId, durationMinutes) {
+            const shift = (scheduleConfig?.shifts || []).find(item => Number(item.maCa) === Number(shiftId));
+            if (!shift) return 0;
+            return countSlotsForShift(shift.gioBatDau, shift.gioKetThuc, Number(durationMinutes) || 40);
+        }
+
         function formatCurrency(amount) {
             return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Number(amount) || 0);
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '--';
+            const date = new Date(`${dateString}T00:00:00`);
+            return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
         }
     </script>
 </body>

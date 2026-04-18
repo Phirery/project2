@@ -790,22 +790,25 @@ CREATE TABLE suatkham (
   maCa int(11) NOT NULL,
   gioBatDau time NOT NULL,
   gioKetThuc time NOT NULL,
-  isActive tinyint(1) NOT NULL DEFAULT 1
+  isActive tinyint(1) NOT NULL DEFAULT 1,
+  effectiveFrom date NOT NULL DEFAULT '1900-01-01',
+  effectiveTo date DEFAULT NULL,
+  presetMinutes int(11) NOT NULL DEFAULT 40
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO suatkham (maSuat, maCa, gioBatDau, gioKetThuc, isActive) VALUES
-(1, 1, '07:00:00', '07:40:00', 1),
-(2, 1, '07:40:00', '08:20:00', 1),
-(3, 1, '08:20:00', '09:00:00', 1),
-(4, 1, '09:00:00', '09:40:00', 1),
-(5, 1, '09:40:00', '10:20:00', 1),
-(6, 1, '10:20:00', '11:00:00', 1),
-(7, 2, '13:00:00', '13:40:00', 1),
-(8, 2, '13:40:00', '14:20:00', 1),
-(9, 2, '14:20:00', '15:00:00', 1),
-(10, 2, '15:00:00', '15:40:00', 1),
-(11, 2, '15:40:00', '16:20:00', 1),
-(12, 2, '16:20:00', '17:00:00', 1);
+INSERT INTO suatkham (maSuat, maCa, gioBatDau, gioKetThuc, isActive, effectiveFrom, effectiveTo, presetMinutes) VALUES
+(1, 1, '07:00:00', '07:40:00', 1, '1900-01-01', NULL, 40),
+(2, 1, '07:40:00', '08:20:00', 1, '1900-01-01', NULL, 40),
+(3, 1, '08:20:00', '09:00:00', 1, '1900-01-01', NULL, 40),
+(4, 1, '09:00:00', '09:40:00', 1, '1900-01-01', NULL, 40),
+(5, 1, '09:40:00', '10:20:00', 1, '1900-01-01', NULL, 40),
+(6, 1, '10:20:00', '11:00:00', 1, '1900-01-01', NULL, 40),
+(7, 2, '13:00:00', '13:40:00', 1, '1900-01-01', NULL, 40),
+(8, 2, '13:40:00', '14:20:00', 1, '1900-01-01', NULL, 40),
+(9, 2, '14:20:00', '15:00:00', 1, '1900-01-01', NULL, 40),
+(10, 2, '15:00:00', '15:40:00', 1, '1900-01-01', NULL, 40),
+(11, 2, '15:40:00', '16:20:00', 1, '1900-01-01', NULL, 40),
+(12, 2, '16:20:00', '17:00:00', 1, '1900-01-01', NULL, 40);
 
 CREATE TABLE thongbaoadmin (
   maThongBao int(11) NOT NULL,
@@ -857,7 +860,7 @@ CREATE TABLE thongbaolichkham (
   maThongBao int(11) NOT NULL,
   maBacSi varchar(20) NOT NULL,
   maLichKham int(11) DEFAULT NULL,
-  loai enum('Đặt lịch','Hủy lịch') NOT NULL,
+  loai enum('Đặt lịch','Hủy lịch','Cập nhật lịch biểu') NOT NULL,
   tieuDe varchar(255) NOT NULL,
   noiDung text NOT NULL,
   thoiGian datetime DEFAULT current_timestamp(),

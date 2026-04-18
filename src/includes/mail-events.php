@@ -954,4 +954,145 @@ function extractAppointmentSnapshotFromDbRow(array $row): array {
         'slotDisplay' => $slotDisplay,
     ];
 }
+
+function sendSchedulePresetChangedEmails(mysqli $conn, int $oldDuration, int $newDuration, string $effectiveFrom): array {
+    $stmt = $conn->prepare(
+        "SELECT DISTINCT nd.email, COALESCE(bs.tenBacSi, nd.tenDangNhap) AS tenBacSi
+         FROM bacsi bs
+         JOIN nguoidung nd ON bs.nguoiDungId = nd.id
+         WHERE nd.isDeleted = 0
+           AND nd.email IS NOT NULL
+           AND nd.email <> ''"
+    );
+    if (!$stmt) {
+        return ['success' => false, 'message' => 'cannot_prepare'];
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $sent = 0;
+    $failed = 0;
+    $details = [];
+
+    $subject = 'Cập nhật lịch biểu khám từ ' . formatVNDate($effectiveFrom);
+    $eventKey = 'schedule_preset:' . $effectiveFrom . ':' . $newDuration;
+
+    while ($row = $result->fetch_assoc()) {
+        $recipientEmail = trim((string)($row['email'] ?? ''));
+        if ($recipientEmail === '') {
+            continue;
+        }
+
+        $doctorName = (string)($row['tenBacSi'] ?? 'Bác sĩ');
+        $html = buildEmailLayout(
+            'Cập nhật lịch biểu khám',
+            "
+            <h2 style='margin:0 0 12px;'>Lịch biểu khám đã được cập nhật</h2>
+            <p>Xin chào <strong>" . htmlspecialchars($doctorName, ENT_QUOTES, 'UTF-8') . "</strong>,</p>
+            <p>Quản trị viên vừa thay đổi preset lịch biểu khám của hệ thống.</p>
+            <ul>
+                <li>Preset cũ: <strong>{$oldDuration} phút</strong></li>
+                <li>Preset mới: <strong>{$newDuration} phút</strong></li>
+                <li>Hiệu lực từ: <strong>" . htmlspecialchars(formatVNDate($effectiveFrom), ENT_QUOTES, 'UTF-8') . "</strong></li>
+            </ul>
+            <p>Các lịch đã tạo trước thời điểm hiệu lực vẫn giữ nguyên cấu hình cũ.</p>
+            "
+        );
+
+        $mailResult = sendTransactionalMail(
+            $conn,
+            'schedule_preset_changed_doctor',
+            $eventKey,
+            $recipientEmail,
+            $subject,
+            $html
+        );
+
+        if (!empty($mailResult['success'])) {
+            $sent++;
+        } else {
+            $failed++;
+        }
+
+        $details[] = [
+            'email' => $recipientEmail,
+            'success' => !empty($mailResult['success'])
+        ];
+    }
+
+    $stmt->close();
+
+    return [
+        'success' => true,
+        'sent' => $sent,
+        'failed' => $failed,
+        'details' => $details
+    ];
+}
+
+function sendSchedulePresetChangedNotifications(mysqli $conn, int $oldDuration, int $newDuration, string $effectiveFrom): array {
+    $stmt = $conn->prepare(
+        "SELECT DISTINCT bs.maBacSi, COALESCE(bs.tenBacSi, nd.tenDangNhap) AS tenBacSi
+         FROM bacsi bs
+         JOIN nguoidung nd ON bs.nguoiDungId = nd.id
+         WHERE nd.isDeleted = 0"
+    );
+    if (!$stmt) {
+        return ['success' => false, 'message' => 'cannot_prepare'];
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $title = 'Lịch biểu khám đã được cập nhật';
+    $message = sprintf(
+        'Preset lịch khám đã thay đổi từ %d phút sang %d phút. Hiệu lực từ %s. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.',
+        $oldDuration,
+        $newDuration,
+        formatVNDate($effectiveFrom)
+    );
+
+    $insertStmt = $conn->prepare(
+        "INSERT INTO thongbaolichkham (maBacSi, maLichKham, loai, tieuDe, noiDung)
+         VALUES (?, NULL, 'Cập nhật lịch biểu', ?, ?)"
+    );
+    if (!$insertStmt) {
+        $stmt->close();
+        return ['success' => false, 'message' => 'cannot_prepare_insert'];
+    }
+
+    $sent = 0;
+    $failed = 0;
+    $details = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $maBacSi = trim((string)($row['maBacSi'] ?? ''));
+        if ($maBacSi === '') {
+            continue;
+        }
+
+        $insertStmt->bind_param('sss', $maBacSi, $title, $message);
+        $ok = $insertStmt->execute();
+        if ($ok) {
+            $sent++;
+        } else {
+            $failed++;
+        }
+
+        $details[] = [
+            'maBacSi' => $maBacSi,
+            'success' => $ok
+        ];
+    }
+
+    $insertStmt->close();
+    $stmt->close();
+
+    return [
+        'success' => true,
+        'sent' => $sent,
+        'failed' => $failed,
+        'details' => $details
+    ];
+}
 ?>

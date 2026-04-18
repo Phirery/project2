@@ -527,6 +527,7 @@ let currentPage = 1;
             document.getElementById('filterDateFrom').addEventListener('change', applyFilters);
             document.getElementById('filterDateTo').addEventListener('change', applyFilters);
             document.getElementById('filterSearch').addEventListener('input', triggerRealtimeAppointmentFilter);
+            document.getElementById('appointmentDate').addEventListener('change', () => loadTimeSlots(true));
         });
 
         async function loadAppointments() {
@@ -780,15 +781,16 @@ let currentPage = 1;
 
         async function loadTimeSlots(includeInactive = false) {
             const maCa = document.getElementById('shiftSelect').value;
+            const ngayKham = document.getElementById('appointmentDate').value;
             const slotSelect = document.getElementById('slotSelect');
             
-            if (!maCa) {
+            if (!maCa || !ngayKham) {
                 slotSelect.innerHTML = '<option value="">-- Chọn suất --</option>';
                 return;
             }
             
             try {
-                const response = await fetch(`${API_BASE_ADMIN}/get-slots.php?maCa=${maCa}${includeInactive ? '&includeInactive=1' : ''}`, {
+                const response = await fetch(`${API_BASE_ADMIN}/get-slots.php?maCa=${maCa}&ngayKham=${ngayKham}${includeInactive ? '&includeInactive=1' : ''}`, {
                     credentials: 'include'
                 });
                 const data = await response.json();

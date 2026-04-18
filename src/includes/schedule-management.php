@@ -23,9 +23,25 @@ function ensureScheduleManagementSchema(mysqli $conn): void
         $conn->query("ALTER TABLE suatkham ADD COLUMN isActive TINYINT(1) NOT NULL DEFAULT 1 AFTER gioKetThuc");
     }
 
+    if (!scheduleManagementColumnExists($conn, 'suatkham', 'effectiveFrom')) {
+        $conn->query("ALTER TABLE suatkham ADD COLUMN effectiveFrom DATE NOT NULL DEFAULT '1900-01-01' AFTER isActive");
+    }
+
+    if (!scheduleManagementColumnExists($conn, 'suatkham', 'effectiveTo')) {
+        $conn->query("ALTER TABLE suatkham ADD COLUMN effectiveTo DATE DEFAULT NULL AFTER effectiveFrom");
+    }
+
+    if (!scheduleManagementColumnExists($conn, 'suatkham', 'presetMinutes')) {
+        $conn->query("ALTER TABLE suatkham ADD COLUMN presetMinutes INT(11) NOT NULL DEFAULT 40 AFTER effectiveTo");
+    }
+
     if (!scheduleManagementColumnExists($conn, 'goikham', 'isActive')) {
         $conn->query("ALTER TABLE goikham ADD COLUMN isActive TINYINT(1) NOT NULL DEFAULT 1 AFTER gia");
     }
+
+    $conn->query("UPDATE suatkham SET effectiveFrom = '1900-01-01' WHERE effectiveFrom IS NULL OR effectiveFrom = '0000-00-00'");
+    $conn->query("UPDATE suatkham SET presetMinutes = 40 WHERE presetMinutes IS NULL OR presetMinutes <= 0");
+    $conn->query("UPDATE suatkham SET effectiveTo = NULL WHERE effectiveTo = '0000-00-00'");
 }
 
 function getAllowedSlotPresets(): array
@@ -56,6 +72,15 @@ function calculateDurationMinutes(string $startTime, string $endTime): int
     return timeStringToMinutes($endTime) - timeStringToMinutes($startTime);
 }
 
+function getNormalizedScheduleDate(?string $date = null): string
+{
+    if ($date && preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+        return $date;
+    }
+
+    return date('Y-m-d');
+}
+
 function getShiftRows(mysqli $conn): array
 {
     ensureScheduleManagementSchema($conn);
@@ -83,21 +108,29 @@ function getShiftRows(mysqli $conn): array
     return $shifts;
 }
 
-function getCurrentActiveSlots(mysqli $conn): array
+function getScheduleSlotsForDate(mysqli $conn, ?string $date = null): array
 {
     ensureScheduleManagementSchema($conn);
+    $targetDate = getNormalizedScheduleDate($date);
 
-    $result = $conn->query(
+    $stmt = $conn->prepare(
         "SELECT
             maSuat,
             maCa,
             TIME_FORMAT(gioBatDau, '%H:%i:%s') AS gioBatDau,
             TIME_FORMAT(gioKetThuc, '%H:%i:%s') AS gioKetThuc,
-            isActive
+            isActive,
+            effectiveFrom,
+            effectiveTo,
+            presetMinutes
          FROM suatkham
-         WHERE isActive = 1
+         WHERE effectiveFrom <= ?
+           AND (effectiveTo IS NULL OR effectiveTo >= ?)
          ORDER BY maCa, gioBatDau, maSuat"
     );
+    $stmt->bind_param('ss', $targetDate, $targetDate);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     $slots = [];
     while ($row = $result->fetch_assoc()) {
@@ -106,38 +139,42 @@ function getCurrentActiveSlots(mysqli $conn): array
             'maCa' => (int)$row['maCa'],
             'gioBatDau' => $row['gioBatDau'],
             'gioKetThuc' => $row['gioKetThuc'],
-            'isActive' => (int)$row['isActive']
+            'isActive' => (int)$row['isActive'],
+            'effectiveFrom' => $row['effectiveFrom'],
+            'effectiveTo' => $row['effectiveTo'],
+            'presetMinutes' => (int)$row['presetMinutes']
         ];
     }
+    $stmt->close();
 
     return $slots;
 }
 
 function getCurrentSlotPresetMinutes(mysqli $conn, int $defaultMinutes = 40): int
 {
-    $slots = getCurrentActiveSlots($conn);
+    $slots = getScheduleSlotsForDate($conn);
 
     if (empty($slots)) {
         return $defaultMinutes;
     }
 
-    $durations = [];
-    foreach ($slots as $slot) {
-        $durations[] = calculateDurationMinutes($slot['gioBatDau'], $slot['gioKetThuc']);
-    }
-
-    $uniqueDurations = array_values(array_unique($durations));
-
-    if (count($uniqueDurations) === 1 && $uniqueDurations[0] > 0) {
-        return $uniqueDurations[0];
+    $presetMinutes = (int)($slots[0]['presetMinutes'] ?? 0);
+    if ($presetMinutes > 0) {
+        return $presetMinutes;
     }
 
     return $defaultMinutes;
 }
 
-function getSlotRowById(mysqli $conn, int $maSuat): ?array
+function getCurrentActiveSlots(mysqli $conn): array
+{
+    return getScheduleSlotsForDate($conn);
+}
+
+function getSlotRowById(mysqli $conn, int $maSuat, ?string $date = null): ?array
 {
     ensureScheduleManagementSchema($conn);
+    $targetDate = getNormalizedScheduleDate($date);
 
     $stmt = $conn->prepare(
         "SELECT
@@ -145,12 +182,17 @@ function getSlotRowById(mysqli $conn, int $maSuat): ?array
             maCa,
             TIME_FORMAT(gioBatDau, '%H:%i:%s') AS gioBatDau,
             TIME_FORMAT(gioKetThuc, '%H:%i:%s') AS gioKetThuc,
-            isActive
+            isActive,
+            effectiveFrom,
+            effectiveTo,
+            presetMinutes
          FROM suatkham
          WHERE maSuat = ?
+           AND effectiveFrom <= ?
+           AND (effectiveTo IS NULL OR effectiveTo >= ?)
          LIMIT 1"
     );
-    $stmt->bind_param('i', $maSuat);
+    $stmt->bind_param('iss', $maSuat, $targetDate, $targetDate);
     $stmt->execute();
     $row = $stmt->get_result()->fetch_assoc();
     $stmt->close();
@@ -164,7 +206,10 @@ function getSlotRowById(mysqli $conn, int $maSuat): ?array
         'maCa' => (int)$row['maCa'],
         'gioBatDau' => $row['gioBatDau'],
         'gioKetThuc' => $row['gioKetThuc'],
-        'isActive' => (int)$row['isActive']
+        'isActive' => (int)$row['isActive'],
+        'effectiveFrom' => $row['effectiveFrom'],
+        'effectiveTo' => $row['effectiveTo'],
+        'presetMinutes' => (int)$row['presetMinutes']
     ];
 }
 
@@ -316,19 +361,37 @@ function applySlotPreset(mysqli $conn, int $durationMinutes): array
 
     $shifts = getShiftRows($conn);
     $generatedSlots = buildSlotsForPreset($shifts, $durationMinutes);
+    $currentDate = getNormalizedScheduleDate();
+    $currentVersionDate = getCurrentScheduleVersionDate($conn);
+    $effectiveFrom = getNextScheduleEffectiveDate($conn);
 
     $conn->begin_transaction();
 
     try {
-        $conn->query("UPDATE suatkham SET isActive = 0 WHERE isActive = 1");
+        $deleteStmt = $conn->prepare("DELETE FROM suatkham WHERE effectiveFrom >= ?");
+        $deleteStmt->bind_param('s', $effectiveFrom);
+        $deleteStmt->execute();
+        $deleteStmt->close();
+
+        if ($currentVersionDate) {
+            $stmtClose = $conn->prepare(
+                "UPDATE suatkham
+                 SET effectiveTo = DATE_SUB(?, INTERVAL 1 DAY), isActive = 0
+                 WHERE effectiveFrom = ?
+                   AND (effectiveTo IS NULL OR effectiveTo >= ?)"
+            );
+            $stmtClose->bind_param('sss', $effectiveFrom, $currentVersionDate, $effectiveFrom);
+            $stmtClose->execute();
+            $stmtClose->close();
+        }
 
         $stmt = $conn->prepare(
-            "INSERT INTO suatkham (maCa, gioBatDau, gioKetThuc, isActive)
-             VALUES (?, ?, ?, 1)"
+            "INSERT INTO suatkham (maCa, gioBatDau, gioKetThuc, isActive, effectiveFrom, effectiveTo, presetMinutes)
+             VALUES (?, ?, ?, 1, ?, NULL, ?)"
         );
 
         foreach ($generatedSlots as $slot) {
-            $stmt->bind_param('iss', $slot['maCa'], $slot['gioBatDau'], $slot['gioKetThuc']);
+            $stmt->bind_param('isssi', $slot['maCa'], $slot['gioBatDau'], $slot['gioKetThuc'], $effectiveFrom, $durationMinutes);
             $stmt->execute();
         }
 
@@ -350,7 +413,8 @@ function getScheduleConfigData(mysqli $conn): array
     ensureScheduleManagementSchema($conn);
 
     $shifts = getShiftRows($conn);
-    $activeSlots = getCurrentActiveSlots($conn);
+    $currentVersionDate = getCurrentScheduleVersionDate($conn);
+    $activeSlots = $currentVersionDate ? getScheduleSlotsForDate($conn, $currentVersionDate) : getCurrentActiveSlots($conn);
     $currentDuration = getCurrentSlotPresetMinutes($conn);
     $slotsByShift = [];
 
@@ -386,7 +450,48 @@ function getScheduleConfigData(mysqli $conn): array
 
     return [
         'currentDurationMinutes' => $currentDuration,
+        'currentEffectiveFrom' => $currentVersionDate,
+        'nextEffectiveFrom' => getNextScheduleEffectiveDate($conn),
         'presetOptions' => getAllowedSlotPresets(),
         'shifts' => $shiftConfigs
     ];
+}
+
+function getCurrentScheduleVersionDate(mysqli $conn, ?string $date = null): ?string
+{
+    ensureScheduleManagementSchema($conn);
+    $targetDate = getNormalizedScheduleDate($date);
+
+    $stmt = $conn->prepare(
+        "SELECT effectiveFrom
+         FROM suatkham
+         WHERE effectiveFrom <= ?
+           AND (effectiveTo IS NULL OR effectiveTo >= ?)
+         ORDER BY effectiveFrom DESC
+         LIMIT 1"
+    );
+    $stmt->bind_param('ss', $targetDate, $targetDate);
+    $stmt->execute();
+    $row = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    return $row['effectiveFrom'] ?? null;
+}
+
+function getLastAppointmentDate(mysqli $conn): ?string
+{
+    $result = $conn->query("SELECT MAX(ngayKham) AS maxDate FROM lichkham WHERE trangThai != 'Hủy'");
+    $row = $result ? $result->fetch_assoc() : null;
+    $date = $row['maxDate'] ?? null;
+    return $date ?: null;
+}
+
+function getNextScheduleEffectiveDate(mysqli $conn): string
+{
+    $lastAppointmentDate = getLastAppointmentDate($conn);
+    if ($lastAppointmentDate) {
+        return date('Y-m-d', strtotime($lastAppointmentDate . ' +1 day'));
+    }
+
+    return date('Y-m-d', strtotime('+1 day'));
 }
