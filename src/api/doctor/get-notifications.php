@@ -23,6 +23,8 @@ try {
     $search = trim($_GET['search'] ?? '');
     $type = trim($_GET['type'] ?? '');
     $status = trim($_GET['status'] ?? '');
+    $order = strtolower(trim($_GET['order'] ?? 'desc'));
+    $orderDir = $order === 'asc' ? 'ASC' : 'DESC';
 
     $stmt = $conn->prepare("SELECT maBacSi FROM bacsi WHERE nguoiDungId = ?");
     $stmt->bind_param("i", $_SESSION['id']);
@@ -97,7 +99,7 @@ try {
         LEFT JOIN lichkham l ON t.maLichKham = l.maLichKham
         LEFT JOIN benhnhan bn ON l.maBenhNhan = bn.maBenhNhan
         $whereSql
-        ORDER BY t.thoiGian DESC, t.maThongBao DESC
+        ORDER BY t.thoiGian $orderDir, t.maThongBao $orderDir
         LIMIT ? OFFSET ?
     ";
     $idStmt = $conn->prepare($idSql);
@@ -132,7 +134,7 @@ try {
             LEFT JOIN benhnhan bn ON l.maBenhNhan = bn.maBenhNhan
             LEFT JOIN calamviec c ON l.maCa = c.maCa
             WHERE t.maThongBao IN ($placeholders)
-            ORDER BY t.thoiGian DESC, t.maThongBao DESC
+            ORDER BY t.thoiGian $orderDir, t.maThongBao $orderDir
         ";
         $dataStmt = $conn->prepare($dataSql);
         $dataTypes = str_repeat('s', count($notificationIds));

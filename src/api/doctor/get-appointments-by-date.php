@@ -27,9 +27,11 @@ $limit = (int)($_GET['limit'] ?? 10);
 if ($limit < 1) $limit = 10;
 if ($limit > 100) $limit = 100;
 
-$search = trim($_GET['search'] ?? '');
-$shift = trim($_GET['shift'] ?? '');
-$status = trim($_GET['status'] ?? '');
+    $search = trim($_GET['search'] ?? '');
+    $shift = trim($_GET['shift'] ?? '');
+    $status = trim($_GET['status'] ?? '');
+    $order = strtolower(trim($_GET['order'] ?? 'desc'));
+    $orderDir = $order === 'asc' ? 'ASC' : 'DESC';
 
 try {
     $stmt_bs = $conn->prepare("SELECT maBacSi FROM bacsi WHERE nguoiDungId = ?");
@@ -144,7 +146,7 @@ try {
         JOIN benhnhan bn ON lk.maBenhNhan = bn.maBenhNhan
         JOIN suatkham sk ON lk.maSuat = sk.maSuat
         $whereSql
-        ORDER BY lk.maCa, sk.gioBatDau, lk.maLichKham
+        ORDER BY lk.maCa $orderDir, sk.gioBatDau $orderDir, lk.maLichKham $orderDir
         LIMIT ? OFFSET ?
     ";
     $idStmt = $conn->prepare($idSql);
@@ -188,7 +190,7 @@ try {
                 WHERE h1.isDeleted = 0
             ) h ON h.maLichKham = lk.maLichKham
             WHERE lk.maLichKham IN ($placeholders)
-            ORDER BY lk.maCa, sk.gioBatDau, lk.maLichKham
+            ORDER BY lk.maCa $orderDir, sk.gioBatDau $orderDir, lk.maLichKham $orderDir
         ";
         $dataStmt = $conn->prepare($dataSql);
         $dataTypes = str_repeat('s', count($appointmentIds));

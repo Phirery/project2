@@ -24,6 +24,8 @@ try {
     $visitType = trim($_GET['visitType'] ?? '');
     $gender = strtolower(trim($_GET['gender'] ?? ''));
     $sort = trim($_GET['sort'] ?? 'recent');
+    $order = strtolower(trim($_GET['order'] ?? 'desc'));
+    $orderDesc = $order !== 'asc';
 
     $stmt = $conn->prepare("SELECT maBacSi FROM bacsi WHERE nguoiDungId = ?");
     $stmt->bind_param("i", $_SESSION['id']);
@@ -114,11 +116,11 @@ try {
         $filterParams[] = $gender;
     }
 
-    $orderBy = "ps.lanKhamGanNhat DESC, ps.tenBenhNhan ASC";
+    $orderBy = $orderDesc ? "ps.lanKhamGanNhat DESC, ps.tenBenhNhan ASC" : "ps.lanKhamGanNhat ASC, ps.tenBenhNhan DESC";
     if ($sort === 'name') {
-        $orderBy = "ps.tenBenhNhan ASC, ps.lanKhamGanNhat DESC";
+        $orderBy = $orderDesc ? "ps.tenBenhNhan ASC, ps.lanKhamGanNhat DESC" : "ps.tenBenhNhan DESC, ps.lanKhamGanNhat ASC";
     } elseif ($sort === 'visits') {
-        $orderBy = "ps.soLanKham DESC, ps.lanKhamGanNhat DESC, ps.tenBenhNhan ASC";
+        $orderBy = $orderDesc ? "ps.soLanKham DESC, ps.lanKhamGanNhat DESC, ps.tenBenhNhan ASC" : "ps.soLanKham ASC, ps.lanKhamGanNhat ASC, ps.tenBenhNhan DESC";
     }
 
     $baseTypes = 'sss';

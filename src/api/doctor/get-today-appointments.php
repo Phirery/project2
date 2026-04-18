@@ -23,6 +23,8 @@ try {
     $search = trim($_GET['search'] ?? '');
     $shift = trim($_GET['shift'] ?? '');
     $status = trim($_GET['status'] ?? '');
+    $order = strtolower(trim($_GET['order'] ?? 'desc'));
+    $orderDir = $order === 'asc' ? 'ASC' : 'DESC';
 
     $stmt = $conn->prepare("SELECT maBacSi FROM bacsi WHERE nguoiDungId = ?");
     $stmt->bind_param("i", $_SESSION['id']);
@@ -101,7 +103,7 @@ try {
         JOIN benhnhan bn ON lk.maBenhNhan = bn.maBenhNhan
         JOIN suatkham sk ON lk.maSuat = sk.maSuat
         $whereSql
-        ORDER BY lk.maCa, sk.gioBatDau, lk.maLichKham
+        ORDER BY lk.maCa $orderDir, sk.gioBatDau $orderDir, lk.maLichKham $orderDir
         LIMIT ? OFFSET ?
     ";
     $idStmt = $conn->prepare($idSql);
@@ -145,7 +147,7 @@ try {
                 WHERE h1.isDeleted = 0
             ) h ON h.maLichKham = lk.maLichKham
             WHERE lk.maLichKham IN ($placeholders)
-            ORDER BY lk.maCa, sk.gioBatDau, lk.maLichKham
+            ORDER BY lk.maCa $orderDir, sk.gioBatDau $orderDir, lk.maLichKham $orderDir
         ";
         $dataStmt = $conn->prepare($dataSql);
         $dataTypes = str_repeat('s', count($appointmentIds));

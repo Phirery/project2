@@ -59,6 +59,13 @@
             align-items: center;
             gap: 10px;
         }
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
 
         .filter-bar {
             background: #f8f9fa;
@@ -89,6 +96,9 @@
             top: 50%;
             transform: translateY(-50%);
             color: #8898aa;
+        }
+        .search-box .search-clear-btn {
+            right: 10px;
         }
 
         .form-select {
@@ -245,6 +255,15 @@
         .btn-delete:hover {
             background: #c0392b;
             transform: translateY(-2px);
+        }
+
+        .actions-col {
+            width: 58px;
+            text-align: center;
+        }
+        .actions-cell {
+            text-align: center;
+            white-space: nowrap;
         }
 
         .loading {
@@ -518,23 +537,23 @@
         </div>
 
         <div class="section-card">
-            <div class="card-header">
+            <div class="card-header table-header">
                 <h5><i class="fas fa-tasks me-2"></i>Hồ sơ cần hoàn thành <span class="badge bg-warning"
                         id="pendingBadge">0</span></h5>
             </div>
             <div class="filter-bar">
                 <div class="row g-3">
-                    <div class="col-md-5">
-                        <div class="search-box"><i class="fas fa-search"></i><input type="text" class="form-control"
-                                id="searchPending" placeholder="Tìm bệnh nhân..." oninput="applyPendingFilters()"></div>
+                    <div class="col-md-8">
+                        <div class="search-box filter-control-wrap"><i class="fas fa-search"></i><input type="text" class="form-control"
+                                id="searchPending" placeholder="Tìm bệnh nhân..." oninput="applyPendingFilters()"><button type="button" class="filter-clear-btn" id="clearSearchPendingBtn" aria-label="Xóa từ khóa tìm kiếm" onclick="clearPendingSearch()">×</button></div>
                     </div>
-                    <div class="col-md-3"><select class="form-select" id="sortPending" onchange="applyPendingFilters()">
+                    <div class="col-md-2">
+                        <select class="form-select" id="sortPending" onchange="applyPendingFilters()">
                             <option value="newest">Mới nhất</option>
                             <option value="oldest">Cũ nhất</option>
                             <option value="name">Tên A-Z</option>
-                        </select></div>
-                    <div class="col-md-2"><button class="btn btn-secondary w-100" onclick="resetPendingFilters()"><i
-                                class="fas fa-redo me-1"></i>Đặt lại</button></div>
+                        </select>
+                    </div>
                     <div class="col-md-2"><button class="btn btn-success w-100" onclick="showCreateModal()"><i
                                 class="fas fa-plus me-1"></i>Khởi tạo</button></div>
                 </div>
@@ -552,7 +571,7 @@
                             <th>Ngày khám</th>
                             <th>Suất khám</th>
                             <th>Trạng thái</th>
-                            <th>Thao tác</th>
+                            <th class="actions-col"><i class="fas fa-cog"></i></th>
                         </tr>
                     </thead>
                     <tbody id="pendingList"></tbody>
@@ -567,24 +586,22 @@
         </div>
 
         <div class="section-card">
-            <div class="card-header">
+            <div class="card-header table-header">
                 <h5><i class="fas fa-check-double me-2"></i>Hồ sơ đã hoàn thành</h5>
             </div>
             <div class="filter-bar">
                 <div class="row g-3">
-                    <div class="col-md-6">
-                        <div class="search-box"><i class="fas fa-search"></i><input type="text" class="form-control"
-                                id="searchCompleted" placeholder="Tìm bệnh nhân..." oninput="applyCompletedFilters()">
-                        </div>
+                    <div class="col-md-9">
+                        <div class="search-box filter-control-wrap"><i class="fas fa-search"></i><input type="text" class="form-control"
+                                id="searchCompleted" placeholder="Tìm bệnh nhân..." oninput="applyCompletedFilters()"><button type="button" class="filter-clear-btn" id="clearSearchCompletedBtn" aria-label="Xóa từ khóa tìm kiếm" onclick="clearCompletedSearch()">×</button></div>
                     </div>
-                    <div class="col-md-3"><select class="form-select" id="sortCompleted"
-                            onchange="applyCompletedFilters()">
+                    <div class="col-md-3">
+                        <select class="form-select" id="sortCompleted" onchange="applyCompletedFilters()">
                             <option value="newest">Mới nhất</option>
                             <option value="oldest">Cũ nhất</option>
                             <option value="name">Tên A-Z</option>
-                        </select></div>
-                    <div class="col-md-3"><button class="btn btn-secondary w-100" onclick="resetCompletedFilters()"><i
-                                class="fas fa-redo me-1"></i>Đặt lại</button></div>
+                        </select>
+                    </div>
                 </div>
             </div>
             <div id="loadingCompleted" class="loading" style="display: none;">
@@ -599,7 +616,7 @@
                             <th>Bệnh nhân</th>
                             <th>Ngày hoàn thành</th>
                             <th>Chẩn đoán</th>
-                            <th>Thao tác</th>
+                            <th class="actions-col"><i class="fas fa-cog"></i></th>
                         </tr>
                     </thead>
                     <tbody id="completedList"></tbody>
@@ -746,15 +763,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/api-config.js"></script>
-    <script src="assets/js/sidebar-doctor.js"></script>    
+    <script src="assets/js/doctor-page-helper.js"></script>
+    <script src="assets/js/sidebar-doctor.js"></script>
     <script>
-        const COMPONENT_PATH = 'components/';
-        const API_BASE_DOCTOR = window.API_ENDPOINTS.doctor;
-        const API_BASE_AUTH = window.API_ENDPOINTS.auth;
-        var DOCTOR_INFO = {};
-    </script>
-    <script>
-        const API_BASE = window.API_ENDPOINTS.doctor;
+        const API_BASE = window.DoctorPageHelper.doctorApiBase;
 
         let pendingPage = 1, completedPage = 1;
         const itemsPerPage = 10;
@@ -766,6 +778,8 @@
         let medicineSearchTimer = null;
 
         document.addEventListener('DOMContentLoaded', async function () {
+            window.DoctorPageHelper.syncSearchClearButton('searchPending', 'clearSearchPendingBtn');
+            window.DoctorPageHelper.syncSearchClearButton('searchCompleted', 'clearSearchCompletedBtn');
             setupMedicineAutocomplete();
             document.getElementById('editModal').addEventListener('hidden.bs.modal', resetPrescriptionEditor);
 
@@ -1171,37 +1185,42 @@
             const container = document.getElementById('pendingList');
             document.getElementById('pendingBadge').textContent = totalPendingRecords;
             if (pendingRecords.length === 0) { showEmptyState('pendingList', totalPendingRecords === 0 ? 'Không có hồ sơ cần hoàn thành' : 'Không tìm thấy kết quả phù hợp', 6); updatePagination('pending'); return; }
-            container.innerHTML = pendingRecords.map(record => `
-                <tr>
-                    <td><span class="record-id">${record.maHoSo}</span></td>
-                    <td><div class="patient-name">${record.tenBenhNhan}</div><div class="patient-info">${record.gioiTinh} - ${calculateAge(record.ngaySinh)} tuổi</div></td>
-                    <td>${formatDate(record.ngayKham)}</td>
-                    <td><span class="time-badge">${record.tenCa}<br>${record.gioBatDau ? record.gioBatDau.substring(0, 5) : 'N/A'}</span></td>
-                    <td><span class="status-badge status-pending"><i class="fas fa-clock me-1"></i>Chưa hoàn thành</span></td>
-                    <td>
-                        <button class="btn-action btn-edit" onclick="showEditModal('${record.maHoSo}')" title="Hoàn thành"><i class="fas fa-edit"></i></button>
-                        <button class="btn-action btn-view" onclick="viewRecord('${record.maHoSo}')" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
-                    </td>
-                </tr>
-            `).join('');
+            container.innerHTML = pendingRecords.map(record => {
+                const actions = [
+                    { label: 'Hoàn thành', icon: 'fa-edit', onClick: `showEditModal('${record.maHoSo}')`, variant: 'edit' },
+                    { label: 'Xem chi tiết', icon: 'fa-eye', onClick: `viewRecord('${record.maHoSo}')`, variant: 'view' }
+                ];
+                return `
+                    <tr>
+                        <td><span class="record-id">${record.maHoSo}</span></td>
+                        <td><div class="patient-name">${record.tenBenhNhan}</div><div class="patient-info">${record.gioiTinh} - ${calculateAge(record.ngaySinh)} tuổi</div></td>
+                        <td>${formatDate(record.ngayKham)}</td>
+                        <td><span class="time-badge">${record.tenCa}<br>${record.gioBatDau ? record.gioBatDau.substring(0, 5) : 'N/A'}</span></td>
+                        <td><span class="status-badge status-pending"><i class="fas fa-clock me-1"></i>Chưa hoàn thành</span></td>
+                        <td class="actions-cell">${window.DoctorPageHelper.renderTableActions(actions)}</td>
+                    </tr>
+                `;
+            }).join('');
             updatePagination('pending');
         }
 
         function displayCompletedRecords() {
             const container = document.getElementById('completedList');
             if (completedRecords.length === 0) { showEmptyState('completedList', totalCompletedRecords === 0 ? 'Chưa có hồ sơ đã hoàn thành' : 'Không tìm thấy kết quả phù hợp', 5); updatePagination('completed'); return; }
-            container.innerHTML = completedRecords.map(record => `
-                <tr>
-                    <td><span class="record-id">${record.maHoSo}</span></td>
-                    <td><div class="patient-name">${record.tenBenhNhan}</div><div class="patient-info">${record.gioiTinh} - ${calculateAge(record.ngaySinh)} tuổi</div></td>
-                    <td>${formatDateTime(record.ngayHoanThanh)}</td>
-                    <td>${truncate(record.chanDoan, 50)}</td>
-                    <td>
-                        <button class="btn-action btn-view" onclick="viewRecord('${record.maHoSo}')" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
-                        <button class="btn-action btn-delete" onclick="deleteRecord('${record.maHoSo}')" title="Xóa"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>
-            `).join('');
+            container.innerHTML = completedRecords.map(record => {
+                const actions = [
+                    { label: 'Xem chi tiết', icon: 'fa-eye', onClick: `viewRecord('${record.maHoSo}')`, variant: 'view' }
+                ];
+                return `
+                    <tr>
+                        <td><span class="record-id">${record.maHoSo}</span></td>
+                        <td><div class="patient-name">${record.tenBenhNhan}</div><div class="patient-info">${record.gioiTinh} - ${calculateAge(record.ngaySinh)} tuổi</div></td>
+                        <td>${formatDateTime(record.ngayHoanThanh)}</td>
+                        <td>${truncate(record.chanDoan, 50)}</td>
+                        <td class="actions-cell">${window.DoctorPageHelper.renderTableActions(actions)}</td>
+                    </tr>
+                `;
+            }).join('');
             updatePagination('completed');
         }
 
@@ -1241,26 +1260,22 @@
 
         function applyPendingFilters() {
             pendingPage = 1;
+            window.DoctorPageHelper.syncSearchClearButton('searchPending', 'clearSearchPendingBtn');
             loadPendingRecords(1);
         }
 
-        function resetPendingFilters() {
-            document.getElementById('searchPending').value = '';
-            document.getElementById('sortPending').value = 'newest';
-            pendingPage = 1;
-            loadPendingRecords(1);
+        function clearPendingSearch() {
+            window.DoctorPageHelper.clearSearchInput('searchPending', 'clearSearchPendingBtn', 'applyPendingFilters');
         }
 
         function applyCompletedFilters() {
             completedPage = 1;
+            window.DoctorPageHelper.syncSearchClearButton('searchCompleted', 'clearSearchCompletedBtn');
             loadCompletedRecords(1);
         }
 
-        function resetCompletedFilters() {
-            document.getElementById('searchCompleted').value = '';
-            document.getElementById('sortCompleted').value = 'newest';
-            completedPage = 1;
-            loadCompletedRecords(1);
+        function clearCompletedSearch() {
+            window.DoctorPageHelper.clearSearchInput('searchCompleted', 'clearSearchCompletedBtn', 'applyCompletedFilters');
         }
 
         async function viewRecord(maHoSo) {
@@ -1399,16 +1414,6 @@
                 saveDraftBtn.disabled = false;
                 completeRecordBtn.disabled = false;
             }
-        }
-
-        async function deleteRecord(maHoSo) {
-            if (!confirm('Bạn có chắc muốn xóa hồ sơ này? Hành động này không thể hoàn tác.')) return;
-            try {
-                const response = await fetch(`${API_BASE}/delete-record.php`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ maHoSo }) });
-                const data = await response.json();
-                if (data.success) { showAlert('success', 'Đã xóa hồ sơ thành công!'); loadStatistics(); loadCompletedRecords(); }
-                else { showAlert('error', data.message || 'Không thể xóa hồ sơ'); }
-            } catch (error) { console.error('Error deleting record:', error); showAlert('error', 'Lỗi kết nối server'); }
         }
 
         function renderSelectedAppointmentInfo(selectElement) {

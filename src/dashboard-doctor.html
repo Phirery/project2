@@ -59,6 +59,13 @@
             align-items: center;
             gap: 10px;
         }
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
 
         .filter-bar {
             background: #f8f9fa;
@@ -89,6 +96,9 @@
             top: 50%;
             transform: translateY(-50%);
             color: #8898aa;
+        }
+        .search-box .search-clear-btn {
+            right: 10px;
         }
 
         .form-select {
@@ -140,6 +150,14 @@
             text-transform: uppercase;
             font-size: 0.85rem;
             letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .actions-col {
+            width: 58px;
+            text-align: center;
+        }
+        .actions-cell {
+            text-align: center;
             white-space: nowrap;
         }
 
@@ -354,28 +372,34 @@
         </div>
 
         <div class="section-card">
-            <div class="card-header">
+            <div class="card-header table-header">
                 <h5><i class="fas fa-calendar-alt me-2"></i>Lịch khám hôm nay <span class="badge bg-primary"
                         id="totalToday">0</span></h5>
+                <div class="table-header-actions">
+                    <button class="sort-toggle-btn" id="sortToggleBtn" type="button" onclick="toggleSortOrder()" aria-label="Đổi thứ tự thời gian">
+                        <i id="sortToggleIcon" class="fas fa-sort-amount-down"></i>
+                    </button>
+                </div>
             </div>
 
             <div class="filter-bar">
                 <div class="row g-3">
-                    <div class="col-md-4">
-                        <div class="search-box">
+                    <div class="col-md-8">
+                        <div class="search-box filter-control-wrap">
                             <i class="fas fa-search"></i>
                             <input type="text" class="form-control" id="searchInput" placeholder="Tìm bệnh nhân..."
                                 oninput="applyFilters()">
+                            <button type="button" class="filter-clear-btn" id="clearSearchBtn" aria-label="Xóa từ khóa tìm kiếm" onclick="clearSearch()">×</button>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <select class="form-select" id="shiftFilter" onchange="applyFilters()">
                             <option value="">Tất cả ca</option>
                             <option value="1">Ca sáng</option>
                             <option value="2">Ca chiều</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <select class="form-select" id="statusFilter" onchange="applyFilters()">
                             <option value="">Tất cả trạng thái</option>
                             <option value="booked">Chờ khám</option>
@@ -383,11 +407,6 @@
                             <option value="completed">Đã khám</option>
                             <option value="cancelled">Đã hủy</option>
                         </select>
-                    </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-secondary w-100" onclick="resetFilters()">
-                            <i class="fas fa-redo me-1"></i>Đặt lại
-                        </button>
                     </div>
                 </div>
             </div>
@@ -406,7 +425,7 @@
                             <th>Giới tính</th>
                             <th>Gói khám</th>
                             <th>Trạng thái</th>
-                            <th>Thao tác</th>
+                            <th class="actions-col"><i class="fas fa-cog"></i></th>
                         </tr>
                     </thead>
                     <tbody id="patientList"></tbody>
@@ -440,20 +459,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/api-config.js"></script>
-    <script src="assets/js/sidebar-doctor.js"></script>    
+    <script src="assets/js/doctor-page-helper.js"></script>
+    <script src="assets/js/sidebar-doctor.js"></script>
     <script>
-        const COMPONENT_PATH = 'components/';
-        const API_BASE_DOCTOR = window.API_ENDPOINTS.doctor;
-        const API_BASE_AUTH = window.API_ENDPOINTS.auth;
-        var DOCTOR_INFO = {};
-    </script>
-    <script>
-        const API_BASE = window.API_ENDPOINTS.doctor;
+        const API_BASE = window.DoctorPageHelper.doctorApiBase;
 
         let currentPage = 1;
         const itemsPerPage = 10;
         let currentAppointments = [];
         let totalAppointments = 0;
+        let sortOrder = 'desc';
 
         function getAppointmentUiStatus(appointment) {
             if (appointment.trangThai === 'Hủy') {
@@ -479,7 +494,7 @@
             if (!appointment.maHoSo) {
                 return {
                     title: 'Khởi tạo hồ sơ',
-                    icon: 'fa-file-circle-plus',
+                    icon: 'fa-notes-medical',
                     url: `ho-so-benh-an.html?createFor=${encodeURIComponent(String(appointment.maLichKham))}`
                 };
             }
@@ -487,7 +502,7 @@
             if (appointment.trangThaiHoSo === 'Chưa hoàn thành') {
                 return {
                     title: 'Hoàn tất hồ sơ',
-                    icon: 'fa-pen-to-square',
+                    icon: 'fa-edit',
                     url: `ho-so-benh-an.html?edit=${encodeURIComponent(String(appointment.maHoSo))}`
                 };
             }
@@ -500,6 +515,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', function () {
+            window.DoctorPageHelper.syncSearchClearButton('searchInput', 'clearSearchBtn');
+            syncSortToggle();
             loadStatistics();
             loadTodayAppointments(1);
         });
@@ -533,6 +550,7 @@
             const search = document.getElementById('searchInput')?.value?.trim() || '';
             const shift = document.getElementById('shiftFilter')?.value || '';
             const status = document.getElementById('statusFilter')?.value || '';
+            params.set('order', sortOrder);
 
             if (search) params.set('search', search);
             if (shift) params.set('shift', shift);
@@ -583,6 +601,18 @@
                 const age = calculateAge(apt.ngaySinh);
                 const status = getAppointmentUiStatus(apt);
                 const recordAction = getRecordAction(apt);
+                const actions = [
+                    { label: 'Xem chi tiết', icon: 'fa-eye', onClick: `viewAppointment(${apt.maLichKham})`, variant: 'view' }
+                ];
+
+                if (recordAction) {
+                    actions.push({
+                        label: recordAction.title,
+                        icon: recordAction.icon,
+                        onClick: `openRecordWorkflow('${recordAction.url}')`,
+                        variant: 'complete'
+                    });
+                }
 
                 return `
                     <tr>
@@ -594,15 +624,7 @@
                         <td>${apt.gioiTinh}</td>
                         <td>${apt.tenGoi}</td>
                         <td><span class="status-badge ${status.className}">${status.label}</span></td>
-                        <td>
-                            <button class="btn-action btn-view" onclick="viewAppointment(${apt.maLichKham})" title="Xem chi tiết">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            ${recordAction ? `
-                            <button class="btn-action btn-complete" onclick="openRecordWorkflow('${recordAction.url}')" title="${recordAction.title}">
-                                <i class="fas ${recordAction.icon}"></i>
-                            </button>` : ''}
-                        </td>
+                        <td class="actions-cell">${window.DoctorPageHelper.renderTableActions(actions)}</td>
                     </tr>
                 `;
             }).join('');
@@ -664,15 +686,27 @@
 
         function applyFilters() {
             currentPage = 1;
+            window.DoctorPageHelper.syncSearchClearButton('searchInput', 'clearSearchBtn');
             loadTodayAppointments(1);
         }
 
-        function resetFilters() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('shiftFilter').value = '';
-            document.getElementById('statusFilter').value = '';
-            currentPage = 1;
-            loadTodayAppointments(1);
+        function clearSearch() {
+            window.DoctorPageHelper.clearSearchInput('searchInput', 'clearSearchBtn', 'applyFilters');
+        }
+
+        function toggleSortOrder() {
+            sortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
+            syncSortToggle();
+            loadTodayAppointments(currentPage);
+        }
+
+        function syncSortToggle() {
+            const btn = document.getElementById('sortToggleBtn');
+            const icon = document.getElementById('sortToggleIcon');
+            if (!btn || !icon) return;
+            const isDesc = sortOrder === 'desc';
+            icon.className = `fas ${isDesc ? 'fa-sort-amount-down' : 'fa-sort-amount-up'}`;
+            btn.title = isDesc ? 'Đang sắp xếp: mới nhất trước' : 'Đang sắp xếp: cũ nhất trước';
         }
 
         async function viewAppointment(maLichKham) {

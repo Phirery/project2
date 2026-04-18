@@ -60,6 +60,13 @@
             align-items: center;
             gap: 10px;
         }
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
 
         .filter-bar {
             background: #f6f9fc;
@@ -90,6 +97,9 @@
             top: 50%;
             transform: translateY(-50%);
             color: #8898aa;
+        }
+        .search-box .search-clear-btn {
+            right: 10px;
         }
 
         .form-select {
@@ -255,6 +265,15 @@
             transform: translateY(-2px);
         }
 
+        .actions-col {
+            width: 58px;
+            text-align: center;
+        }
+        .actions-cell {
+            text-align: center;
+            white-space: nowrap;
+        }
+
         .pagination-container {
             display: flex;
             justify-content: space-between;
@@ -374,32 +393,34 @@
         </div>
 
         <div class="section-card">
-            <div class="card-header">
+            <div class="card-header table-header">
                 <h5><i class="fas fa-list me-2"></i>Danh sách bệnh nhân</h5>
+                <div class="table-header-actions">
+                    <button class="sort-toggle-btn" id="sortToggleBtn" type="button" onclick="toggleSortOrder()" aria-label="Đổi thứ tự thời gian">
+                        <i id="sortToggleIcon" class="fas fa-sort-amount-down"></i>
+                    </button>
+                </div>
             </div>
             <div class="filter-bar">
                 <div class="row g-3">
-                    <div class="col-md-4">
-                        <div class="search-box"><i class="fas fa-search"></i><input type="text" class="form-control"
-                                id="searchInput" placeholder="Tìm theo tên, SĐT, email, chẩn đoán gần nhất..."></div>
+                    <div class="col-md-6">
+                        <div class="search-box filter-control-wrap"><i class="fas fa-search"></i><input type="text" class="form-control"
+                                id="searchInput" placeholder="Tìm theo tên, SĐT, email, chẩn đoán gần nhất..." oninput="applyFilters()"><button type="button" class="filter-clear-btn" id="clearSearchBtn" aria-label="Xóa từ khóa tìm kiếm" onclick="clearSearch()">×</button></div>
                     </div>
-                    <div class="col-md-2"><select class="form-select" id="visitTypeFilter">
+                    <div class="col-md-2"><select class="form-select" id="visitTypeFilter" onchange="applyFilters()">
                             <option value="">Tất cả loại khám</option>
                             <option value="1">Khám mới</option>
                             <option value="2+">Tái khám</option>
                         </select></div>
-                    <div class="col-md-2"><select class="form-select" id="genderFilter">
+                    <div class="col-md-2"><select class="form-select" id="genderFilter" onchange="applyFilters()">
                             <option value="">Tất cả giới tính</option>
                             <option value="nam">Nam</option>
                             <option value="nu">Nữ</option>
                         </select></div>
-                    <div class="col-md-2"><select class="form-select" id="sortFilter">
-                            <option value="recent">Gần đây nhất</option>
+                    <div class="col-md-2"><select class="form-select" id="sortFilter" onchange="applyFilters()">
                             <option value="name">Tên A-Z</option>
                             <option value="visits">Số lần khám</option>
                         </select></div>
-                    <div class="col-md-2"><button class="btn btn-primary w-100" onclick="applyFilters()"><i
-                                class="fas fa-filter me-1"></i>Lọc</button></div>
                 </div>
             </div>
             <div id="loadingIndicator" class="text-center py-5" style="display: none;">
@@ -410,13 +431,12 @@
                 <table class="custom-table">
                     <thead>
                         <tr>
-                            <th>STT</th>
                             <th>Bệnh nhân</th>
                             <th>Giới tính</th>
                             <th>Liên hệ</th>
                             <th>Số lần khám</th>
                             <th>Lần khám gần nhất</th>
-                            <th>Thao tác</th>
+                            <th class="actions-col"><i class="fas fa-cog"></i></th>
                         </tr>
                     </thead>
                     <tbody id="patientList"></tbody>
@@ -450,25 +470,22 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/api-config.js"></script>
-    <script src="assets/js/sidebar-doctor.js"></script>    
+    <script src="assets/js/doctor-page-helper.js"></script>
+    <script src="assets/js/sidebar-doctor.js"></script>
     <script>
-        const COMPONENT_PATH = 'components/';
-        const API_BASE_DOCTOR = window.API_ENDPOINTS.doctor;
-        const API_BASE_AUTH = window.API_ENDPOINTS.auth;
-        var DOCTOR_INFO = {};
-    </script>
-    <script>
-        const API_BASE = window.API_ENDPOINTS.doctor;
+        const API_BASE = window.DoctorPageHelper.doctorApiBase;
 
         let currentPage = 1;
         const itemsPerPage = 10;
         let currentPatients = [];
         let totalPatientsCount = 0;
         let currentPatientId = null;
+        let sortOrder = 'desc';
 
         document.addEventListener('DOMContentLoaded', function () {
+            window.DoctorPageHelper.syncSearchClearButton('searchInput', 'clearSearchBtn');
+            syncSortToggle();
             loadPatients(1);
-            document.getElementById('searchInput').addEventListener('input', () => { applyFilters(); });
         });
 
         function buildPatientQuery(page = 1) {
@@ -479,7 +496,8 @@
             const search = document.getElementById('searchInput')?.value?.trim() || '';
             const visitType = document.getElementById('visitTypeFilter')?.value || '';
             const gender = document.getElementById('genderFilter')?.value || '';
-            const sort = document.getElementById('sortFilter')?.value || 'recent';
+            const sort = document.getElementById('sortFilter')?.value || 'name';
+            params.set('order', sortOrder);
 
             if (search) params.set('search', search);
             if (visitType) params.set('visitType', visitType);
@@ -519,31 +537,30 @@
         function displayPatients() {
             const tbody = document.getElementById('patientList');
             if (currentPatients.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-5">Không có bệnh nhân</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5">Không có bệnh nhân</td></tr>';
                 updatePagination();
                 return;
             }
 
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            tbody.innerHTML = currentPatients.map((patient, index) => {
+            tbody.innerHTML = currentPatients.map((patient) => {
                 const age = calculateAge(patient.ngaySinh);
                 const visitBadge = patient.soLanKham === 1 ? `<span class="visit-badge badge-new"><i class="fas fa-star me-1"></i>Mới</span>` : `<span class="visit-badge badge-revisit"><i class="fas fa-redo me-1"></i>${patient.soLanKham} lần</span>`;
                 const lastVisit = patient.lanKhamGanNhat ? new Date(patient.lanKhamGanNhat).toLocaleDateString('vi-VN') : 'Chưa có';
                 const contactPhone = patient.soDienThoai || 'Chưa có SĐT';
                 const contactEmail = patient.email || 'Chưa có email';
                 const latestSnippet = patient.chanDoanGanNhat ? truncateText(patient.chanDoanGanNhat, 70) : 'Chưa có chẩn đoán';
+                const actions = [
+                    { label: 'Xem chi tiết', icon: 'fa-eye', onClick: `viewPatient('${patient.maBenhNhan}')`, variant: 'view' },
+                    { label: 'Lịch sử khám', icon: 'fa-history', onClick: `viewHistory('${patient.maBenhNhan}')`, variant: 'history' }
+                ];
                 return `
                     <tr>
-                        <td><strong>${startIndex + index + 1}</strong></td>
                         <td><div class="patient-name">${patient.tenBenhNhan}</div><div class="patient-age">${age} tuổi</div></td>
                         <td>${patient.gioiTinh}</td>
                         <td><div class="contact-text">${contactPhone}<div class="secondary">${contactEmail}</div></div></td>
                         <td>${visitBadge}</td>
                         <td><div>${lastVisit}</div><div class="record-snippet">${latestSnippet}</div></td>
-                        <td>
-                            <button class="btn-action btn-view" onclick="viewPatient('${patient.maBenhNhan}')" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
-                            <button class="btn-action btn-history" onclick="viewHistory('${patient.maBenhNhan}')" title="Lịch sử khám"><i class="fas fa-history"></i></button>
-                        </td>
+                        <td class="actions-cell">${window.DoctorPageHelper.renderTableActions(actions)}</td>
                     </tr>
                 `;
             }).join('');
@@ -581,7 +598,27 @@
 
         function applyFilters() {
             currentPage = 1;
+            window.DoctorPageHelper.syncSearchClearButton('searchInput', 'clearSearchBtn');
             loadPatients(1);
+        }
+
+        function clearSearch() {
+            window.DoctorPageHelper.clearSearchInput('searchInput', 'clearSearchBtn', 'applyFilters');
+        }
+
+        function toggleSortOrder() {
+            sortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
+            syncSortToggle();
+            loadPatients(1);
+        }
+
+        function syncSortToggle() {
+            const btn = document.getElementById('sortToggleBtn');
+            const icon = document.getElementById('sortToggleIcon');
+            if (!btn || !icon) return;
+            const isDesc = sortOrder === 'desc';
+            icon.className = `fas ${isDesc ? 'fa-sort-amount-down' : 'fa-sort-amount-up'}`;
+            btn.title = isDesc ? 'Đang sắp xếp: mới nhất trước' : 'Đang sắp xếp: cũ nhất trước';
         }
 
         async function viewPatient(maBenhNhan) {
@@ -625,7 +662,7 @@
             const patient = currentPatients.find(p => String(p.maBenhNhan) === String(maBenhNhan));
             if (!history || history.length === 0) { showAlert('info', 'Chưa có lịch sử khám bệnh'); return; }
             const patientName = patient?.tenBenhNhan || maBenhNhan;
-            let html = `<div class="modal-dialog modal-dialog-centered modal-xl"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="fas fa-history me-2"></i>Lịch sử bệnh án - ${patientName}</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="table-responsive"><table class="table table-hover align-middle"><thead><tr><th>Ngày khám</th><th>Hồ sơ</th><th>Ca / Gói</th><th>Chẩn đoán</th><th>Điều trị</th><th>Toa thuốc</th><th>Thao tác</th></tr></thead><tbody>${history.map(h => `<tr><td><div>${formatDate(h.ngayKham)}</div><div class="record-snippet">${h.ngayHoanThanh ? `Hoàn tất ${formatDateTime(h.ngayHoanThanh)}` : ''}</div></td><td><div class="fw-semibold">${h.maHoSo}</div><div class="record-snippet">${truncateText(h.ghiChu || 'Không có ghi chú', 60)}</div></td><td><div>${h.tenCa || 'N/A'}</div><div class="record-snippet">${h.tenGoi || 'Chưa có gói khám'}${h.gioBatDau ? ` • ${h.gioBatDau.substring(0, 5)} - ${h.gioKetThuc.substring(0, 5)}` : ''}</div></td><td>${truncateText(h.chanDoan || 'Chưa cập nhật', 90)}</td><td>${truncateText(h.dieuTri || 'Chưa cập nhật', 90)}</td><td>${Number(h.soThuoc) > 0 ? `<span class="history-badge"><i class="fas fa-capsules"></i>${Number(h.soThuoc)} thuốc</span>` : '<span class="text-muted">Không có</span>'}${h.loiDanBacSi ? `<div class="record-snippet">${truncateText(h.loiDanBacSi, 70)}</div>` : ''}</td><td><a class="btn btn-sm btn-outline-primary" href="ho-so-benh-an.html?view=${encodeURIComponent(h.maHoSo)}"><i class="fas fa-eye me-1"></i>Xem hồ sơ</a></td></tr>`).join('')}</tbody></table></div></div></div></div>`;
+            let html = `<div class="modal-dialog modal-dialog-centered modal-xl"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="fas fa-history me-2"></i>Lịch sử bệnh án - ${patientName}</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="table-responsive"><table class="table table-hover align-middle"><thead><tr><th>Ngày khám</th><th>Hồ sơ</th><th>Ca / Gói</th><th>Chẩn đoán</th><th>Điều trị</th><th>Toa thuốc</th><th class="actions-col"><i class="fas fa-cog"></i></th></tr></thead><tbody>${history.map(h => `<tr><td><div>${formatDate(h.ngayKham)}</div><div class="record-snippet">${h.ngayHoanThanh ? `Hoàn tất ${formatDateTime(h.ngayHoanThanh)}` : ''}</div></td><td><div class="fw-semibold">${h.maHoSo}</div><div class="record-snippet">${truncateText(h.ghiChu || 'Không có ghi chú', 60)}</div></td><td><div>${h.tenCa || 'N/A'}</div><div class="record-snippet">${h.tenGoi || 'Chưa có gói khám'}${h.gioBatDau ? ` • ${h.gioBatDau.substring(0, 5)} - ${h.gioKetThuc.substring(0, 5)}` : ''}</div></td><td>${truncateText(h.chanDoan || 'Chưa cập nhật', 90)}</td><td>${truncateText(h.dieuTri || 'Chưa cập nhật', 90)}</td><td>${Number(h.soThuoc) > 0 ? `<span class="history-badge"><i class="fas fa-capsules"></i>${Number(h.soThuoc)} thuốc</span>` : '<span class="text-muted">Không có</span>'}${h.loiDanBacSi ? `<div class="record-snippet">${truncateText(h.loiDanBacSi, 70)}</div>` : ''}</td><td class="actions-cell"><a class="btn btn-sm btn-outline-primary" href="ho-so-benh-an.html?view=${encodeURIComponent(h.maHoSo)}"><i class="fas fa-eye me-1"></i>Xem hồ sơ</a></td></tr>`).join('')}</tbody></table></div></div></div></div>`;
             const existingModal = document.querySelector('#viewPatientModal');
             if (existingModal) bootstrap.Modal.getInstance(existingModal)?.hide();
             const tempDiv = document.createElement('div');
@@ -640,7 +677,7 @@
         function formatDateTime(value) { return value ? new Date(value).toLocaleString('vi-VN') : ''; }
         function animateNumber(elementId, targetNumber) { const el = document.getElementById(elementId); if (!el) return; let cur = 0; const inc = targetNumber / 50; const timer = setInterval(() => { cur += inc; if (cur >= targetNumber) { el.textContent = targetNumber; clearInterval(timer); } else { el.textContent = Math.floor(cur); } }, 20); }
         function showLoading(show) { document.getElementById('loadingIndicator').style.display = show ? 'block' : 'none'; document.querySelector('.table-responsive').style.display = show ? 'none' : 'block'; }
-        function showError(message) { document.getElementById('patientList').innerHTML = `<tr><td colspan="7" class="text-center py-5 text-danger">${message}</td></tr>`; }
+        function showError(message) { document.getElementById('patientList').innerHTML = `<tr><td colspan="6" class="text-center py-5 text-danger">${message}</td></tr>`; }
     </script>
 </body>
 

@@ -2,6 +2,12 @@
     'use strict';
 
     const DEFAULT_DB_AVATAR_KEY = 'samples/paper.png';
+    const doctorHelper = window.DoctorPageHelper || {};
+    const COMPONENT_PATH = doctorHelper.componentPath || window.COMPONENT_PATH || 'components/';
+    const API_BASE_DOCTOR = doctorHelper.doctorApiBase || window.API_BASE_DOCTOR || '';
+    const API_BASE_AUTH = doctorHelper.authApiBase || window.API_BASE_AUTH || '';
+
+    window.DOCTOR_INFO = window.DOCTOR_INFO || {};
 
     async function loadSidebar() {
         try {
@@ -104,7 +110,7 @@
                 const firstLetters = doctorName.split(' ').slice(-2).map(w => w[0]).join('').toUpperCase() || 'BS';
 
                 // Store in global variable
-                DOCTOR_INFO = {
+                window.DOCTOR_INFO = {
                     id: data.data.maBacSi,
                     tenBacSi: doctorName,
                     vaiTro: 'bacsi'
