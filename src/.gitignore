@@ -1,3 +1,4 @@
 .env
 *.log
 cron/logs/*.log
+database/db.sql

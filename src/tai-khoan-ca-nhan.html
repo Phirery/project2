@@ -112,7 +112,7 @@
             flex: 0 0 100%;
         }
 
-        /* Avatar edit overlay (doctor only, edit mode) */
+        /* Avatar edit overlay (allowed roles in edit mode) */
         .avatar-edit-wrap {
             position: relative;
             display: inline-block;
@@ -157,7 +157,7 @@
             font-weight: 600;
         }
 
-        /* Avatar upload mini-button (edit mode, doctor only) */
+        /* Avatar upload mini-button (edit mode, allowed roles only) */
         .btn-change-avatar {
             display: none;
             margin-top: 8px;
@@ -579,7 +579,7 @@
     <!-- Profile Header -->
     <div class="profile-header">
         <div class="profile-header-content">
-            <!-- Avatar (bác sĩ: có overlay khi edit mode) -->
+            <!-- Avatar (vai trò được phép: có overlay khi edit mode) -->
             <div id="avatarWrap" class="profile-avatar">
                 <span id="avatarInitials">U</span>
             </div>
@@ -587,7 +587,7 @@
             <div class="profile-info">
                 <h2 id="profileName">Đang tải...</h2>
                 <span class="profile-role" id="profileRole">—</span>
-                <!-- Nút thay ảnh (chỉ bác sĩ, chỉ hiện khi edit mode) -->
+                <!-- Nút thay ảnh (chỉ hiện khi edit mode cho vai trò được phép) -->
                 <div>
                     <button class="btn-change-avatar" id="btnChangeAvatar" onclick="triggerAvatarPicker()">
                         <i class="fas fa-camera me-1"></i> Thay đổi ảnh
@@ -599,7 +599,7 @@
         </div>
     </div>
 
-    <!-- Hidden file input for avatar (doctor) -->
+    <!-- Hidden file input for avatar -->
     <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="previewAvatar(event)">
 
     <!-- Tabs -->
@@ -817,7 +817,7 @@
     };
 
     let userData    = {};
-    let pendingAvatarFile = null;   // File ảnh đại diện chờ upload (bác sĩ)
+    let pendingAvatarFile = null;   // File ảnh đại diện chờ upload
     let otpCountdownInterval  = null;
     let resendCooldownInterval = null;
     let updateCooldownInterval = null;
@@ -877,7 +877,11 @@
         renderAvatarEl(document.getElementById('avatarWrap'), userData.hoTen, userData.avatar, false);
     }
 
-    /** Renders avatar — either <img> or initials. editMode adds overlay for bacsi. */
+    function canEditAvatar(role) {
+        return ['bacsi', 'benhnhan', 'quantri'].includes(role);
+    }
+
+    /** Renders avatar — either <img> or initials. editMode adds overlay for allowed roles. */
     function renderAvatarEl(wrap, name, avatarUrl, editMode) {
         const isDefault = !avatarUrl || avatarUrl.includes('samples/paper.png');
         if (!isDefault) {
@@ -889,7 +893,7 @@
             wrap.innerHTML = `<span>${initials}</span>`;
         }
 
-        if (editMode && userData.vaiTro === 'bacsi') {
+        if (editMode && canEditAvatar(userData.vaiTro)) {
             const overlay = document.createElement('div');
             overlay.className = 'avatar-overlay';
             overlay.innerHTML = '<i class="fas fa-camera"></i>';
@@ -1000,8 +1004,8 @@
         document.getElementById('btnSave').style.display   = 'inline-flex';
         document.getElementById('btnCancel').style.display = 'inline-flex';
 
-        // Nếu là bác sĩ: hiện nút thay ảnh, thêm overlay avatar
-        if (userData.vaiTro === 'bacsi') {
+        // Vai trò được phép: hiện nút thay ảnh, thêm overlay avatar
+        if (canEditAvatar(userData.vaiTro)) {
             document.getElementById('btnChangeAvatar').style.display = 'inline-block';
             document.getElementById('avatarHint').style.display = 'block';
             renderAvatarEl(document.getElementById('avatarWrap'), userData.hoTen, userData.avatar, true);
@@ -1033,8 +1037,8 @@
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang lưu...';
 
         try {
-            // Nếu bác sĩ có chọn ảnh mới → upload trước
-            if (userData.vaiTro === 'bacsi' && pendingAvatarFile) {
+            // Nếu có chọn ảnh mới và thuộc vai trò được phép → upload trước
+            if (canEditAvatar(userData.vaiTro) && pendingAvatarFile) {
                 await uploadAvatar();
             }
 
@@ -1062,9 +1066,13 @@
     }
 
 
-    //  AVATAR (BÁC SĨ)
+    //  AVATAR
 
     function triggerAvatarPicker() {
+        if (!canEditAvatar(userData.vaiTro)) {
+            showAlert('error', 'Vai trò hiện tại không được phép đổi ảnh đại diện');
+            return;
+        }
         document.getElementById('avatarFileInput').click();
     }
 

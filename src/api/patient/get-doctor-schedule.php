@@ -1,6 +1,7 @@
 <?php
 require_once '../../config/cors.php';
 require_once '../../config/db.php';
+require_once '../../includes/schedule-management.php';
 
 $maBacSi = $_GET['maBacSi'] ?? '';
 $ngayKham = $_GET['ngayKham'] ?? '';
@@ -14,6 +15,8 @@ if (empty($maBacSi) || empty($ngayKham)) {
 }
 
 try {
+    ensureScheduleManagementSchema($conn);
+
     $doctorStmt = $conn->prepare("
         SELECT COUNT(*) AS count
         FROM bacsi bs
@@ -73,7 +76,7 @@ try {
     }
     $offStmt->close();
     
-    // Lấy TẤT CẢ suất khám (12 suất: 6 sáng + 6 chiều)
+    // Lấy TẤT CẢ suất khám active của cấu hình hiện hành
     $stmt = $conn->prepare("
         SELECT 
             sk.maSuat,
@@ -81,16 +84,25 @@ try {
             sk.gioBatDau,
             sk.gioKetThuc,
             c.tenCa,
-            lk.maLichKham,
-            lk.trangThai
+            CASE
+                WHEN EXISTS (
+                    SELECT 1
+                    FROM lichkham lk
+                    JOIN suatkham bookedSk ON lk.maSuat = bookedSk.maSuat
+                    WHERE lk.maBacSi = ?
+                      AND lk.ngayKham = ?
+                      AND lk.trangThai != 'Hủy'
+                      AND (
+                          (bookedSk.gioBatDau >= sk.gioBatDau AND bookedSk.gioBatDau < sk.gioKetThuc)
+                          OR (bookedSk.gioKetThuc > sk.gioBatDau AND bookedSk.gioKetThuc <= sk.gioKetThuc)
+                          OR (bookedSk.gioBatDau <= sk.gioBatDau AND bookedSk.gioKetThuc >= sk.gioKetThuc)
+                      )
+                ) THEN 1
+                ELSE 0
+            END AS isBooked
         FROM suatkham sk
         JOIN calamviec c ON sk.maCa = c.maCa
-        LEFT JOIN lichkham lk ON (
-            lk.maBacSi = ? AND 
-            lk.ngayKham = ? AND 
-            lk.maSuat = sk.maSuat AND
-            lk.trangThai != 'Hủy'
-        )
+        WHERE sk.isActive = 1
         ORDER BY sk.maCa, sk.gioBatDau
     ");
     $stmt->bind_param("ss", $maBacSi, $ngayKham);
@@ -104,7 +116,7 @@ try {
     
     while ($row = $result->fetch_assoc()) {
         $maCa = (int)$row['maCa'];
-        $isBooked = !empty($row['maLichKham']);
+        $isBooked = (int)($row['isBooked'] ?? 0) === 1;
         $isDoctorOff = $offAllDay || in_array($maCa, $offShifts);
         
         // Xác định trạng thái

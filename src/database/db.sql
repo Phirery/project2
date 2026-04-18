@@ -221,12 +221,13 @@ CREATE TABLE goikham (
   tenGoi varchar(100) NOT NULL,
   moTa text DEFAULT NULL,
   thoiLuong int(11) DEFAULT 40,
-  gia decimal(10,2) NOT NULL
+  gia decimal(10,2) NOT NULL,
+  isActive tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO goikham (maGoi, tenGoi, moTa, thoiLuong, gia) VALUES
-(1, 'Gói khám thường', 'Khám với bác sĩ tổng quát', 40, 150000.00),
-(2, 'Gói khám cao cấp', 'Khám với bác sĩ chuyên gia', 40, 250000.00);
+INSERT INTO goikham (maGoi, tenGoi, moTa, thoiLuong, gia, isActive) VALUES
+(1, 'Gói khám thường', 'Khám với bác sĩ tổng quát', 40, 150000.00, 1),
+(2, 'Gói khám cao cấp', 'Khám với bác sĩ chuyên gia', 40, 250000.00, 1);
 
 CREATE TABLE hoadon (
   maHoaDon int(11) NOT NULL,
@@ -788,22 +789,23 @@ CREATE TABLE suatkham (
   maSuat int(11) NOT NULL,
   maCa int(11) NOT NULL,
   gioBatDau time NOT NULL,
-  gioKetThuc time NOT NULL
+  gioKetThuc time NOT NULL,
+  isActive tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO suatkham (maSuat, maCa, gioBatDau, gioKetThuc) VALUES
-(1, 1, '07:00:00', '07:40:00'),
-(2, 1, '07:40:00', '08:20:00'),
-(3, 1, '08:20:00', '09:00:00'),
-(4, 1, '09:00:00', '09:40:00'),
-(5, 1, '09:40:00', '10:20:00'),
-(6, 1, '10:20:00', '11:00:00'),
-(7, 2, '13:00:00', '13:40:00'),
-(8, 2, '13:40:00', '14:20:00'),
-(9, 2, '14:20:00', '15:00:00'),
-(10, 2, '15:00:00', '15:40:00'),
-(11, 2, '15:40:00', '16:20:00'),
-(12, 2, '16:20:00', '17:00:00');
+INSERT INTO suatkham (maSuat, maCa, gioBatDau, gioKetThuc, isActive) VALUES
+(1, 1, '07:00:00', '07:40:00', 1),
+(2, 1, '07:40:00', '08:20:00', 1),
+(3, 1, '08:20:00', '09:00:00', 1),
+(4, 1, '09:00:00', '09:40:00', 1),
+(5, 1, '09:40:00', '10:20:00', 1),
+(6, 1, '10:20:00', '11:00:00', 1),
+(7, 2, '13:00:00', '13:40:00', 1),
+(8, 2, '13:40:00', '14:20:00', 1),
+(9, 2, '14:20:00', '15:00:00', 1),
+(10, 2, '15:00:00', '15:40:00', 1),
+(11, 2, '15:40:00', '16:20:00', 1),
+(12, 2, '16:20:00', '17:00:00', 1);
 
 CREATE TABLE thongbaoadmin (
   maThongBao int(11) NOT NULL,

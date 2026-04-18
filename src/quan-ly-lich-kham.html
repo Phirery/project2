@@ -778,7 +778,7 @@ let currentPage = 1;
             }
         }
 
-        async function loadTimeSlots() {
+        async function loadTimeSlots(includeInactive = false) {
             const maCa = document.getElementById('shiftSelect').value;
             const slotSelect = document.getElementById('slotSelect');
             
@@ -788,7 +788,7 @@ let currentPage = 1;
             }
             
             try {
-                const response = await fetch(`${API_BASE_ADMIN}/get-slots.php?maCa=${maCa}`, {
+                const response = await fetch(`${API_BASE_ADMIN}/get-slots.php?maCa=${maCa}${includeInactive ? '&includeInactive=1' : ''}`, {
                     credentials: 'include'
                 });
                 const data = await response.json();
@@ -796,16 +796,19 @@ let currentPage = 1;
                 if (data.success) {
                     allSlots = data.data;
                     slotSelect.innerHTML = '<option value="">-- Chọn suất --</option>' +
-                        data.data.map(s => `<option value="${s.maSuat}">${s.gioBatDau} - ${s.gioKetThuc}</option>`).join('');
+                        data.data.map(s => {
+                            const inactiveLabel = Number(s.isActive) === 1 ? '' : ' (ngừng áp dụng)';
+                            return `<option value="${s.maSuat}">${s.gioBatDau} - ${s.gioKetThuc}${inactiveLabel}</option>`;
+                        }).join('');
                 }
             } catch (error) {
                 console.error('Error:', error);
             }
         }
 
-        async function loadPackages() {
+        async function loadPackages(includeInactive = false) {
             try {
-                const response = await fetch(`${API_BASE_ADMIN}/get-packages.php`, {
+                const response = await fetch(`${API_BASE_ADMIN}/get-packages.php${includeInactive ? '?includeInactive=1' : ''}`, {
                     credentials: 'include'
                 });
                 const data = await response.json();
@@ -814,7 +817,10 @@ let currentPage = 1;
                     allPackages = data.data;
                     const select = document.getElementById('packageSelect');
                     select.innerHTML = '<option value="">-- Chọn gói --</option>' +
-                        data.data.map(p => `<option value="${p.maGoi}">${p.tenGoi} - ${formatCurrency(p.gia)}</option>`).join('');
+                        data.data.map(p => {
+                            const inactiveLabel = Number(p.isActive) === 1 ? '' : ' (ngừng áp dụng)';
+                            return `<option value="${p.maGoi}">${p.tenGoi} - ${formatCurrency(p.gia)}${inactiveLabel}</option>`;
+                        }).join('');
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -826,6 +832,7 @@ let currentPage = 1;
             document.getElementById('appointmentForm').reset();
             document.getElementById('appointmentId').value = '';
             currentEditingOriginalStatus = null;
+            loadPackages();
             updateStatusSelectForContext(null, true);
             new bootstrap.Modal(document.getElementById('appointmentModal')).show();
         }
@@ -841,7 +848,8 @@ let currentPage = 1;
             document.getElementById('appointmentDate').value = apt.ngayKham;
             document.getElementById('shiftSelect').value = apt.maCa;
             
-            await loadTimeSlots();
+            await loadPackages(true);
+            await loadTimeSlots(true);
             document.getElementById('slotSelect').value = apt.maSuat;
             document.getElementById('packageSelect').value = apt.maGoi || '';
             currentEditingOriginalStatus = apt.trangThai;

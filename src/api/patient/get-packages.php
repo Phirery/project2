@@ -1,9 +1,15 @@
 <?php
 require_once '../../config/cors.php';
 require_once '../../config/db.php';
+require_once '../../includes/schedule-management.php';
 
 try {
-    $sql = "SELECT maGoi, tenGoi, moTa, gia FROM goikham ORDER BY gia";
+    ensureScheduleManagementSchema($conn);
+
+    $sql = "SELECT maGoi, tenGoi, moTa, gia
+            FROM goikham
+            WHERE isActive = 1
+            ORDER BY gia, maGoi";
     $result = $conn->query($sql);
     
     $packages = [];

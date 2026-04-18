@@ -3,6 +3,7 @@ require_once '../../config/cors.php';
 require_once '../../config/db.php';
 require_once '../../config/session.php';
 require_once '../../includes/mail-events.php';
+require_once '../../includes/schedule-management.php';
 
 require_role('quantri');
 
@@ -51,6 +52,8 @@ if (!array_key_exists($trangThai, $allowedTransitions)) {
 }
 
 try {
+    ensureScheduleManagementSchema($conn);
+
     // Lấy snapshot cũ để xác định có đổi lịch/hủy hay không
     $oldStmt = $conn->prepare(
         "SELECT
@@ -102,6 +105,77 @@ try {
     }
 
     $oldSnapshot = extractAppointmentSnapshotFromDbRow($oldRow);
+
+    $selectedSlot = getSlotRowById($conn, $maSuat);
+    if (!$selectedSlot || $selectedSlot['maCa'] !== $maCa) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Suất khám không tồn tại hoặc không thuộc ca đã chọn'
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    $isKeepingOldSlot = (int)$oldRow['maSuat'] === $maSuat;
+    if ((int)$selectedSlot['isActive'] !== 1 && !$isKeepingOldSlot) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Suất khám này không còn được áp dụng'
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    $doctorConflict = findDoctorOverlap(
+        $conn,
+        $maBacSi,
+        $ngayKham,
+        $selectedSlot['gioBatDau'],
+        $selectedSlot['gioKetThuc'],
+        $maLichKham
+    );
+    if ($doctorConflict) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Khung giờ này đã có lịch khám khác (Mã lịch: ' . $doctorConflict['maLichKham'] . ')'
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    $patientConflict = findPatientOverlap(
+        $conn,
+        $maBenhNhan,
+        $ngayKham,
+        $selectedSlot['gioBatDau'],
+        $selectedSlot['gioKetThuc'],
+        $maLichKham
+    );
+    if ($patientConflict) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Bệnh nhân đã có lịch trùng giờ (Mã lịch: ' . $patientConflict['maLichKham'] . ')'
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    if ($maGoi !== null) {
+        $packageRow = getPackageRowById($conn, $maGoi);
+        $isKeepingOldPackage = (int)($oldRow['maGoi'] ?? 0) === $maGoi;
+
+        if (!$packageRow) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Gói khám không tồn tại'
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        if ((int)$packageRow['isActive'] !== 1 && !$isKeepingOldPackage) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Gói khám này đã ngừng áp dụng'
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+    }
 
     $finalGhiChu = $ghiChu !== '' ? $ghiChu : null;
 

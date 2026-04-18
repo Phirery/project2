@@ -208,6 +208,7 @@
         const pageTitles = {
             'dashboard-admin.html': '<i class="fas fa-chart-line me-2"></i>Dashboard',
             'quan-ly-lich-kham.html': '<i class="fas fa-calendar-check me-2"></i>Quản Lý Lịch Khám',
+            'quan-ly-lich-bieu.html': '<i class="fas fa-calendar-alt me-2"></i>Quản Lý Lịch Biểu',
             'quan-ly-khoa.html': '<i class="fas fa-hospital me-2"></i>Quản Lý Khoa',
             'quan-ly-benh-nhan.html': '<i class="fas fa-user-injured me-2"></i>Quản Lý Bệnh Nhân',
             'quan-ly-bac-si.html': '<i class="fas fa-user-md me-2"></i>Quản Lý Bác Sĩ',

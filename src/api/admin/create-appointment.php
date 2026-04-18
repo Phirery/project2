@@ -3,6 +3,7 @@ require_once '../../config/cors.php';
 require_once '../../config/db.php';
 require_once '../../config/session.php';
 require_once '../../includes/mail-events.php';
+require_once '../../includes/schedule-management.php';
 
 require_role('quantri');
 
@@ -23,7 +24,47 @@ if ($maBenhNhan === '' || $maBacSi === '' || $ngayKham === '' || $maCa <= 0 || $
 }
 
 try {
+    ensureScheduleManagementSchema($conn);
     $conn->begin_transaction();
+
+    $selectedSlot = getSlotRowById($conn, $maSuat);
+    if (!$selectedSlot || $selectedSlot['maCa'] !== $maCa) {
+        throw new Exception('Suất khám không tồn tại hoặc không thuộc ca đã chọn');
+    }
+
+    if ((int)$selectedSlot['isActive'] !== 1) {
+        throw new Exception('Suất khám này không còn được áp dụng');
+    }
+
+    $doctorConflict = findDoctorOverlap(
+        $conn,
+        $maBacSi,
+        $ngayKham,
+        $selectedSlot['gioBatDau'],
+        $selectedSlot['gioKetThuc']
+    );
+    if ($doctorConflict) {
+        throw new Exception('Khung giờ này đã có lịch khám khác (Mã lịch: ' . $doctorConflict['maLichKham'] . ')');
+    }
+
+    $patientConflict = findPatientOverlap(
+        $conn,
+        $maBenhNhan,
+        $ngayKham,
+        $selectedSlot['gioBatDau'],
+        $selectedSlot['gioKetThuc']
+    );
+    if ($patientConflict) {
+        throw new Exception('Bệnh nhân đã có lịch trùng giờ (Mã lịch: ' . $patientConflict['maLichKham'] . ')');
+    }
+
+    $packageRow = null;
+    if ($maGoi !== null) {
+        $packageRow = getPackageRowById($conn, $maGoi);
+        if (!$packageRow || (int)$packageRow['isActive'] !== 1) {
+            throw new Exception('Gói khám không tồn tại hoặc đã ngừng áp dụng');
+        }
+    }
 
     if ($maGoi === null) {
         $stmt = $conn->prepare(
@@ -47,22 +88,14 @@ try {
     $stmt->close();
 
     // Tạo hóa đơn mặc định nếu lịch có gói khám
-    if ($maGoi !== null) {
-        $priceStmt = $conn->prepare("SELECT gia FROM goikham WHERE maGoi = ? LIMIT 1");
-        $priceStmt->bind_param('i', $maGoi);
-        $priceStmt->execute();
-        $row = $priceStmt->get_result()->fetch_assoc();
-        $priceStmt->close();
-
-        if ($row) {
-            $amount = (float)$row['gia'];
+    if ($packageRow) {
+            $amount = (float)$packageRow['gia'];
             $invoiceStmt = $conn->prepare(
                 "INSERT INTO hoadon (maLichKham, soTien, trangThai) VALUES (?, ?, 'Chưa thanh toán')"
             );
             $invoiceStmt->bind_param('id', $maLichKham, $amount);
             $invoiceStmt->execute();
             $invoiceStmt->close();
-        }
     }
 
     $conn->commit();

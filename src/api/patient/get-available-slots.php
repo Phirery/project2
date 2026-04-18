@@ -1,6 +1,7 @@
 <?php
 require_once '../../config/cors.php';
 require_once '../../config/db.php';
+require_once '../../includes/schedule-management.php';
 
 $maBacSi = $_GET['maBacSi'] ?? '';
 $ngayKham = $_GET['ngayKham'] ?? '';
@@ -15,6 +16,8 @@ if (empty($maBacSi) || empty($ngayKham) || empty($maCa)) {
 }
 
 try {
+    ensureScheduleManagementSchema($conn);
+
     // Bác sĩ đã xóa mềm thì không trả về slot
     $doctorStmt = $conn->prepare("
         SELECT COUNT(*) AS count
@@ -57,18 +60,25 @@ try {
             CASE 
                 -- Nếu bác sĩ nghỉ ca này -> tất cả suất đều unavailable
                 WHEN ? = 1 THEN 0
-                -- Kiểm tra suất đã được đặt chưa
+                -- Kiểm tra lịch khám đã đặt có chồng thời gian với slot hiện tại không
                 WHEN EXISTS (
-                    SELECT 1 FROM lichkham lk 
-                    WHERE lk.maBacSi = ? 
-                    AND lk.ngayKham = ? 
-                    AND lk.maSuat = sk.maSuat
-                    AND lk.trangThai != 'Hủy'
+                    SELECT 1
+                    FROM lichkham lk
+                    JOIN suatkham bookedSk ON lk.maSuat = bookedSk.maSuat
+                    WHERE lk.maBacSi = ?
+                      AND lk.ngayKham = ?
+                      AND lk.trangThai != 'Hủy'
+                      AND (
+                          (bookedSk.gioBatDau >= sk.gioBatDau AND bookedSk.gioBatDau < sk.gioKetThuc)
+                          OR (bookedSk.gioKetThuc > sk.gioBatDau AND bookedSk.gioKetThuc <= sk.gioKetThuc)
+                          OR (bookedSk.gioBatDau <= sk.gioBatDau AND bookedSk.gioKetThuc >= sk.gioKetThuc)
+                      )
                 ) THEN 0
                 ELSE 1
             END as available
         FROM suatkham sk
         WHERE sk.maCa = ?
+          AND sk.isActive = 1
         ORDER BY sk.gioBatDau
     ");
     $stmt->bind_param("issi", $isOff, $maBacSi, $ngayKham, $maCa);

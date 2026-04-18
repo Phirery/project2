@@ -3,6 +3,7 @@ require_once '../../config/cors.php';
 require_once '../../config/db.php';
 require_once '../../config/session.php';
 require_once '../../includes/mail-events.php';
+require_once '../../includes/schedule-management.php';
 
 require_role('benhnhan');
 
@@ -11,13 +12,13 @@ $data = json_decode(file_get_contents('php://input'), true);
 $maBenhNhan = $data['maBenhNhan'] ?? '';
 $maBacSi = $data['maBacSi'] ?? '';
 $ngayKham = $data['ngayKham'] ?? '';
-$maCa = $data['maCa'] ?? '';
-$maSuat = $data['maSuat'] ?? '';
-$maGoi = $data['maGoi'] ?? '';
-$ghiChu = $data['ghiChu'] ?? '';
+$maCa = isset($data['maCa']) ? (int)$data['maCa'] : 0;
+$maSuat = isset($data['maSuat']) ? (int)$data['maSuat'] : 0;
+$maGoi = isset($data['maGoi']) && $data['maGoi'] !== '' ? (int)$data['maGoi'] : null;
+$ghiChu = trim($data['ghiChu'] ?? '');
 
 // Validation
-if (empty($maBenhNhan) || empty($maBacSi) || empty($ngayKham) || empty($maCa) || empty($maSuat)) {
+if (empty($maBenhNhan) || empty($maBacSi) || empty($ngayKham) || $maCa <= 0 || $maSuat <= 0) {
     echo json_encode([
         'success' => false,
         'message' => 'Thiếu thông tin bắt buộc'
@@ -45,6 +46,7 @@ if ($ngayKham < $today) {
 }
 
 try {
+    ensureScheduleManagementSchema($conn);
     $conn->begin_transaction();
 
     // 0. Kiểm tra bác sĩ còn hoạt động
@@ -80,60 +82,59 @@ try {
         throw new Exception('Bác sĩ nghỉ trong ca này. Vui lòng chọn bác sĩ hoặc ca khác!');
     }
     
-    // 2. Kiểm tra suất khám có bị trùng KHÔNG (bất kể gói khám)
-    // Quan trọng: Chỉ cần maBacSi + ngayKham + maSuat trùng là không cho đặt
-    $checkStmt = $conn->prepare("
-        SELECT maLichKham, maGoi, trangThai
-        FROM lichkham 
-        WHERE maBacSi = ? 
-        AND ngayKham = ? 
-        AND maSuat = ? 
-        AND trangThai != 'Hủy'
-    ");
-    $checkStmt->bind_param("ssi", $maBacSi, $ngayKham, $maSuat);
-    $checkStmt->execute();
-    $checkResult = $checkStmt->get_result();
-    
-    if ($checkResult->num_rows > 0) {
-        $existingBooking = $checkResult->fetch_assoc();
-        $checkStmt->close();
-        throw new Exception('Suất khám này đã được đặt (Mã lịch: ' . $existingBooking['maLichKham'] . '). Vui lòng chọn suất khác!');
+    $selectedSlot = getSlotRowById($conn, $maSuat);
+    if (!$selectedSlot || $selectedSlot['maCa'] !== $maCa) {
+        throw new Exception('Suất khám không tồn tại hoặc không thuộc ca đã chọn');
     }
-    $checkStmt->close();
-    
-    // 3. Kiểm tra bệnh nhân đã đặt lịch trùng thời gian chưa
-    // (Một bệnh nhân không thể đặt 2 lịch cùng lúc)
-    $checkPatientStmt = $conn->prepare("
-        SELECT lk.maLichKham
-        FROM lichkham lk
-        JOIN suatkham sk1 ON lk.maSuat = sk1.maSuat
-        JOIN suatkham sk2 ON sk2.maSuat = ?
-        WHERE lk.maBenhNhan = ?
-        AND lk.ngayKham = ?
-        AND lk.trangThai != 'Hủy'
-        AND (
-            (sk1.gioBatDau >= sk2.gioBatDau AND sk1.gioBatDau < sk2.gioKetThuc)
-            OR (sk1.gioKetThuc > sk2.gioBatDau AND sk1.gioKetThuc <= sk2.gioKetThuc)
-            OR (sk1.gioBatDau <= sk2.gioBatDau AND sk1.gioKetThuc >= sk2.gioKetThuc)
-        )
-    ");
-    $checkPatientStmt->bind_param("iss", $maSuat, $maBenhNhan, $ngayKham);
-    $checkPatientStmt->execute();
-    $checkPatientResult = $checkPatientStmt->get_result();
-    
-    if ($checkPatientResult->num_rows > 0) {
-        $conflictBooking = $checkPatientResult->fetch_assoc();
-        $checkPatientStmt->close();
-        throw new Exception('Bạn đã có lịch khám trùng giờ (Mã lịch: ' . $conflictBooking['maLichKham'] . '). Vui lòng chọn giờ khác!');
+
+    if ((int)$selectedSlot['isActive'] !== 1) {
+        throw new Exception('Suất khám này không còn được áp dụng. Vui lòng tải lại và chọn suất mới');
     }
-    $checkPatientStmt->close();
+
+    $doctorConflict = findDoctorOverlap(
+        $conn,
+        $maBacSi,
+        $ngayKham,
+        $selectedSlot['gioBatDau'],
+        $selectedSlot['gioKetThuc']
+    );
+    if ($doctorConflict) {
+        throw new Exception('Suất khám này đã được đặt (Mã lịch: ' . $doctorConflict['maLichKham'] . '). Vui lòng chọn suất khác!');
+    }
+
+    $patientConflict = findPatientOverlap(
+        $conn,
+        $maBenhNhan,
+        $ngayKham,
+        $selectedSlot['gioBatDau'],
+        $selectedSlot['gioKetThuc']
+    );
+    if ($patientConflict) {
+        throw new Exception('Bạn đã có lịch khám trùng giờ (Mã lịch: ' . $patientConflict['maLichKham'] . '). Vui lòng chọn giờ khác!');
+    }
+
+    $packageRow = null;
+    if ($maGoi !== null) {
+        $packageRow = getPackageRowById($conn, $maGoi);
+        if (!$packageRow || (int)$packageRow['isActive'] !== 1) {
+            throw new Exception('Gói khám không tồn tại hoặc đã ngừng áp dụng');
+        }
+    }
     
     // 4. Thêm lịch khám
-    $stmt = $conn->prepare("
-        INSERT INTO lichkham (maBenhNhan, maBacSi, ngayKham, maCa, maSuat, maGoi, trangThai, ghiChu)
-        VALUES (?, ?, ?, ?, ?, ?, 'Đã đặt', ?)
-    ");
-    $stmt->bind_param("sssiiss", $maBenhNhan, $maBacSi, $ngayKham, $maCa, $maSuat, $maGoi, $ghiChu);
+    if ($maGoi === null) {
+        $stmt = $conn->prepare("
+            INSERT INTO lichkham (maBenhNhan, maBacSi, ngayKham, maCa, maSuat, maGoi, trangThai, ghiChu)
+            VALUES (?, ?, ?, ?, ?, NULL, 'Đã đặt', ?)
+        ");
+        $stmt->bind_param("sssiis", $maBenhNhan, $maBacSi, $ngayKham, $maCa, $maSuat, $ghiChu);
+    } else {
+        $stmt = $conn->prepare("
+            INSERT INTO lichkham (maBenhNhan, maBacSi, ngayKham, maCa, maSuat, maGoi, trangThai, ghiChu)
+            VALUES (?, ?, ?, ?, ?, ?, 'Đã đặt', ?)
+        ");
+        $stmt->bind_param("sssiiis", $maBenhNhan, $maBacSi, $ngayKham, $maCa, $maSuat, $maGoi, $ghiChu);
+    }
     
     if (!$stmt->execute()) {
         throw new Exception('Không thể tạo lịch khám: ' . $stmt->error);
@@ -143,14 +144,7 @@ try {
     $stmt->close();
 
     // 5. Tạo hóa đơn mặc định (nếu lịch khám có gói và chưa có hóa đơn)
-    if (!empty($maGoi)) {
-        $priceStmt = $conn->prepare("SELECT gia FROM goikham WHERE maGoi = ? LIMIT 1");
-        $priceStmt->bind_param("i", $maGoi);
-        $priceStmt->execute();
-        $priceRow = $priceStmt->get_result()->fetch_assoc();
-        $priceStmt->close();
-
-        if ($priceRow) {
+    if ($packageRow) {
             $checkInvoiceStmt = $conn->prepare("SELECT maHoaDon FROM hoadon WHERE maLichKham = ? LIMIT 1");
             $checkInvoiceStmt->bind_param("i", $maLichKham);
             $checkInvoiceStmt->execute();
@@ -158,7 +152,7 @@ try {
             $checkInvoiceStmt->close();
 
             if (!$invoiceExists) {
-                $amount = (float)$priceRow['gia'];
+                $amount = (float)$packageRow['gia'];
                 $invoiceStmt = $conn->prepare("
                     INSERT INTO hoadon (maLichKham, soTien, trangThai)
                     VALUES (?, ?, 'Chưa thanh toán')
@@ -169,7 +163,6 @@ try {
                 }
                 $invoiceStmt->close();
             }
-        }
     }
     
     $conn->commit();

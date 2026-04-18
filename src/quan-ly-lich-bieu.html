@@ -1,0 +1,551 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Lịch Biểu</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="favicon.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link id="sidebar-admin-css" rel="stylesheet" href="assets/css/sidebar-admin.css">
+    <link rel="stylesheet" href="assets/css/admin-summary.css">
+    <style>
+        .summary-chip.preset { background: rgba(102, 126, 234, 0.12); border-color: rgba(102, 126, 234, 0.3); }
+        .summary-chip.morning { background: rgba(255, 193, 7, 0.12); border-color: rgba(255, 193, 7, 0.28); }
+        .summary-chip.afternoon { background: rgba(0, 174, 239, 0.12); border-color: rgba(0, 174, 239, 0.26); }
+        .summary-chip.packages { background: rgba(76, 175, 80, 0.12); border-color: rgba(76, 175, 80, 0.28); }
+        .dashboard-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; margin-bottom: 24px; }
+        .section-card { background: #fff; border-radius: 16px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); overflow: hidden; }
+        .section-card .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 22px 24px 16px; border-bottom: 1px solid #edf0f5; background: linear-gradient(180deg, #fcfdff 0%, #ffffff 100%); }
+        .section-card .card-header h5 { margin: 0; font-weight: 700; color: #253041; }
+        .section-card .card-header p { margin: 6px 0 0; color: #687385; font-size: 0.92rem; }
+        .section-card .card-body { padding: 24px; }
+        .preset-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+        .preset-card { border: 2px solid #e7ecf3; border-radius: 16px; padding: 18px; background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%); cursor: pointer; transition: all 0.25s ease; text-align: left; }
+        .preset-card:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(41, 53, 72, 0.08); }
+        .preset-card.active { border-color: var(--primary-purple); box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12); }
+        .preset-card.selected { border-color: #1f2937; box-shadow: 0 0 0 3px rgba(31, 41, 55, 0.08); }
+        .preset-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-weight: 700; color: #243042; }
+        .preset-meta { color: #667085; font-size: 0.88rem; line-height: 1.5; }
+        .preset-badge { padding: 4px 10px; border-radius: 999px; font-size: 0.74rem; font-weight: 700; background: rgba(102, 126, 234, 0.12); color: var(--primary-purple); }
+        .preset-actions { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding: 16px 18px; border-radius: 14px; background: #f8fafc; border: 1px solid #e8edf4; }
+        .preset-actions p { margin: 0; color: #5c6676; font-size: 0.9rem; }
+        .btn-primary-gradient { border: none; border-radius: 999px; padding: 11px 22px; font-weight: 700; color: #fff; background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue)); box-shadow: 0 10px 18px rgba(102, 126, 234, 0.22); }
+        .btn-primary-gradient:hover { transform: translateY(-1px); color: #fff; }
+        .schedule-preview { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+        .shift-card { border-radius: 16px; border: 1px solid #e7edf5; background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%); overflow: hidden; }
+        .shift-card-header { padding: 18px 20px 14px; border-bottom: 1px solid #edf2f7; }
+        .shift-card-header h6 { margin: 0; font-size: 1rem; font-weight: 700; color: #223049; }
+        .shift-card-header p { margin: 6px 0 0; color: #667085; font-size: 0.88rem; }
+        .slot-list { padding: 18px 20px 20px; display: flex; flex-wrap: wrap; gap: 10px; }
+        .slot-pill { padding: 8px 12px; border-radius: 999px; background: #eef4ff; color: #32405a; font-weight: 600; font-size: 0.84rem; }
+        .empty-state { padding: 32px 18px; text-align: center; color: #8a94a6; font-size: 0.92rem; }
+        .table-card { background: #fff; border-radius: 16px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); padding: 24px; }
+        .table-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 18px; }
+        .table-header h5 { margin: 0; font-weight: 700; color: #243042; }
+        .table-header p { margin: 6px 0 0; color: #667085; font-size: 0.92rem; }
+        .toolbar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 18px; }
+        .toolbar .form-control { min-width: 260px; border-radius: 12px; border: 1px solid #dde4ee; padding: 10px 14px; }
+        .custom-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+        .custom-table thead th { padding: 12px 14px; font-size: 0.84rem; text-transform: uppercase; letter-spacing: 0.04em; color: #607086; }
+        .custom-table tbody tr { background: #fff; box-shadow: 0 4px 14px rgba(19, 34, 55, 0.06); }
+        .custom-table tbody td { padding: 16px 14px; vertical-align: middle; }
+        .custom-table tbody tr td:first-child { border-radius: 14px 0 0 14px; }
+        .custom-table tbody tr td:last-child { border-radius: 0 14px 14px 0; }
+        .package-name { font-weight: 700; color: #1f2937; }
+        .package-description { color: #667085; font-size: 0.88rem; line-height: 1.45; }
+        .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; font-size: 0.82rem; font-weight: 700; }
+        .status-pill.active { background: rgba(76, 175, 80, 0.14); color: #1f7a33; }
+        .status-pill.inactive { background: rgba(255, 152, 0, 0.14); color: #9c5b00; }
+        .btn-action { border: none; border-radius: 10px; padding: 8px 12px; font-size: 0.88rem; font-weight: 600; margin-right: 6px; }
+        .btn-edit { background: #fff7df; color: #8b6508; }
+        .btn-toggle { background: #edf4ff; color: #275db3; }
+        .btn-toggle.off { background: #fff1e6; color: #ad5b09; }
+        .modal-content { border: none; border-radius: 18px; }
+        .modal-header { border: none; padding: 22px 24px 10px; }
+        .modal-title { font-weight: 700; color: #243042; }
+        .modal-body { padding: 0 24px 24px; }
+        .form-label { font-weight: 700; color: #334155; margin-bottom: 8px; }
+        .form-control, .form-select { border-radius: 12px; border: 1px solid #d8e1ec; padding: 11px 14px; }
+        .readonly-note { padding: 12px 14px; border-radius: 12px; background: #f8fafc; border: 1px solid #e5ebf3; color: #5f6b7a; font-size: 0.9rem; }
+        .loading-block { text-align: center; padding: 48px 18px; color: #7a8596; }
+        @media (max-width: 992px) { .dashboard-grid, .schedule-preview { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { .preset-grid { grid-template-columns: 1fr; } .table-header, .toolbar, .preset-actions { flex-direction: column; align-items: stretch; } }
+    </style>
+</head>
+<body>
+    <div id="sidebar-placeholder"></div>
+
+    <div id="page-content" style="display:none;">
+        <div class="container-fluid">
+            <div class="summary-bar">
+                <div class="summary-chip preset"><i class="fas fa-stopwatch"></i><div><div class="summary-label">Preset hiện tại</div><div class="summary-value" id="summaryPreset">--</div></div></div>
+                <div class="summary-chip morning"><i class="fas fa-sun"></i><div><div class="summary-label">Ca sáng</div><div class="summary-value" id="summaryMorning">--</div></div></div>
+                <div class="summary-chip afternoon"><i class="fas fa-cloud-sun"></i><div><div class="summary-label">Ca chiều</div><div class="summary-value" id="summaryAfternoon">--</div></div></div>
+                <div class="summary-chip packages"><i class="fas fa-briefcase-medical"></i><div><div class="summary-label">Gói khám hoạt động</div><div class="summary-value" id="summaryPackages">--</div></div></div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="section-card">
+                    <div class="card-header">
+                        <div>
+                            <h5><i class="fas fa-calendar-alt me-2"></i>Cấu Hình Suất Khám</h5>
+                            <p>Giữ nguyên 2 ca sáng và chiều, chỉ đổi preset thời lượng để hệ thống tự sinh lại suất khám.</p>
+                        </div>
+                        <span class="preset-badge" id="currentPresetBadge">Preset --</span>
+                    </div>
+                    <div class="card-body">
+                        <div id="scheduleLoading" class="loading-block"><div class="spinner-border text-primary mb-3" role="status"></div><div>Đang tải cấu hình lịch biểu...</div></div>
+                        <div id="scheduleContent" style="display:none;">
+                            <div class="preset-grid" id="presetGrid"></div>
+                            <div class="preset-actions">
+                                <p id="presetHint">Mỗi lần đổi preset, hệ thống chỉ mở bộ slot mới cho các lịch tạo sau đó.</p>
+                                <button class="btn btn-primary-gradient" id="applyPresetBtn" type="button"><i class="fas fa-sync-alt me-2"></i>Áp Dụng Preset</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="card-header">
+                        <div>
+                            <h5><i class="fas fa-clock me-2"></i>Preview Theo Ca</h5>
+                            <p>Xem ngay số suất và khung giờ đang được dùng ở mỗi buổi khám.</p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="schedulePreviewLoading" class="loading-block"><div class="spinner-border text-primary mb-3" role="status"></div><div>Đang dựng preview lịch khám...</div></div>
+                        <div class="schedule-preview" id="schedulePreview" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="table-card">
+                <div class="table-header">
+                    <div>
+                        <h5><i class="fas fa-box-open me-2"></i>Quản Lý Gói Khám</h5>
+                        <p>Gói khám chỉ thay đổi tên, mô tả, giá và trạng thái sử dụng. Thời lượng luôn đồng bộ với preset hiện tại.</p>
+                    </div>
+                    <button class="btn btn-primary-gradient" type="button" onclick="openPackageModal()"><i class="fas fa-plus me-2"></i>Thêm Gói Khám</button>
+                </div>
+
+                <div class="toolbar">
+                    <input type="text" id="packageSearch" class="form-control" placeholder="Tìm theo tên gói hoặc mô tả...">
+                </div>
+
+                <div class="table-responsive">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Gói khám</th>
+                                <th>Thời lượng</th>
+                                <th>Giá tiền</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="packageTableBody">
+                            <tr><td colspan="5" class="text-center text-muted py-4">Đang tải danh sách gói khám...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="packageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="packageModalTitle">Thêm Gói Khám</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="packageForm">
+                        <input type="hidden" id="packageId">
+                        <div class="mb-3">
+                            <label class="form-label" for="packageName">Tên gói khám</label>
+                            <input type="text" class="form-control" id="packageName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="packageDescription">Mô tả</label>
+                            <textarea class="form-control" id="packageDescription" rows="4" placeholder="Mô tả ngắn cho gói khám"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="packagePrice">Giá tiền</label>
+                            <input type="number" class="form-control" id="packagePrice" min="1000" step="1000" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="packageStatus">Trạng thái</label>
+                            <select class="form-select" id="packageStatus">
+                                <option value="1">Đang áp dụng</option>
+                                <option value="0">Ngừng áp dụng</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Thời lượng áp dụng</label>
+                            <div class="readonly-note" id="packageDurationNote">--</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary-gradient w-100"><i class="fas fa-save me-2"></i>Lưu Gói Khám</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/api-config.js"></script>
+    <script src="assets/js/config-admin.js"></script>
+    <script src="assets/js/sidebar-admin.js"></script>
+    <script>
+        let scheduleConfig = null;
+        let allPackages = [];
+        let filteredPackages = [];
+        let selectedPreset = null;
+        let packageModalInstance = null;
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            packageModalInstance = new bootstrap.Modal(document.getElementById('packageModal'));
+            document.getElementById('packageForm').addEventListener('submit', handlePackageSubmit);
+            document.getElementById('packageSearch').addEventListener('input', applyPackageFilter);
+            document.getElementById('applyPresetBtn').addEventListener('click', handleApplyPreset);
+
+            await Promise.all([loadScheduleConfig(), loadPackages()]);
+            document.getElementById('page-content').style.display = 'block';
+        });
+
+        async function loadScheduleConfig() {
+            const scheduleLoading = document.getElementById('scheduleLoading');
+            const scheduleContent = document.getElementById('scheduleContent');
+            const previewLoading = document.getElementById('schedulePreviewLoading');
+            const preview = document.getElementById('schedulePreview');
+
+            scheduleLoading.style.display = 'block';
+            previewLoading.style.display = 'block';
+            scheduleContent.style.display = 'none';
+            preview.style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_BASE_ADMIN}/get-schedule-config.php`, { credentials: 'include' });
+                const result = await response.json();
+
+                if (!result.success) {
+                    showAlert('error', result.message || 'Không thể tải cấu hình lịch biểu');
+                    handleSessionExpired(result.message || null);
+                    return;
+                }
+
+                scheduleConfig = result.data;
+                selectedPreset = scheduleConfig.currentDurationMinutes;
+                renderScheduleSummary();
+                renderPresetGrid();
+                renderSchedulePreview();
+                scheduleContent.style.display = 'block';
+                preview.style.display = 'grid';
+            } catch (error) {
+                console.error('Error loading schedule config:', error);
+                showAlert('error', 'Lỗi kết nối khi tải cấu hình lịch biểu');
+            } finally {
+                scheduleLoading.style.display = 'none';
+                previewLoading.style.display = 'none';
+            }
+        }
+
+        async function loadPackages() {
+            try {
+                const response = await fetch(`${API_BASE_ADMIN}/get-packages.php?includeInactive=1`, { credentials: 'include' });
+                const result = await response.json();
+
+                if (!result.success) {
+                    showAlert('error', result.message || 'Không thể tải gói khám');
+                    handleSessionExpired(result.message || null);
+                    return;
+                }
+
+                allPackages = result.data || [];
+                filteredPackages = [...allPackages];
+                renderPackageTable();
+                updatePackageSummary();
+            } catch (error) {
+                console.error('Error loading packages:', error);
+                showAlert('error', 'Lỗi kết nối khi tải gói khám');
+            }
+        }
+        function renderScheduleSummary() {
+            const currentPreset = scheduleConfig?.currentDurationMinutes || '--';
+            const shifts = scheduleConfig?.shifts || [];
+            const morning = shifts.find(shift => Number(shift.maCa) === 1);
+            const afternoon = shifts.find(shift => Number(shift.maCa) === 2);
+
+            document.getElementById('summaryPreset').textContent = `${currentPreset} phút`;
+            document.getElementById('currentPresetBadge').textContent = `Preset ${currentPreset} phút`;
+            document.getElementById('summaryMorning').textContent = `${morning?.soSuat ?? 0} suất`;
+            document.getElementById('summaryAfternoon').textContent = `${afternoon?.soSuat ?? 0} suất`;
+            document.getElementById('presetHint').textContent = `Preset ${selectedPreset} phút sẽ tạo ${(240 / selectedPreset).toFixed(0)} suất mỗi ca trong khung giờ cố định.`;
+            updatePackageDurationNote();
+        }
+
+        function renderPresetGrid() {
+            const container = document.getElementById('presetGrid');
+            const options = scheduleConfig?.presetOptions || [];
+            const shifts = scheduleConfig?.shifts || [];
+
+            container.innerHTML = options.map(option => {
+                const slotsPerShift = shifts.map(shift => {
+                    const duration = calculateMinutes(shift.gioBatDau, shift.gioKetThuc);
+                    return `${shift.tenCa}: ${Math.floor(duration / option)} suất`;
+                }).join('<br>');
+                const isActive = Number(option) === Number(scheduleConfig.currentDurationMinutes);
+                const isSelected = Number(option) === Number(selectedPreset);
+
+                return `
+                    <button type="button" class="preset-card ${isActive ? 'active' : ''} ${isSelected ? 'selected' : ''}" onclick="selectPreset(${option})">
+                        <div class="preset-title">
+                            <span>${option} phút</span>
+                            ${isActive ? '<span class="preset-badge">Đang dùng</span>' : ''}
+                        </div>
+                        <div class="preset-meta">${slotsPerShift}</div>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function renderSchedulePreview() {
+            const container = document.getElementById('schedulePreview');
+            const shifts = scheduleConfig?.shifts || [];
+
+            container.innerHTML = shifts.map(shift => {
+                const slotHtml = shift.slots.length
+                    ? shift.slots.map(slot => `<span class="slot-pill">${slot.gioBatDau} - ${slot.gioKetThuc}</span>`).join('')
+                    : '<div class="empty-state">Chưa có suất khám active cho ca này.</div>';
+
+                return `
+                    <div class="shift-card">
+                        <div class="shift-card-header">
+                            <h6>${shift.tenCa}</h6>
+                            <p>${shift.gioBatDau} - ${shift.gioKetThuc} • ${shift.soSuat} suất</p>
+                        </div>
+                        <div class="slot-list">${slotHtml}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updatePackageSummary() {
+            const activeCount = allPackages.filter(pkg => Number(pkg.isActive) === 1).length;
+            document.getElementById('summaryPackages').textContent = `${activeCount}/${allPackages.length}`;
+        }
+
+        function updatePackageDurationNote() {
+            const durationText = `${scheduleConfig?.currentDurationMinutes || '--'} phút cho tất cả gói khám`;
+            const note = `Thời lượng được khóa theo preset slot hiện tại: ${durationText}.`;
+            const durationNode = document.getElementById('packageDurationNote');
+            if (durationNode) {
+                durationNode.textContent = note;
+            }
+        }
+
+        function renderPackageTable() {
+            const tbody = document.getElementById('packageTableBody');
+
+            if (!filteredPackages.length) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">Không tìm thấy gói khám phù hợp.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filteredPackages.map(pkg => {
+                const isActive = Number(pkg.isActive) === 1;
+                return `
+                    <tr>
+                        <td>
+                            <div class="package-name">${escapeHtml(pkg.tenGoi)}</div>
+                            <div class="package-description">${escapeHtml(pkg.moTa || 'Chưa có mô tả')}</div>
+                        </td>
+                        <td>${pkg.thoiLuong} phút</td>
+                        <td>${formatCurrency(pkg.gia)}</td>
+                        <td>
+                            <span class="status-pill ${isActive ? 'active' : 'inactive'}">
+                                <i class="fas ${isActive ? 'fa-check-circle' : 'fa-pause-circle'}"></i>
+                                ${isActive ? 'Đang áp dụng' : 'Ngừng áp dụng'}
+                            </span>
+                        </td>
+                        <td>
+                            <button type="button" class="btn-action btn-edit" onclick="openPackageModal(${pkg.maGoi})"><i class="fas fa-pen me-1"></i>Sửa</button>
+                            <button type="button" class="btn-action btn-toggle ${isActive ? 'off' : ''}" onclick="togglePackage(${pkg.maGoi}, ${isActive ? 0 : 1})"><i class="fas ${isActive ? 'fa-eye-slash' : 'fa-eye'} me-1"></i>${isActive ? 'Ẩn' : 'Bật'}</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function applyPackageFilter() {
+            const keyword = document.getElementById('packageSearch').value.trim().toLowerCase();
+            filteredPackages = allPackages.filter(pkg => `${pkg.tenGoi || ''} ${pkg.moTa || ''}`.toLowerCase().includes(keyword));
+            renderPackageTable();
+        }
+
+        function selectPreset(durationMinutes) {
+            selectedPreset = Number(durationMinutes);
+            renderPresetGrid();
+            renderScheduleSummary();
+        }
+
+        async function handleApplyPreset() {
+            if (!selectedPreset) {
+                showAlert('error', 'Vui lòng chọn preset trước khi áp dụng');
+                return;
+            }
+
+            if (Number(selectedPreset) === Number(scheduleConfig?.currentDurationMinutes)) {
+                showAlert('success', 'Preset này đang được áp dụng sẵn rồi');
+                return;
+            }
+
+            if (!confirm(`Áp dụng preset ${selectedPreset} phút cho toàn bộ cấu hình suất khám?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_ADMIN}/update-slot-preset.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ durationMinutes: selectedPreset })
+                });
+                const result = await response.json();
+
+                if (!result.success) {
+                    showAlert('error', result.message || 'Không thể cập nhật preset');
+                    return;
+                }
+
+                showAlert('success', result.message || 'Đã cập nhật preset suất khám');
+                scheduleConfig = result.data;
+                selectedPreset = scheduleConfig.currentDurationMinutes;
+                renderScheduleSummary();
+                renderPresetGrid();
+                renderSchedulePreview();
+                await loadPackages();
+            } catch (error) {
+                console.error('Error updating preset:', error);
+                showAlert('error', 'Lỗi kết nối khi cập nhật preset');
+            }
+        }
+        function openPackageModal(packageId = null) {
+            document.getElementById('packageForm').reset();
+            document.getElementById('packageId').value = '';
+            updatePackageDurationNote();
+
+            if (packageId === null) {
+                document.getElementById('packageModalTitle').textContent = 'Thêm Gói Khám';
+                document.getElementById('packageStatus').value = '1';
+                packageModalInstance.show();
+                return;
+            }
+
+            const pkg = allPackages.find(item => Number(item.maGoi) === Number(packageId));
+            if (!pkg) {
+                showAlert('error', 'Không tìm thấy gói khám');
+                return;
+            }
+
+            document.getElementById('packageModalTitle').textContent = 'Cập Nhật Gói Khám';
+            document.getElementById('packageId').value = pkg.maGoi;
+            document.getElementById('packageName').value = pkg.tenGoi || '';
+            document.getElementById('packageDescription').value = pkg.moTa || '';
+            document.getElementById('packagePrice').value = pkg.gia || '';
+            document.getElementById('packageStatus').value = Number(pkg.isActive) === 1 ? '1' : '0';
+            packageModalInstance.show();
+        }
+
+        async function handlePackageSubmit(event) {
+            event.preventDefault();
+
+            const packageId = document.getElementById('packageId').value;
+            const payload = {
+                tenGoi: document.getElementById('packageName').value.trim(),
+                moTa: document.getElementById('packageDescription').value.trim(),
+                gia: Number(document.getElementById('packagePrice').value),
+                isActive: Number(document.getElementById('packageStatus').value)
+            };
+
+            if (!payload.tenGoi || payload.gia <= 0) {
+                showAlert('error', 'Vui lòng nhập tên gói và giá tiền hợp lệ');
+                return;
+            }
+
+            const isEdit = packageId !== '';
+            if (isEdit) {
+                payload.maGoi = Number(packageId);
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_ADMIN}/${isEdit ? 'update-package.php' : 'create-package.php'}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (!result.success) {
+                    showAlert('error', result.message || 'Không thể lưu gói khám');
+                    return;
+                }
+
+                showAlert('success', result.message || 'Đã lưu gói khám');
+                packageModalInstance.hide();
+                await loadPackages();
+            } catch (error) {
+                console.error('Error saving package:', error);
+                showAlert('error', 'Lỗi kết nối khi lưu gói khám');
+            }
+        }
+
+        async function togglePackage(packageId, nextState) {
+            const pkg = allPackages.find(item => Number(item.maGoi) === Number(packageId));
+            if (!pkg) {
+                showAlert('error', 'Không tìm thấy gói khám');
+                return;
+            }
+
+            const actionLabel = Number(nextState) === 1 ? 'bật' : 'ẩn';
+            if (!confirm(`Bạn có chắc chắn muốn ${actionLabel} gói "${pkg.tenGoi}" không?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_ADMIN}/toggle-package.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ maGoi: Number(packageId), isActive: Number(nextState) })
+                });
+                const result = await response.json();
+
+                if (!result.success) {
+                    showAlert('error', result.message || 'Không thể thay đổi trạng thái gói khám');
+                    return;
+                }
+
+                showAlert('success', result.message || 'Đã cập nhật trạng thái gói khám');
+                await loadPackages();
+            } catch (error) {
+                console.error('Error toggling package:', error);
+                showAlert('error', 'Lỗi kết nối khi đổi trạng thái gói khám');
+            }
+        }
+
+        function calculateMinutes(startTime, endTime) {
+            const [startHour, startMinute] = startTime.split(':').map(Number);
+            const [endHour, endMinute] = endTime.split(':').map(Number);
+            return ((endHour * 60) + endMinute) - ((startHour * 60) + startMinute);
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Number(amount) || 0);
+        }
+    </script>
+</body>
+</html>
