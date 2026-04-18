@@ -55,21 +55,24 @@ body {
     top: 0;
     left: 0;
     height: 100vh;
+    height: 100dvh;
     width: var(--sidebar-width);
     background: linear-gradient(180deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
     color: white;
     padding: 20px 0;
     box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
     z-index: 1002;
-    overflow-y: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     transition: transform 0.3s;
 }
 
-.sidebar::-webkit-scrollbar {
+.sidebar-menu::-webkit-scrollbar {
     width: 6px;
 }
 
-.sidebar::-webkit-scrollbar-thumb {
+.sidebar-menu::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.3);
     border-radius: 3px;
 }
@@ -101,10 +104,23 @@ body {
 .sidebar-menu {
     list-style: none;
     padding: 0;
+    margin: 0;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 12px;
 }
 
 .sidebar-menu li {
     margin: 5px 0;
+}
+
+.sidebar-menu hr {
+    margin: 8px 20px;
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .sidebar-menu a {
@@ -147,10 +163,16 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: none;
-    padding: 0;
-    border-radius: 0;
-    margin-bottom: 0;
+    cursor: pointer;
+}
+
+.user-info-sidebar .user-details {
+    text-align: left;
+}
+
+.user-info-sidebar .user-name,
+.user-info-sidebar .user-role {
+    color: white;
 }
 
 .logout-btn-sidebar {
@@ -390,7 +412,7 @@ body {
         order: 1;
     }
 
-    .user-details,
+    .logout-header .user-details,
     .logout-btn-desktop {
         display: none;
     }
@@ -421,12 +443,40 @@ body {
     }
 
     .user-logout-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 12px 20px;
-        margin: 5px 0;
+        display: block;
+        margin: 10px 14px calc(12px + env(safe-area-inset-bottom, 0px));
+        padding: 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        background: rgba(255, 255, 255, 0.14);
+        backdrop-filter: blur(4px);
         transition: all 0.25s;
+    }
+
+    .user-logout-item .user-info-sidebar {
+        margin-bottom: 10px;
+    }
+
+    .user-logout-item .user-avatar {
+        flex-shrink: 0;
+    }
+
+    .user-logout-item .user-name {
+        color: #fff;
+        font-size: 0.95rem;
+    }
+
+    .user-logout-item .user-role {
+        color: rgba(255, 255, 255, 0.85);
+    }
+
+    .user-logout-item .logout-btn-sidebar {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .sidebar-menu {
+        padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     }
 
     .user-logout-item:hover {

@@ -1,6 +1,8 @@
 (function () {
     'use strict';
 
+    const DEFAULT_DB_AVATAR_KEY = 'samples/paper.png';
+
     async function loadSidebar() {
         try {
             const response = await fetch(COMPONENT_PATH + 'sidebar-admin.html');
@@ -59,6 +61,37 @@
         setInterval(loadUnreadNotificationsCount, 30000);
     }
 
+    function hasCustomAvatar(avatarUrl) {
+        return typeof avatarUrl === 'string'
+            && avatarUrl.trim() !== ''
+            && !avatarUrl.includes(DEFAULT_DB_AVATAR_KEY);
+    }
+
+    function renderAdminHeaderAvatars(avatarUrl, fallbackText) {
+        document.querySelectorAll('#sidebarUserAvatar, #topUserAvatar').forEach(el => {
+            if (!el) return;
+            el.innerHTML = '';
+            el.style.overflow = 'hidden';
+
+            if (hasCustomAvatar(avatarUrl)) {
+                const img = document.createElement('img');
+                img.src = avatarUrl;
+                img.alt = 'Avatar quản trị viên';
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '50%';
+                img.onerror = () => {
+                    el.innerHTML = '';
+                    el.textContent = fallbackText;
+                };
+                el.appendChild(img);
+            } else {
+                el.textContent = fallbackText;
+            }
+        });
+    }
+
     async function loadAdminInfo() {
         try {
             const response = await fetch(`${API_BASE_ADMIN}/get-admin-info.php`, {
@@ -69,12 +102,13 @@
 
             if (data.success) {
                 const userName = data.data.tenDangNhap || 'Admin';
-                const firstLetter = userName.charAt(0).toUpperCase();
+                const avatarFallback = userName.split(' ').slice(-2).map(w => w[0]).join('').toUpperCase() || 'AD';
 
                 // Store in global variable
                 ADMIN_INFO = {
                     id: data.data.id,
                     tenDangNhap: userName,
+                    avatar: data.data.avatar || '',
                     vaiTro: 'quantri'
                 };
 
@@ -88,15 +122,8 @@
                     if (el) el.textContent = userName;
                 });
 
-                // Update all avatar displays
-                const avatarElements = [
-                    'topUserAvatar',
-                    'sidebarUserAvatar'
-                ];
-                avatarElements.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.textContent = firstLetter;
-                });
+                // Update avatars
+                renderAdminHeaderAvatars(data.data.avatar, avatarFallback);
             } else {
                 handleSessionExpired(data.message || null);
             }

@@ -8,7 +8,7 @@ require_role('quantri');
 try {
     // Lấy thông tin admin
     $stmt = $conn->prepare("
-        SELECT qv.maQuanTriVien, nd.tenDangNhap, nd.soDienThoai
+        SELECT qv.maQuanTriVien, nd.tenDangNhap, nd.soDienThoai, nd.avatar
         FROM quantrivien qv
         JOIN nguoidung nd ON qv.nguoiDungId = nd.id
         WHERE qv.nguoiDungId = ?
@@ -25,7 +25,8 @@ try {
             "data" => [
                 "maQuanTriVien" => $admin['maQuanTriVien'],
                 "tenDangNhap" => $admin['tenDangNhap'],
-                "soDienThoai" => $admin['soDienThoai']
+                "soDienThoai" => $admin['soDienThoai'],
+                "avatar" => $admin['avatar']
             ]
         ]);
     } else {
