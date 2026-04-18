@@ -383,7 +383,7 @@
                             <th>Suất khám</th>
                             <th>Gói khám</th>
                             <th>Trạng thái</th>
-                            <th>Thao tác</th>
+                            <th><i class="fas fa-gear"></i></th>
                         </tr>
                     </thead>
                     <tbody id="appointmentTableBody"></tbody>
@@ -495,6 +495,7 @@
     <script src="assets/js/config-admin.js"></script>
     <script src="assets/js/sidebar-admin.js"></script>
     <script src="assets/js/admin-summary.js"></script>
+    <script src="assets/js/admin-page-helper.js"></script>
     <script>
 let currentPage = 1;
         const itemsPerPage = 10;
@@ -602,15 +603,11 @@ let currentPage = 1;
                     <td>${apt.tenGoi || 'N/A'}</td>
                     <td>${getStatusBadge(apt.trangThai)}</td>
                     <td>
-                        <button class="btn-action btn-view" onclick="viewAppointment('${apt.maLichKham}')" title="Xem chi tiết">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="btn-action btn-edit" onclick="editAppointment('${apt.maLichKham}')" title="Chỉnh sửa">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn-action btn-delete" onclick="deleteAppointment('${apt.maLichKham}')" title="Xóa">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        ${window.AdminPageHelper.renderTableActions([
+                            { label: 'Xem chi tiết', icon: 'fa-eye', onClick: "viewAppointment('${apt.maLichKham}')", variant: 'view' },
+                            { label: 'Chỉnh sửa', icon: 'fa-edit', onClick: "editAppointment('${apt.maLichKham}')", variant: 'edit' },
+                            { label: 'Xóa', icon: 'fa-trash', onClick: "deleteAppointment('${apt.maLichKham}')", variant: 'delete' }
+                        ])}
                     </td>
                 </tr>
             `).join('');

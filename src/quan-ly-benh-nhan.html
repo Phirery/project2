@@ -458,7 +458,7 @@
                             <th style="width: 10%;">Giới tính</th>
                             <th style="width: 13%;">Điện thoại</th>
                             <th style="width: 17%;">BHYT</th>
-                            <th style="width: 15%;">Thao tác</th>
+                            <th style="width: 15%;"><i class="fas fa-gear"></i></th>
                         </tr>
                     </thead>
                     <tbody id="patientTableBody"></tbody>
@@ -552,6 +552,7 @@
     <script src="assets/js/config-admin.js"></script>
     <script src="assets/js/sidebar-admin.js"></script>
     <script src="assets/js/admin-summary.js"></script>
+    <script src="assets/js/admin-page-helper.js"></script>
     <script>
 let currentPage = 1;
         const itemsPerPage = 10;
@@ -645,15 +646,11 @@ let currentPage = 1;
                             }
                         </td>
                         <td>
-                            <button class="btn-action btn-view" onclick="viewPatient('${patient.maBenhNhan}')" title="Xem chi tiết">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="btn-action btn-edit" onclick="editPatient('${patient.maBenhNhan}')" title="Chỉnh sửa">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn-action btn-delete" onclick="deletePatient('${patient.maBenhNhan}')" title="Xóa">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            ${window.AdminPageHelper.renderTableActions([
+                                { label: 'Xem chi tiết', icon: 'fa-eye', onClick: "viewPatient('${patient.maBenhNhan}')", variant: 'view' },
+                                { label: 'Chỉnh sửa', icon: 'fa-edit', onClick: "editPatient('${patient.maBenhNhan}')", variant: 'edit' },
+                                { label: 'Xóa', icon: 'fa-trash', onClick: "deletePatient('${patient.maBenhNhan}')", variant: 'delete' }
+                            ])}
                         </td>
                     </tr>
                 `;

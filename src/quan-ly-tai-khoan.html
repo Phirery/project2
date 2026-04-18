@@ -397,7 +397,7 @@
                             <th>Số điện thoại</th>
                             <th>Vai trò</th>
                             <th>Trạng thái</th>
-                            <th class="text-center">Thao tác</th>
+                            <th class="text-center"><i class="fas fa-gear"></i></th>
                         </tr>
                     </thead>
                     <tbody id="accountTableBody"></tbody>
@@ -569,6 +569,7 @@
     <script src="assets/js/config-admin.js"></script>
     <script src="assets/js/sidebar-admin.js"></script>
     <script src="assets/js/admin-summary.js"></script>
+    <script src="assets/js/admin-page-helper.js"></script>
     <script>
 let currentPage = 1;
         const itemsPerPage = 10;
@@ -700,6 +701,15 @@ let currentPage = 1;
                 const isLocked = acc.trangThai === 'Khóa';
                 const statusClass = isLocked ? 'locked' : 'active';
                 const statusLabel = isLocked ? 'Đã khóa' : 'Hoạt động';
+                const actions = [
+                    { label: 'Xem chi tiết', icon: 'fa-eye', onClick: `viewAccount(${acc.id})`, variant: 'view' }
+                ];
+
+                if (isLocked) {
+                    actions.push({ label: 'Mở khóa', icon: 'fa-unlock', onClick: `toggleLockAccount(${acc.id}, false)`, variant: 'unlock' });
+                } else if (acc.vaiTro !== 'quantri') {
+                    actions.push({ label: 'Khóa', icon: 'fa-lock', onClick: `openLockReasonModal(${acc.id})`, variant: 'lock' });
+                }
                 
                 return `
                     <tr>
@@ -708,20 +718,7 @@ let currentPage = 1;
                         <td>${acc.soDienThoai || 'N/A'}</td>
                         <td><span class="role-badge ${acc.vaiTro}">${roleText}</span></td>
                         <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
-                        <td class="text-center">
-                            <button class="btn-action btn-view" onclick="viewAccount(${acc.id})" title="Xem chi tiết">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            ${isLocked ? `
-                                <button class="btn-action btn-unlock" onclick="toggleLockAccount(${acc.id}, false)" title="Mở khóa">
-                                    <i class="fas fa-unlock"></i>
-                                </button>
-                            ` : (acc.vaiTro === 'quantri' ? '' : `
-                                <button class="btn-action btn-lock" onclick="openLockReasonModal(${acc.id})" title="Khóa">
-                                    <i class="fas fa-lock"></i>
-                                </button>
-                            `)}
-                        </td>
+                        <td class="text-center">${window.AdminPageHelper.renderTableActions(actions)}</td>
                     </tr>
                 `;
             }).join('');

@@ -148,7 +148,7 @@
                                 <th>Thời lượng</th>
                                 <th>Giá tiền</th>
                                 <th>Trạng thái</th>
-                                <th>Thao tác</th>
+                                <th><i class="fas fa-gear"></i></th>
                             </tr>
                         </thead>
                         <tbody id="packageTableBody">
@@ -204,6 +204,7 @@
     <script src="assets/js/api-config.js"></script>
     <script src="assets/js/config-admin.js"></script>
     <script src="assets/js/sidebar-admin.js"></script>
+    <script src="assets/js/admin-page-helper.js"></script>
     <script>
         let scheduleConfig = null;
         let allPackages = [];
@@ -360,6 +361,15 @@
 
             tbody.innerHTML = filteredPackages.map(pkg => {
                 const isActive = Number(pkg.isActive) === 1;
+                const actionsHtml = window.AdminPageHelper.renderTableActions([
+                    { label: 'Sửa', icon: 'fa-pen', onClick: `openPackageModal(${pkg.maGoi})`, variant: 'edit' },
+                    {
+                        label: isActive ? 'Ẩn' : 'Bật',
+                        icon: isActive ? 'fa-eye-slash' : 'fa-eye',
+                        onClick: `togglePackage(${pkg.maGoi}, ${isActive ? 0 : 1})`,
+                        variant: 'toggle'
+                    }
+                ]);
                 return `
                     <tr>
                         <td>
@@ -374,10 +384,7 @@
                                 ${isActive ? 'Đang áp dụng' : 'Ngừng áp dụng'}
                             </span>
                         </td>
-                        <td>
-                            <button type="button" class="btn-action btn-edit" onclick="openPackageModal(${pkg.maGoi})"><i class="fas fa-pen me-1"></i>Sửa</button>
-                            <button type="button" class="btn-action btn-toggle ${isActive ? 'off' : ''}" onclick="togglePackage(${pkg.maGoi}, ${isActive ? 0 : 1})"><i class="fas ${isActive ? 'fa-eye-slash' : 'fa-eye'} me-1"></i>${isActive ? 'Ẩn' : 'Bật'}</button>
-                        </td>
+                        <td>${actionsHtml}</td>
                     </tr>
                 `;
             }).join('');

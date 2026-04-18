@@ -92,7 +92,7 @@
                     position: relative;
                     display: inline-flex;
                     align-items: center;
-                    z-index: 1000;
+                    z-index: 500;
                 }
                 .doctor-actions-toggle {
                     width: 36px;
@@ -123,7 +123,7 @@
                 }
                 .doctor-actions-floating-menu {
                     position: fixed;
-                    z-index: 1001;
+                    z-index: 501;
                 }
                 .custom-table tbody td {
                     overflow: visible;

@@ -201,7 +201,7 @@
                         <th style="width:10%">Tồn kho</th>
                         <th style="width:10%">Giá tiền</th>
                         <th style="width:12%">Hạn SD</th>
-                        <th style="width:12%">Thao tác</th>
+                        <th style="width:12%"><i class="fas fa-gear"></i></th>
                     </tr>
                 </thead>
                 <tbody id="medicineTableBody"></tbody>
@@ -343,6 +343,7 @@
     <script src="assets/js/config-admin.js"></script>
     <script src="assets/js/sidebar-admin.js"></script>
     <script src="assets/js/admin-summary.js"></script>
+    <script src="assets/js/admin-page-helper.js"></script>
     <script>
         let currentPage = 1;
         const ITEMS_PER_PAGE = 20;
@@ -453,6 +454,12 @@
 
                 const hint = m.cachDungMacDinh
                     ? `<div class="medicine-hint">${escapeHtml(m.cachDungMacDinh.substring(0,55))}${m.cachDungMacDinh.length>55?'…':''}</div>` : '';
+                const medicineNameLiteral = JSON.stringify(String(m.tenThuoc || ''));
+                const actionsHtml = window.AdminPageHelper.renderTableActions([
+                    { label: 'Xem', icon: 'fa-eye', onClick: `viewMedicine(${m.maThuoc})`, variant: 'view' },
+                    { label: 'Sửa', icon: 'fa-edit', onClick: `editMedicine(${m.maThuoc})`, variant: 'edit' },
+                    { label: 'Xóa', icon: 'fa-trash', onClick: `deleteMedicine(${m.maThuoc}, ${medicineNameLiteral})`, variant: 'delete' }
+                ]);
 
                 return `<tr class="${rowClass}" data-id="${m.maThuoc}">
                     <td><div class="medicine-name"><i class="fas fa-pills me-2 text-primary opacity-50"></i>${escapeHtml(m.tenThuoc)}</div>${hint}</td>
@@ -462,11 +469,7 @@
                     <td>${stockHtml}</td>
                     <td>${parseInt(m.giaTien)>0 ? parseInt(m.giaTien).toLocaleString('vi-VN')+'đ' : '<span class="text-muted">—</span>'}</td>
                     <td>${hanHtml}</td>
-                    <td>
-                        <button class="btn-action btn-view"   onclick="viewMedicine(${m.maThuoc})"                      title="Xem"><i class="fas fa-eye"></i></button>
-                        <button class="btn-action btn-edit"   onclick="editMedicine(${m.maThuoc})"                      title="Sửa"><i class="fas fa-edit"></i></button>
-                        <button class="btn-action btn-delete" onclick="deleteMedicine(${m.maThuoc},'${escapeHtml(m.tenThuoc)}')" title="Xóa"><i class="fas fa-trash"></i></button>
-                    </td>
+                    <td>${actionsHtml}</td>
                 </tr>`;
             }).join('');
         }
