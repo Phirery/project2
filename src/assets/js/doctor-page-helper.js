@@ -4,6 +4,8 @@
     let actionsStyleInjected = false;
     let actionsMenuBound = false;
     let actionsMenuCounter = 0;
+    let floatingActionsMenu = null;
+    let activeActionsMenuId = '';
 
     const endpoints = window.API_ENDPOINTS || {};
     const helper = {
@@ -90,7 +92,7 @@
                     position: relative;
                     display: inline-flex;
                     align-items: center;
-                    z-index: 4000;
+                    z-index: 1000;
                 }
                 .doctor-actions-toggle {
                     width: 36px;
@@ -110,16 +112,8 @@
                     line-height: 1;
                     pointer-events: none;
                 }
-                .doctor-actions-toggle:hover {
-                    background: #f3f8ff;
-                    border-color: #bcd2f1;
-                }
                 .doctor-actions-menu {
                     display: none;
-                    position: absolute;
-                    top: 0;
-                    right: calc(100% + 6px);
-                    z-index: 6000;
                     min-width: 160px;
                     padding: 6px;
                     background: #fff;
@@ -127,16 +121,9 @@
                     border-radius: 10px;
                     box-shadow: 0 8px 22px rgba(16, 38, 74, 0.18);
                 }
-                .doctor-actions-menu.menu-up {
-                    top: auto;
-                    bottom: 0;
-                }
-                .doctor-actions-menu.menu-down {
-                    top: 0;
-                    bottom: auto;
-                }
-                .doctor-actions.open .doctor-actions-menu {
-                    display: block;
+                .doctor-actions-floating-menu {
+                    position: fixed;
+                    z-index: 1001;
                 }
                 .custom-table tbody td {
                     overflow: visible;
@@ -191,17 +178,40 @@
             if (actionsMenuBound) return;
             document.addEventListener('click', (event) => {
                 const target = event.target;
-                if (!target.closest('.doctor-actions')) {
-                    document.querySelectorAll('.doctor-actions.open').forEach(el => el.classList.remove('open'));
+                if (!target.closest('.doctor-actions') && !target.closest('.doctor-actions-floating-menu')) {
+                    helper.closeAllActionsMenus();
                 }
             });
             window.addEventListener('resize', () => {
-                document.querySelectorAll('.doctor-actions.open').forEach(el => el.classList.remove('open'));
+                helper.closeAllActionsMenus();
             });
             window.addEventListener('scroll', () => {
-                document.querySelectorAll('.doctor-actions.open').forEach(el => el.classList.remove('open'));
+                helper.closeAllActionsMenus();
             }, true);
+            document.addEventListener('show.bs.modal', () => {
+                helper.closeAllActionsMenus();
+            });
             actionsMenuBound = true;
+        },
+        getFloatingActionsMenu() {
+            if (floatingActionsMenu && document.body.contains(floatingActionsMenu)) return floatingActionsMenu;
+            const menu = document.createElement('div');
+            menu.className = 'doctor-actions-menu doctor-actions-floating-menu';
+            menu.id = 'doctorFloatingActionsMenu';
+            menu.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(menu);
+            floatingActionsMenu = menu;
+            return menu;
+        },
+        closeAllActionsMenus() {
+            document.querySelectorAll('.doctor-actions.open').forEach(el => el.classList.remove('open'));
+            const menu = helper.getFloatingActionsMenu();
+            menu.style.display = 'none';
+            menu.style.visibility = 'hidden';
+            menu.innerHTML = '';
+            menu.removeAttribute('data-source-menu-id');
+            menu.setAttribute('aria-hidden', 'true');
+            activeActionsMenuId = '';
         },
         toggleActionsMenu(menuId, event) {
             if (event) {
@@ -213,37 +223,54 @@
             const wrapper = menu.closest('.doctor-actions');
             if (!wrapper) return;
 
-            const shouldOpen = !wrapper.classList.contains('open');
-            document.querySelectorAll('.doctor-actions.open').forEach(el => el.classList.remove('open'));
-            if (!shouldOpen) return;
+            const shouldCloseCurrent = wrapper.classList.contains('open') && activeActionsMenuId === menuId;
+            helper.closeAllActionsMenus();
+            if (shouldCloseCurrent) return;
 
             wrapper.classList.add('open');
-            helper.positionActionsMenu(menu, wrapper);
+            activeActionsMenuId = menuId;
+            helper.openFloatingActionsMenu(menu, wrapper);
+        },
+        openFloatingActionsMenu(sourceMenu, wrapper) {
+            const floatingMenu = helper.getFloatingActionsMenu();
+            floatingMenu.innerHTML = sourceMenu.innerHTML;
+            floatingMenu.setAttribute('data-source-menu-id', sourceMenu.id || '');
+            floatingMenu.setAttribute('aria-hidden', 'false');
+            floatingMenu.style.visibility = 'hidden';
+            floatingMenu.style.display = 'block';
+            helper.positionActionsMenu(floatingMenu, wrapper);
+            floatingMenu.style.visibility = 'visible';
         },
         positionActionsMenu(menu, wrapper) {
-            // Measure menu while hidden from user
-            menu.style.visibility = 'hidden';
-            menu.style.display = 'block';
-
             const triggerRect = wrapper.getBoundingClientRect();
             const menuRect = menu.getBoundingClientRect();
+            const menuWidth = menuRect.width || 160;
             const menuHeight = menuRect.height || 120;
+            const viewportW = window.innerWidth;
             const viewportH = window.innerHeight;
+            const gap = 6;
+            const edgePadding = 8;
 
-            // Auto direction: down first if enough space, otherwise up.
-            const spaceBelow = viewportH - triggerRect.bottom;
-            const spaceAbove = triggerRect.top;
-            const openUp = spaceBelow < menuHeight + 8 && spaceAbove > spaceBelow;
-            menu.classList.toggle('menu-up', openUp);
-            menu.classList.toggle('menu-down', !openUp);
+            let left = triggerRect.left - menuWidth - gap;
+            if (left < edgePadding) {
+                left = triggerRect.right + gap;
+            }
+            if (left + menuWidth > viewportW - edgePadding) {
+                left = Math.max(edgePadding, viewportW - menuWidth - edgePadding);
+            }
 
-            menu.style.visibility = 'visible';
-            menu.style.display = '';
+            let top = triggerRect.top;
+            if (top + menuHeight > viewportH - edgePadding) {
+                top = triggerRect.bottom - menuHeight;
+            }
+            top = Math.min(Math.max(edgePadding, top), Math.max(edgePadding, viewportH - menuHeight - edgePadding));
+
+            menu.style.left = `${Math.round(left)}px`;
+            menu.style.top = `${Math.round(top)}px`;
         },
         closeActionsMenu(menuId) {
-            const menu = document.getElementById(menuId);
-            const wrapper = menu ? menu.closest('.doctor-actions') : null;
-            if (wrapper) wrapper.classList.remove('open');
+            if (menuId && activeActionsMenuId && menuId !== activeActionsMenuId) return;
+            helper.closeAllActionsMenus();
         },
         renderTableActions(actions = []) {
             const validActions = Array.isArray(actions) ? actions.filter(Boolean) : [];
