@@ -523,7 +523,7 @@ let currentPage = 1;
             loadShifts();
             loadPackages();
             syncAppointmentSummaryFilter();
-            document.getElementById('appointmentDate').min = new Date().toISOString().split('T')[0];
+            document.getElementById('appointmentDate').min = window.AdminPageHelper.formatDateToYYYYMMDD(new Date());
             document.getElementById('appointmentForm').addEventListener('submit', handleFormSubmit);
             document.getElementById('filterStatus').addEventListener('change', applyFilters);
             document.getElementById('filterDateFrom').addEventListener('change', applyFilters);

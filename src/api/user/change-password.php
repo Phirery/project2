@@ -7,18 +7,15 @@ $nguoiDungId = $_SESSION['id'];
 $input = json_decode(file_get_contents('php://input'), true);
 
 try {
-    // Check 24h cooldown
-    $stmt = $conn->prepare("SELECT matKhau, ngayCapNhatMatKhau FROM nguoidung WHERE id = ?");
+    // Get current password
+    $stmt = $conn->prepare("SELECT matKhau FROM nguoidung WHERE id = ?");
     $stmt->bind_param("i", $nguoiDungId);
     $stmt->execute();
     $result = $stmt->get_result()->fetch_assoc();
     $stmt->close();
     
-    if ($result['ngayCapNhatMatKhau']) {
-        $hoursSinceChange = (time() - strtotime($result['ngayCapNhatMatKhau'])) / 3600;
-        if ($hoursSinceChange < 24) {
-            throw new Exception('Bạn chỉ có thể đổi mật khẩu sau 24 giờ!');
-        }
+    if (!$result) {
+        throw new Exception('Không tìm thấy người dùng!');
     }
     
     // Verify current password

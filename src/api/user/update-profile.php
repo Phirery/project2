@@ -23,20 +23,6 @@ function bindDynamicParams(mysqli_stmt $stmt, string $types, array &$values): vo
 try {
     $conn->begin_transaction();
 
-    // Check cooldown
-    $checkStmt = $conn->prepare("SELECT ngayCapNhatTaiKhoan FROM nguoidung WHERE id = ?");
-    $checkStmt->bind_param("i", $nguoiDungId);
-    $checkStmt->execute();
-    $lastUpdate = $checkStmt->get_result()->fetch_assoc()['ngayCapNhatTaiKhoan'] ?? null;
-    $checkStmt->close();
-
-    if ($lastUpdate) {
-        $secondsSinceUpdate = time() - strtotime($lastUpdate);
-        if ($secondsSinceUpdate < 60) {
-            throw new Exception('Bạn chỉ có thể cập nhật thông tin sau 1 phút!');
-        }
-    }
-
     $hasChanges = false;
 
     // Update nguoidung fields that are actually sent

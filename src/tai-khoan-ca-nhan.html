@@ -623,7 +623,7 @@
 
             <!-- ═══════════════ TAB THÔNG TIN ═══════════════ -->
             <div class="tab-pane active" id="info">
-                <div id="infoCooldown"></div>
+
 
                 <!-- View mode -->
                 <div id="profileView"></div>
@@ -648,7 +648,7 @@
 
             <!-- ═══════════════ TAB MẬT KHẨU ═══════════════ -->
             <div class="tab-pane" id="password">
-                <div id="pwdCooldown"></div>
+
 
                 <form id="changePasswordForm" onsubmit="changePassword(event)">
                     <div class="mb-3">
@@ -820,7 +820,7 @@
     let pendingAvatarFile = null;   // File ảnh đại diện chờ upload
     let otpCountdownInterval  = null;
     let resendCooldownInterval = null;
-    let updateCooldownInterval = null;
+
 
 
     //  INIT
@@ -865,7 +865,7 @@
             renderView();
             buildEditForm();
             applyRoleUI();
-            await Promise.all([checkUpdateCooldown(), checkPasswordCooldown()]);
+            // Cooldown removed
         } catch (e) {
             showAlert('error', 'Lỗi kết nối server');
         }
@@ -1048,30 +1048,77 @@
             }
         }
 
+        // Kiểm tra xem có thông tin nào thay đổi không
+        let hasInfoChanged = false;
+        for (const key in body) {
+            let newVal = body[key];
+            let oldVal = userData[key];
+
+            // Normalize values for comparison
+            if (newVal === null || newVal === undefined) newVal = '';
+            if (oldVal === null || oldVal === undefined) oldVal = '';
+            
+            if (String(newVal).trim() !== String(oldVal).trim()) {
+                hasInfoChanged = true;
+                break;
+            }
+        }
+
+        const hasAvatarChanged = !!(canEditAvatar(userData.vaiTro) && pendingAvatarFile);
+
+        if (!hasInfoChanged && !hasAvatarChanged) {
+            showAlert('error', 'Không có thông tin nào thay đổi');
+            cancelEdit();
+            return;
+        }
+
         const btn = document.getElementById('btnSave');
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang lưu...';
 
         try {
-            // Nếu có chọn ảnh mới và thuộc vai trò được phép → upload trước
-            if (canEditAvatar(userData.vaiTro) && pendingAvatarFile) {
-                await uploadAvatar();
+            let avatarUpdated = false;
+            let infoUpdated = false;
+
+            // 1. Cập nhật ảnh đại diện nếu có
+            if (hasAvatarChanged) {
+                const avatarRes = await uploadAvatar();
+                if (avatarRes && avatarRes.success) {
+                    avatarUpdated = true;
+                } else if (avatarRes && !avatarRes.success) {
+                    return; 
+                }
             }
 
-            const res  = await fetch(`${API_USER}/update-profile.php`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify(body)
-            });
-            const data = await res.json();
+            // 2. Cập nhật thông tin nếu có
+            if (hasInfoChanged) {
+                const res  = await fetch(`${API_USER}/update-profile.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
 
-            if (data.success) {
+                if (data.success) {
+                    infoUpdated = true;
+                } else {
+                    showAlert('error', data.message || 'Cập nhật thông tin thất bại');
+                }
+            }
+
+            // 3. Thông báo kết quả chính xác
+            if (avatarUpdated && infoUpdated) {
+                showAlert('success', 'Cập nhật ảnh đại diện và thông tin thành công!');
+            } else if (avatarUpdated) {
+                // showAlert cho avatar đã được gọi trong uploadAvatar()
+            } else if (infoUpdated) {
                 showAlert('success', 'Cập nhật thông tin thành công!');
+            }
+
+            if (avatarUpdated || infoUpdated) {
                 await loadProfile();
                 cancelEdit();
-            } else {
-                showAlert('error', data.message || 'Cập nhật thất bại');
             }
         } catch (e) {
             showAlert('error', 'Lỗi kết nối server');
@@ -1136,11 +1183,14 @@
             if (data.success) {
                 userData.avatar = data.avatarUrl;
                 showAlert('success', 'Cập nhật ảnh đại diện thành công!');
+                return data;
             } else {
                 showAlert('error', data.message || 'Không thể upload ảnh');
+                return data;
             }
         } catch (e) {
             showAlert('error', 'Lỗi upload ảnh: ' + e.message);
+            return { success: false, message: e.message };
         } finally {
             pendingAvatarFile = null;
         }
@@ -1159,69 +1209,7 @@
     }
 
 
-    //  COOLDOWN
 
-    async function checkUpdateCooldown() {
-        try {
-            const res  = await fetch(`${API_USER}/get-update-cooldown.php`, { credentials: 'include' });
-            const data = await res.json();
-            if (data.success && !data.canUpdate) {
-                const remainingSeconds = toPositiveInt(
-                    data.remainingSeconds,
-                    parseVietnameseDurationToSeconds(data.remainingTime)
-                );
-                startUpdateCooldown(remainingSeconds);
-            } else {
-                startUpdateCooldown(0);
-            }
-        } catch {}
-    }
-
-    function startUpdateCooldown(seconds) {
-        clearInterval(updateCooldownInterval);
-        const wrap = document.getElementById('infoCooldown');
-        const btn  = document.getElementById('btnEdit');
-        const safeSeconds = toPositiveInt(seconds, 0);
-
-        if (safeSeconds <= 0) {
-            wrap.innerHTML = '';
-            btn.disabled = false;
-            return;
-        }
-
-        wrap.innerHTML = `<div class="cooldown-notice"><i class="fas fa-clock"></i>
-            Bạn chỉ có thể cập nhật thông tin sau <strong id="updateCooldownText"></strong>.</div>`;
-        const textEl = document.getElementById('updateCooldownText');
-        const endAt = Date.now() + (safeSeconds * 1000);
-
-        const tick = () => {
-            const rem = Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
-            textEl.textContent = formatDurationVi(rem);
-            btn.disabled = rem > 0;
-
-            if (rem <= 0) {
-                clearInterval(updateCooldownInterval);
-                wrap.innerHTML = '';
-                btn.disabled = false;
-            }
-        };
-
-        tick();
-        updateCooldownInterval = setInterval(tick, 1000);
-    }
-
-    async function checkPasswordCooldown() {
-        try {
-            const res  = await fetch(`${API_USER}/get-password-cooldown.php`, { credentials: 'include' });
-            const data = await res.json();
-            if (data.success && !data.canChange) {
-                document.getElementById('pwdCooldown').innerHTML =
-                    `<div class="cooldown-notice"><i class="fas fa-clock"></i>
-                     Bạn chỉ có thể đổi mật khẩu sau <strong>${data.remainingTime}</strong>.</div>`;
-                document.getElementById('btnChangePwd').disabled = true;
-            }
-        } catch {}
-    }
 
 
     //  ĐỔI MẬT KHẨU (Tab mật khẩu)
@@ -1270,7 +1258,7 @@
                 showAlert('success', 'Đổi mật khẩu thành công!');
                 document.getElementById('changePasswordForm').reset();
                 document.getElementById('strengthBar').className = 'password-strength-bar';
-                await checkPasswordCooldown();
+
             } else {
                 showAlert('error', data.message || 'Đổi mật khẩu thất bại');
             }
@@ -1448,7 +1436,7 @@
             if (data.success) {
                 showAlert('success', 'Đổi mật khẩu thành công!');
                 closeOtpModal();
-                await checkPasswordCooldown();
+
             } else {
                 showAlert('error', data.message || 'Xác thực thất bại');
             }

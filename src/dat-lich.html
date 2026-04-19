@@ -942,7 +942,11 @@
         // Setup date input - chỉ cho phép chọn ngày từ hôm nay
         function setupDateInput() {
             const dateInput = document.getElementById('appointmentDate');
-            const today = new Date().toISOString().split('T')[0];
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            const today = `${y}-${m}-${d}`;
             dateInput.min = today;
             
             dateInput.addEventListener('change', function() {

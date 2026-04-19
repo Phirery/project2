@@ -860,12 +860,12 @@
             // Set min date for leave request
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
-            document.getElementById('leaveDate').min = tomorrow.toISOString().split('T')[0];
+            document.getElementById('leaveDate').min = window.DoctorPageHelper.formatDateToYYYYMMDD(tomorrow);
         });
 
         function buildAppointmentsQuery(page = 1) {
             const params = new URLSearchParams();
-            params.set('date', currentDate.toISOString().split('T')[0]);
+            params.set('date', window.DoctorPageHelper.formatDateToYYYYMMDD(currentDate));
             params.set('page', String(page));
             params.set('limit', String(itemsPerPage));
 
