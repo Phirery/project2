@@ -15,7 +15,7 @@ try {
     $stmt = $conn->prepare(
         "INSERT INTO thuoc (tenThuoc,donViTinh,soLuongTon,giaTien,cachDungMacDinh,loaiThuoc,nhaSanXuat,hanSuDung,nguongCanhBao)
          VALUES (?,?,?,?,?,?,?,?,?)
-         ON DUPLICATE KEY UPDATE soLuongTon=VALUES(soLuongTon), giaTien=VALUES(giaTien)"
+         ON DUPLICATE KEY UPDATE soLuongTon = soLuongTon + VALUES(soLuongTon), giaTien = VALUES(giaTien)"
     );
 
     $inserted = 0; $skipped = 0;

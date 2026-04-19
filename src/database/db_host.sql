@@ -1432,7 +1432,7 @@ ALTER TABLE thongbaolichkham
 
 ALTER TABLE thuoc
   ADD PRIMARY KEY (maThuoc),
-  ADD KEY idx_tenThuoc (tenThuoc),
+  ADD UNIQUE KEY idx_tenThuoc (tenThuoc),
   ADD KEY idx_loaiThuoc (loaiThuoc);
 
 
