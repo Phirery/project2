@@ -17,6 +17,23 @@ function scheduleManagementColumnExists(mysqli $conn, string $tableName, string 
     return $count > 0;
 }
 
+function scheduleManagementIndexExists(mysqli $conn, string $tableName, string $indexName): bool
+{
+    $stmt = $conn->prepare(
+        "SELECT COUNT(*) AS count
+         FROM information_schema.statistics
+         WHERE table_schema = DATABASE()
+           AND table_name = ?
+           AND index_name = ?"
+    );
+    $stmt->bind_param('ss', $tableName, $indexName);
+    $stmt->execute();
+    $count = (int)($stmt->get_result()->fetch_assoc()['count'] ?? 0);
+    $stmt->close();
+
+    return $count > 0;
+}
+
 function ensureScheduleManagementSchema(mysqli $conn): void
 {
     if (!scheduleManagementColumnExists($conn, 'suatkham', 'isActive')) {
@@ -35,6 +52,52 @@ function ensureScheduleManagementSchema(mysqli $conn): void
         $conn->query("ALTER TABLE suatkham ADD COLUMN presetMinutes INT(11) NOT NULL DEFAULT 40 AFTER effectiveTo");
     }
 
+    if (!scheduleManagementIndexExists($conn, 'suatkham', 'uniq_suatkham_slot_version')) {
+        $conn->query("DROP TEMPORARY TABLE IF EXISTS tmp_suatkham_duplicate_map");
+        $conn->query("DROP TEMPORARY TABLE IF EXISTS tmp_suatkham_canonical");
+        $conn->query(
+            "CREATE TEMPORARY TABLE tmp_suatkham_canonical
+             SELECT
+                MIN(maSuat) AS keepMaSuat,
+                maCa,
+                gioBatDau,
+                gioKetThuc,
+                effectiveFrom
+             FROM suatkham
+             GROUP BY maCa, gioBatDau, gioKetThuc, effectiveFrom"
+        );
+        $conn->query(
+            "CREATE TEMPORARY TABLE tmp_suatkham_duplicate_map
+             SELECT
+                s.maSuat AS oldMaSuat,
+                c.keepMaSuat AS newMaSuat
+             FROM suatkham s
+             JOIN tmp_suatkham_canonical c
+               ON c.maCa = s.maCa
+              AND c.gioBatDau = s.gioBatDau
+              AND c.gioKetThuc = s.gioKetThuc
+              AND c.effectiveFrom = s.effectiveFrom
+             WHERE s.maSuat <> c.keepMaSuat"
+        );
+        $conn->query(
+            "UPDATE lichkham lk
+             JOIN tmp_suatkham_duplicate_map m ON lk.maSuat = m.oldMaSuat
+             SET lk.maSuat = m.newMaSuat"
+        );
+        $conn->query(
+            "DELETE s
+             FROM suatkham s
+             JOIN tmp_suatkham_duplicate_map m ON s.maSuat = m.oldMaSuat"
+        );
+        $conn->query("DROP TEMPORARY TABLE IF EXISTS tmp_suatkham_duplicate_map");
+        $conn->query("DROP TEMPORARY TABLE IF EXISTS tmp_suatkham_canonical");
+
+        $conn->query(
+            "ALTER TABLE suatkham
+             ADD UNIQUE KEY uniq_suatkham_slot_version (maCa, gioBatDau, gioKetThuc, effectiveFrom)"
+        );
+    }
+
     if (!scheduleManagementColumnExists($conn, 'goikham', 'isActive')) {
         $conn->query("ALTER TABLE goikham ADD COLUMN isActive TINYINT(1) NOT NULL DEFAULT 1 AFTER gia");
     }
@@ -42,6 +105,13 @@ function ensureScheduleManagementSchema(mysqli $conn): void
     $conn->query("UPDATE suatkham SET effectiveFrom = '1900-01-01' WHERE effectiveFrom IS NULL OR effectiveFrom = '0000-00-00'");
     $conn->query("UPDATE suatkham SET presetMinutes = 40 WHERE presetMinutes IS NULL OR presetMinutes <= 0");
     $conn->query("UPDATE suatkham SET effectiveTo = NULL WHERE effectiveTo = '0000-00-00'");
+    $conn->query(
+        "DELETE s
+         FROM suatkham s
+         LEFT JOIN lichkham lk ON lk.maSuat = s.maSuat
+         WHERE lk.maSuat IS NULL
+           AND TIME_TO_SEC(TIMEDIFF(s.gioKetThuc, s.gioBatDau)) <> (s.presetMinutes * 60)"
+    );
 }
 
 function getAllowedSlotPresets(): array
@@ -112,6 +182,11 @@ function getScheduleSlotsForDate(mysqli $conn, ?string $date = null): array
 {
     ensureScheduleManagementSchema($conn);
     $targetDate = getNormalizedScheduleDate($date);
+    $versionDate = getCurrentScheduleVersionDate($conn, $targetDate);
+
+    if (!$versionDate) {
+        return [];
+    }
 
     $stmt = $conn->prepare(
         "SELECT
@@ -124,11 +199,13 @@ function getScheduleSlotsForDate(mysqli $conn, ?string $date = null): array
             effectiveTo,
             presetMinutes
          FROM suatkham
-         WHERE effectiveFrom <= ?
+         WHERE effectiveFrom = ?
+           AND effectiveFrom <= ?
            AND (effectiveTo IS NULL OR effectiveTo >= ?)
+           AND TIME_TO_SEC(TIMEDIFF(gioKetThuc, gioBatDau)) = (presetMinutes * 60)
          ORDER BY maCa, gioBatDau, maSuat"
     );
-    $stmt->bind_param('ss', $targetDate, $targetDate);
+    $stmt->bind_param('sss', $versionDate, $targetDate, $targetDate);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -190,6 +267,7 @@ function getSlotRowById(mysqli $conn, int $maSuat, ?string $date = null): ?array
          WHERE maSuat = ?
            AND effectiveFrom <= ?
            AND (effectiveTo IS NULL OR effectiveTo >= ?)
+           AND TIME_TO_SEC(TIMEDIFF(gioKetThuc, gioBatDau)) = (presetMinutes * 60)
          LIMIT 1"
     );
     $stmt->bind_param('iss', $maSuat, $targetDate, $targetDate);
@@ -361,8 +439,6 @@ function applySlotPreset(mysqli $conn, int $durationMinutes): array
 
     $shifts = getShiftRows($conn);
     $generatedSlots = buildSlotsForPreset($shifts, $durationMinutes);
-    $currentDate = getNormalizedScheduleDate();
-    $currentVersionDate = getCurrentScheduleVersionDate($conn);
     $effectiveFrom = getNextScheduleEffectiveDate($conn);
 
     $conn->begin_transaction();
@@ -373,21 +449,24 @@ function applySlotPreset(mysqli $conn, int $durationMinutes): array
         $deleteStmt->execute();
         $deleteStmt->close();
 
-        if ($currentVersionDate) {
-            $stmtClose = $conn->prepare(
-                "UPDATE suatkham
-                 SET effectiveTo = DATE_SUB(?, INTERVAL 1 DAY), isActive = 0
-                 WHERE effectiveFrom = ?
-                   AND (effectiveTo IS NULL OR effectiveTo >= ?)"
-            );
-            $stmtClose->bind_param('sss', $effectiveFrom, $currentVersionDate, $effectiveFrom);
-            $stmtClose->execute();
-            $stmtClose->close();
-        }
+        $stmtClose = $conn->prepare(
+            "UPDATE suatkham
+             SET effectiveTo = DATE_SUB(?, INTERVAL 1 DAY), isActive = 1
+             WHERE effectiveFrom < ?
+               AND (effectiveTo IS NULL OR effectiveTo >= ?)"
+        );
+        $stmtClose->bind_param('sss', $effectiveFrom, $effectiveFrom, $effectiveFrom);
+        $stmtClose->execute();
+        $stmtClose->close();
 
         $stmt = $conn->prepare(
             "INSERT INTO suatkham (maCa, gioBatDau, gioKetThuc, isActive, effectiveFrom, effectiveTo, presetMinutes)
-             VALUES (?, ?, ?, 1, ?, NULL, ?)"
+             VALUES (?, ?, ?, 1, ?, NULL, ?)
+             ON DUPLICATE KEY UPDATE
+                 gioKetThuc = VALUES(gioKetThuc),
+                 isActive = 1,
+                 effectiveTo = NULL,
+                 presetMinutes = VALUES(presetMinutes)"
         );
 
         foreach ($generatedSlots as $slot) {

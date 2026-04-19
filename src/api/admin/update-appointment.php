@@ -115,15 +115,6 @@ try {
         exit;
     }
 
-    $isKeepingOldSlot = (int)$oldRow['maSuat'] === $maSuat;
-    if ((int)$selectedSlot['isActive'] !== 1 && !$isKeepingOldSlot) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Suất khám này không còn được áp dụng'
-        ], JSON_UNESCAPED_UNICODE);
-        exit;
-    }
-
     $doctorConflict = findDoctorOverlap(
         $conn,
         $maBacSi,

@@ -1,3 +1,5 @@
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+
 CREATE TABLE bacsi (
   nguoiDungId int(11) NOT NULL,
   maBacSi varchar(20) NOT NULL,
@@ -105,6 +107,12 @@ CREATE TABLE chitietdonthuoc (
   soLuong int(11) DEFAULT NULL,
   lieuDung text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO chitietdonthuoc (id, maDonThuoc, maThuoc, soLuong, lieuDung) VALUES
+(1, 1, 2, 5, 'Uống 1 viên/lần, 4-6 giờ/lần. Uống ngay sau ăn'),
+(2, 1, 17, 5, 'Uống 1-2 viên/ngày sau bữa ăn'),
+(5, 3, 61, 5, 'Uống theo chỉ định bác sĩ. Không vượt quá 1.2mg/lần'),
+(6, 3, 16, 5, 'Hòa tan 1 viên trong 200ml nước, uống 1 lần/ngày sau ăn');
 
 CREATE TABLE chuyenkhoa (
   maChuyenKhoa varchar(10) NOT NULL,
@@ -216,6 +224,10 @@ CREATE TABLE donthuoc (
   tongTienThuoc decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO donthuoc (maDonThuoc, maLichKham, chuanDoan, loiDanBacSi, ngayKeDon, tongTienThuoc) VALUES
+(1, 79, 'Đau đầu, thiếu vitamin', 'Uống sau khi ăn', '2026-04-18 20:34:45', 31500.00),
+(3, 82, 'Vẫn ổn', '', '2026-04-19 02:06:12', 77500.00);
+
 CREATE TABLE goikham (
   maGoi int(11) NOT NULL,
   tenGoi varchar(100) NOT NULL,
@@ -226,8 +238,8 @@ CREATE TABLE goikham (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO goikham (maGoi, tenGoi, moTa, thoiLuong, gia, isActive) VALUES
-(1, 'Gói khám thường', 'Khám với bác sĩ tổng quát', 40, 150000.00, 1),
-(2, 'Gói khám cao cấp', 'Khám với bác sĩ chuyên gia', 40, 250000.00, 1);
+(1, 'Gói khám thường', 'Khám với bác sĩ tổng quát', 60, 150000.00, 1),
+(2, 'Gói khám cao cấp', 'Khám với bác sĩ chuyên gia', 60, 250000.00, 1);
 
 CREATE TABLE hoadon (
   maHoaDon int(11) NOT NULL,
@@ -241,7 +253,11 @@ CREATE TABLE hoadon (
 
 INSERT INTO hoadon (maHoaDon, maLichKham, soTien, ngayTao, trangThai, phuongThuc, vnp_TransactionNo) VALUES
 (1, 77, 150000.00, '2026-02-23 22:55:04', 'Chưa thanh toán', NULL, NULL),
-(2, 78, 250000.00, '2026-02-23 22:55:43', 'Chưa thanh toán', NULL, NULL);
+(2, 78, 250000.00, '2026-02-23 22:55:43', 'Chưa thanh toán', NULL, NULL),
+(3, 79, 150000.00, '2026-04-04 02:15:55', 'Chưa thanh toán', NULL, NULL),
+(4, 80, 250000.00, '2026-04-04 03:10:47', 'Chưa thanh toán', NULL, NULL),
+(5, 81, 250000.00, '2026-04-18 20:43:40', 'Chưa thanh toán', NULL, NULL),
+(6, 82, 150000.00, '2026-04-18 20:45:02', 'Chưa thanh toán', NULL, NULL);
 
 CREATE TABLE hosobenhan (
   maHoSo varchar(20) NOT NULL,
@@ -276,7 +292,12 @@ INSERT INTO hosobenhan (maHoSo, maBenhNhan, maBacSi, maLichKham, chanDoan, dieuT
 ('HS20251202131115238', 'BN2025111712142915', 'bs1', 73, '1', '1', 'Đã hoàn thành', '2025-12-02 13:11:15', '2025-12-04 20:09:27', '', '2025-12-05 00:00:00', 0, NULL, NULL, NULL),
 ('HS20251202131123736', 'BN2025112200000059', 'bs1', 71, '2', '2', 'Đã hoàn thành', '2025-12-02 13:11:23', '2025-12-04 20:14:59', '', '2025-12-04 00:00:00', 0, NULL, NULL, NULL),
 ('HS20251202131128242', 'BN202511101515250', 'bs1', 72, '3', '3', 'Đã hoàn thành', '2025-12-02 13:11:28', '2025-12-04 20:14:38', '', '2025-12-04 00:00:00', 0, NULL, NULL, NULL),
-('HS20251204200920792', 'bn1', 'bs1', 70, '1', '1', 'Đã hoàn thành', '2025-12-04 20:09:20', '2025-12-04 20:15:02', '', '2025-12-04 00:00:00', 0, NULL, NULL, NULL);
+('HS20251204200920792', 'bn1', 'bs1', 70, '1', '1', 'Đã hoàn thành', '2025-12-04 20:09:20', '2025-12-04 20:15:02', '', '2025-12-04 00:00:00', 0, NULL, NULL, NULL),
+('HS20260418203208441', 'bn1', 'bs1', 79, 'Đau đầu, thiếu vitamin', 'Nghỉ ngơi, uống thuốc đúng giờ', 'Đã hoàn thành', '2026-04-18 20:32:08', '2026-04-18 20:34:45', 'tái khám nếu sau 5 ngày nếu chưa khỏi', '2026-04-11 00:00:00', 0, NULL, NULL, NULL),
+('HS20260418203513404', 'BN202511082304701', 'bs1', 69, '', '', 'Chưa hoàn thành', '2026-04-18 20:35:13', NULL, '', '2025-12-03 00:00:00', 0, NULL, NULL, NULL),
+('HS20260418203519154', 'BN2025112200000058', 'bs1', 67, '', '', 'Chưa hoàn thành', '2026-04-18 20:35:19', NULL, '', '2025-12-03 00:00:00', 0, NULL, NULL, NULL),
+('HS20260418203525789', 'bn1', 'bs1', 66, '', '', 'Chưa hoàn thành', '2026-04-18 20:35:25', NULL, '', '2025-12-03 00:00:00', 0, NULL, NULL, NULL),
+('HS20260419020444496', 'bn1', 'bs1', 82, 'Vẫn ổn', 'Ổn', 'Đã hoàn thành', '2026-04-19 02:04:44', '2026-04-19 02:06:12', '', '2026-04-18 00:00:00', 0, NULL, NULL, NULL);
 
 CREATE TABLE khoa (
   maKhoa varchar(10) NOT NULL,
@@ -357,58 +378,27 @@ INSERT INTO lichkham (maLichKham, maBacSi, maBenhNhan, ngayKham, maCa, maSuat, m
 (75, 'BS20251121022', 'bn1', '2025-12-05', 1, 1, 1, 'Hủy', '\n[Lý do hủy]: 1', 'benhnhan'),
 (76, 'BS20251121027', 'BN2025112200000058', '2025-12-05', 1, 1, 1, 'Đã đặt', '', NULL),
 (77, 'BS20251121022', 'bn1', '2026-02-24', 1, 3, 1, 'Hủy', 'Không!', 'bacsi'),
-(78, 'BS20251121022', 'bn1', '2026-02-24', 1, 4, 2, 'Hủy', '', 'bacsi');
+(78, 'BS20251121022', 'bn1', '2026-02-24', 1, 4, 2, 'Hủy', '', 'bacsi'),
+(79, 'bs1', 'bn1', '2026-04-11', 2, 8, 1, 'Hoàn thành', '', NULL),
+(80, 'bs1', 'bn1', '2026-04-04', 1, 4, 2, 'Hủy', '\n[Lý do hủy]: Không có lí do', 'benhnhan'),
+(81, 'bs1', 'bn1', '2026-04-20', 1, 25, 2, 'Đã đặt', 'Không', NULL),
+(82, 'bs1', 'bn1', '2026-04-18', 2, 32, 1, 'Hoàn thành', '', NULL);
 DELIMITER $$
 CREATE TRIGGER `after_lichkham_insert` AFTER INSERT ON `lichkham` FOR EACH ROW BEGIN
-    DECLARE patientName VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-    DECLARE appointmentDate VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-    DECLARE shiftName VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-    DECLARE noteText TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '';
-    DECLARE messageText TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '';
+    DECLARE patientName VARCHAR(100);
+    DECLARE appointmentDate VARCHAR(20);
+    DECLARE shiftName VARCHAR(50);
+    DECLARE noteText TEXT DEFAULT '';
     
-    -- Lấy thông tin cơ bản, luôn trả về 1 dòng để tránh NULL ngoài ý muốn
-    SELECT COALESCE(
-        CONVERT(MAX(tenBenhNhan) USING utf8mb4) COLLATE utf8mb4_unicode_ci,
-        _utf8mb4'Không rõ bệnh nhân' COLLATE utf8mb4_unicode_ci
-    )
-    INTO patientName
-    FROM benhnhan
-    WHERE maBenhNhan = NEW.maBenhNhan;
-
-    SELECT COALESCE(
-        CONVERT(MAX(tenCa) USING utf8mb4) COLLATE utf8mb4_unicode_ci,
-        _utf8mb4'Không rõ ca' COLLATE utf8mb4_unicode_ci
-    )
-    INTO shiftName
-    FROM calamviec
-    WHERE maCa = NEW.maCa;
-
-    SET appointmentDate = COALESCE(
-        CONVERT(DATE_FORMAT(NEW.ngayKham, '%d/%m/%Y') USING utf8mb4) COLLATE utf8mb4_unicode_ci,
-        _utf8mb4'(chưa có ngày)' COLLATE utf8mb4_unicode_ci
-    );
+    -- Lấy thông tin cơ bản
+    SELECT tenBenhNhan INTO patientName FROM benhnhan WHERE maBenhNhan = NEW.maBenhNhan;
+    SELECT tenCa INTO shiftName FROM calamviec WHERE maCa = NEW.maCa;
+    SET appointmentDate = IFNULL(DATE_FORMAT(NEW.ngayKham, '%d/%m/%Y'), '(chưa có ngày)');
     
     -- Xử lý ghi chú: Nếu có ghi chú thì thêm vào nội dung
     IF NEW.ghiChu IS NOT NULL AND NEW.ghiChu != '' THEN
-        SET noteText = CONCAT(
-            _utf8mb4'. Ghi chú: ' COLLATE utf8mb4_unicode_ci,
-            CONVERT(NEW.ghiChu USING utf8mb4) COLLATE utf8mb4_unicode_ci
-        );
+        SET noteText = CONCAT('. Ghi chú: ', NEW.ghiChu);
     END IF;
-
-    -- Nối chuỗi theo từng bước để tương thích tốt hơn trên host
-    SET messageText = CONCAT(
-        _utf8mb4'Bệnh nhân ' COLLATE utf8mb4_unicode_ci,
-        patientName
-    );
-    SET messageText = CONCAT(
-        messageText,
-        _utf8mb4' đã đặt lịch khám vào ngày ' COLLATE utf8mb4_unicode_ci
-    );
-    SET messageText = CONCAT(messageText, appointmentDate);
-    SET messageText = CONCAT(messageText, _utf8mb4' - ' COLLATE utf8mb4_unicode_ci);
-    SET messageText = CONCAT(messageText, shiftName);
-    SET messageText = CONCAT(messageText, noteText);
     
     INSERT INTO thongbaolichkham (maBacSi, maLichKham, loai, tieuDe, noiDung, thoiGian, daXem)
     VALUES (
@@ -416,7 +406,12 @@ CREATE TRIGGER `after_lichkham_insert` AFTER INSERT ON `lichkham` FOR EACH ROW B
         NEW.maLichKham,
         'Đặt lịch',
         'Lịch khám mới',
-        messageText,
+        CONCAT(
+            'Bệnh nhân ', patientName, 
+            ' đã đặt lịch khám vào ngày ', appointmentDate, 
+            ' - ', shiftName,
+            noteText -- Thêm phần ghi chú vào đây
+        ),
         NOW(),
         0
     );
@@ -425,37 +420,30 @@ $$
 DELIMITER ;
 DELIMITER $$
 CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW BEGIN
-    DECLARE patientName VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-    DECLARE doctorName VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-    DECLARE appointmentDate VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-    DECLARE shiftName VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-    DECLARE slotTime VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-    DECLARE cancelSource VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-    DECLARE cancelActor VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-    DECLARE reason TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '';
+    DECLARE patientName VARCHAR(100);
+    DECLARE doctorName VARCHAR(100);
+    DECLARE appointmentDate VARCHAR(20);
+    DECLARE shiftName VARCHAR(50);
+    DECLARE slotTime VARCHAR(50);
+    DECLARE cancelSource VARCHAR(50);
+    DECLARE cancelActor VARCHAR(20);
+    DECLARE reason TEXT DEFAULT '';
 
     IF NEW.trangThai = 'Hủy' AND OLD.trangThai != 'Hủy' THEN
-        SELECT CONVERT(tenBenhNhan USING utf8mb4) COLLATE utf8mb4_unicode_ci
-        INTO patientName FROM benhnhan WHERE maBenhNhan = NEW.maBenhNhan;
-        SELECT CONVERT(tenBacSi USING utf8mb4) COLLATE utf8mb4_unicode_ci
-        INTO doctorName FROM bacsi WHERE maBacSi = NEW.maBacSi;
-        SELECT CONVERT(tenCa USING utf8mb4) COLLATE utf8mb4_unicode_ci
-        INTO shiftName FROM calamviec WHERE maCa = NEW.maCa;
-        SELECT CONCAT(
-            CONVERT(SUBSTRING(gioBatDau, 1, 5) USING utf8mb4) COLLATE utf8mb4_unicode_ci,
-            _utf8mb4' - ' COLLATE utf8mb4_unicode_ci,
-            CONVERT(SUBSTRING(gioKetThuc, 1, 5) USING utf8mb4) COLLATE utf8mb4_unicode_ci
-        )
+        SELECT tenBenhNhan INTO patientName FROM benhnhan WHERE maBenhNhan = NEW.maBenhNhan;
+        SELECT tenBacSi INTO doctorName FROM bacsi WHERE maBacSi = NEW.maBacSi;
+        SELECT tenCa INTO shiftName FROM calamviec WHERE maCa = NEW.maCa;
+        SELECT CONCAT(SUBSTRING(gioBatDau, 1, 5), ' - ', SUBSTRING(gioKetThuc, 1, 5))
         INTO slotTime FROM suatkham WHERE maSuat = NEW.maSuat;
-        SET appointmentDate = CONVERT(DATE_FORMAT(NEW.ngayKham, '%d/%m/%Y') USING utf8mb4) COLLATE utf8mb4_unicode_ci;
+        SET appointmentDate = DATE_FORMAT(NEW.ngayKham, '%d/%m/%Y');
 
         IF NEW.ghiChu LIKE '%[Lý do hủy]:%' THEN
-            SET reason = CONVERT(SUBSTRING_INDEX(NEW.ghiChu, '[Lý do hủy]: ', -1) USING utf8mb4) COLLATE utf8mb4_unicode_ci;
+            SET reason = SUBSTRING_INDEX(NEW.ghiChu, '[Lý do hủy]: ', -1);
         ELSE
-            SET reason = _utf8mb4'Không có lý do cụ thể' COLLATE utf8mb4_unicode_ci;
+            SET reason = 'Không có lý do cụ thể';
         END IF;
 
-        SET cancelActor = LOWER(TRIM(COALESCE(CONVERT(NEW.nguoiHuy USING utf8mb4) COLLATE utf8mb4_unicode_ci, '')));
+        SET cancelActor = LOWER(TRIM(COALESCE(NEW.nguoiHuy, '')));
 
         IF cancelActor = 'benhnhan' THEN
             IF NOT EXISTS (
@@ -474,10 +462,9 @@ CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW B
                     'Hủy lịch',
                     'Lịch khám đã hủy',
                     CONCAT(
-                        _utf8mb4'Bệnh nhân ' COLLATE utf8mb4_unicode_ci, patientName,
-                        _utf8mb4' đã hủy lịch khám ngày ' COLLATE utf8mb4_unicode_ci, appointmentDate,
-                        _utf8mb4' - ' COLLATE utf8mb4_unicode_ci, shiftName,
-                        _utf8mb4'. Lý do: ' COLLATE utf8mb4_unicode_ci, reason
+                        'Bệnh nhân ', patientName,
+                        ' đã hủy lịch khám ngày ', appointmentDate, ' - ', shiftName,
+                        '. Lý do: ', reason
                     ),
                     NOW(),
                     0
@@ -485,10 +472,10 @@ CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW B
             END IF;
         ELSEIF cancelActor IN ('bacsi', 'quantri', 'hethong') THEN
             SET cancelSource = CASE
-                WHEN cancelActor = 'bacsi' THEN _utf8mb4'Bác sĩ' COLLATE utf8mb4_unicode_ci
-                WHEN cancelActor = 'quantri' THEN _utf8mb4'Quản trị viên' COLLATE utf8mb4_unicode_ci
-                WHEN cancelActor = 'hethong' THEN _utf8mb4'Hệ thống' COLLATE utf8mb4_unicode_ci
-                ELSE _utf8mb4'Bệnh viện' COLLATE utf8mb4_unicode_ci
+                WHEN cancelActor = 'bacsi' THEN 'Bác sĩ'
+                WHEN cancelActor = 'quantri' THEN 'Quản trị viên'
+                WHEN cancelActor = 'hethong' THEN 'Hệ thống'
+                ELSE 'Bệnh viện'
             END;
 
             IF NOT EXISTS (
@@ -507,10 +494,10 @@ CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW B
                     'Lịch khám',
                     'Lịch khám bị hủy',
                     CONCAT(
-                        _utf8mb4'Lịch khám ngày ' COLLATE utf8mb4_unicode_ci, appointmentDate,
-                        _utf8mb4' đã bị hủy bởi ' COLLATE utf8mb4_unicode_ci, cancelSource,
-                        _utf8mb4'. Lý do: ' COLLATE utf8mb4_unicode_ci, reason,
-                        _utf8mb4'. Vui lòng đặt lịch mới.' COLLATE utf8mb4_unicode_ci
+                        'Lịch khám ngày ', appointmentDate,
+                        ' đã bị hủy bởi ', cancelSource,
+                        '. Lý do: ', reason,
+                        '. Vui lòng đặt lịch mới.'
                     ),
                     NOW(),
                     0
@@ -518,31 +505,6 @@ CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW B
             END IF;
         END IF;
     END IF;
-END
-$$
-DELIMITER ;
-
-DELIMITER $$
-CREATE EVENT `auto_cancel_expired_appointments`
-ON SCHEDULE EVERY 1 DAY
-STARTS TIMESTAMP(CURRENT_DATE, '17:05:00')
-DO
-BEGIN
-    UPDATE lichkham
-    SET
-        trangThai = 'Hủy',
-        nguoiHuy = 'hethong',
-        ghiChu = CASE
-            WHEN ghiChu IS NULL OR TRIM(ghiChu) = '' THEN
-                '[Lý do hủy]: Quá thời gian khám trong ngày'
-            WHEN ghiChu LIKE '%[Lý do hủy]:%' THEN
-                ghiChu
-            ELSE
-                CONCAT(ghiChu, '\n[Lý do hủy]: Quá thời gian khám trong ngày')
-        END
-    WHERE
-        ngayKham <= CURDATE()
-        AND trangThai NOT IN ('Hoàn thành', 'Hủy');
 END
 $$
 DELIMITER ;
@@ -565,7 +527,8 @@ INSERT INTO lienhe (maLienHe, hoTen, email, soDienThoai, chuDe, noiDung, trangTh
 (1, 'Test', 'test@gmail.com', '0123456789', 'Khác', 'test', 'Đã xử lý', '2025-11-23 19:21:51', 3, '2025-11-26 09:50:39', NULL),
 (2, 'testtwo', 'two@gmail.vn', '0987654321', 'Khác', 'a', 'Đã xử lý', '2025-11-23 19:42:29', 3, '2025-11-26 09:50:35', NULL),
 (3, 'hovaten', 'example@gamil.com', '0123456789', 'Khác', 'test n', 'Đã xử lý', '2025-11-24 17:10:15', 3, '2025-11-26 09:50:31', NULL),
-(4, 'Nguyễn Đạt', 'dat123456789fa+lienhe1@gmail.com', '0123123123', 'Khác', 'Hi', 'Đã xử lý', '2026-03-04 23:58:56', 3, '2026-03-05 00:01:02', 'Gửi lại lời chào cho khách hàng');
+(4, 'Nguyễn Đạt', 'dat123456789fa+lienhe1@gmail.com', '0123123123', 'Khác', 'Hi', 'Đã xử lý', '2026-03-04 23:58:56', 3, '2026-03-05 00:01:02', 'Gửi lại lời chào cho khách hàng'),
+(5, 'dat', 'ntdatcntt2311055@student.ctuet.edu.vn', '0987987987', 'Tư vấn dịch vụ', 'Xin tư vấn ạ', 'Chưa xử lý', '2026-04-19 02:02:33', NULL, NULL, NULL);
 
 CREATE TABLE mail_notification_log (
   id int(11) NOT NULL,
@@ -597,7 +560,40 @@ INSERT INTO mail_notification_log (id, event_code, event_key, recipient_email, s
 (16, 'contact_received', '4:contact:received', 'dat123456789fa+lienhe1@gmail.com', 'sent', NULL, '{\"subject\":\"Da tiep nhan lien he #4\"}', '2026-03-04 23:58:57'),
 (17, 'contact_processed', '4:contact:processed:2026-03-05 00:01:02', 'dat123456789fa+lienhe1@gmail.com', 'sent', NULL, '{\"subject\":\"Lien he #4 da duoc xu ly\"}', '2026-03-05 00:01:03'),
 (18, 'account_locked', '58:account_status:locked:20260309220912', 'dat123456789fa+benhnhan4@gmail.com', 'sent', NULL, '{\"subject\":\"Thong bao khoa tai khoan\"}', '2026-03-09 22:09:13'),
-(19, 'account_unlocked', '58:account_status:active:20260309220945', 'dat123456789fa+benhnhan4@gmail.com', 'sent', NULL, '{\"subject\":\"Thong bao mo khoa tai khoan\"}', '2026-03-09 22:09:46');
+(19, 'account_unlocked', '58:account_status:active:20260309220945', 'dat123456789fa+benhnhan4@gmail.com', 'sent', NULL, '{\"subject\":\"Thong bao mo khoa tai khoan\"}', '2026-03-09 22:09:46'),
+(20, 'appointment_booked_patient', '79:booked:2026-04-11:8', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Xác nhận đặt lịch khám #79\"}', '2026-04-04 02:15:56'),
+(21, 'appointment_booked_doctor', '79:booked:2026-04-11:8', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo có lịch khám mới #79\"}', '2026-04-04 02:15:57'),
+(22, 'appointment_booked_patient', '80:booked:2026-04-04:4', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Xác nhận đặt lịch khám #80\"}', '2026-04-04 03:10:48'),
+(23, 'appointment_booked_doctor', '80:booked:2026-04-04:4', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo có lịch khám mới #80\"}', '2026-04-04 03:10:49'),
+(24, 'appointment_cancelled_patient', '80:cancel:2026-04-04:393ad3338844683e9b69c26d044e5bcb', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám #80\"}', '2026-04-04 03:22:05'),
+(25, 'appointment_cancelled_doctor', '80:cancel:2026-04-04:393ad3338844683e9b69c26d044e5bcb', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám bệnh nhân #80\"}', '2026-04-04 03:22:06'),
+(26, 'medical_record_ready', 'HS20260418203208441:record_ready', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Hồ sơ khám bệnh đã cập nhật #HS20260418203208441\"}', '2026-04-18 20:34:46'),
+(27, 'appointment_booked_patient', '81:booked:2026-04-20:25', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Xác nhận đặt lịch khám #81\"}', '2026-04-18 20:43:41'),
+(28, 'appointment_booked_doctor', '81:booked:2026-04-20:25', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo có lịch khám mới #81\"}', '2026-04-18 20:43:42'),
+(29, 'appointment_booked_patient', '82:booked:2026-04-18:32', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Xác nhận đặt lịch khám #82\"}', '2026-04-18 20:45:03'),
+(30, 'appointment_booked_doctor', '82:booked:2026-04-18:32', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo có lịch khám mới #82\"}', '2026-04-18 20:45:03'),
+(31, 'contact_received', '5:contact:received', 'ntdatcntt2311055@student.ctuet.edu.vn', 'sent', NULL, '{\"subject\":\"Đã tiếp nhận liên hệ #5\"}', '2026-04-19 02:02:34'),
+(32, 'medical_record_ready', 'HS20260419020444496:record_ready', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Hồ sơ khám bệnh đã cập nhật #HS20260419020444496\"}', '2026-04-19 02:06:12'),
+(33, 'schedule_preset_changed_doctor', 'schedule_preset:2026-04-21:60', 'dat123456789+bacsi1@gmail.com', 'sent', NULL, '{\"subject\":\"Cập nhật lịch biểu khám từ 21\\/04\\/2026\"}', '2026-04-19 02:09:54'),
+(34, 'schedule_preset_changed_doctor', 'schedule_preset:2026-04-21:60', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Cập nhật lịch biểu khám từ 21\\/04\\/2026\"}', '2026-04-19 02:09:54');
+
+CREATE TABLE medicine_stock_log (
+  id int(11) NOT NULL,
+  maThuoc int(11) NOT NULL,
+  maLichKham int(11) DEFAULT NULL,
+  maHoSo varchar(30) DEFAULT NULL,
+  changeQty int(11) NOT NULL,
+  balanceAfter int(11) NOT NULL,
+  actionType varchar(32) NOT NULL,
+  note varchar(255) DEFAULT NULL,
+  createdAt datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO medicine_stock_log (id, maThuoc, maLichKham, maHoSo, changeQty, balanceAfter, actionType, note, createdAt) VALUES
+(1, 2, 79, 'HS20260418203208441', -5, 195, 'deduct', 'Dong bo toa thuoc cho ho so HS20260418203208441', '2026-04-18 20:34:45'),
+(2, 17, 79, 'HS20260418203208441', -5, 395, 'deduct', 'Dong bo toa thuoc cho ho so HS20260418203208441', '2026-04-18 20:34:45'),
+(3, 16, 82, 'HS20260419020444496', -5, 295, 'deduct', 'Dong bo toa thuoc cho ho so HS20260419020444496', '2026-04-19 02:06:12'),
+(4, 61, 82, 'HS20260419020444496', -5, 75, 'deduct', 'Dong bo toa thuoc cho ho so HS20260419020444496', '2026-04-19 02:06:12');
 
 CREATE TABLE ngaynghi (
   maNghi int(11) NOT NULL,
@@ -610,7 +606,9 @@ CREATE TABLE ngaynghi (
 INSERT INTO ngaynghi (maNghi, maBacSi, ngayNghi, maCa, lyDo) VALUES
 (7, 'bs1', '2025-11-27', 1, '0'),
 (8, 'bs1', '2025-11-27', 2, 'Thử'),
-(9, 'bs1', '2025-12-03', 1, 'Thích');
+(9, 'bs1', '2025-12-03', 1, 'Thích'),
+(10, 'bs1', '2026-04-19', 1, 'Bận'),
+(11, 'bs1', '2026-04-19', 2, 'Bận');
 DELIMITER $$
 CREATE TRIGGER `after_ngaynghi_delete` AFTER DELETE ON `ngaynghi` FOR EACH ROW BEGIN
     DECLARE doctorName VARCHAR(100);
@@ -725,9 +723,9 @@ CREATE TABLE nguoidung (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO nguoidung (id, tenDangNhap, matKhau, soDienThoai, email, vaiTro, trangThai, ngayCapNhatTaiKhoan, ngayCapNhatMatKhau, avatar, isDeleted, deletedAt, deletedBy, deleteReason) VALUES
-(1, 'nguoidung1', '$2y$10$Y8HGcx2vQmfKgEb3Kp.Xfu41/ZmWMs9y78oKa5OhnSfuOjk/yC3hy', '0987654322', 'dat123456789fa@gmail.com', 'benhnhan', 'Hoạt Động', '2025-11-21 15:25:43', '2026-03-02 21:35:49', 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(2, 'nguoidung2', '$2y$10$7G5Z78wzljUpOrRM0rS3zeDIGO3PNEao6/RbvbqvbYwRdqQtZ1kYq', '0987654323', 'dat123456789fa+nguoidung2@gmail.com', 'bacsi', 'Hoạt Động', '2026-02-24 00:46:34', '2025-12-02 12:15:59', 'https://res.cloudinary.com/dlnevod7e/image/upload/v1773160452/eden_health/avatars/doctors/doctor_admin_20260310233402_6441.jpg', 0, NULL, NULL, NULL),
-(3, 'nguoidung3', '$2y$10$/0FrHldUcP41w29..ISGO.rhD3NHA.YBmYWzOoxe9jnZBnpm97v1G', '0987654321', 'nguoidung3@gmail.com', 'quantri', 'Hoạt Động', NULL, '2025-12-02 12:16:42', 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(1, 'nguoidung1', '$2y$10$Y8HGcx2vQmfKgEb3Kp.Xfu41/ZmWMs9y78oKa5OhnSfuOjk/yC3hy', '0987654322', 'dat123456789fa@gmail.com', 'benhnhan', 'Hoạt Động', '2026-03-25 00:14:08', '2026-03-02 21:35:49', 'https://res.cloudinary.com/dlnevod7e/image/upload/v1776517111/Images/bacsi_1.gif', 0, NULL, NULL, NULL),
+(2, 'nguoidung2', '$2y$10$7G5Z78wzljUpOrRM0rS3zeDIGO3PNEao6/RbvbqvbYwRdqQtZ1kYq', '0987654323', 'dat123456789fa+nguoidung2@gmail.com', 'bacsi', 'Hoạt Động', '2026-02-24 00:46:34', '2025-12-02 12:15:59', 'https://res.cloudinary.com/dlnevod7e/image/upload/v1775243680/Images/bacsi_2.gif', 0, NULL, NULL, NULL),
+(3, 'nguoidung3', '$2y$10$/0FrHldUcP41w29..ISGO.rhD3NHA.YBmYWzOoxe9jnZBnpm97v1G', '0987654321', 'nguoidung3@gmail.com', 'quantri', 'Hoạt Động', NULL, '2025-12-02 12:16:42', 'https://res.cloudinary.com/dlnevod7e/image/upload/v1776535076/Images/bacsi_3.gif', 0, NULL, NULL, NULL),
 (8, 'ABCD', 'passwork', '0936846244', 'abcd@gmail.com', 'benhnhan', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
 (11, '0000000000', 'passwork', '0000000000', NULL, 'benhnhan', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
 (15, 'tranvanh2000', '$2y$10$7867Ekei9uerWlzDqGdIfef6p2glRKnjxuBwLV4rD8ZdtBCyvnPYO', '0345678921', NULL, 'benhnhan', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
@@ -797,18 +795,26 @@ CREATE TABLE suatkham (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO suatkham (maSuat, maCa, gioBatDau, gioKetThuc, isActive, effectiveFrom, effectiveTo, presetMinutes) VALUES
-(1, 1, '07:00:00', '07:40:00', 1, '1900-01-01', NULL, 40),
-(2, 1, '07:40:00', '08:20:00', 1, '1900-01-01', NULL, 40),
-(3, 1, '08:20:00', '09:00:00', 1, '1900-01-01', NULL, 40),
-(4, 1, '09:00:00', '09:40:00', 1, '1900-01-01', NULL, 40),
-(5, 1, '09:40:00', '10:20:00', 1, '1900-01-01', NULL, 40),
-(6, 1, '10:20:00', '11:00:00', 1, '1900-01-01', NULL, 40),
-(7, 2, '13:00:00', '13:40:00', 1, '1900-01-01', NULL, 40),
-(8, 2, '13:40:00', '14:20:00', 1, '1900-01-01', NULL, 40),
-(9, 2, '14:20:00', '15:00:00', 1, '1900-01-01', NULL, 40),
-(10, 2, '15:00:00', '15:40:00', 1, '1900-01-01', NULL, 40),
-(11, 2, '15:40:00', '16:20:00', 1, '1900-01-01', NULL, 40),
-(12, 2, '16:20:00', '17:00:00', 1, '1900-01-01', NULL, 40);
+(1, 1, '07:00:00', '07:40:00', 0, '1900-01-01', '2026-04-20', 40),
+(2, 1, '07:40:00', '08:20:00', 0, '1900-01-01', '2026-04-20', 40),
+(3, 1, '08:20:00', '09:00:00', 0, '1900-01-01', '2026-04-20', 40),
+(4, 1, '09:00:00', '09:40:00', 0, '1900-01-01', '2026-04-20', 40),
+(5, 1, '09:40:00', '10:20:00', 0, '1900-01-01', '2026-04-20', 40),
+(6, 1, '10:20:00', '11:00:00', 0, '1900-01-01', '2026-04-20', 40),
+(7, 2, '13:00:00', '13:40:00', 0, '1900-01-01', '2026-04-20', 40),
+(8, 2, '13:40:00', '14:20:00', 0, '1900-01-01', '2026-04-20', 40),
+(9, 2, '14:20:00', '15:00:00', 0, '1900-01-01', '2026-04-20', 40),
+(10, 2, '15:00:00', '15:40:00', 0, '1900-01-01', '2026-04-20', 40),
+(11, 2, '15:40:00', '16:20:00', 0, '1900-01-01', '2026-04-20', 40),
+(12, 2, '16:20:00', '17:00:00', 0, '1900-01-01', '2026-04-20', 40),
+(41, 1, '07:00:00', '08:00:00', 1, '2026-04-21', NULL, 60),
+(42, 1, '08:00:00', '09:00:00', 1, '2026-04-21', NULL, 60),
+(43, 1, '09:00:00', '10:00:00', 1, '2026-04-21', NULL, 60),
+(44, 1, '10:00:00', '11:00:00', 1, '2026-04-21', NULL, 60),
+(45, 2, '13:00:00', '14:00:00', 1, '2026-04-21', NULL, 60),
+(46, 2, '14:00:00', '15:00:00', 1, '2026-04-21', NULL, 60),
+(47, 2, '15:00:00', '16:00:00', 1, '2026-04-21', NULL, 60),
+(48, 2, '16:00:00', '17:00:00', 1, '2026-04-21', NULL, 60);
 
 CREATE TABLE thongbaoadmin (
   maThongBao int(11) NOT NULL,
@@ -832,7 +838,8 @@ INSERT INTO thongbaoadmin (maThongBao, nguoiDungId, maNghi, maYeuCau, soDienThoa
 (4, 58, NULL, 8, '0111111111', 'Cấp lại mật khẩu', 'Yêu cầu cấp lại mật khẩu', 'Người dùng test1 (benhnhan) yêu cầu cấp lại mật khẩu', '2025-11-24 22:17:16', 1, 'Từ chối', '2025-11-24 22:18:00', NULL),
 (5, 58, NULL, 9, '0111111111', 'Cấp lại mật khẩu', 'Yêu cầu cấp lại mật khẩu', 'Người dùng test1 (benhnhan) yêu cầu cấp lại mật khẩu', '2025-11-24 22:20:20', 1, 'Từ chối', '2025-11-24 22:20:35', NULL),
 (6, 2, 9, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn Bảo xin nghỉ phép vào ngày 03/12/2025 - Ca sáng. Lý do: Thích', '2025-12-02 00:00:58', 1, 'Chờ', NULL, '2025-12-03'),
-(9, 29, NULL, 12, '0912007002', 'Cấp lại mật khẩu', 'Yêu cầu cấp lại mật khẩu', 'Người dùng nguyenhoanganh (bacsi) yêu cầu cấp lại mật khẩu', '2026-03-04 23:25:19', 1, 'Đã xử lý', '2026-03-04 23:25:55', NULL);
+(9, 29, NULL, 12, '0912007002', 'Cấp lại mật khẩu', 'Yêu cầu cấp lại mật khẩu', 'Người dùng nguyenhoanganh (bacsi) yêu cầu cấp lại mật khẩu', '2026-03-04 23:25:19', 1, 'Đã xử lý', '2026-03-04 23:25:55', NULL),
+(10, 2, 10, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn Bảo xin nghỉ phép vào ngày 19/04/2026 - Cả ngày. Lý do: Bận', '2026-04-18 20:36:30', 1, 'Chờ', NULL, '2026-04-19');
 
 CREATE TABLE thongbaobenhnhan (
   maThongBao int(11) NOT NULL,
@@ -854,13 +861,15 @@ INSERT INTO thongbaobenhnhan (maThongBao, maBenhNhan, loai, tieuDe, noiDung, tho
 (7, 'bn1', 'Lịch khám', 'Lịch khám đã bị hủy', 'Lịch khám của bạn với bác sĩ Nguyễn Hoàng Anh vào ngày 01/12/2025 - Ca sáng (07:40 - 08:20) đã bị hủy.', '2025-11-30 10:39:37', 1),
 (8, 'bn1', 'Lịch khám', 'Lịch khám bị hủy', 'Lịch khám ngày 01/12/2025 với bác sĩ Nguyễn Hoàng Anh đã bị hủy bởi Bác sĩ. Vui lòng kiểm tra lại hoặc đặt lịch mới.', '2025-11-30 12:43:47', 1),
 (9, 'bn1', 'Lịch khám', 'Lịch khám bị hủy', 'Lịch khám ngày 24/02/2026 đã bị hủy bởi Bác sĩ. Lý do: Không có lý do cụ thể. Vui lòng đặt lịch mới.', '2026-02-23 22:57:53', 1),
-(10, 'bn1', 'Lịch khám', 'Lịch khám bị hủy', 'Lịch khám ngày 24/02/2026 đã bị hủy bởi Bác sĩ. Lý do: Không có lý do cụ thể. Vui lòng đặt lịch mới.', '2026-02-25 23:19:29', 1);
+(10, 'bn1', 'Lịch khám', 'Lịch khám bị hủy', 'Lịch khám ngày 24/02/2026 đã bị hủy bởi Bác sĩ. Lý do: Không có lý do cụ thể. Vui lòng đặt lịch mới.', '2026-02-25 23:19:29', 1),
+(11, 'bn1', 'Lịch khám', 'Hồ sơ khám bệnh đã hoàn tất', 'Hồ sơ HS20260418203208441 của bạn đã được bác sĩ cập nhật hoàn tất. Lịch khám #79, ngày 11/04/2026, bác sĩ Trần Văn Bảo. Chẩn đoán: Đau đầu, thiếu vitamin', '2026-04-18 20:34:45', 1),
+(12, 'bn1', 'Lịch khám', 'Hồ sơ khám bệnh đã hoàn tất', 'Hồ sơ HS20260419020444496 của bạn đã được bác sĩ cập nhật hoàn tất. Lịch khám #82, ngày 18/04/2026, bác sĩ Trần Văn Bảo. Chẩn đoán: Vẫn ổn', '2026-04-19 02:06:12', 1);
 
 CREATE TABLE thongbaolichkham (
   maThongBao int(11) NOT NULL,
   maBacSi varchar(20) NOT NULL,
   maLichKham int(11) DEFAULT NULL,
-  loai enum('Đặt lịch','Hủy lịch','Cập nhật lịch biểu') NOT NULL,
+  loai enum('Đặt lịch','Hủy lịch') NOT NULL,
   tieuDe varchar(255) NOT NULL,
   noiDung text NOT NULL,
   thoiGian datetime DEFAULT current_timestamp(),
@@ -946,7 +955,98 @@ INSERT INTO thongbaolichkham (maThongBao, maBacSi, maLichKham, loai, tieuDe, noi
 (96, 'bs1', 70, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 04/12/2025 - Ca sáng. Lý do: 1', '2026-02-23 22:56:27', 1),
 (97, 'BS20251121022', 75, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 05/12/2025 - Ca sáng. Lý do: 1', '2026-02-23 22:56:48', 1),
 (98, 'BS20251121028', 63, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 05/12/2025 - Ca sáng. Lý do: 1', '2026-02-23 22:57:08', 0),
-(99, 'BS20251121022', NULL, 'Đặt lịch', 'Cấp lại mật khẩu', 'Mật khẩu mới của bạn là: Eden04032026. Vui lòng đổi mật khẩu sau khi đăng nhập.', '2026-03-04 23:25:55', 1);
+(99, 'BS20251121022', NULL, 'Đặt lịch', 'Cấp lại mật khẩu', 'Mật khẩu mới của bạn là: Eden04032026. Vui lòng đổi mật khẩu sau khi đăng nhập.', '2026-03-04 23:25:55', 1),
+(100, 'bs1', 79, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 11/04/2026 - Ca chiều', '2026-04-04 02:15:55', 1),
+(101, 'bs1', 80, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 04/04/2026 - Ca sáng', '2026-04-04 03:10:47', 1),
+(102, 'bs1', 80, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 04/04/2026 - Ca sáng. Lý do: Không có lí do', '2026-04-04 03:22:04', 1),
+(103, 'bs1', 81, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 20/04/2026 - Ca sáng. Ghi chú: Không', '2026-04-18 20:43:40', 1),
+(104, 'bs1', 82, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 18/04/2026 - Ca chiều', '2026-04-18 20:45:02', 1),
+(105, 'bs1', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(106, 'BS20251121009', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(107, 'BS20251121010', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(108, 'BS20251121011', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(109, 'BS20251121012', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(110, 'BS20251121013', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(111, 'BS20251121014', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(112, 'BS20251121015', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(113, 'BS20251121016', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(114, 'BS20251121017', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(115, 'BS20251121018', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(116, 'BS20251121019', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(117, 'BS20251121020', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(118, 'BS20251121021', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(119, 'BS20251121022', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(120, 'BS20251121023', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(121, 'BS20251121024', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(122, 'BS20251121025', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(123, 'BS20251121026', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(124, 'BS20251121027', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(125, 'BS20251121028', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(126, 'BS20251121029', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(127, 'BS20251121030', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(128, 'BS20251121031', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(129, 'BS20251121032', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(130, 'BS20251121033', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(131, 'BS20251121034', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(132, 'BS20251121035', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(133, 'BS20251121036', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(134, 'BS20251121037', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(135, 'BS20251121038', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(136, 'BS20251121039', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(137, 'BS20251121040', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(138, 'BS20251121041', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(139, 'BS20251121042', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(140, 'BS20251121043', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(141, 'BS20251121044', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(142, 'BS20251121045', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(143, 'BS20251121046', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(144, 'BS20251121047', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(145, 'BS20251121048', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(146, 'BS20251121049', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(147, 'BS20251121050', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(148, 'bs1', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(149, 'BS20251121009', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(150, 'BS20251121010', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(151, 'BS20251121011', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(152, 'BS20251121012', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(153, 'BS20251121013', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(154, 'BS20251121014', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(155, 'BS20251121015', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(156, 'BS20251121016', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(157, 'BS20251121017', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(158, 'BS20251121018', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(159, 'BS20251121019', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(160, 'BS20251121020', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(161, 'BS20251121021', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(162, 'BS20251121022', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(163, 'BS20251121023', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(164, 'BS20251121024', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(165, 'BS20251121025', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(166, 'BS20251121026', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(167, 'BS20251121027', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(168, 'BS20251121028', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(169, 'BS20251121029', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(170, 'BS20251121030', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(171, 'BS20251121031', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(172, 'BS20251121032', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(173, 'BS20251121033', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(174, 'BS20251121034', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(175, 'BS20251121035', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(176, 'BS20251121036', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(177, 'BS20251121037', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(178, 'BS20251121038', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(179, 'BS20251121039', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(180, 'BS20251121040', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(181, 'BS20251121041', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(182, 'BS20251121042', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(183, 'BS20251121043', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(184, 'BS20251121044', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(185, 'BS20251121045', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(186, 'BS20251121046', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(187, 'BS20251121047', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(188, 'BS20251121048', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(189, 'BS20251121049', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(190, 'BS20251121050', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0);
 
 CREATE TABLE thuoc (
   maThuoc int(11) NOT NULL,
@@ -963,7 +1063,7 @@ CREATE TABLE thuoc (
 
 INSERT INTO thuoc (maThuoc, tenThuoc, donViTinh, soLuongTon, giaTien, cachDungMacDinh, loaiThuoc, nhaSanXuat, hanSuDung, nguongCanhBao) VALUES
 (1, 'Paracetamol 500mg', 'Viên', 500, 1500.00, 'Uống 1-2 viên/lần, 4-6 giờ/lần, tối đa 8 viên/ngày', 'Giảm đau / Hạ sốt', 'Hậu Giang Pharma', '2027-06-30', 50),
-(2, 'Paracetamol 650mg (Efferalgan)', 'Viên', 200, 4500.00, 'Uống 1 viên/lần, 4-6 giờ/lần. Uống ngay sau ăn', 'Giảm đau / Hạ sốt', 'UPSA - Pháp', '2026-12-31', 20),
+(2, 'Paracetamol 650mg (Efferalgan)', 'Viên', 195, 4500.00, 'Uống 1 viên/lần, 4-6 giờ/lần. Uống ngay sau ăn', 'Giảm đau / Hạ sốt', 'UPSA - Pháp', '2026-12-31', 20),
 (3, 'Ibuprofen 400mg', 'Viên', 300, 3200.00, 'Uống 1 viên/lần sau ăn, 3 lần/ngày. Không dùng khi đói', 'Giảm đau / Hạ sốt', 'DHG Pharma', '2027-03-31', 30),
 (4, 'Diclofenac 50mg', 'Viên', 150, 2800.00, 'Uống 1 viên/lần, 2-3 lần/ngày sau bữa ăn', 'Giảm đau / Hạ sốt', 'Pymepharco', '2026-09-30', 20),
 (5, 'Meloxicam 7.5mg', 'Viên', 120, 4200.00, 'Uống 1 viên/ngày trong bữa ăn. Không dùng quá 15mg/ngày', 'Giảm đau / Hạ sốt', 'Boehringer Ingelheim', '2027-01-31', 15),
@@ -977,8 +1077,8 @@ INSERT INTO thuoc (maThuoc, tenThuoc, donViTinh, soLuongTon, giaTien, cachDungMa
 (13, 'Metronidazole 500mg', 'Viên', 250, 2500.00, 'Uống 1 viên x 3 lần/ngày trong bữa ăn. Không uống rượu', 'Kháng sinh', 'Hậu Giang Pharma', '2027-04-30', 25),
 (14, 'Clarithromycin 250mg', 'Viên', 100, 12500.00, 'Uống 1 viên x 2 lần/ngày, cách đều 12 giờ', 'Kháng sinh', 'Abbott', '2026-11-30', 10),
 (15, 'Trimethoprim + SMX 480mg', 'Viên', 200, 3500.00, 'Uống 2 viên x 2 lần/ngày. Uống nhiều nước', 'Kháng sinh', 'DHG Pharma', '2026-08-31', 20),
-(16, 'Vitamin C 1000mg (Sủi)', 'Viên', 300, 3500.00, 'Hòa tan 1 viên trong 200ml nước, uống 1 lần/ngày sau ăn', 'Vitamin & Khoáng chất', 'Meyer-BPC', '2027-06-30', 30),
-(17, 'Vitamin B Complex', 'Viên', 400, 1800.00, 'Uống 1-2 viên/ngày sau bữa ăn', 'Vitamin & Khoáng chất', 'DHG Pharma', '2027-05-31', 40),
+(16, 'Vitamin C 1000mg (Sủi)', 'Viên', 295, 3500.00, 'Hòa tan 1 viên trong 200ml nước, uống 1 lần/ngày sau ăn', 'Vitamin & Khoáng chất', 'Meyer-BPC', '2027-06-30', 30),
+(17, 'Vitamin B Complex', 'Viên', 395, 1800.00, 'Uống 1-2 viên/ngày sau bữa ăn', 'Vitamin & Khoáng chất', 'DHG Pharma', '2027-05-31', 40),
 (18, 'Vitamin D3 2000IU', 'Viên', 200, 5500.00, 'Uống 1 viên/ngày trong bữa ăn có chất béo', 'Vitamin & Khoáng chất', 'Ostelin', '2027-08-31', 20),
 (19, 'Canxi + D3 (Calcium Sandoz)', 'Viên', 250, 4200.00, 'Nhai hoặc ngậm 1-2 viên/ngày. Không uống cùng sắt', 'Vitamin & Khoáng chất', 'Novartis', '2027-07-31', 25),
 (20, 'Sắt Fumarate 200mg', 'Viên', 200, 3800.00, 'Uống 1 viên/ngày xa bữa ăn. Có thể uống cùng Vitamin C', 'Vitamin & Khoáng chất', 'Pymepharco', '2026-12-31', 20),
@@ -1022,7 +1122,7 @@ INSERT INTO thuoc (maThuoc, tenThuoc, donViTinh, soLuongTon, giaTien, cachDungMa
 (58, 'Prednisolone 5mg', 'Viên', 300, 1500.00, 'Uống theo chỉ định bác sĩ. Uống sau ăn sáng', 'Kháng viêm', 'DHG Pharma', '2026-12-31', 30),
 (59, 'Methylprednisolone 16mg', 'Viên', 150, 9500.00, 'Uống theo chỉ định bác sĩ sau bữa ăn sáng', 'Kháng viêm', 'Pfizer', '2026-10-31', 15),
 (60, 'Dexamethasone 0.5mg', 'Viên', 200, 1200.00, 'Uống theo chỉ định bác sĩ', 'Kháng viêm', 'Pymepharco', '2026-08-31', 20),
-(61, 'Colchicine 0.6mg', 'Viên', 80, 12000.00, 'Uống theo chỉ định bác sĩ. Không vượt quá 1.2mg/lần', 'Kháng viêm', 'Takeda', '2026-11-30', 8),
+(61, 'Colchicine 0.6mg', 'Viên', 75, 12000.00, 'Uống theo chỉ định bác sĩ. Không vượt quá 1.2mg/lần', 'Kháng viêm', 'Takeda', '2026-11-30', 8),
 (62, 'Tobramycin nhỏ mắt 0.3%', 'Lọ', 100, 35000.00, 'Nhỏ 1-2 giọt vào mắt x 4 lần/ngày', 'Mắt', 'Alcon', '2026-07-31', 10),
 (63, 'Nước muối sinh lý 0.9%', 'Lọ', 500, 5000.00, 'Rửa mắt, mũi hoặc vệ sinh vết thương theo nhu cầu', 'Mắt', 'Hậu Giang Pharma', '2027-12-31', 50),
 (64, 'Xylometazoline xịt mũi 0.1%', 'Lọ', 150, 28000.00, 'Xịt 2-3 lần vào mỗi bên mũi x 2-3 lần/ngày. Không dùng >7 ngày', 'Tai mũi họng', 'GlaxoSmithKline', '2026-09-30', 15),
@@ -1111,6 +1211,13 @@ ALTER TABLE mail_notification_log
   ADD UNIQUE KEY uq_mail_event_recipient (event_code,event_key,recipient_email),
   ADD KEY idx_mail_sent_at (sent_at);
 
+ALTER TABLE medicine_stock_log
+  ADD PRIMARY KEY (id),
+  ADD KEY idx_medicine_stock_log_maThuoc (maThuoc),
+  ADD KEY idx_medicine_stock_log_maLichKham (maLichKham),
+  ADD KEY idx_medicine_stock_log_maHoSo (maHoSo),
+  ADD KEY idx_medicine_stock_log_createdAt (createdAt);
+
 ALTER TABLE ngaynghi
   ADD PRIMARY KEY (maNghi),
   ADD KEY maBacSi (maBacSi),
@@ -1129,7 +1236,8 @@ ALTER TABLE quantrivien
 
 ALTER TABLE suatkham
   ADD PRIMARY KEY (maSuat),
-  ADD KEY maCa (maCa);
+  ADD KEY maCa (maCa),
+  ADD UNIQUE KEY uniq_suatkham_slot_version (maCa, gioBatDau, gioKetThuc, effectiveFrom);
 
 ALTER TABLE thongbaoadmin
   ADD PRIMARY KEY (maThongBao),
@@ -1160,46 +1268,49 @@ ALTER TABLE calamviec
   MODIFY maCa int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 ALTER TABLE chitietdonthuoc
-  MODIFY id int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 ALTER TABLE doimatkhau
   MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 ALTER TABLE donthuoc
-  MODIFY maDonThuoc int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY maDonThuoc int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 ALTER TABLE goikham
   MODIFY maGoi int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 ALTER TABLE hoadon
-  MODIFY maHoaDon int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY maHoaDon int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 ALTER TABLE lichkham
-  MODIFY maLichKham int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
+  MODIFY maLichKham int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
 
 ALTER TABLE lienhe
-  MODIFY maLienHe int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY maLienHe int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 ALTER TABLE mail_notification_log
-  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+
+ALTER TABLE medicine_stock_log
+  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 ALTER TABLE ngaynghi
-  MODIFY maNghi int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY maNghi int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 ALTER TABLE nguoidung
   MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 ALTER TABLE suatkham
-  MODIFY maSuat int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY maSuat int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 ALTER TABLE thongbaoadmin
-  MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
-
-ALTER TABLE thongbaobenhnhan
   MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
+ALTER TABLE thongbaobenhnhan
+  MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
 ALTER TABLE thongbaolichkham
-  MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
+  MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=191;
 
 ALTER TABLE thuoc
   MODIFY maThuoc int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;

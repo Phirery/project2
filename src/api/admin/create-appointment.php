@@ -32,10 +32,6 @@ try {
         throw new Exception('Suất khám không tồn tại hoặc không thuộc ca đã chọn');
     }
 
-    if ((int)$selectedSlot['isActive'] !== 1) {
-        throw new Exception('Suất khám này không còn được áp dụng');
-    }
-
     $doctorConflict = findDoctorOverlap(
         $conn,
         $maBacSi,
