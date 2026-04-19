@@ -648,9 +648,9 @@ let currentPage = 1;
                         </td>
                         <td>
                             ${window.AdminPageHelper.renderTableActions([
-                                { label: 'Xem chi tiết', icon: 'fa-eye', onClick: "viewPatient('${patient.maBenhNhan}')", variant: 'view' },
-                                { label: 'Chỉnh sửa', icon: 'fa-edit', onClick: "editPatient('${patient.maBenhNhan}')", variant: 'edit' },
-                                { label: 'Xóa', icon: 'fa-trash', onClick: "deletePatient('${patient.maBenhNhan}')", variant: 'delete' }
+                                { label: 'Xem chi tiết', icon: 'fa-eye', onClick: "viewPatient('" + patient.maBenhNhan + "')", variant: 'view' },
+                                { label: 'Chỉnh sửa', icon: 'fa-edit', onClick: "editPatient('" + patient.maBenhNhan + "')", variant: 'edit' },
+                                { label: 'Xóa', icon: 'fa-trash', onClick: "deletePatient('" + patient.maBenhNhan + "')", variant: 'delete' }
                             ])}
                         </td>
                     </tr>

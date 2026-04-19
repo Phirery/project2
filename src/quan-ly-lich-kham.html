@@ -605,9 +605,9 @@ let currentPage = 1;
                     <td>${getStatusBadge(apt.trangThai)}</td>
                     <td>
                         ${window.AdminPageHelper.renderTableActions([
-                            { label: 'Xem chi tiết', icon: 'fa-eye', onClick: "viewAppointment('${apt.maLichKham}')", variant: 'view' },
-                            { label: 'Chỉnh sửa', icon: 'fa-edit', onClick: "editAppointment('${apt.maLichKham}')", variant: 'edit' },
-                            { label: 'Xóa', icon: 'fa-trash', onClick: "deleteAppointment('${apt.maLichKham}')", variant: 'delete' }
+                            { label: 'Xem chi tiết', icon: 'fa-eye', onClick: "viewAppointment('" + apt.maLichKham + "')", variant: 'view' },
+                            { label: 'Chỉnh sửa', icon: 'fa-edit', onClick: "editAppointment('" + apt.maLichKham + "')", variant: 'edit' },
+                            { label: 'Xóa', icon: 'fa-trash', onClick: "deleteAppointment('" + apt.maLichKham + "')", variant: 'delete' }
                         ])}
                     </td>
                 </tr>

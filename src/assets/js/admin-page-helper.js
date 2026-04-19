@@ -109,9 +109,7 @@
                 helper.closeAllActionsMenus();
             }, true);
 
-            document.addEventListener('show.bs.modal', () => {
-                helper.closeAllActionsMenus();
-            });
+            // Đã gỡ bỏ listener show.bs.modal vì nó gây xung đột với việc mở modal từ async functions
 
             actionsMenuBound = true;
         },
@@ -132,7 +130,7 @@
             const menu = helper.getFloatingActionsMenu();
             menu.style.display = 'none';
             menu.style.visibility = 'hidden';
-            menu.innerHTML = '';
+            // Không xóa innerHTML để tránh lỗi Bootstrap Modal mất relatedTarget khi phần tử bị hủy
             menu.removeAttribute('data-source-menu-id');
             menu.setAttribute('aria-hidden', 'true');
 
@@ -199,9 +197,27 @@
             if (menuId && activeActionsMenuId && menuId !== activeActionsMenuId) return;
             helper.closeAllActionsMenus();
         },
+        executeAction(codeStr) {
+            helper.closeAllActionsMenus();
+            setTimeout(() => {
+                try {
+                    window.eval(codeStr);
+                } catch(e) {
+                    console.error("Lỗi khi thực thi action:", e);
+                }
+            }, 50);
+        },
         renderTableActions(actions = []) {
             const validActions = Array.isArray(actions) ? actions.filter(Boolean) : [];
             if (!validActions.length) return '';
+
+            if (validActions.length === 1) {
+                const action = validActions[0];
+                const variantClass = action.variant ? ` btn-${action.variant}` : '';
+                const iconClass = action.icon ? `fas ${action.icon}` : 'fas fa-circle';
+                const title = String(action.label || 'Thao tác').replace(/"/g, '&quot;');
+                return `<button class="btn-action${variantClass}" onclick="${action.onClick}" title="${title}"><i class="${iconClass}"></i></button>`;
+            }
 
             helper.ensureActionsMenuStyles();
             helper.bindActionsMenuEvents();
@@ -214,14 +230,19 @@
                 const variantClass = variant ? ` is-${variant}` : '';
                 const iconClass = action.icon ? `fas ${action.icon}` : 'fas fa-circle';
                 const label = action.label || 'Thao tác';
-                return `<button class="admin-action-item${variantClass}" type="button" onclick="${action.onClick}; window.AdminPageHelper.closeActionsMenu('${menuId}');"><i class="${iconClass}"></i><span>${label}</span></button>`;
+
+                // Bọc lệnh thực thi qua hàm executeAction để tránh xung đột focus
+                const safeCode = action.onClick.replace(/"/g, '\\"').replace(/'/g, "\\'");
+                return `<button class="admin-action-item${variantClass}" type="button" onclick="window.AdminPageHelper.executeAction('${safeCode}')"><i class="${iconClass}"></i><span>${label}</span></button>`;
             }).join('');
 
             return `
                 <div class="admin-actions">
                     <button class="admin-actions-toggle" type="button" title="Thao tác" onclick="window.AdminPageHelper.toggleActionsMenu('${menuId}', event)"><i class="fas fa-ellipsis-h"></i></button>
                     <div class="admin-actions-menu" id="${menuId}">
-                        ${items}
+                        <div class="admin-actions-menu-inner">
+                            ${items}
+                        </div>
                     </div>
                 </div>
             `;
