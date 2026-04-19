@@ -31,9 +31,10 @@
         .preset-card:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(41, 53, 72, 0.08); }
         .preset-card.active { border-color: var(--primary-purple); box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12); }
         .preset-card.selected { border-color: #1f2937; box-shadow: 0 0 0 3px rgba(31, 41, 55, 0.08); }
-        .preset-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-weight: 700; color: #243042; }
+        .preset-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-weight: 700; color: #243042; flex-wrap: wrap; gap: 6px; }
         .preset-meta { color: #667085; font-size: 0.88rem; line-height: 1.5; }
         .preset-badge { padding: 4px 10px; border-radius: 999px; font-size: 0.74rem; font-weight: 700; background: rgba(102, 126, 234, 0.12); color: var(--primary-purple); }
+        .preset-badge.upcoming { background: rgba(234, 88, 12, 0.1); color: #c2410c; border: 1.5px dashed rgba(234, 88, 12, 0.45); padding: 3px 9px; }
         .preset-actions { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding: 16px 18px; border-radius: 14px; background: #f8fafc; border: 1px solid #e8edf4; }
         .preset-actions p { margin: 0; color: #5c6676; font-size: 0.9rem; }
         .btn-primary-gradient { border: none; border-radius: 999px; padding: 11px 22px; font-weight: 700; color: #fff; background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue)); box-shadow: 0 10px 18px rgba(102, 126, 234, 0.22); }
@@ -78,8 +79,184 @@
         .form-control, .form-select { border-radius: 12px; border: 1px solid #d8e1ec; padding: 11px 14px; }
         .readonly-note { padding: 12px 14px; border-radius: 12px; background: #f8fafc; border: 1px solid #e5ebf3; color: #5f6b7a; font-size: 0.9rem; }
         .loading-block { text-align: center; padding: 48px 18px; color: #7a8596; }
+
+        /* ===== PRESET TIMELINE ===== */
+        .preset-timeline {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+            padding: 14px 20px 20px;
+            margin-bottom: 20px;
+        }
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .timeline-legend {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .tl-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.8rem;
+            color: #4f6b8a;
+            font-weight: 600;
+        }
+        .tl-legend-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+        .timeline-range-btns {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .tl-range-btn {
+            padding: 5px 13px;
+            border-radius: 999px;
+            border: 1.5px solid #d7e1ee;
+            background: #fff;
+            color: #5c7090;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            line-height: 1;
+        }
+        .tl-range-btn:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+        .tl-range-btn.active {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: #fff;
+        }
+        .timeline-bar-wrap {
+            position: relative;
+            padding-bottom: 32px;
+        }
+        .timeline-bar {
+            display: flex;
+            height: 36px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #eef2f8;
+        }
+        .tl-segment {
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+            min-width: 0;
+            transition: filter 0.15s ease;
+        }
+        .tl-segment:hover { filter: brightness(1.1) saturate(1.12); }
+        .tl-segment:first-child { border-radius: 10px 0 0 10px; }
+        .tl-segment:last-child  { border-radius: 0 10px 10px 0; }
+        .tl-segment:only-child  { border-radius: 10px; }
+        .tl-seg-label {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 0.78rem;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            pointer-events: none;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
+            padding: 0 8px;
+        }
+        /* Today marker (absolute inside bar-wrap) */
+        .tl-today-line {
+            position: absolute;
+            top: 0;
+            height: 36px;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.88);
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.18);
+            z-index: 4;
+            pointer-events: none;
+            transform: translateX(-50%);
+        }
+        .tl-today-line::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 8px solid #1f2937;
+        }
+        /* Tick marks */
+        .timeline-ticks {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 28px;
+        }
+        .tl-tick {
+            position: absolute;
+            transform: translateX(-50%);
+        }
+        .tl-tick-stem {
+            width: 1.5px;
+            height: 6px;
+            background: #c8d3e0;
+            margin: 0 auto 3px;
+        }
+        .tl-tick-lbl {
+            font-size: 0.7rem;
+            color: #8a94a6;
+            white-space: nowrap;
+            text-align: center;
+            line-height: 1;
+        }
+        .tl-tick-today .tl-tick-stem { background: #1f2937; width: 2px; }
+        .tl-tick-today .tl-tick-lbl  { color: #1f2937; font-weight: 700; font-size: 0.72rem; }
+        .tl-tick-transition .tl-tick-stem { background: #374151; width: 2px; }
+        .tl-tick-transition .tl-tick-lbl  { color: #374151; font-weight: 700; font-size: 0.72rem; }
+        /* Floating tooltip */
+        .tl-tooltip {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            background: #1e2535;
+            color: #e8edf5;
+            padding: 9px 14px;
+            border-radius: 9px;
+            font-size: 0.81rem;
+            pointer-events: none;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            max-width: 240px;
+            line-height: 1.55;
+        }
+
         @media (max-width: 992px) { .dashboard-grid, .schedule-preview { grid-template-columns: 1fr; } }
-        @media (max-width: 768px) { .preset-grid { grid-template-columns: 1fr; } .table-header, .toolbar, .preset-actions { flex-direction: column; align-items: stretch; } }
+        @media (max-width: 768px) {
+            .preset-grid { grid-template-columns: 1fr; }
+            .table-header, .toolbar, .preset-actions { flex-direction: column; align-items: stretch; }
+            .preset-timeline { padding: 12px 14px 18px; }
+            .timeline-bar { height: 30px; }
+            .tl-today-line { height: 30px; }
+            .timeline-header { flex-direction: row; }
+        }
     </style>
 </head>
 <body>
@@ -87,6 +264,8 @@
 
     <div id="page-content" style="display:none;">
         <div class="container-fluid">
+
+            <!-- Summary Bar -->
             <div class="summary-bar">
                 <div class="summary-chip preset"><i class="fas fa-stopwatch"></i><div class="summary-text"><span class="summary-label">Preset hiện tại</span><span class="summary-value" id="summaryPreset">--</span></div></div>
                 <div class="summary-chip morning"><i class="fas fa-sun"></i><div class="summary-text"><span class="summary-label">Ca sáng</span><span class="summary-value" id="summaryMorning">--</span></div></div>
@@ -94,6 +273,25 @@
                 <div class="summary-chip packages"><i class="fas fa-briefcase-medical"></i><div class="summary-text"><span class="summary-label">Gói khám hoạt động</span><span class="summary-value" id="summaryPackages">--</span></div></div>
             </div>
 
+            <!-- Preset Timeline -->
+            <div class="preset-timeline" id="presetTimelineSection" style="display:none;">
+                <div class="timeline-header">
+                    <div class="timeline-legend" id="timelineLegend"></div>
+                    <div class="timeline-range-btns">
+                        <button class="tl-range-btn active" data-days="7"  onclick="renderTimeline(7)">7 ngày</button>
+                        <button class="tl-range-btn"        data-days="15" onclick="renderTimeline(15)">15 ngày</button>
+                        <button class="tl-range-btn"        data-days="31" onclick="renderTimeline(31)">31 ngày</button>
+                    </div>
+                </div>
+                <div class="timeline-bar-wrap" id="timelineBarWrap">
+                    <div class="timeline-bar"   id="timelineBar"></div>
+                    <div class="tl-today-line"  id="timelineTodayLine" style="display:none;"></div>
+                    <div class="timeline-ticks" id="timelineTicks"></div>
+                </div>
+                <div class="tl-tooltip" id="tlTooltip"></div>
+            </div>
+
+            <!-- Main Config Grid -->
             <div class="dashboard-grid">
                 <div class="section-card">
                     <div class="card-header">
@@ -127,6 +325,8 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Package Table -->
             <div class="table-section">
                 <div class="table-header">
                     <div>
@@ -160,6 +360,7 @@
         </div>
     </div>
 
+    <!-- Package Modal -->
     <div class="modal fade" id="packageModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -206,12 +407,19 @@
     <script src="assets/js/sidebar-admin.js"></script>
     <script src="assets/js/admin-page-helper.js"></script>
     <script>
-        let scheduleConfig = null;
-        let allPackages = [];
-        let filteredPackages = [];
-        let selectedPreset = null;
+        // ─── State ───────────────────────────────────────────────────────────
+        let scheduleConfig    = null;
+        let allPackages       = [];
+        let filteredPackages  = [];
+        let selectedPreset    = null;
         let packageModalInstance = null;
 
+        // ─── Timeline state ───────────────────────────────────────────────────
+        let currentTimelineDays = 7;
+        const TIMELINE_COLORS   = ['#4A90E2', '#7c3aed', '#059669', '#d97706', '#dc2626'];
+        let presetColorMap      = {};
+
+        // ─── Init ─────────────────────────────────────────────────────────────
         document.addEventListener('DOMContentLoaded', async function () {
             packageModalInstance = new bootstrap.Modal(document.getElementById('packageModal'));
             document.getElementById('packageForm').addEventListener('submit', handlePackageSubmit);
@@ -222,20 +430,21 @@
             document.getElementById('page-content').style.display = 'block';
         });
 
+        // ─── Load schedule config ─────────────────────────────────────────────
         async function loadScheduleConfig() {
-            const scheduleLoading = document.getElementById('scheduleLoading');
-            const scheduleContent = document.getElementById('scheduleContent');
-            const previewLoading = document.getElementById('schedulePreviewLoading');
-            const preview = document.getElementById('schedulePreview');
+            const scheduleLoading  = document.getElementById('scheduleLoading');
+            const scheduleContent  = document.getElementById('scheduleContent');
+            const previewLoading   = document.getElementById('schedulePreviewLoading');
+            const preview          = document.getElementById('schedulePreview');
 
-            scheduleLoading.style.display = 'block';
-            previewLoading.style.display = 'block';
-            scheduleContent.style.display = 'none';
-            preview.style.display = 'none';
+            scheduleLoading.style.display  = 'block';
+            previewLoading.style.display   = 'block';
+            scheduleContent.style.display  = 'none';
+            preview.style.display          = 'none';
 
             try {
                 const response = await fetch(`${API_BASE_ADMIN}/get-schedule-config.php`, { credentials: 'include' });
-                const result = await response.json();
+                const result   = await response.json();
 
                 if (!result.success) {
                     showAlert('error', result.message || 'Không thể tải cấu hình lịch biểu');
@@ -245,24 +454,29 @@
 
                 scheduleConfig = result.data;
                 selectedPreset = scheduleConfig.currentDurationMinutes;
+
+                buildPresetColorMap(scheduleConfig.presetHistory || []);
                 renderScheduleSummary();
                 renderPresetGrid();
                 renderSchedulePreview();
+                renderTimeline(currentTimelineDays);
+
                 scheduleContent.style.display = 'block';
-                preview.style.display = 'grid';
+                preview.style.display         = 'grid';
             } catch (error) {
                 console.error('Error loading schedule config:', error);
                 showAlert('error', 'Lỗi kết nối khi tải cấu hình lịch biểu');
             } finally {
-                scheduleLoading.style.display = 'none';
-                previewLoading.style.display = 'none';
+                scheduleLoading.style.display  = 'none';
+                previewLoading.style.display   = 'none';
             }
         }
 
+        // ─── Load packages ────────────────────────────────────────────────────
         async function loadPackages() {
             try {
                 const response = await fetch(`${API_BASE_ADMIN}/get-packages.php?includeInactive=1`, { credentials: 'include' });
-                const result = await response.json();
+                const result   = await response.json();
 
                 if (!result.success) {
                     showAlert('error', result.message || 'Không thể tải gói khám');
@@ -270,7 +484,7 @@
                     return;
                 }
 
-                allPackages = result.data || [];
+                allPackages      = result.data || [];
                 filteredPackages = [...allPackages];
                 renderPackageTable();
                 updatePackageSummary();
@@ -279,35 +493,53 @@
                 showAlert('error', 'Lỗi kết nối khi tải gói khám');
             }
         }
-        function renderScheduleSummary() {
-            const currentPreset = scheduleConfig?.currentDurationMinutes || '--';
-            const nextEffective = scheduleConfig?.nextEffectiveFrom ? formatDate(scheduleConfig.nextEffectiveFrom) : 'Chưa xác định';
 
-            document.getElementById('summaryPreset').textContent = `${currentPreset} phút`;
-            document.getElementById('summaryMorning').textContent = `${countPreviewSlots(1, currentPreset)} suất`;
-            document.getElementById('summaryAfternoon').textContent = `${countPreviewSlots(2, currentPreset)} suất`;
-            document.getElementById('presetHint').textContent = `Preset đang chọn: ${selectedPreset} phút. Nếu áp dụng, hệ thống sẽ bắt đầu từ ${nextEffective}.`;
+        // ─── Render summary bar ───────────────────────────────────────────────
+        function renderScheduleSummary() {
+            const currentPreset  = scheduleConfig?.currentDurationMinutes || '--';
+            const nextEffective  = scheduleConfig?.nextEffectiveFrom
+                ? formatDate(scheduleConfig.nextEffectiveFrom)
+                : 'Chưa xác định';
+
+            document.getElementById('summaryPreset').textContent   = `${currentPreset} phút`;
+            document.getElementById('summaryMorning').textContent  = `${countPreviewSlots(1, currentPreset)} suất`;
+            document.getElementById('summaryAfternoon').textContent= `${countPreviewSlots(2, currentPreset)} suất`;
+            document.getElementById('presetHint').textContent      = `Preset đang chọn: ${selectedPreset} phút. Nếu áp dụng, hệ thống sẽ bắt đầu từ ${nextEffective}.`;
             updatePackageDurationNote();
         }
 
+        // ─── Render preset grid (with upcoming badge) ─────────────────────────
         function renderPresetGrid() {
             const container = document.getElementById('presetGrid');
-            const options = scheduleConfig?.presetOptions || [];
-            const shifts = scheduleConfig?.shifts || [];
+            const options   = scheduleConfig?.presetOptions || [];
+            const shifts    = scheduleConfig?.shifts        || [];
 
             container.innerHTML = options.map(option => {
                 const slotsPerShift = shifts.map(shift => {
-                    const duration = calculateMinutes(shift.gioBatDau, shift.gioKetThuc);
-                    return `${shift.tenCa}: ${Math.floor(duration / option)} suất`;
+                    const dur = calculateMinutes(shift.gioBatDau, shift.gioKetThuc);
+                    return `${shift.tenCa}: ${Math.floor(dur / option)} suất`;
                 }).join('<br>');
-                const isActive = Number(option) === Number(scheduleConfig.currentDurationMinutes);
+
+                const isActive   = Number(option) === Number(scheduleConfig.currentDurationMinutes);
                 const isSelected = Number(option) === Number(selectedPreset);
 
+                // Upcoming badge — only when a future preset exists and is not yet active
+                const _upcoming  = scheduleConfig?.upcomingPreset;
+                const isUpcoming = _upcoming
+                    && Number(option) === Number(_upcoming.presetMinutes)
+                    && !isActive;
+                const upcomingLabel = isUpcoming ? `Từ ${formatDate(_upcoming.effectiveFrom)}` : '';
+
                 return `
-                    <button type="button" class="preset-card ${isActive ? 'active' : ''} ${isSelected ? 'selected' : ''}" onclick="selectPreset(${option})">
+                    <button type="button"
+                        class="preset-card ${isActive ? 'active' : ''} ${isSelected ? 'selected' : ''}"
+                        onclick="selectPreset(${option})">
                         <div class="preset-title">
                             <span>${option} phút</span>
-                            ${isActive ? '<span class="preset-badge">Đang dùng</span>' : ''}
+                            <span style="display:flex;gap:5px;flex-wrap:wrap;">
+                                ${isActive   ? '<span class="preset-badge">Đang dùng</span>' : ''}
+                                ${isUpcoming ? `<span class="preset-badge upcoming"><i class="fas fa-clock" style="font-size:0.68rem;"></i> ${upcomingLabel}</span>` : ''}
+                            </span>
                         </div>
                         <div class="preset-meta">${slotsPerShift}</div>
                     </button>
@@ -315,9 +547,10 @@
             }).join('');
         }
 
+        // ─── Render schedule preview ──────────────────────────────────────────
         function renderSchedulePreview() {
-            const container = document.getElementById('schedulePreview');
-            const shifts = scheduleConfig?.shifts || [];
+            const container      = document.getElementById('schedulePreview');
+            const shifts         = scheduleConfig?.shifts || [];
             const previewDuration = Number(selectedPreset || scheduleConfig?.currentDurationMinutes || 40);
 
             container.innerHTML = shifts.map(shift => {
@@ -337,6 +570,7 @@
             }).join('');
         }
 
+        // ─── Package helpers ──────────────────────────────────────────────────
         function updatePackageSummary() {
             const activeCount = allPackages.filter(pkg => Number(pkg.isActive) === 1).length;
             document.getElementById('summaryPackages').textContent = `${activeCount}/${allPackages.length}`;
@@ -346,9 +580,7 @@
             const durationText = `${scheduleConfig?.currentDurationMinutes || '--'} phút cho tất cả gói khám`;
             const note = `Thời lượng được khóa theo preset slot hiện tại: ${durationText}.`;
             const durationNode = document.getElementById('packageDurationNote');
-            if (durationNode) {
-                durationNode.textContent = note;
-            }
+            if (durationNode) durationNode.textContent = note;
         }
 
         function renderPackageTable() {
@@ -360,15 +592,11 @@
             }
 
             tbody.innerHTML = filteredPackages.map(pkg => {
-                const isActive = Number(pkg.isActive) === 1;
+                const isActive   = Number(pkg.isActive) === 1;
                 const actionsHtml = window.AdminPageHelper.renderTableActions([
-                    { label: 'Sửa', icon: 'fa-pen', onClick: `openPackageModal(${pkg.maGoi})`, variant: 'edit' },
-                    {
-                        label: isActive ? 'Ẩn' : 'Bật',
-                        icon: isActive ? 'fa-eye-slash' : 'fa-eye',
-                        onClick: `togglePackage(${pkg.maGoi}, ${isActive ? 0 : 1})`,
-                        variant: 'toggle'
-                    }
+                    { label: 'Sửa',                 icon: 'fa-pen',       onClick: `openPackageModal(${pkg.maGoi})`,         variant: 'edit'   },
+                    { label: isActive ? 'Ẩn' : 'Bật', icon: isActive ? 'fa-eye-slash' : 'fa-eye',
+                                                    onClick: `togglePackage(${pkg.maGoi}, ${isActive ? 0 : 1})`,  variant: 'toggle' }
                 ]);
                 return `
                     <tr>
@@ -391,11 +619,14 @@
         }
 
         function applyPackageFilter() {
-            const keyword = document.getElementById('packageSearch').value.trim().toLowerCase();
-            filteredPackages = allPackages.filter(pkg => `${pkg.tenGoi || ''} ${pkg.moTa || ''}`.toLowerCase().includes(keyword));
+            const keyword    = document.getElementById('packageSearch').value.trim().toLowerCase();
+            filteredPackages = allPackages.filter(pkg =>
+                `${pkg.tenGoi || ''} ${pkg.moTa || ''}`.toLowerCase().includes(keyword)
+            );
             renderPackageTable();
         }
 
+        // ─── Preset selection ─────────────────────────────────────────────────
         function selectPreset(durationMinutes) {
             selectedPreset = Number(durationMinutes);
             renderPresetGrid();
@@ -403,6 +634,7 @@
             renderSchedulePreview();
         }
 
+        // ─── Apply preset ─────────────────────────────────────────────────────
         async function handleApplyPreset() {
             if (!selectedPreset) {
                 showAlert('error', 'Vui lòng chọn preset trước khi áp dụng');
@@ -414,9 +646,7 @@
                 return;
             }
 
-            if (!confirm(`Áp dụng preset ${selectedPreset} phút cho toàn bộ cấu hình suất khám?`)) {
-                return;
-            }
+            if (!confirm(`Áp dụng preset ${selectedPreset} phút cho toàn bộ cấu hình suất khám?`)) return;
 
             try {
                 const response = await fetch(`${API_BASE_ADMIN}/update-slot-preset.php`, {
@@ -435,15 +665,20 @@
                 showAlert('success', result.message || 'Đã cập nhật preset suất khám');
                 scheduleConfig = result.data;
                 selectedPreset = scheduleConfig.currentDurationMinutes;
+
+                buildPresetColorMap(scheduleConfig.presetHistory || []);
                 renderScheduleSummary();
                 renderPresetGrid();
                 renderSchedulePreview();
+                renderTimeline(currentTimelineDays);
                 await loadPackages();
             } catch (error) {
                 console.error('Error updating preset:', error);
                 showAlert('error', 'Lỗi kết nối khi cập nhật preset');
             }
         }
+
+        // ─── Package modal ────────────────────────────────────────────────────
         function openPackageModal(packageId = null) {
             document.getElementById('packageForm').reset();
             document.getElementById('packageId').value = '';
@@ -457,17 +692,14 @@
             }
 
             const pkg = allPackages.find(item => Number(item.maGoi) === Number(packageId));
-            if (!pkg) {
-                showAlert('error', 'Không tìm thấy gói khám');
-                return;
-            }
+            if (!pkg) { showAlert('error', 'Không tìm thấy gói khám'); return; }
 
-            document.getElementById('packageModalTitle').textContent = 'Cập Nhật Gói Khám';
-            document.getElementById('packageId').value = pkg.maGoi;
-            document.getElementById('packageName').value = pkg.tenGoi || '';
-            document.getElementById('packageDescription').value = pkg.moTa || '';
-            document.getElementById('packagePrice').value = pkg.gia || '';
-            document.getElementById('packageStatus').value = Number(pkg.isActive) === 1 ? '1' : '0';
+            document.getElementById('packageModalTitle').textContent  = 'Cập Nhật Gói Khám';
+            document.getElementById('packageId').value                = pkg.maGoi;
+            document.getElementById('packageName').value              = pkg.tenGoi || '';
+            document.getElementById('packageDescription').value       = pkg.moTa   || '';
+            document.getElementById('packagePrice').value             = pkg.gia    || '';
+            document.getElementById('packageStatus').value            = Number(pkg.isActive) === 1 ? '1' : '0';
             packageModalInstance.show();
         }
 
@@ -475,10 +707,10 @@
             event.preventDefault();
 
             const packageId = document.getElementById('packageId').value;
-            const payload = {
-                tenGoi: document.getElementById('packageName').value.trim(),
-                moTa: document.getElementById('packageDescription').value.trim(),
-                gia: Number(document.getElementById('packagePrice').value),
+            const payload   = {
+                tenGoi:   document.getElementById('packageName').value.trim(),
+                moTa:     document.getElementById('packageDescription').value.trim(),
+                gia:      Number(document.getElementById('packagePrice').value),
                 isActive: Number(document.getElementById('packageStatus').value)
             };
 
@@ -488,9 +720,7 @@
             }
 
             const isEdit = packageId !== '';
-            if (isEdit) {
-                payload.maGoi = Number(packageId);
-            }
+            if (isEdit) payload.maGoi = Number(packageId);
 
             try {
                 const response = await fetch(`${API_BASE_ADMIN}/${isEdit ? 'update-package.php' : 'create-package.php'}`, {
@@ -517,15 +747,10 @@
 
         async function togglePackage(packageId, nextState) {
             const pkg = allPackages.find(item => Number(item.maGoi) === Number(packageId));
-            if (!pkg) {
-                showAlert('error', 'Không tìm thấy gói khám');
-                return;
-            }
+            if (!pkg) { showAlert('error', 'Không tìm thấy gói khám'); return; }
 
             const actionLabel = Number(nextState) === 1 ? 'bật' : 'ẩn';
-            if (!confirm(`Bạn có chắc chắn muốn ${actionLabel} gói "${pkg.tenGoi}" không?`)) {
-                return;
-            }
+            if (!confirm(`Bạn có chắc chắn muốn ${actionLabel} gói "${pkg.tenGoi}" không?`)) return;
 
             try {
                 const response = await fetch(`${API_BASE_ADMIN}/toggle-package.php`, {
@@ -549,24 +774,25 @@
             }
         }
 
+        // ─── Calendar / slot helpers ──────────────────────────────────────────
         function calculateMinutes(startTime, endTime) {
-            const [startHour, startMinute] = startTime.split(':').map(Number);
-            const [endHour, endMinute] = endTime.split(':').map(Number);
-            return ((endHour * 60) + endMinute) - ((startHour * 60) + startMinute);
+            const [sh, sm] = startTime.split(':').map(Number);
+            const [eh, em] = endTime.split(':').map(Number);
+            return ((eh * 60) + em) - ((sh * 60) + sm);
         }
 
         function buildPreviewSlots(startTime, endTime, durationMinutes) {
             const preview = [];
-            const [startHour, startMinute] = startTime.split(':').map(Number);
-            const [endHour, endMinute] = endTime.split(':').map(Number);
-            let cursor = (startHour * 60) + startMinute;
-            const limit = (endHour * 60) + endMinute;
+            const [sh, sm] = startTime.split(':').map(Number);
+            const [eh, em] = endTime.split(':').map(Number);
+            let cursor     = (sh * 60) + sm;
+            const limit    = (eh * 60) + em;
 
             while (cursor < limit) {
                 const next = cursor + durationMinutes;
                 preview.push({
                     start: `${String(Math.floor(cursor / 60)).padStart(2, '0')}:${String(cursor % 60).padStart(2, '0')}`,
-                    end: `${String(Math.floor(next / 60)).padStart(2, '0')}:${String(next % 60).padStart(2, '0')}`
+                    end:   `${String(Math.floor(next   / 60)).padStart(2, '0')}:${String(next   % 60).padStart(2, '0')}`
                 });
                 cursor = next;
             }
@@ -593,6 +819,216 @@
             const date = new Date(`${dateString}T00:00:00`);
             return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
         }
+
+        // ═════════════════════════════════════════════════════════════════════
+        // PRESET TIMELINE
+        // ═════════════════════════════════════════════════════════════════════
+
+        /**
+         * Build a stable color map: first preset in history → color[0],
+         * second unique preset → color[1], etc.
+         */
+        function buildPresetColorMap(history) {
+            presetColorMap = {};
+            const seen = [];
+            for (const h of history) {
+                if (!seen.includes(h.presetMinutes)) {
+                    seen.push(h.presetMinutes);
+                    presetColorMap[h.presetMinutes] = TIMELINE_COLORS[(seen.length - 1) % TIMELINE_COLORS.length];
+                }
+            }
+        }
+
+        function getTimelineColor(presetMinutes) {
+            return presetColorMap[presetMinutes] || TIMELINE_COLORS[0];
+        }
+
+        /** Date helpers (tl-prefixed to avoid clashes) */
+        function tlToDateStr(date) {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        function tlAddDays(date, n) {
+            const d = new Date(date);
+            d.setDate(d.getDate() + n);
+            return d;
+        }
+
+        function tlFormatTick(date) {
+            return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}`;
+        }
+
+        /**
+         * Return the preset active on `dateStr` (YYYY-MM-DD).
+         * History must be sorted by effectiveFrom ASC.
+         * "Last win" gives the most-recent effectiveFrom ≤ dateStr.
+         */
+        function getPresetForDate(dateStr, history) {
+            let match = null;
+            for (const h of history) {
+                if (h.effectiveFrom <= dateStr && (h.effectiveTo === null || h.effectiveTo >= dateStr)) {
+                    match = h;
+                }
+            }
+            return match;
+        }
+
+        /**
+         * Main render function. Called on load and whenever range buttons are clicked.
+         */
+        function renderTimeline(days) {
+            currentTimelineDays = days || 7;
+
+            const section      = document.getElementById('presetTimelineSection');
+            const barEl        = document.getElementById('timelineBar');
+            const ticksEl      = document.getElementById('timelineTicks');
+            const todayLineEl  = document.getElementById('timelineTodayLine');
+            const legendEl     = document.getElementById('timelineLegend');
+
+            const history = scheduleConfig?.presetHistory;
+            if (!history || !history.length) {
+                section.style.display = 'none';
+                return;
+            }
+
+            section.style.display = 'block';
+
+            // Date range: centre on today
+            const todayDate = new Date();
+            todayDate.setHours(0, 0, 0, 0);
+            const halfDays  = Math.floor(currentTimelineDays / 2);
+            const startDate = tlAddDays(todayDate, -halfDays);
+            const endDate   = tlAddDays(todayDate, currentTimelineDays - halfDays - 1);
+
+            // ── Build segments ────────────────────────────────────────────────
+            const segments = [];
+            let seg = null;
+            const cursor = new Date(startDate);
+
+            while (cursor <= endDate) {
+                const ds     = tlToDateStr(cursor);
+                const preset = getPresetForDate(ds, history);
+                const pm     = preset?.presetMinutes ?? null;
+
+                if (!seg || seg.pm !== pm) {
+                    if (seg) segments.push(seg);
+                    seg = { pm, startDate: new Date(cursor), endDate: new Date(cursor), count: 1 };
+                } else {
+                    seg.endDate = new Date(cursor);
+                    seg.count++;
+                }
+                cursor.setDate(cursor.getDate() + 1);
+            }
+            if (seg) segments.push(seg);
+
+            // ── Render bar ────────────────────────────────────────────────────
+            barEl.innerHTML = segments.map(s => {
+                const pct     = (s.count / currentTimelineDays) * 100;
+                const color   = s.pm ? getTimelineColor(s.pm) : '#dde4ee';
+                const fromFmt = tlFormatTick(s.startDate);
+                const toFmt   = tlFormatTick(s.endDate);
+                const tip     = s.pm
+                    ? `${s.pm} phút/suất\n${fromFmt} – ${toFmt}`
+                    : `Không có dữ liệu\n${fromFmt} – ${toFmt}`;
+                const label   = s.pm && s.count >= 2 ? `${s.pm} phút` : '';
+
+                return `<div class="tl-segment"
+                    style="width:${pct}%;background:${color};"
+                    data-tip="${tip}"
+                    onmouseenter="showTLTooltip(event,this)"
+                    onmouseleave="hideTLTooltip()">
+                    ${label ? `<span class="tl-seg-label">${label}</span>` : ''}
+                </div>`;
+            }).join('');
+
+            // ── Today line ────────────────────────────────────────────────────
+            const todayPct = (halfDays / currentTimelineDays) * 100;
+            todayLineEl.style.left    = `${todayPct}%`;
+            todayLineEl.style.display = 'block';
+
+            // ── Tick marks ────────────────────────────────────────────────────
+            const tickInterval = currentTimelineDays <= 7 ? 1 : currentTimelineDays <= 15 ? 3 : 7;
+            const tickItems    = [];
+            const addedDates   = new Set();
+
+            // Regular interval ticks
+            for (let i = 0; i < currentTimelineDays; i++) {
+                if (i % tickInterval !== 0) continue;
+                const d       = tlAddDays(startDate, i);
+                const ds      = tlToDateStr(d);
+                const isToday = ds === tlToDateStr(todayDate);
+                addedDates.add(ds);
+                tickItems.push({
+                    pct:   (i / currentTimelineDays) * 100,
+                    label: isToday ? 'Hôm nay' : tlFormatTick(d),
+                    type:  isToday ? 'today' : 'normal'
+                });
+            }
+
+            // Transition ticks (skip 1900-01-01 = system init date)
+            for (const h of history) {
+                if (h.effectiveFrom === '1900-01-01') continue;
+                const fromDate = new Date(h.effectiveFrom + 'T00:00:00');
+                if (fromDate >= startDate && fromDate <= endDate && !addedDates.has(h.effectiveFrom)) {
+                    const dayOffset = Math.round((fromDate - startDate) / 86400000);
+                    tickItems.push({
+                        pct:   (dayOffset / currentTimelineDays) * 100,
+                        label: tlFormatTick(fromDate),
+                        type:  'transition'
+                    });
+                }
+            }
+
+            ticksEl.innerHTML = tickItems.map(t => `
+                <div class="tl-tick tl-tick-${t.type}" style="left:${t.pct}%">
+                    <div class="tl-tick-stem"></div>
+                    <div class="tl-tick-lbl">${t.label}</div>
+                </div>
+            `).join('');
+
+            // ── Legend ────────────────────────────────────────────────────────
+            const uniquePresets = [...new Map(history.map(h => [h.presetMinutes, h])).values()];
+            legendEl.innerHTML  = uniquePresets.map(h => `
+                <div class="tl-legend-item">
+                    <span class="tl-legend-dot" style="background:${getTimelineColor(h.presetMinutes)}"></span>
+                    <span>${h.presetMinutes} phút / suất</span>
+                </div>
+            `).join('');
+
+            // ── Range button active state ─────────────────────────────────────
+            document.querySelectorAll('.tl-range-btn').forEach(btn => {
+                btn.classList.toggle('active', Number(btn.dataset.days) === currentTimelineDays);
+            });
+        }
+
+        // ── Tooltip ───────────────────────────────────────────────────────────
+        function showTLTooltip(event, el) {
+            const tooltip         = document.getElementById('tlTooltip');
+            tooltip.style.display = 'block';
+            // Support newline in data-tip
+            tooltip.innerHTML     = (el.dataset.tip || '').split('\n').map(l => `<div>${l}</div>`).join('');
+            moveTLTooltip(event);
+        }
+
+        function hideTLTooltip() {
+            document.getElementById('tlTooltip').style.display = 'none';
+        }
+
+        function moveTLTooltip(event) {
+            const tooltip = document.getElementById('tlTooltip');
+            if (!tooltip || tooltip.style.display === 'none') return;
+            const x  = event.clientX + 14;
+            const y  = event.clientY - 44;
+            const tw = tooltip.offsetWidth  || 180;
+            const th = tooltip.offsetHeight || 50;
+            tooltip.style.left = `${Math.min(x, window.innerWidth  - tw - 12)}px`;
+            tooltip.style.top  = `${Math.max(6, Math.min(y, window.innerHeight - th - 12))}px`;
+        }
+
+        document.addEventListener('mousemove', moveTLTooltip);
     </script>
 </body>
 </html>

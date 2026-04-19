@@ -219,7 +219,7 @@
 
             return `
                 <div class="admin-actions">
-                    <button class="admin-actions-toggle" type="button" title="Thao tác" onclick="window.AdminPageHelper.toggleActionsMenu('${menuId}', event)"><i class="fas fa-gear"></i></button>
+                    <button class="admin-actions-toggle" type="button" title="Thao tác" onclick="window.AdminPageHelper.toggleActionsMenu('${menuId}', event)"><i class="fas fa-ellipsis-h"></i></button>
                     <div class="admin-actions-menu" id="${menuId}">
                         ${items}
                     </div>

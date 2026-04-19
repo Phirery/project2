@@ -532,7 +532,9 @@ function getScheduleConfigData(mysqli $conn): array
         'currentEffectiveFrom' => $currentVersionDate,
         'nextEffectiveFrom' => getNextScheduleEffectiveDate($conn),
         'presetOptions' => getAllowedSlotPresets(),
-        'shifts' => $shiftConfigs
+        'shifts' => $shiftConfigs,
+        'presetHistory' => getPresetHistory($conn),
+        'upcomingPreset' => getUpcomingPreset($conn)
     ];
 }
 
@@ -573,4 +575,50 @@ function getNextScheduleEffectiveDate(mysqli $conn): string
     }
 
     return date('Y-m-d', strtotime('+1 day'));
+}
+function getPresetHistory(mysqli $conn): array
+{
+    $result = $conn->query(
+        "SELECT DISTINCT presetMinutes, effectiveFrom, effectiveTo
+         FROM suatkham
+         ORDER BY effectiveFrom ASC"
+    );
+ 
+    $history = [];
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $history[] = [
+                'presetMinutes' => (int)$row['presetMinutes'],
+                'effectiveFrom' => $row['effectiveFrom'],
+                'effectiveTo'   => $row['effectiveTo']
+            ];
+        }
+    }
+ 
+    return $history;
+}
+ 
+function getUpcomingPreset(mysqli $conn): ?array
+{
+    $today = date('Y-m-d');
+    $stmt  = $conn->prepare(
+        "SELECT DISTINCT presetMinutes, effectiveFrom
+         FROM suatkham
+         WHERE effectiveFrom > ?
+         ORDER BY effectiveFrom ASC
+         LIMIT 1"
+    );
+    $stmt->bind_param('s', $today);
+    $stmt->execute();
+    $row = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+ 
+    if (!$row) {
+        return null;
+    }
+ 
+    return [
+        'presetMinutes' => (int)$row['presetMinutes'],
+        'effectiveFrom' => $row['effectiveFrom']
+    ];
 }
