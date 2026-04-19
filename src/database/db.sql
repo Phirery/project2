@@ -196,7 +196,7 @@ CREATE TRIGGER `after_doimatkhau_insert` AFTER INSERT ON `doimatkhau` FOR EACH R
         userPhone,
         'Cấp lại mật khẩu',
         'Yêu cầu cấp lại mật khẩu',
-        CONCAT('Người dùng ', userName, ' (', userRole, ') yêu cầu cấp lại mật khẩu'),
+        CONCAT('Người dùng ' COLLATE utf8mb4_general_ci, userName, ' (' COLLATE utf8mb4_general_ci, userRole, ') yêu cầu cấp lại mật khẩu' COLLATE utf8mb4_general_ci),
         NOW(),
         0,
         'Chờ'
@@ -402,7 +402,7 @@ CREATE TRIGGER `after_lichkham_insert` AFTER INSERT ON `lichkham` FOR EACH ROW B
     
     -- Xử lý ghi chú: Nếu có ghi chú thì thêm vào nội dung
     IF NEW.ghiChu IS NOT NULL AND NEW.ghiChu != '' THEN
-        SET noteText = CONCAT('. Ghi chú: ', NEW.ghiChu);
+        SET noteText = CONCAT('. Ghi chú: ' COLLATE utf8mb4_general_ci, NEW.ghiChu);
     END IF;
     
     INSERT INTO thongbaolichkham (maBacSi, maLichKham, loai, tieuDe, noiDung, thoiGian, daXem)
@@ -412,9 +412,9 @@ CREATE TRIGGER `after_lichkham_insert` AFTER INSERT ON `lichkham` FOR EACH ROW B
         'Đặt lịch',
         'Lịch khám mới',
         CONCAT(
-            'Bệnh nhân ', patientName, 
-            ' đã đặt lịch khám vào ngày ', appointmentDate, 
-            ' - ', shiftName,
+            'Bệnh nhân ' COLLATE utf8mb4_general_ci, patientName, 
+            ' đã đặt lịch khám vào ngày ' COLLATE utf8mb4_general_ci, appointmentDate, 
+            ' - ' COLLATE utf8mb4_general_ci, shiftName,
             noteText -- Thêm phần ghi chú vào đây
         ),
         NOW(),
@@ -438,7 +438,7 @@ CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW B
         SELECT tenBenhNhan INTO patientName FROM benhnhan WHERE maBenhNhan = NEW.maBenhNhan;
         SELECT tenBacSi INTO doctorName FROM bacsi WHERE maBacSi = NEW.maBacSi;
         SELECT tenCa INTO shiftName FROM calamviec WHERE maCa = NEW.maCa;
-        SELECT CONCAT(SUBSTRING(gioBatDau, 1, 5), ' - ', SUBSTRING(gioKetThuc, 1, 5))
+        SELECT CONCAT(SUBSTRING(gioBatDau, 1, 5), ' - ' COLLATE utf8mb4_general_ci, SUBSTRING(gioKetThuc, 1, 5))
         INTO slotTime FROM suatkham WHERE maSuat = NEW.maSuat;
         SET appointmentDate = DATE_FORMAT(NEW.ngayKham, '%d/%m/%Y');
 
@@ -467,9 +467,9 @@ CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW B
                     'Hủy lịch',
                     'Lịch khám đã hủy',
                     CONCAT(
-                        'Bệnh nhân ', patientName,
-                        ' đã hủy lịch khám ngày ', appointmentDate, ' - ', shiftName,
-                        '. Lý do: ', reason
+                        'Bệnh nhân ' COLLATE utf8mb4_general_ci, patientName,
+                        ' đã hủy lịch khám ngày ' COLLATE utf8mb4_general_ci, appointmentDate, ' - ' COLLATE utf8mb4_general_ci, shiftName,
+                        '. Lý do: ' COLLATE utf8mb4_general_ci, reason
                     ),
                     NOW(),
                     0
@@ -499,10 +499,10 @@ CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW B
                     'Lịch khám',
                     'Lịch khám bị hủy',
                     CONCAT(
-                        'Lịch khám ngày ', appointmentDate,
-                        ' đã bị hủy bởi ', cancelSource,
-                        '. Lý do: ', reason,
-                        '. Vui lòng đặt lịch mới.'
+                        'Lịch khám ngày ' COLLATE utf8mb4_general_ci, appointmentDate,
+                        ' đã bị hủy bởi ' COLLATE utf8mb4_general_ci, cancelSource,
+                        '. Lý do: ' COLLATE utf8mb4_general_ci, reason,
+                        '. Vui lòng đặt lịch mới.' COLLATE utf8mb4_general_ci
                     ),
                     NOW(),
                     0
@@ -645,8 +645,8 @@ CREATE TRIGGER `after_ngaynghi_delete` AFTER DELETE ON `ngaynghi` FOR EACH ROW B
         doctorUserId,
         'Hủy nghỉ',
         'Hủy đơn nghỉ phép',
-        CONCAT('Bác sĩ ', doctorName, ' đã hủy đơn nghỉ phép ngày ', leaveDate, 
-               IF(OLD.maCa = 1, ' - Ca sáng', ' - Ca chiều')),
+        CONCAT('Bác sĩ ' COLLATE utf8mb4_general_ci, doctorName, ' đã hủy đơn nghỉ phép ngày ' COLLATE utf8mb4_general_ci, leaveDate, 
+               IF(OLD.maCa = 1, ' - Ca sáng' COLLATE utf8mb4_general_ci, ' - Ca chiều' COLLATE utf8mb4_general_ci)),
         NOW(),
         0
     );
@@ -687,7 +687,7 @@ CREATE TRIGGER `after_ngaynghi_insert` AFTER INSERT ON `ngaynghi` FOR EACH ROW B
         END IF;
 
         UPDATE thongbaoadmin
-        SET noiDung = CONCAT('Bác sĩ ', doctorName, ' xin nghỉ phép vào ngày ', DATE_FORMAT(NEW.ngayNghi, '%d/%m/%Y'), ' - Cả ngày. Lý do: ', finalReason),
+        SET noiDung = CONCAT('Bác sĩ ' COLLATE utf8mb4_general_ci, doctorName, ' xin nghỉ phép vào ngày ' COLLATE utf8mb4_general_ci, DATE_FORMAT(NEW.ngayNghi, '%d/%m/%Y'), ' - Cả ngày. Lý do: ' COLLATE utf8mb4_general_ci, finalReason),
             thoiGian = NOW(), -- Cập nhật lại thời gian mới nhất
             daXem = 0         -- Đẩy lên thành chưa xem
         WHERE maThongBao = existingNotifID;
@@ -702,9 +702,9 @@ CREATE TRIGGER `after_ngaynghi_insert` AFTER INSERT ON `ngaynghi` FOR EACH ROW B
             doctorUserId,
             'Nghỉ phép',
             'Đơn xin nghỉ phép',
-            CONCAT('Bác sĩ ', doctorName, ' xin nghỉ phép vào ngày ', DATE_FORMAT(NEW.ngayNghi, '%d/%m/%Y'), 
-                   IF(NEW.maCa = 1, ' - Ca sáng', ' - Ca chiều'), 
-                   '. Lý do: ', finalReason),
+            CONCAT('Bác sĩ ' COLLATE utf8mb4_general_ci, doctorName, ' xin nghỉ phép vào ngày ' COLLATE utf8mb4_general_ci, DATE_FORMAT(NEW.ngayNghi, '%d/%m/%Y'), 
+                   IF(NEW.maCa = 1, ' - Ca sáng' COLLATE utf8mb4_general_ci, ' - Ca chiều' COLLATE utf8mb4_general_ci), 
+                   '. Lý do: ' COLLATE utf8mb4_general_ci, finalReason),
             NOW(),
             0,
             NEW.ngayNghi -- Lưu ngày để check trùng
