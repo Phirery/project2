@@ -1,4 +1,5 @@
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+07:00";
 
 CREATE TABLE bacsi (
   nguoiDungId int(11) NOT NULL,
@@ -257,7 +258,9 @@ INSERT INTO hoadon (maHoaDon, maLichKham, soTien, ngayTao, trangThai, phuongThuc
 (3, 79, 150000.00, '2026-04-04 02:15:55', 'Chưa thanh toán', NULL, NULL),
 (4, 80, 250000.00, '2026-04-04 03:10:47', 'Chưa thanh toán', NULL, NULL),
 (5, 81, 250000.00, '2026-04-18 20:43:40', 'Chưa thanh toán', NULL, NULL),
-(6, 82, 150000.00, '2026-04-18 20:45:02', 'Chưa thanh toán', NULL, NULL);
+(6, 82, 150000.00, '2026-04-18 20:45:02', 'Chưa thanh toán', NULL, NULL),
+(7, 83, 250000.00, '2026-04-19 17:20:55', 'Chưa thanh toán', NULL, NULL),
+(8, 84, 250000.00, '2026-04-19 17:21:37', 'Chưa thanh toán', NULL, NULL);
 
 CREATE TABLE hosobenhan (
   maHoSo varchar(20) NOT NULL,
@@ -381,8 +384,10 @@ INSERT INTO lichkham (maLichKham, maBacSi, maBenhNhan, ngayKham, maCa, maSuat, m
 (78, 'BS20251121022', 'bn1', '2026-02-24', 1, 4, 2, 'Hủy', '', 'bacsi'),
 (79, 'bs1', 'bn1', '2026-04-11', 2, 8, 1, 'Hoàn thành', '', NULL),
 (80, 'bs1', 'bn1', '2026-04-04', 1, 4, 2, 'Hủy', '\n[Lý do hủy]: Không có lí do', 'benhnhan'),
-(81, 'bs1', 'bn1', '2026-04-20', 1, 25, 2, 'Đã đặt', 'Không', NULL),
-(82, 'bs1', 'bn1', '2026-04-18', 2, 32, 1, 'Hoàn thành', '', NULL);
+(81, 'bs1', 'bn1', '2026-04-20', 1, 5, 2, 'Đã đặt', 'Không', NULL),
+(82, 'bs1', 'bn1', '2026-04-18', 2, 12, 1, 'Hoàn thành', '', NULL),
+(83, 'BS20251121030', 'bn1', '2026-04-20', 2, 10, 2, 'Đã đặt', '', NULL),
+(84, 'BS20251121027', 'bn1', '2026-04-22', 1, 68, 2, 'Đã đặt', '', NULL);
 DELIMITER $$
 CREATE TRIGGER `after_lichkham_insert` AFTER INSERT ON `lichkham` FOR EACH ROW BEGIN
     DECLARE patientName VARCHAR(100);
@@ -575,7 +580,11 @@ INSERT INTO mail_notification_log (id, event_code, event_key, recipient_email, s
 (31, 'contact_received', '5:contact:received', 'ntdatcntt2311055@student.ctuet.edu.vn', 'sent', NULL, '{\"subject\":\"Đã tiếp nhận liên hệ #5\"}', '2026-04-19 02:02:34'),
 (32, 'medical_record_ready', 'HS20260419020444496:record_ready', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Hồ sơ khám bệnh đã cập nhật #HS20260419020444496\"}', '2026-04-19 02:06:12'),
 (33, 'schedule_preset_changed_doctor', 'schedule_preset:2026-04-21:60', 'dat123456789+bacsi1@gmail.com', 'sent', NULL, '{\"subject\":\"Cập nhật lịch biểu khám từ 21\\/04\\/2026\"}', '2026-04-19 02:09:54'),
-(34, 'schedule_preset_changed_doctor', 'schedule_preset:2026-04-21:60', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Cập nhật lịch biểu khám từ 21\\/04\\/2026\"}', '2026-04-19 02:09:54');
+(34, 'schedule_preset_changed_doctor', 'schedule_preset:2026-04-21:60', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Cập nhật lịch biểu khám từ 21\\/04\\/2026\"}', '2026-04-19 02:09:54'),
+(35, 'schedule_preset_changed_doctor', 'schedule_preset:2026-04-21:30', 'dat123456789+bacsi1@gmail.com', 'sent', NULL, '{\"subject\":\"Cập nhật lịch biểu khám từ 21\\/04\\/2026\"}', '2026-04-19 16:24:51'),
+(36, 'schedule_preset_changed_doctor', 'schedule_preset:2026-04-21:30', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Cập nhật lịch biểu khám từ 21\\/04\\/2026\"}', '2026-04-19 16:24:53'),
+(37, 'appointment_booked_patient', '83:booked:2026-04-20:10', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Xác nhận đặt lịch khám #83\"}', '2026-04-19 17:20:56'),
+(38, 'appointment_booked_patient', '84:booked:2026-04-22:68', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Xác nhận đặt lịch khám #84\"}', '2026-04-19 17:21:38');
 
 CREATE TABLE medicine_stock_log (
   id int(11) NOT NULL,
@@ -807,14 +816,14 @@ INSERT INTO suatkham (maSuat, maCa, gioBatDau, gioKetThuc, isActive, effectiveFr
 (10, 2, '15:00:00', '15:40:00', 0, '1900-01-01', '2026-04-20', 40),
 (11, 2, '15:40:00', '16:20:00', 0, '1900-01-01', '2026-04-20', 40),
 (12, 2, '16:20:00', '17:00:00', 0, '1900-01-01', '2026-04-20', 40),
-(41, 1, '07:00:00', '08:00:00', 1, '2026-04-21', NULL, 60),
-(42, 1, '08:00:00', '09:00:00', 1, '2026-04-21', NULL, 60),
-(43, 1, '09:00:00', '10:00:00', 1, '2026-04-21', NULL, 60),
-(44, 1, '10:00:00', '11:00:00', 1, '2026-04-21', NULL, 60),
-(45, 2, '13:00:00', '14:00:00', 1, '2026-04-21', NULL, 60),
-(46, 2, '14:00:00', '15:00:00', 1, '2026-04-21', NULL, 60),
-(47, 2, '15:00:00', '16:00:00', 1, '2026-04-21', NULL, 60),
-(48, 2, '16:00:00', '17:00:00', 1, '2026-04-21', NULL, 60);
+(65, 1, '07:00:00', '08:00:00', 1, '2026-04-21', NULL, 60),
+(66, 1, '08:00:00', '09:00:00', 1, '2026-04-21', NULL, 60),
+(67, 1, '09:00:00', '10:00:00', 1, '2026-04-21', NULL, 60),
+(68, 1, '10:00:00', '11:00:00', 1, '2026-04-21', NULL, 60),
+(69, 2, '13:00:00', '14:00:00', 1, '2026-04-21', NULL, 60),
+(70, 2, '14:00:00', '15:00:00', 1, '2026-04-21', NULL, 60),
+(71, 2, '15:00:00', '16:00:00', 1, '2026-04-21', NULL, 60),
+(72, 2, '16:00:00', '17:00:00', 1, '2026-04-21', NULL, 60);
 
 CREATE TABLE thongbaoadmin (
   maThongBao int(11) NOT NULL,
@@ -961,7 +970,7 @@ INSERT INTO thongbaolichkham (maThongBao, maBacSi, maLichKham, loai, tieuDe, noi
 (102, 'bs1', 80, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 04/04/2026 - Ca sáng. Lý do: Không có lí do', '2026-04-04 03:22:04', 1),
 (103, 'bs1', 81, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 20/04/2026 - Ca sáng. Ghi chú: Không', '2026-04-18 20:43:40', 1),
 (104, 'bs1', 82, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 18/04/2026 - Ca chiều', '2026-04-18 20:45:02', 1),
-(105, 'bs1', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
+(105, 'bs1', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 1),
 (106, 'BS20251121009', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
 (107, 'BS20251121010', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
 (108, 'BS20251121011', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
@@ -1004,7 +1013,7 @@ INSERT INTO thongbaolichkham (maThongBao, maBacSi, maLichKham, loai, tieuDe, noi
 (145, 'BS20251121048', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
 (146, 'BS20251121049', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
 (147, 'BS20251121050', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:09:53', 0),
-(148, 'bs1', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(148, 'bs1', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 1),
 (149, 'BS20251121009', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
 (150, 'BS20251121010', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
 (151, 'BS20251121011', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
@@ -1046,7 +1055,96 @@ INSERT INTO thongbaolichkham (maThongBao, maBacSi, maLichKham, loai, tieuDe, noi
 (187, 'BS20251121047', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
 (188, 'BS20251121048', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
 (189, 'BS20251121049', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
-(190, 'BS20251121050', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0);
+(190, 'BS20251121050', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 02:10:45', 0),
+(191, 'bs1', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 1),
+(192, 'BS20251121009', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(193, 'BS20251121010', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(194, 'BS20251121011', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(195, 'BS20251121012', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(196, 'BS20251121013', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(197, 'BS20251121014', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(198, 'BS20251121015', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(199, 'BS20251121016', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(200, 'BS20251121017', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(201, 'BS20251121018', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(202, 'BS20251121019', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(203, 'BS20251121020', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(204, 'BS20251121021', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(205, 'BS20251121022', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(206, 'BS20251121023', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(207, 'BS20251121024', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(208, 'BS20251121025', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(209, 'BS20251121026', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(210, 'BS20251121027', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(211, 'BS20251121028', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(212, 'BS20251121029', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(213, 'BS20251121030', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(214, 'BS20251121031', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(215, 'BS20251121032', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(216, 'BS20251121033', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(217, 'BS20251121034', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(218, 'BS20251121035', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(219, 'BS20251121036', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(220, 'BS20251121037', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(221, 'BS20251121038', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(222, 'BS20251121039', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(223, 'BS20251121040', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(224, 'BS20251121041', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(225, 'BS20251121042', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(226, 'BS20251121043', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(227, 'BS20251121044', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(228, 'BS20251121045', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(229, 'BS20251121046', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(230, 'BS20251121047', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(231, 'BS20251121048', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(232, 'BS20251121049', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(233, 'BS20251121050', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 30 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 16:24:50', 0),
+(234, 'bs1', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 1),
+(235, 'BS20251121009', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(236, 'BS20251121010', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(237, 'BS20251121011', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(238, 'BS20251121012', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(239, 'BS20251121013', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(240, 'BS20251121014', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(241, 'BS20251121015', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(242, 'BS20251121016', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(243, 'BS20251121017', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(244, 'BS20251121018', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(245, 'BS20251121019', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(246, 'BS20251121020', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(247, 'BS20251121021', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(248, 'BS20251121022', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(249, 'BS20251121023', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(250, 'BS20251121024', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(251, 'BS20251121025', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(252, 'BS20251121026', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(253, 'BS20251121027', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(254, 'BS20251121028', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(255, 'BS20251121029', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(256, 'BS20251121030', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(257, 'BS20251121031', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(258, 'BS20251121032', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(259, 'BS20251121033', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(260, 'BS20251121034', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(261, 'BS20251121035', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0);
+INSERT INTO thongbaolichkham (maThongBao, maBacSi, maLichKham, loai, tieuDe, noiDung, thoiGian, daXem) VALUES
+(262, 'BS20251121036', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(263, 'BS20251121037', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(264, 'BS20251121038', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(265, 'BS20251121039', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(266, 'BS20251121040', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(267, 'BS20251121041', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(268, 'BS20251121042', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(269, 'BS20251121043', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(270, 'BS20251121044', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(271, 'BS20251121045', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(272, 'BS20251121046', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(273, 'BS20251121047', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(274, 'BS20251121048', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(275, 'BS20251121049', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(276, 'BS20251121050', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
+(277, 'BS20251121030', 83, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 20/04/2026 - Ca chiều', '2026-04-19 17:20:55', 0),
+(278, 'BS20251121027', 84, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 22/04/2026 - Ca sáng', '2026-04-19 17:21:37', 0);
 
 CREATE TABLE thuoc (
   maThuoc int(11) NOT NULL,
@@ -1236,8 +1334,8 @@ ALTER TABLE quantrivien
 
 ALTER TABLE suatkham
   ADD PRIMARY KEY (maSuat),
-  ADD KEY maCa (maCa),
-  ADD UNIQUE KEY uniq_suatkham_slot_version (maCa, gioBatDau, gioKetThuc, effectiveFrom);
+  ADD UNIQUE KEY uniq_suatkham_slot_version (maCa,gioBatDau,gioKetThuc,effectiveFrom),
+  ADD KEY maCa (maCa);
 
 ALTER TABLE thongbaoadmin
   ADD PRIMARY KEY (maThongBao),
@@ -1280,16 +1378,16 @@ ALTER TABLE goikham
   MODIFY maGoi int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 ALTER TABLE hoadon
-  MODIFY maHoaDon int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY maHoaDon int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 ALTER TABLE lichkham
-  MODIFY maLichKham int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
+  MODIFY maLichKham int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
 
 ALTER TABLE lienhe
   MODIFY maLienHe int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 ALTER TABLE mail_notification_log
-  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 ALTER TABLE medicine_stock_log
   MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
@@ -1301,7 +1399,7 @@ ALTER TABLE nguoidung
   MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 ALTER TABLE suatkham
-  MODIFY maSuat int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY maSuat int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 
 ALTER TABLE thongbaoadmin
   MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
@@ -1310,7 +1408,7 @@ ALTER TABLE thongbaobenhnhan
   MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 ALTER TABLE thongbaolichkham
-  MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=191;
+  MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=279;
 
 ALTER TABLE thuoc
   MODIFY maThuoc int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
@@ -1376,3 +1474,4 @@ ALTER TABLE thongbaobenhnhan
 ALTER TABLE thongbaolichkham
   ADD CONSTRAINT thongbao_ibfk_1 FOREIGN KEY (maBacSi) REFERENCES bacsi (maBacSi) ON DELETE CASCADE,
   ADD CONSTRAINT thongbao_ibfk_2 FOREIGN KEY (maLichKham) REFERENCES lichkham (maLichKham) ON DELETE SET NULL;
+COMMIT;
