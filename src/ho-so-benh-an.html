@@ -480,10 +480,49 @@
             font-size: 0.9rem;
         }
 
+        /* Custom Tabs Style from lich-kham-ca-nhan.html */
+        .custom-tabs {
+            border-bottom: 2px solid #e8eef5;
+            padding: 0 25px;
+            margin-bottom: 0;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: thin;
+        }
+
+        .custom-tabs .nav-item { flex: 0 0 auto; }
+
+        .custom-tabs .nav-link {
+            border: none;
+            color: #666;
+            font-weight: 600;
+            padding: 15px 20px;
+            position: relative;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .custom-tabs .nav-link:hover { color: #4A90E2; }
+        .custom-tabs .nav-link.active {
+            color: #4A90E2;
+            background: transparent;
+            border-bottom-color: #4A90E2;
+        }
+        .custom-tabs .badge { font-size: 0.7rem; padding: 3px 8px; }
+
+        .tab-content-wrapper {
+            padding: 25px;
+        }
+
         @media (max-width: 768px) {
             .summary-chips { gap: 8px; margin-bottom: 15px; }
 
             .section-card {
+                padding: 0; /* Remove padding for the card as tab content will have it */
+            }
+            
+            .tab-content-wrapper {
                 padding: 15px;
             }
 
@@ -521,6 +560,15 @@
             .prescription-summary {
                 align-items: flex-start;
             }
+            
+            .custom-tabs {
+                padding: 0 15px;
+            }
+            
+            .custom-tabs .nav-link {
+                padding: 12px 10px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -537,96 +585,117 @@
         </div>
 
         <div class="section-card">
-            <div class="card-header table-header">
-                <h5><i class="fas fa-tasks me-2"></i>Hồ sơ cần hoàn thành <span class="badge bg-warning"
-                        id="pendingBadge">0</span></h5>
-            </div>
-            <div class="filter-bar">
-                <div class="row g-3">
-                    <div class="col-md-8">
-                        <div class="search-box filter-control-wrap"><i class="fas fa-search"></i><input type="text" class="form-control"
-                                id="searchPending" placeholder="Tìm bệnh nhân..." oninput="applyPendingFilters()"><button type="button" class="filter-clear-btn" id="clearSearchPendingBtn" aria-label="Xóa từ khóa tìm kiếm" onclick="clearPendingSearch()">×</button></div>
-                    </div>
-                    <div class="col-md-2">
-                        <select class="form-select" id="sortPending" onchange="applyPendingFilters()">
-                            <option value="newest">Mới nhất</option>
-                            <option value="oldest">Cũ nhất</option>
-                            <option value="name">Tên A-Z</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2"><button class="btn btn-success w-100" onclick="showCreateModal()"><i
-                                class="fas fa-plus me-1"></i>Khởi tạo</button></div>
-                </div>
-            </div>
-            <div id="loadingPending" class="loading" style="display: none;">
-                <div class="spinner-border text-primary"></div>
-                <p class="mt-3">Đang tải...</p>
-            </div>
-            <div class="table-responsive">
-                <table class="custom-table">
-                    <thead>
-                        <tr>
-                            <th>Mã HS</th>
-                            <th>Bệnh nhân</th>
-                            <th>Ngày khám</th>
-                            <th>Suất khám</th>
-                            <th>Trạng thái</th>
-                            <th class="actions-col"><i class="fas fa-cog"></i></th>
-                        </tr>
-                    </thead>
-                    <tbody id="pendingList"></tbody>
-                </table>
-            </div>
-            <div class="pagination-container">
-                <div class="text-muted" id="pendingInfo">Hiển thị 0 - 0 của 0 hồ sơ</div>
-                <nav>
-                    <ul class="pagination" id="pendingPagination"></ul>
-                </nav>
-            </div>
-        </div>
+            <ul class="nav nav-tabs custom-tabs" id="recordTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending-records-pane" type="button" role="tab">
+                        <i class="fas fa-tasks me-2"></i>Chờ hoàn thành <span class="badge bg-warning" id="pendingBadge">0</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed-records-pane" type="button" role="tab">
+                        <i class="fas fa-check-double me-2"></i>Đã hoàn thành <span class="badge bg-secondary" id="completedBadge">0</span>
+                    </button>
+                </li>
+            </ul>
 
-        <div class="section-card">
-            <div class="card-header table-header">
-                <h5><i class="fas fa-check-double me-2"></i>Hồ sơ đã hoàn thành</h5>
-            </div>
-            <div class="filter-bar">
-                <div class="row g-3">
-                    <div class="col-md-9">
-                        <div class="search-box filter-control-wrap"><i class="fas fa-search"></i><input type="text" class="form-control"
-                                id="searchCompleted" placeholder="Tìm bệnh nhân..." oninput="applyCompletedFilters()"><button type="button" class="filter-clear-btn" id="clearSearchCompletedBtn" aria-label="Xóa từ khóa tìm kiếm" onclick="clearCompletedSearch()">×</button></div>
+            <div class="tab-content tab-content-wrapper">
+                <!-- Tab Chờ hoàn thành -->
+                <div class="tab-pane fade show active" id="pending-records-pane" role="tabpanel">
+                    <div class="filter-bar">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <div class="search-box filter-control-wrap">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" class="form-control" id="searchPending" placeholder="Tìm bệnh nhân..." oninput="applyPendingFilters()">
+                                    <button type="button" class="filter-clear-btn" id="clearSearchPendingBtn" aria-label="Xóa từ khóa tìm kiếm" onclick="clearPendingSearch()">×</button>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-select" id="sortPending" onchange="applyPendingFilters()">
+                                    <option value="newest">Mới nhất</option>
+                                    <option value="oldest">Cũ nhất</option>
+                                    <option value="name">Tên A-Z</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-success w-100" onclick="showCreateModal()">
+                                    <i class="fas fa-plus me-1"></i>Khởi tạo
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-3">
-                        <select class="form-select" id="sortCompleted" onchange="applyCompletedFilters()">
-                            <option value="newest">Mới nhất</option>
-                            <option value="oldest">Cũ nhất</option>
-                            <option value="name">Tên A-Z</option>
-                        </select>
+                    <div id="loadingPending" class="loading" style="display: none;">
+                        <div class="spinner-border text-primary"></div>
+                        <p class="mt-3">Đang tải...</p>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Mã HS</th>
+                                    <th>Bệnh nhân</th>
+                                    <th>Ngày khám</th>
+                                    <th>Suất khám</th>
+                                    <th>Trạng thái</th>
+                                    <th class="actions-col"><i class="fas fa-cog"></i></th>
+                                </tr>
+                            </thead>
+                            <tbody id="pendingList"></tbody>
+                        </table>
+                    </div>
+                    <div class="pagination-container">
+                        <div class="text-muted" id="pendingInfo">Hiển thị 0 - 0 của 0 hồ sơ</div>
+                        <nav>
+                            <ul class="pagination" id="pendingPagination"></ul>
+                        </nav>
                     </div>
                 </div>
-            </div>
-            <div id="loadingCompleted" class="loading" style="display: none;">
-                <div class="spinner-border text-primary"></div>
-                <p class="mt-3">Đang tải...</p>
-            </div>
-            <div class="table-responsive">
-                <table class="custom-table">
-                    <thead>
-                        <tr>
-                            <th>Mã HS</th>
-                            <th>Bệnh nhân</th>
-                            <th>Ngày hoàn thành</th>
-                            <th>Chẩn đoán</th>
-                            <th class="actions-col"><i class="fas fa-cog"></i></th>
-                        </tr>
-                    </thead>
-                    <tbody id="completedList"></tbody>
-                </table>
-            </div>
-            <div class="pagination-container">
-                <div class="text-muted" id="completedInfo">Hiển thị 0 - 0 của 0 hồ sơ</div>
-                <nav>
-                    <ul class="pagination" id="completedPagination"></ul>
-                </nav>
+
+                <!-- Tab Đã hoàn thành -->
+                <div class="tab-pane fade" id="completed-records-pane" role="tabpanel">
+                    <div class="filter-bar">
+                        <div class="row g-3">
+                            <div class="col-md-9">
+                                <div class="search-box filter-control-wrap">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" class="form-control" id="searchCompleted" placeholder="Tìm bệnh nhân..." oninput="applyCompletedFilters()">
+                                    <button type="button" class="filter-clear-btn" id="clearSearchCompletedBtn" aria-label="Xóa từ khóa tìm kiếm" onclick="clearCompletedSearch()">×</button>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select" id="sortCompleted" onchange="applyCompletedFilters()">
+                                    <option value="newest">Mới nhất</option>
+                                    <option value="oldest">Cũ nhất</option>
+                                    <option value="name">Tên A-Z</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="loadingCompleted" class="loading" style="display: none;">
+                        <div class="spinner-border text-primary"></div>
+                        <p class="mt-3">Đang tải...</p>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Mã HS</th>
+                                    <th>Bệnh nhân</th>
+                                    <th>Ngày hoàn thành</th>
+                                    <th>Chẩn đoán</th>
+                                    <th class="actions-col"><i class="fas fa-cog"></i></th>
+                                </tr>
+                            </thead>
+                            <tbody id="completedList"></tbody>
+                        </table>
+                    </div>
+                    <div class="pagination-container">
+                        <div class="text-muted" id="completedInfo">Hiển thị 0 - 0 của 0 hồ sơ</div>
+                        <nav>
+                            <ul class="pagination" id="completedPagination"></ul>
+                        </nav>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1206,6 +1275,7 @@
 
         function displayCompletedRecords() {
             const container = document.getElementById('completedList');
+            document.getElementById('completedBadge').textContent = totalCompletedRecords;
             if (completedRecords.length === 0) { showEmptyState('completedList', totalCompletedRecords === 0 ? 'Chưa có hồ sơ đã hoàn thành' : 'Không tìm thấy kết quả phù hợp', 5); updatePagination('completed'); return; }
             container.innerHTML = completedRecords.map(record => {
                 const actions = [
