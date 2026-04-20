@@ -9,6 +9,7 @@ require_role('quantri');
 
 $data = json_decode(file_get_contents('php://input'), true);
 $durationMinutes = isset($data['durationMinutes']) ? (int)$data['durationMinutes'] : 0;
+$effectiveFromInput = isset($data['effectiveFrom']) ? $data['effectiveFrom'] : null;
 
 if (!isValidSlotPreset($durationMinutes)) {
     echo json_encode([
@@ -20,7 +21,7 @@ if (!isValidSlotPreset($durationMinutes)) {
 
 try {
     $currentDuration = getCurrentSlotPresetMinutes($conn);
-    $effectiveFrom = getNextScheduleEffectiveDate($conn);
+    $effectiveFrom = $effectiveFromInput ?? getNextScheduleEffectiveDate($conn);
 
     if ($currentDuration === $durationMinutes) {
         echo json_encode([
@@ -31,7 +32,7 @@ try {
         exit;
     }
 
-    $scheduleConfig = applySlotPreset($conn, $durationMinutes);
+    $scheduleConfig = applySlotPreset($conn, $durationMinutes, $effectiveFrom);
     $notificationResult = sendSchedulePresetChangedNotifications($conn, $currentDuration, $durationMinutes, $effectiveFrom);
     $mailResult = sendSchedulePresetChangedEmails($conn, $currentDuration, $durationMinutes, $effectiveFrom);
 

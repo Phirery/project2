@@ -429,7 +429,7 @@ function syncPackageDurations(mysqli $conn, int $durationMinutes): void
     $stmt->close();
 }
 
-function applySlotPreset(mysqli $conn, int $durationMinutes): array
+function applySlotPreset(mysqli $conn, int $durationMinutes, ?string $effectiveFromDate = null): array
 {
     ensureScheduleManagementSchema($conn);
 
@@ -439,7 +439,7 @@ function applySlotPreset(mysqli $conn, int $durationMinutes): array
 
     $shifts = getShiftRows($conn);
     $generatedSlots = buildSlotsForPreset($shifts, $durationMinutes);
-    $effectiveFrom = getNextScheduleEffectiveDate($conn);
+    $effectiveFrom = $effectiveFromDate ?? getNextScheduleEffectiveDate($conn);
 
     $conn->begin_transaction();
 
@@ -531,6 +531,7 @@ function getScheduleConfigData(mysqli $conn): array
         'currentDurationMinutes' => $currentDuration,
         'currentEffectiveFrom' => $currentVersionDate,
         'nextEffectiveFrom' => getNextScheduleEffectiveDate($conn),
+        'maxScheduledDate' => getLastAppointmentDate($conn),
         'presetOptions' => getAllowedSlotPresets(),
         'shifts' => $shiftConfigs,
         'presetHistory' => getPresetHistory($conn),

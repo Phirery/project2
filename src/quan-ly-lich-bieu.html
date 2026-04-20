@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link id="sidebar-admin-css" rel="stylesheet" href="assets/css/sidebar-admin.css">
     <link rel="stylesheet" href="assets/css/admin-summary.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         .summary-bar { display: flex; flex-wrap: wrap; gap: 10px; }
         .summary-chip { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
@@ -401,7 +402,31 @@
         </div>
     </div>
 
+    <!-- Apply Preset Modal -->
+    <div class="modal fade" id="applyPresetModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Chọn ngày áp dụng Preset</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Preset <strong><span id="displaySelectedPreset"></span> phút</strong> sẽ được áp dụng.</p>
+                    <div class="mb-3">
+                        <label class="form-label" for="effectiveFromDate">Ngày bắt đầu hiệu lực:</label>
+                        <input type="text" class="form-control" id="effectiveFromDate" placeholder="Chọn ngày...">
+                        <small class="text-muted mt-1 d-block">Các ngày trước đó đã có lịch khám nên không thể chọn.</small>
+                    </div>
+                    <button type="button" class="btn btn-primary-gradient w-100" id="confirmApplyPresetBtn">
+                        <i class="fas fa-check me-2"></i>Xác nhận áp dụng
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="assets/js/api-config.js"></script>
     <script src="assets/js/config-admin.js"></script>
     <script src="assets/js/sidebar-admin.js"></script>
@@ -413,6 +438,8 @@
         let filteredPackages  = [];
         let selectedPreset    = null;
         let packageModalInstance = null;
+        let applyPresetModalInstance = null;
+        let flatpickrInstance = null;
 
         // ─── Timeline state ───────────────────────────────────────────────────
         let currentTimelineDays = 7;
@@ -422,6 +449,8 @@
         // ─── Init ─────────────────────────────────────────────────────────────
         document.addEventListener('DOMContentLoaded', async function () {
             packageModalInstance = new bootstrap.Modal(document.getElementById('packageModal'));
+            applyPresetModalInstance = new bootstrap.Modal(document.getElementById('applyPresetModal'));
+            document.getElementById('confirmApplyPresetBtn').addEventListener('click', submitPresetChange);
             document.getElementById('packageForm').addEventListener('submit', handlePackageSubmit);
             document.getElementById('packageSearch').addEventListener('input', applyPackageFilter);
             document.getElementById('applyPresetBtn').addEventListener('click', handleApplyPreset);
@@ -635,7 +664,7 @@
         }
 
         // ─── Apply preset ─────────────────────────────────────────────────────
-        async function handleApplyPreset() {
+        function handleApplyPreset() {
             if (!selectedPreset) {
                 showAlert('error', 'Vui lòng chọn preset trước khi áp dụng');
                 return;
@@ -646,14 +675,37 @@
                 return;
             }
 
-            if (!confirm(`Áp dụng preset ${selectedPreset} phút cho toàn bộ cấu hình suất khám?`)) return;
+            document.getElementById('displaySelectedPreset').textContent = selectedPreset;
+
+            let maxDate = scheduleConfig?.maxScheduledDate ? new Date(scheduleConfig.maxScheduledDate) : new Date();
+            let minSelectableDate = new Date(maxDate);
+            minSelectableDate.setDate(minSelectableDate.getDate() + 1);
+
+            if (flatpickrInstance) {
+                flatpickrInstance.destroy();
+            }
+            flatpickrInstance = flatpickr("#effectiveFromDate", {
+                dateFormat: "Y-m-d",
+                minDate: minSelectableDate,
+                defaultDate: minSelectableDate
+            });
+
+            applyPresetModalInstance.show();
+        }
+
+        async function submitPresetChange() {
+            const effectiveDate = document.getElementById('effectiveFromDate').value;
+            if(!effectiveDate) {
+                showAlert('error', 'Vui lòng chọn ngày!');
+                return;
+            }
 
             try {
                 const response = await fetch(`${API_BASE_ADMIN}/update-slot-preset.php`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
-                    body: JSON.stringify({ durationMinutes: selectedPreset })
+                    body: JSON.stringify({ durationMinutes: selectedPreset, effectiveFrom: effectiveDate })
                 });
                 const result = await response.json();
 
@@ -663,6 +715,7 @@
                 }
 
                 showAlert('success', result.message || 'Đã cập nhật preset suất khám');
+                applyPresetModalInstance.hide();
                 scheduleConfig = result.data;
                 selectedPreset = scheduleConfig.currentDurationMinutes;
 
