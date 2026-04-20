@@ -124,9 +124,10 @@ function fetchSummary($conn, $maBenhNhan)
             SUM(CASE WHEN lk.trangThai = 'Hoàn thành' THEN 1 ELSE 0 END) AS hoanThanh,
             SUM(CASE WHEN lk.trangThai = 'Hủy' THEN 1 ELSE 0 END) AS daHuy,
             COALESCE(SUM(CASE WHEN lk.trangThai IN ('Đã đặt', 'Hoàn thành') THEN gk.gia ELSE 0 END), 0) AS tongGiaTriGoi,
-            COALESCE(SUM(CASE WHEN lk.trangThai = 'Hoàn thành' THEN gk.gia ELSE 0 END), 0) AS tongChiTieuDaKham
+            COALESCE(SUM(CASE WHEN lk.trangThai = 'Hoàn thành' THEN (gk.gia + COALESCE(dt.tongTienThuoc, 0)) ELSE 0 END), 0) AS tongChiTieuDaKham
         FROM lichkham lk
         LEFT JOIN goikham gk ON lk.maGoi = gk.maGoi
+        LEFT JOIN donthuoc dt ON lk.maLichKham = dt.maLichKham
         WHERE lk.maBenhNhan = ?
     ");
     if (!$summaryStmt) {
