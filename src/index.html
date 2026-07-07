@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -601,6 +601,485 @@
             background: rgba(227, 242, 253, 0.38);
         }
 
+        /* ─── AI Suggest Section ─── */
+        .ai-suggest {
+            padding: 26px 0 56px;
+            position: relative;
+        }
+
+        .ai-suggest::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(74, 144, 226, 0.07), transparent 50%),
+                radial-gradient(circle at 80% 30%, rgba(82, 196, 26, 0.06), transparent 45%);
+            pointer-events: none;
+        }
+
+        .ai-chat-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .ai-intro {
+            padding-top: 10px;
+        }
+
+        .ai-intro-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 0.73rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.14), rgba(82, 196, 26, 0.12));
+            color: var(--primary-blue-dark);
+            margin-bottom: 14px;
+        }
+
+        .ai-intro-badge i {
+            font-size: 0.82rem;
+        }
+
+        .ai-intro h2 {
+            font-size: clamp(1.5rem, 2.6vw, 2rem);
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            line-height: 1.25;
+        }
+
+        .ai-intro h2 span {
+            background: linear-gradient(135deg, var(--primary-blue), #6c5ce7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .ai-intro > p {
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            line-height: 1.7;
+            margin-bottom: 18px;
+            max-width: 480px;
+        }
+
+        .ai-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .ai-features li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .ai-features li i {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.78rem;
+            background: rgba(82, 196, 26, 0.13);
+            color: var(--secondary-green-dark);
+            flex-shrink: 0;
+        }
+
+        .ai-chat-box {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(34, 81, 143, 0.10), 0 2px 8px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            max-height: 520px;
+        }
+
+        .ai-chat-header {
+            padding: 14px 16px;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #5b7fe8 100%);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ai-chat-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.22);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .ai-chat-header-info h4 {
+            margin: 0;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .ai-chat-header-info span {
+            font-size: 0.72rem;
+            opacity: 0.85;
+        }
+
+        .ai-chat-header .ai-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #52c41a;
+            box-shadow: 0 0 6px rgba(82, 196, 26, 0.6);
+            animation: aiPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes aiPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.85); }
+        }
+
+        .ai-chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 260px;
+            max-height: 340px;
+            scroll-behavior: smooth;
+        }
+
+        .ai-chat-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .ai-chat-messages::-webkit-scrollbar-thumb {
+            border-radius: 999px;
+            background: rgba(74, 144, 226, 0.25);
+        }
+
+        .ai-msg {
+            max-width: 88%;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 0.84rem;
+            line-height: 1.6;
+            animation: aiFadeIn 0.3s ease;
+        }
+
+        @keyframes aiFadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ai-msg-bot {
+            align-self: flex-start;
+            background: var(--light-bg);
+            color: var(--text-primary);
+            border-bottom-left-radius: 4px;
+        }
+
+        .ai-msg-user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--primary-blue), #5b7fe8);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .ai-msg-bot .ai-msg-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* Typing indicator */
+        .ai-typing {
+            align-self: flex-start;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 12px 18px;
+            background: var(--light-bg);
+            border-radius: 14px;
+            border-bottom-left-radius: 4px;
+        }
+
+        .ai-typing-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            opacity: 0.5;
+            animation: aiTypingBounce 1.4s ease-in-out infinite;
+        }
+
+        .ai-typing-dot:nth-child(2) { animation-delay: 0.16s; }
+        .ai-typing-dot:nth-child(3) { animation-delay: 0.32s; }
+
+        @keyframes aiTypingBounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-6px); opacity: 1; }
+        }
+
+        /* Suggestion cards */
+        .ai-suggestions-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .ai-suggestion-card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .ai-suggestion-card:hover {
+            border-color: rgba(74, 144, 226, 0.4);
+            box-shadow: 0 4px 14px rgba(74, 144, 226, 0.1);
+        }
+
+        .ai-suggestion-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .ai-suggestion-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ai-suggestion-name i {
+            color: var(--primary-blue);
+            font-size: 0.9rem;
+        }
+
+        .ai-confidence {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+
+        .ai-confidence-high {
+            background: rgba(82, 196, 26, 0.14);
+            color: var(--secondary-green-dark);
+        }
+
+        .ai-confidence-mid {
+            background: rgba(250, 173, 20, 0.14);
+            color: #d48806;
+        }
+
+        .ai-confidence-low {
+            background: rgba(245, 108, 108, 0.14);
+            color: #cf1322;
+        }
+
+        .ai-confidence-bar {
+            height: 4px;
+            border-radius: 999px;
+            background: var(--border-color);
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+
+        .ai-confidence-fill {
+            height: 100%;
+            border-radius: 999px;
+            transition: width 0.6s ease;
+        }
+
+        .ai-suggestion-reason {
+            font-size: 0.79rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+            margin-bottom: 8px;
+        }
+
+        .ai-suggestion-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 8px;
+            background: rgba(74, 144, 226, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .ai-suggestion-btn:hover {
+            background: var(--primary-blue);
+            color: #fff;
+        }
+
+        .ai-advice {
+            margin-top: 4px;
+            padding: 8px 12px;
+            background: rgba(250, 173, 20, 0.08);
+            border-left: 3px solid #faad14;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.79rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+
+        /* Quick tags */
+        .ai-quick-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 0 16px 10px;
+        }
+
+        .ai-quick-tag {
+            border: 1px solid var(--border-color);
+            background: #fff;
+            border-radius: 999px;
+            padding: 5px 12px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .ai-quick-tag:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+            background: rgba(74, 144, 226, 0.06);
+        }
+
+        /* Input row */
+        .ai-chat-input {
+            padding: 10px 14px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            background: #fafbfc;
+        }
+
+        .ai-chat-input input {
+            flex: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            outline: none;
+            background: #fff;
+            transition: border-color 0.2s;
+        }
+
+        .ai-chat-input input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        .ai-chat-input input:disabled {
+            background: var(--light-bg);
+            cursor: not-allowed;
+        }
+
+        .ai-send-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: none;
+            background: var(--primary-blue);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+
+        .ai-send-btn:hover {
+            background: var(--primary-blue-dark);
+            transform: scale(1.05);
+        }
+
+        .ai-send-btn:disabled {
+            background: var(--border-color);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .ai-disclaimer {
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: rgba(74, 144, 226, 0.06);
+            border: 1px solid rgba(74, 144, 226, 0.12);
+            font-size: 0.76rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: flex-start;
+            gap: 7px;
+            line-height: 1.55;
+        }
+
+        .ai-disclaimer i {
+            color: var(--primary-blue);
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Error state */
+        .ai-msg-error {
+            background: rgba(245, 108, 108, 0.08);
+            border: 1px solid rgba(245, 108, 108, 0.2);
+            color: #cf1322;
+        }
+
         @media (max-width: 1199px) {
             .track-4 {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -622,6 +1101,10 @@
 
             .track-3 {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .ai-chat-container {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -704,6 +1187,20 @@
 
             .faq-help {
                 padding: 11px;
+            }
+
+            .ai-suggest {
+                padding: 22px 0 46px;
+            }
+
+            .ai-chat-box {
+                max-height: 480px;
+                border-radius: 14px;
+            }
+
+            .ai-chat-messages {
+                min-height: 220px;
+                max-height: 300px;
             }
         }
 
@@ -1024,6 +1521,63 @@
             </div>
         </section>
 
+        <section class="ai-suggest" id="aiSuggestSection">
+            <div class="container">
+                <div class="ai-chat-container">
+                    <div class="ai-intro">
+                        <span class="ai-intro-badge"><i class="ri-sparkling-2-fill"></i> Trợ lý AI thông minh</span>
+                        <h2>Không biết khám <span>chuyên khoa nào</span>?</h2>
+                        <p>Chỉ cần mô tả triệu chứng đang gặp, trợ lý AI sẽ phân tích và gợi ý chuyên khoa phù hợp nhất — giúp bạn tiết kiệm thời gian khi đặt lịch.</p>
+                        <ul class="ai-features">
+                            <li><i class="fas fa-check"></i> Gợi ý dựa trên dữ liệu chuyên khoa thực tế</li>
+                            <li><i class="fas fa-check"></i> Phản hồi tức thì, hỗ trợ 24/7</li>
+                            <li><i class="fas fa-check"></i> Đặt lịch nhanh ngay từ kết quả gợi ý</li>
+                            <li><i class="fas fa-check"></i> Hoàn toàn miễn phí, không cần đăng nhập</li>
+                        </ul>
+                    </div>
+
+                    <div class="ai-chat-box" id="aiChatBox">
+                        <div class="ai-chat-header">
+                            <div class="ai-chat-avatar"><i class="ri-robot-2-line"></i></div>
+                            <div class="ai-chat-header-info">
+                                <h4>Eden AI Assistant</h4>
+                                <span>Gợi ý chuyên khoa thông minh</span>
+                            </div>
+                            <div class="ai-status-dot" style="margin-left:auto;"></div>
+                        </div>
+
+                        <div class="ai-chat-messages" id="aiChatMessages">
+                            <div class="ai-msg ai-msg-bot">
+                                <div class="ai-msg-label"><i class="ri-robot-2-line"></i> Eden AI</div>
+                                Xin chào! 👋 Mình là trợ lý AI của Eden Health. Bạn hãy mô tả triệu chứng đang gặp (ví dụ: <em>"đau đầu, chóng mặt, mất ngủ"</em>), mình sẽ gợi ý chuyên khoa phù hợp nhé!
+                            </div>
+                        </div>
+
+                        <div class="ai-quick-tags" id="aiQuickTags">
+                            <button type="button" class="ai-quick-tag" data-symptom="Đau đầu, chóng mặt">🤕 Đau đầu</button>
+                            <button type="button" class="ai-quick-tag" data-symptom="Đau bụng, buồn nôn, khó tiêu">🤢 Đau bụng</button>
+                            <button type="button" class="ai-quick-tag" data-symptom="Khó thở, tức ngực, tim đập nhanh">💓 Khó thở</button>
+                            <button type="button" class="ai-quick-tag" data-symptom="Đau lưng, đau khớp, cứng khớp">🦴 Đau xương khớp</button>
+                            <button type="button" class="ai-quick-tag" data-symptom="Mất ngủ, lo âu, căng thẳng kéo dài">😰 Mất ngủ</button>
+                            <button type="button" class="ai-quick-tag" data-symptom="Da nổi mẩn, ngứa, phát ban">🩹 Vấn đề da</button>
+                        </div>
+
+                        <div class="ai-chat-input">
+                            <input type="text" id="aiSymptomInput" placeholder="Mô tả triệu chứng của bạn..." maxlength="1000" autocomplete="off">
+                            <button type="button" class="ai-send-btn" id="aiSendBtn" title="Gửi">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ai-disclaimer">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Kết quả gợi ý chỉ mang tính chất tham khảo, không thay thế chẩn đoán y khoa chính thức. Vui lòng đến gặp bác sĩ để được tư vấn chuyên môn.</span>
+                </div>
+            </div>
+        </section>
+
         <section class="cta">
             <div class="container">
                 <div class="cta-box">
@@ -1048,6 +1602,7 @@
             loadStatistics();
             initBookingFaqFilter();
             initFaqSupportAction();
+            initAiSuggest();
         });
 
         async function loadStatistics() {
@@ -1143,6 +1698,211 @@
                 }
 
                 window.location.href = 'lien-he.html';
+            });
+        }
+
+        // ─── AI Suggest Specialty ───
+        function initAiSuggest() {
+            const input = document.getElementById('aiSymptomInput');
+            const sendBtn = document.getElementById('aiSendBtn');
+            const messagesContainer = document.getElementById('aiChatMessages');
+            const quickTags = document.querySelectorAll('.ai-quick-tag');
+
+            if (!input || !sendBtn || !messagesContainer) return;
+
+            let isProcessing = false;
+
+            function setProcessing(state) {
+                isProcessing = state;
+                input.disabled = state;
+                sendBtn.disabled = state;
+                if (state) {
+                    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                } else {
+                    sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                }
+            }
+
+            function scrollToBottom() {
+                requestAnimationFrame(() => {
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                });
+            }
+
+            function addUserMessage(text) {
+                const div = document.createElement('div');
+                div.className = 'ai-msg ai-msg-user';
+                div.textContent = text;
+                messagesContainer.appendChild(div);
+                scrollToBottom();
+            }
+
+            function addBotMessage(html) {
+                const div = document.createElement('div');
+                div.className = 'ai-msg ai-msg-bot';
+                div.innerHTML = '<div class="ai-msg-label"><i class="ri-robot-2-line"></i> Eden AI</div>' + html;
+                messagesContainer.appendChild(div);
+                scrollToBottom();
+            }
+
+            function addErrorMessage(text) {
+                const div = document.createElement('div');
+                div.className = 'ai-msg ai-msg-bot ai-msg-error';
+                div.innerHTML = '<div class="ai-msg-label"><i class="fas fa-exclamation-triangle"></i> Lỗi</div>' + text;
+                messagesContainer.appendChild(div);
+                scrollToBottom();
+            }
+
+            function showTyping() {
+                const typing = document.createElement('div');
+                typing.className = 'ai-typing';
+                typing.id = 'aiTypingIndicator';
+                typing.innerHTML = '<div class="ai-typing-dot"></div><div class="ai-typing-dot"></div><div class="ai-typing-dot"></div>';
+                messagesContainer.appendChild(typing);
+                scrollToBottom();
+            }
+
+            function hideTyping() {
+                const typing = document.getElementById('aiTypingIndicator');
+                if (typing) typing.remove();
+            }
+
+            function getConfidenceClass(score) {
+                if (score >= 70) return 'ai-confidence-high';
+                if (score >= 40) return 'ai-confidence-mid';
+                return 'ai-confidence-low';
+            }
+
+            function getConfidenceColor(score) {
+                if (score >= 70) return '#52c41a';
+                if (score >= 40) return '#faad14';
+                return '#f56c6c';
+            }
+
+            function renderSuggestions(data) {
+                let html = '';
+
+                if (data.suggestions && data.suggestions.length > 0) {
+                    html += 'Dựa trên mô tả của bạn, mình gợi ý các chuyên khoa sau:';
+                    html += '<div class="ai-suggestions-wrap">';
+
+                    data.suggestions.forEach(s => {
+                        const confClass = getConfidenceClass(s.doTinCay);
+                        const confColor = getConfidenceColor(s.doTinCay);
+                        html += `
+                            <div class="ai-suggestion-card">
+                                <div class="ai-suggestion-top">
+                                    <span class="ai-suggestion-name"><i class="ri-hospital-line"></i> ${escapeHtml(s.tenChuyenKhoa)}</span>
+                                    <span class="ai-confidence ${confClass}">${s.doTinCay}% phù hợp</span>
+                                </div>
+                                <div class="ai-confidence-bar">
+                                    <div class="ai-confidence-fill" style="width:${s.doTinCay}%;background:${confColor}"></div>
+                                </div>
+                                <div class="ai-suggestion-reason">${escapeHtml(s.lyDo)}</div>
+                                <a href="dat-lich.html?chuyenKhoa=${encodeURIComponent(s.maChuyenKhoa)}" class="ai-suggestion-btn">
+                                    <i class="fas fa-calendar-check"></i> Đặt lịch chuyên khoa này
+                                </a>
+                            </div>
+                        `;
+                    });
+
+                    html += '</div>';
+                }
+
+                if (data.loiKhuyen) {
+                    html += `<div class="ai-advice"><i class="fas fa-lightbulb" style="color:#faad14;margin-right:5px"></i> ${escapeHtml(data.loiKhuyen)}</div>`;
+                }
+
+                addBotMessage(html);
+            }
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            async function sendMessage(symptoms) {
+                const trimmed = symptoms.trim();
+                if (!trimmed || trimmed.length < 5) {
+                    addErrorMessage('Vui lòng mô tả triệu chứng ít nhất 5 ký tự để AI có thể phân tích chính xác hơn.');
+                    return;
+                }
+
+                addUserMessage(trimmed);
+                input.value = '';
+                setProcessing(true);
+                showTyping();
+
+                // Hide quick tags after first message
+                const tagsWrap = document.getElementById('aiQuickTags');
+                if (tagsWrap) tagsWrap.style.display = 'none';
+
+                try {
+                    const apiUrl = (typeof API_ENDPOINTS !== 'undefined' && API_ENDPOINTS.patient)
+                        ? API_ENDPOINTS.patient + '/ai-suggest-specialty.php'
+                        : '/DO_AN/src/api/patient/ai-suggest-specialty.php';
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ symptoms: trimmed })
+                    });
+
+                    hideTyping();
+
+                    if (!response.ok) {
+                        const errData = await response.json().catch(() => null);
+                        addErrorMessage(errData?.message || `Lỗi server (HTTP ${response.status}). Vui lòng thử lại sau.`);
+                        return;
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        addErrorMessage(data.message || 'Không thể xử lý yêu cầu. Vui lòng thử lại.');
+                        return;
+                    }
+
+                    if (data.type === 'suggestions' && data.suggestions?.length > 0) {
+                        renderSuggestions(data);
+                    } else if (data.type === 'text' && data.message) {
+                        addBotMessage(escapeHtml(data.message));
+                    } else {
+                        addBotMessage('Mình chưa thể xác định chuyên khoa phù hợp từ mô tả này. Bạn thử mô tả chi tiết hơn nhé! 😊');
+                    }
+
+                } catch (error) {
+                    hideTyping();
+                    console.error('AI Suggest Error:', error);
+                    addErrorMessage('Không thể kết nối đến hệ thống AI. Vui lòng kiểm tra kết nối và thử lại.');
+                } finally {
+                    setProcessing(false);
+                    input.focus();
+                }
+            }
+
+            // Send on button click
+            sendBtn.addEventListener('click', () => {
+                if (!isProcessing) sendMessage(input.value);
+            });
+
+            // Send on Enter key
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !isProcessing) {
+                    e.preventDefault();
+                    sendMessage(input.value);
+                }
+            });
+
+            // Quick tag click
+            quickTags.forEach(tag => {
+                tag.addEventListener('click', () => {
+                    if (!isProcessing) {
+                        const symptom = tag.dataset.symptom || tag.textContent.trim();
+                        sendMessage(symptom);
+                    }
+                });
             });
         }
     </script>
