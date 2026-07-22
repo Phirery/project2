@@ -1,65 +1,48 @@
 <?php
 require_once '../../config/cors.php';
 require_once '../../config/db.php';
+require_once '../../config/session.php';
 require_once '../../includes/mail-events.php';
+require_once '../../includes/vnpay.php';
 
-// Endpoint callback/return thanh toán VNPAY (bản demo).
-// Khi tích hợp production cần verify chữ ký VNPAY trước khi cập nhật hóa đơn.
+$result = vnpay_process_callback($conn, $_REQUEST);
 
-$maHoaDon = isset($_REQUEST['maHoaDon']) ? (int)$_REQUEST['maHoaDon'] : 0;
-if ($maHoaDon <= 0 && isset($_REQUEST['vnp_TxnRef'])) {
-    $maHoaDon = (int)$_REQUEST['vnp_TxnRef'];
-}
-
-$responseCode = trim($_REQUEST['vnp_ResponseCode'] ?? '');
-$transactionNo = trim($_REQUEST['vnp_TransactionNo'] ?? '');
-
-if ($maHoaDon <= 0) {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Thiếu mã hóa đơn'
-    ], JSON_UNESCAPED_UNICODE);
-    exit;
-}
-
-$isSuccess = ($responseCode === '00');
-$newStatus = $isSuccess ? 'Đã thanh toán' : 'Chưa thanh toán';
-$reason = $isSuccess ? '' : ('Mã lỗi VNPAY: ' . ($responseCode !== '' ? $responseCode : 'unknown'));
-
-try {
-    $stmt = $conn->prepare(
-        "UPDATE hoadon
-         SET trangThai = ?,
-             phuongThuc = 'VNPAY',
-             vnp_TransactionNo = ?
-         WHERE maHoaDon = ?"
-    );
-    $stmt->bind_param('ssi', $newStatus, $transactionNo, $maHoaDon);
-    $stmt->execute();
-    $stmt->close();
-
+if (!empty($result['invoice']['maHoaDon'])) {
     try {
-        sendPaymentStatusEmail($conn, $maHoaDon, $newStatus, $reason);
+        sendPaymentStatusEmail(
+            $conn,
+            (int)$result['invoice']['maHoaDon'],
+            $result['paymentSuccess'] ? 'Đã thanh toán' : 'Chưa thanh toán',
+            $result['paymentSuccess'] ? '' : ($result['paymentMessage'] ?: $result['message'])
+        );
     } catch (Throwable $mailError) {
-        error_log('VNPAY callback mail error: ' . $mailError->getMessage());
+        error_log('VNPAY return mail error: ' . $mailError->getMessage());
     }
-
-    echo json_encode([
-        'success' => true,
-        'message' => $isSuccess ? 'Thanh toán thành công' : 'Thanh toán thất bại',
-        'data' => [
-            'maHoaDon' => $maHoaDon,
-            'trangThai' => $newStatus,
-            'vnp_ResponseCode' => $responseCode,
-            'vnp_TransactionNo' => $transactionNo
-        ]
-    ], JSON_UNESCAPED_UNICODE);
-} catch (Exception $e) {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Lỗi: ' . $e->getMessage()
-    ], JSON_UNESCAPED_UNICODE);
 }
 
-$conn->close();
-?>
+$params = [
+    'payment' => 'vnpay',
+    'status' => $result['paymentSuccess'] ? 'success' : 'failed',
+    'rspCode' => $result['rspCode'],
+    'paymentCode' => $result['paymentCode'] ?? '',
+    'message' => $result['paymentSuccess']
+        ? 'Thanh toan VNPay thanh cong'
+        : ($result['paymentMessage'] ?: $result['message']),
+];
+
+if (!empty($result['invoice']['maHoaDon'])) {
+    $params['maHoaDon'] = (string)$result['invoice']['maHoaDon'];
+}
+
+if (!empty($result['invoice']['maLichKham'])) {
+    $params['maLichKham'] = (string)$result['invoice']['maLichKham'];
+}
+
+if (!empty($result['invoice']['vnp_TransactionNo'])) {
+    $params['vnp_TransactionNo'] = (string)$result['invoice']['vnp_TransactionNo'];
+}
+
+$redirectUrl = rtrim(APP_BASE_URL, '/') . '/dat-lich.html?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+
+header('Location: ' . $redirectUrl, true, 302);
+exit;

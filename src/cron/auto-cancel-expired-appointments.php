@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/mail-events.php';
+require_once __DIR__ . '/../includes/vnpay.php';
 
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 
@@ -43,10 +44,74 @@ if (!isAuthorizedHttpRequest()) {
 $summary = [
     'timestamp' => date('Y-m-d H:i:s'),
     'affectedRows' => 0,
+    'expiredHoldRows' => 0,
     'mailSent' => 0
 ];
 
 try {
+    $holdMinutes = vnpay_get_hold_minutes();
+    $expiredHoldIds = [];
+    $expiredHoldStmt = $conn->prepare("
+        SELECT lk.maLichKham
+        FROM lichkham lk
+        JOIN hoadon hd ON hd.maLichKham = lk.maLichKham
+        WHERE lk.trangThai = 'Chờ'
+          AND hd.trangThai = 'Chưa thanh toán'
+          AND TIMESTAMPDIFF(MINUTE, hd.ngayTao, NOW()) > ?
+    ");
+    $expiredHoldStmt->bind_param('i', $holdMinutes);
+    $expiredHoldStmt->execute();
+    $expiredHoldResult = $expiredHoldStmt->get_result();
+    while ($row = $expiredHoldResult->fetch_assoc()) {
+        $expiredHoldIds[] = (int)$row['maLichKham'];
+    }
+    $expiredHoldStmt->close();
+
+    if (!empty($expiredHoldIds)) {
+        $placeholders = implode(',', array_fill(0, count($expiredHoldIds), '?'));
+        $types = str_repeat('i', count($expiredHoldIds));
+
+        $cancelSql = "
+            UPDATE lichkham
+            SET
+                trangThai = 'Hủy',
+                nguoiHuy = 'hethong',
+                ghiChu = CASE
+                    WHEN ghiChu IS NULL OR TRIM(ghiChu) = '' THEN
+                        '[Lý do hủy]: Quá hạn thanh toán VNPay'
+                    WHEN ghiChu LIKE '%[Lý do hủy]:%' THEN
+                        ghiChu
+                    ELSE
+                        CONCAT(ghiChu, '\n[Lý do hủy]: Quá hạn thanh toán VNPay')
+                END
+            WHERE maLichKham IN ({$placeholders})
+              AND trangThai = 'Chờ'
+        ";
+        $cancelStmt = $conn->prepare($cancelSql);
+        $bindArgs = [$types];
+        foreach ($expiredHoldIds as $index => $expiredId) {
+            $bindArgs[] = &$expiredHoldIds[$index];
+        }
+        call_user_func_array([$cancelStmt, 'bind_param'], $bindArgs);
+        $cancelStmt->execute();
+        $summary['expiredHoldRows'] = $cancelStmt->affected_rows;
+        $cancelStmt->close();
+
+        foreach ($expiredHoldIds as $maLichKham) {
+            try {
+                sendAppointmentCancelledEmails(
+                    $conn,
+                    $maLichKham,
+                    'hethong',
+                    'Quá hạn thanh toán VNPay'
+                );
+                $summary['mailSent']++;
+            } catch (Throwable $mailError) {
+                error_log('Expired hold mail error: ' . $mailError->getMessage());
+            }
+        }
+    }
+
     $selectSql = "
         SELECT maLichKham
         FROM lichkham

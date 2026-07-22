@@ -1,4 +1,5 @@
 .env
+.env_host
 *.log
 cron/logs/*.log
 database/migrations

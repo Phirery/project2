@@ -1,4 +1,10 @@
 <?php
+require_once __DIR__ . '/../config/app-env.php';
+
+function getPendingBookingHoldMinutes(): int
+{
+    return max(1, (int)(getConfigValue('VNPAY_HOLD_MINUTES') ?: 15));
+}
 
 function scheduleManagementColumnExists(mysqli $conn, string $tableName, string $columnName): bool
 {
@@ -329,6 +335,7 @@ function findOverlappingAppointment(
     string $gioKetThuc,
     int $excludeAppointmentId = 0
 ): ?array {
+    $holdMinutes = getPendingBookingHoldMinutes();
     $sql = "
         SELECT
             lk.maLichKham,
@@ -337,9 +344,16 @@ function findOverlappingAppointment(
             TIME_FORMAT(sk.gioKetThuc, '%H:%i:%s') AS gioKetThuc
         FROM lichkham lk
         JOIN suatkham sk ON lk.maSuat = sk.maSuat
+        LEFT JOIN hoadon hd ON hd.maLichKham = lk.maLichKham
         WHERE lk.$columnName = ?
           AND lk.ngayKham = ?
           AND lk.trangThai != 'Hủy'
+          AND NOT (
+              lk.trangThai = 'Chờ'
+              AND hd.maHoaDon IS NOT NULL
+              AND hd.trangThai = 'Chưa thanh toán'
+              AND TIMESTAMPDIFF(MINUTE, hd.ngayTao, NOW()) > ?
+          )
           AND (? = 0 OR lk.maLichKham != ?)
           AND (
               (sk.gioBatDau >= ? AND sk.gioBatDau < ?)
@@ -351,9 +365,10 @@ function findOverlappingAppointment(
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param(
-        'ssiissssss',
+        'ssiiissssss',
         $columnValue,
         $ngayKham,
+        $holdMinutes,
         $excludeAppointmentId,
         $excludeAppointmentId,
         $gioBatDau,

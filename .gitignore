@@ -1,4 +1,3 @@
-# Sensitive local config
 src/config/mail.php
 src/config/cloudinary.php
 src/config/db-config.php
@@ -9,3 +8,4 @@ src/test
 src/test.py
 src/test2.py
 src/logoweb31032026.png
+docs

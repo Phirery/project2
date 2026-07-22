@@ -88,6 +88,19 @@ $isLocalHost = strpos($host, 'localhost') !== false || $host === 'localhost:5500
 // Chỉ dùng một file .env cho cả local/host (mỗi môi trường tự có bản .env riêng)
 loadDotEnvIfExists(dirname(__DIR__) . '/.env');
 
+// Cho phép host ghi đè bằng file .env_host mà không cần sửa code khác.
+// Local không tự động dùng file này để tránh lẫn cấu hình khi test.
+$customEnvFile = getConfigValue('APP_ENV_FILE');
+if ($customEnvFile !== null && $customEnvFile !== '') {
+    $customEnvPath = $customEnvFile;
+    if (!preg_match('~^(?:[A-Za-z]:\\\\|/)~', $customEnvPath)) {
+        $customEnvPath = dirname(__DIR__) . '/' . ltrim($customEnvPath, '/\\');
+    }
+    loadDotEnvIfExists($customEnvPath);
+} elseif (!$isLocalHost) {
+    loadDotEnvIfExists(dirname(__DIR__) . '/.env_host');
+}
+
 $appEnv = getConfigValue('APP_ENV');
 if ($appEnv === null || $appEnv === '') {
     $appEnv = $isLocalHost ? 'local' : 'host';
@@ -101,6 +114,17 @@ $baseUrlByEnv = [
 $baseUrl = getConfigValue('APP_BASE_URL');
 if ($baseUrl === null || $baseUrl === '') {
     $baseUrl = $baseUrlByEnv[$appEnv] ?? $baseUrlByEnv['host'];
+}
+
+if (getConfigValue('APP_API_BASE_URL') === null || getConfigValue('APP_API_BASE_URL') === '') {
+    $apiBaseByEnv = [
+        'local' => 'http://localhost/DO_AN/src',
+        'host'  => 'https://domainex.id.vn',
+    ];
+    $apiBaseUrl = $apiBaseByEnv[$appEnv] ?? $apiBaseByEnv['host'];
+    if (!defined('APP_API_BASE_URL')) define('APP_API_BASE_URL', rtrim($apiBaseUrl, '/'));
+} else {
+    if (!defined('APP_API_BASE_URL')) define('APP_API_BASE_URL', rtrim(getConfigValue('APP_API_BASE_URL'), '/'));
 }
 
 if (!defined('APP_ENV')) define('APP_ENV', $appEnv);

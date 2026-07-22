@@ -864,8 +864,8 @@
                         <button class="btn-custom btn-prev" onclick="goToStep(5)">
                             <i class="fas fa-arrow-left"></i> Quay Lại
                         </button>
-                        <button class="btn-custom btn-submit" onclick="submitBooking()">
-                            <i class="fas fa-check-circle"></i> Xác Nhận Đặt Lịch
+                        <button class="btn-custom btn-submit" id="btnSubmitBooking" onclick="submitBooking()">
+                            <i class="fas fa-check-circle"></i> Đặt Lịch & Thanh Toán
                         </button>
                     </div>
                 </div>
@@ -897,6 +897,8 @@
         // Khởi tạo
         document.addEventListener('DOMContentLoaded', function() {
             // Common.js sẽ tự động load Header
+            window.__paymentReturnPresent = new URLSearchParams(window.location.search).has('payment');
+            handlePaymentReturnState();
             checkAuth(); // Giữ hàm này để lấy patientId cho luồng đặt lịch
             loadPackages();
             setupDateInput();
@@ -919,8 +921,14 @@
                     credentials: 'include'
                 });
                 const data = await response.json();
+                const hasPaymentResult = Boolean(window.__paymentReturnPresent);
                 
                 if (!data.success || data.role !== 'benhnhan') {
+                    if (hasPaymentResult) {
+                        bookingState.patientId = null;
+                        return;
+                    }
+
                     showAlert('error', 'Vui lòng đăng nhập với tài khoản bệnh nhân để đặt lịch!');
                     setTimeout(() => {
                         window.location.href = 'login.html';
@@ -932,6 +940,9 @@
                 
             } catch (error) {
                 console.error('Auth error:', error);
+                if (window.__paymentReturnPresent) {
+                    return;
+                }
                 showAlert('error', 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại!');
                 setTimeout(() => {
                     window.location.href = 'login.html';
@@ -1385,6 +1396,12 @@
 
         async function submitBooking() {
             const notes = document.getElementById('notes').value;
+            const submitButton = document.getElementById('btnSubmitBooking');
+            if (!submitButton) return;
+            let shouldResetButton = true;
+
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
             
             const bookingData = {
                 maBenhNhan: bookingState.patientId,
@@ -1397,7 +1414,7 @@
             };
             
             try {
-                const response = await fetch(`${API_BASE_PATIENT}/create-appointment.php`, {
+                const response = await fetch(`${API_BASE_PATIENT}/create-appointment-vnpay.php`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(bookingData),
@@ -1407,7 +1424,27 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    showAlert('success', 'Đặt lịch thành công!');
+                    const paymentUrl = data.data?.paymentUrl;
+                    const expiresAt = data.data?.paymentExpiresAt;
+                    const amount = data.data?.soTien;
+                    showAlert(
+                        'success',
+                        `Đã giữ chỗ thành công${amount ? `, số tiền ${Number(amount).toLocaleString('vi-VN')}đ` : ''}. Đang chuyển sang VNPay...`
+                    );
+                    if (paymentUrl) {
+                        if (expiresAt) {
+                            sessionStorage.setItem('vnpay_payment_expires_at', expiresAt);
+                        }
+                        shouldResetButton = false;
+                        setTimeout(() => {
+                            window.location.href = paymentUrl;
+                        }, 700);
+                        return;
+                    }
+
+                showAlert('error', 'Không nhận được URL thanh toán từ hệ thống.');
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = '<i class="fas fa-check-circle"></i> Đặt Lịch & Thanh Toán';
                     setTimeout(() => {
                         window.location.href = 'lich-kham-ca-nhan.html';
                     }, 500);
@@ -1417,7 +1454,44 @@
             } catch (error) {
                 console.error('Error submitting booking:', error);
                 showAlert('error', 'Có lỗi xảy ra. Vui lòng thử lại!');
+            } finally {
+                if (shouldResetButton) {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = '<i class="fas fa-check-circle"></i> Đặt Lịch & Thanh Toán';
+                }
             }
+        }
+
+        function handlePaymentReturnState() {
+            const params = new URLSearchParams(window.location.search);
+            if (!params.has('payment')) {
+                return;
+            }
+
+            const status = params.get('status') || '';
+            const message = params.get('message') || '';
+            const maLichKham = params.get('maLichKham') || '';
+            const maHoaDon = params.get('maHoaDon') || '';
+            const transactionNo = params.get('vnp_TransactionNo') || '';
+
+            if (status === 'success') {
+                showAlert(
+                    'success',
+                    `Thanh toán VNPay thành công${maLichKham ? ` cho lịch #${maLichKham}` : ''}${maHoaDon ? ` (Hóa đơn #${maHoaDon})` : ''}.`
+                );
+            } else if (status === 'failed') {
+                showAlert(
+                    'error',
+                    `Thanh toán VNPay chưa thành công${message ? `: ${message}` : ''}${transactionNo ? ` (GD: ${transactionNo})` : ''}.`
+                );
+            } else {
+                showAlert('error', message || 'Không thể xác định kết quả thanh toán.');
+            }
+
+            const cleanUrl = new URL(window.location.href);
+            ['payment', 'status', 'rspCode', 'paymentCode', 'message', 'maLichKham', 'maHoaDon', 'vnp_TransactionNo']
+                .forEach((key) => cleanUrl.searchParams.delete(key));
+            history.replaceState({}, document.title, cleanUrl.pathname + cleanUrl.search + cleanUrl.hash);
         }
 
         // Helper function
