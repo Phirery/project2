@@ -6,6 +6,11 @@ function getPendingBookingHoldMinutes(): int
     return max(1, (int)(getConfigValue('VNPAY_HOLD_MINUTES') ?: 15));
 }
 
+function getAppointmentRescheduleLimitHours(): int
+{
+    return max(1, (int)(getConfigValue('APPOINTMENT_RESCHEDULE_HOURS') ?: 24));
+}
+
 function scheduleManagementColumnExists(mysqli $conn, string $tableName, string $columnName): bool
 {
     $stmt = $conn->prepare(
@@ -108,9 +113,18 @@ function ensureScheduleManagementSchema(mysqli $conn): void
         $conn->query("ALTER TABLE goikham ADD COLUMN isActive TINYINT(1) NOT NULL DEFAULT 1 AFTER gia");
     }
 
+    if (!scheduleManagementColumnExists($conn, 'lichkham', 'soLanDoiLich')) {
+        $conn->query("ALTER TABLE lichkham ADD COLUMN soLanDoiLich TINYINT(1) NOT NULL DEFAULT 0 AFTER nguoiHuy");
+    }
+
+    if (!scheduleManagementColumnExists($conn, 'lichkham', 'thoiGianDoiLich')) {
+        $conn->query("ALTER TABLE lichkham ADD COLUMN thoiGianDoiLich DATETIME DEFAULT NULL AFTER soLanDoiLich");
+    }
+
     $conn->query("UPDATE suatkham SET effectiveFrom = '1900-01-01' WHERE effectiveFrom IS NULL OR effectiveFrom = '0000-00-00'");
     $conn->query("UPDATE suatkham SET presetMinutes = 40 WHERE presetMinutes IS NULL OR presetMinutes <= 0");
     $conn->query("UPDATE suatkham SET effectiveTo = NULL WHERE effectiveTo = '0000-00-00'");
+    $conn->query("UPDATE lichkham SET soLanDoiLich = 0 WHERE soLanDoiLich IS NULL");
     $conn->query(
         "DELETE s
          FROM suatkham s

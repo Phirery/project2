@@ -233,7 +233,7 @@
         .form-select:focus { border-color: #667eea; box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25); }
 
         /* Tables */
-        .table-responsive { margin-top: 20px; }
+        .table-responsive { margin-top: 20px; overflow-y: visible; }
         .appointment-table { margin-bottom: 0; }
         .appointment-table thead { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
         .appointment-table thead th { border: none; padding: 15px 12px; font-weight: 600; font-size: 0.9rem; white-space: nowrap; }
@@ -251,6 +251,15 @@
         .btn-action { padding: 6px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; transition: all 0.3s; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
         .btn-cancel { background: #e74c3c; color: white; }
         .btn-cancel:hover { background: #c0392b; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3); }
+        .btn-menu { background: #eef2f7; color: #334155; border: 1px solid #d8e2ef; }
+        .btn-menu:hover { background: #e2e8f0; color: #0f172a; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08); }
+        .action-dropdown .btn-action { min-width: 42px; justify-content: center; padding: 6px 10px; }
+        .action-dropdown .dropdown-toggle::after { display: none; }
+        .action-dropdown .dropdown-menu { min-width: 220px; border-radius: 14px; border: 1px solid #e6ebf2; box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12); }
+        .action-dropdown .dropdown-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; font-weight: 600; }
+        .action-dropdown .dropdown-item i { width: 18px; text-align: center; }
+        .action-dropdown .dropdown-item.disabled, .action-dropdown .dropdown-item:disabled { pointer-events: none; opacity: 0.45; }
+        .action-disabled-note { display: block; padding: 0 16px 10px; color: #8a94a6; font-size: 0.78rem; line-height: 1.4; }
 
         /* Modal */
         .modal-content { border-radius: 15px; border: none; }
@@ -260,6 +269,22 @@
         .appointment-info { background: #f8f9fa; padding: 15px; border-radius: 10px; border-left: 4px solid var(--primary-purple); }
         .appointment-info p { margin-bottom: 8px; }
         .appointment-info p:last-child { margin-bottom: 0; }
+        .reschedule-note { background: linear-gradient(135deg, rgba(102,126,234,0.08), rgba(118,75,162,0.08)); border: 1px solid rgba(102,126,234,0.14); border-radius: 12px; padding: 14px 16px; color: #334155; }
+        .reschedule-summary { background: #f8fafc; border: 1px solid #e6ebf2; border-radius: 12px; padding: 14px 16px; }
+        .reschedule-summary .summary-row { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; }
+        .reschedule-summary .summary-label { color: #64748b; font-weight: 600; }
+        .reschedule-summary .summary-value { color: #0f172a; font-weight: 700; text-align: right; }
+        .reschedule-grid { display: grid; gap: 12px; }
+        .reschedule-section { background: #fff; border: 1px solid #e6ebf2; border-radius: 14px; padding: 14px; }
+        .reschedule-section h6 { margin-bottom: 12px; color: #1f2937; font-weight: 700; }
+        .reschedule-shifts, .reschedule-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+        .reschedule-chip { border: 1.5px solid #d8e2ef; border-radius: 12px; padding: 12px 10px; background: #fff; font-weight: 700; color: #1f2937; transition: all 0.25s ease; text-align: center; cursor: pointer; }
+        .reschedule-chip:hover:not(.disabled) { border-color: var(--primary-purple); box-shadow: 0 8px 20px rgba(102,126,234,0.12); transform: translateY(-2px); }
+        .reschedule-chip.selected { border-color: var(--primary-purple); background: rgba(102,126,234,0.12); color: var(--primary-purple); }
+        .reschedule-chip.disabled { opacity: 0.5; cursor: not-allowed; background: #f8fafc; }
+        .reschedule-slot-time { display: block; font-size: 0.98rem; }
+        .reschedule-slot-status { display: block; margin-top: 4px; font-size: 0.77rem; color: #64748b; font-weight: 600; }
+        .reschedule-empty { border: 1px dashed #d8e2ef; border-radius: 12px; padding: 18px; text-align: center; color: #64748b; background: #f8fafc; }
         .modal-backdrop.show { opacity: 0.5; }
 
         /* Loading & Empty States */
@@ -567,6 +592,50 @@
         </div>
     </div>
 
+    <div class="modal fade" id="rescheduleModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-calendar-alt text-warning me-2"></i>
+                        Đổi lịch khám
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="reschedule-note mb-3">
+                        <strong>Lưu ý:</strong> Chỉ được đổi 1 lần cho mỗi lịch khám và phải thực hiện trước 24 giờ so với giờ khám.
+                        Hệ thống sẽ giữ nguyên bác sĩ, chuyên khoa và gói khám hiện tại.
+                    </div>
+                    <div class="appointment-info mb-3" id="rescheduleAppointmentInfo"></div>
+                    <div class="reschedule-summary mb-3" id="rescheduleSummary"></div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Ngày khám mới</label>
+                        <input type="date" class="form-control" id="rescheduleDate" onchange="onRescheduleDateChange()">
+                    </div>
+                    <div class="reschedule-grid">
+                        <div class="reschedule-section">
+                            <h6><i class="fas fa-clock me-2"></i>Chọn buổi khám</h6>
+                            <div id="rescheduleShiftList" class="reschedule-shifts"></div>
+                        </div>
+                        <div class="reschedule-section">
+                            <h6><i class="fas fa-stopwatch me-2"></i>Chọn giờ khám</h6>
+                            <div id="rescheduleSlotList" class="reschedule-slots"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Đóng
+                    </button>
+                    <button type="button" class="btn btn-primary" id="btnConfirmReschedule" onclick="confirmReschedule()" disabled>
+                        <i class="fas fa-calendar-check me-1"></i>Xác nhận đổi lịch
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="footer-placeholder"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
@@ -576,10 +645,19 @@
 
     <script>
         let currentAppointmentId = null;
+        let currentRescheduleAppointment = null;
         const PAGE_LIMIT = 10;
         const appointments = {
             upcoming: [],
             history: []
+        };
+        const rescheduleState = {
+            appointment: null,
+            selectedDate: '',
+            selectedShiftId: null,
+            selectedSlotId: null,
+            shifts: [],
+            slots: []
         };
         const pageState = {
             upcoming: {
@@ -765,6 +843,27 @@
                 const encodedNgayKham = encodeURIComponent(String(apt.ngayKham || ''));
                 const encodedGioKham = encodeURIComponent(String(apt.gioKham || ''));
                 const encodedBacSi = encodeURIComponent(String(apt.bacSi || ''));
+                const encodedAppointment = encodeURIComponent(JSON.stringify({
+                    maLichKham,
+                    maBacSi: String(apt.maBacSi || ''),
+                    maCa: Number(apt.maCa || 0),
+                    maSuat: Number(apt.maSuat || 0),
+                    maGoi: Number(apt.maGoi || 0),
+                    ngayKhamRaw: String(apt.ngayKhamRaw || ''),
+                    ngayKham: String(apt.ngayKham || ''),
+                    gioKham: String(apt.gioKham || ''),
+                    gioBatDau: String(apt.gioBatDau || ''),
+                    gioKetThuc: String(apt.gioKetThuc || ''),
+                    bacSi: String(apt.bacSi || ''),
+                    chuyenKhoa: String(apt.chuyenKhoa || ''),
+                    goiKham: String(apt.goiKham || ''),
+                    tenCa: String(apt.tenCa || ''),
+                    canReschedule: Boolean(apt.canReschedule),
+                    rescheduleReason: String(apt.rescheduleReason || ''),
+                    soLanDoiLich: Number(apt.soLanDoiLich || 0)
+                }));
+                const rescheduleDisabled = !apt.canReschedule;
+                const rescheduleReason = escapeHtml(apt.rescheduleReason || 'Không thể đổi lịch vào lúc này');
 
                 return `
                     <tr>
@@ -775,9 +874,24 @@
                         <td>${escapeHtml(apt.goiKham)}</td>
                         <td><span class="status-badge confirmed">${escapeHtml(apt.trangThai)}</span></td>
                         <td>
-                            <button class="btn-action btn-cancel" onclick="openCancelModal(${maLichKham}, '${encodedNgayKham}', '${encodedGioKham}', '${encodedBacSi}')">
-                                <i class="fas fa-times-circle"></i> Hủy
-                            </button>
+                            <div class="dropdown action-dropdown">
+                                <button class="btn-action btn-menu dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Thao tác">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <button class="dropdown-item" type="button" onclick="openCancelModal(${maLichKham}, '${encodedNgayKham}', '${encodedGioKham}', '${encodedBacSi}')">
+                                            <i class="fas fa-ban text-danger"></i> Hủy lịch
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="dropdown-item ${rescheduleDisabled ? 'disabled' : ''}" type="button" ${rescheduleDisabled ? 'aria-disabled="true" tabindex="-1"' : `onclick="openRescheduleModal('${encodedAppointment}')"`}>
+                                            <i class="fas fa-calendar-alt text-primary"></i> Đổi lịch
+                                        </button>
+                                    </li>
+                                    ${rescheduleDisabled ? `<li><span class="action-disabled-note">${rescheduleReason}</span></li>` : ''}
+                                </ul>
+                            </div>
                         </td>
                     </tr>
                 `;
@@ -1063,6 +1177,391 @@
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#39;');
+        }
+
+        function formatDateFromRaw(rawDate) {
+            if (!rawDate) return '-';
+            const parts = String(rawDate).split('-');
+            if (parts.length !== 3) return String(rawDate);
+            return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+
+        function getLocalDateInputValue(date = new Date()) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function formatDateTimeForSummary(dateLabel, timeLabel) {
+            const safeDate = dateLabel ? escapeHtml(dateLabel) : '-';
+            const safeTime = timeLabel ? escapeHtml(timeLabel) : '-';
+            return `${safeDate} - ${safeTime}`;
+        }
+
+        function resetRescheduleState() {
+            rescheduleState.appointment = null;
+            rescheduleState.selectedDate = '';
+            rescheduleState.selectedShiftId = null;
+            rescheduleState.selectedSlotId = null;
+            rescheduleState.shifts = [];
+            rescheduleState.slots = [];
+        }
+
+        function updateRescheduleConfirmState() {
+            const button = document.getElementById('btnConfirmReschedule');
+            if (!button) return;
+            button.disabled = !(
+                rescheduleState.appointment &&
+                rescheduleState.selectedDate &&
+                Number.isInteger(rescheduleState.selectedShiftId) &&
+                Number.isInteger(rescheduleState.selectedSlotId)
+            );
+        }
+
+        function renderRescheduleAppointmentInfo() {
+            const container = document.getElementById('rescheduleAppointmentInfo');
+            if (!container || !rescheduleState.appointment) return;
+
+            const apt = rescheduleState.appointment;
+            container.innerHTML = `
+                <p><i class="fas fa-calendar text-primary me-2"></i><strong>Ngày khám hiện tại:</strong> ${escapeHtml(apt.ngayKham || '-')}</p>
+                <p><i class="fas fa-clock text-info me-2"></i><strong>Giờ khám hiện tại:</strong> ${escapeHtml(apt.gioKham || '-')}</p>
+                <p><i class="fas fa-user-md text-success me-2"></i><strong>Bác sĩ:</strong> ${escapeHtml(apt.bacSi || '-')}</p>
+                <p><i class="fas fa-layer-group text-warning me-2"></i><strong>Chuyên khoa:</strong> ${escapeHtml(apt.chuyenKhoa || '-')}</p>
+                <p><i class="fas fa-pills text-danger me-2"></i><strong>Gói khám:</strong> ${escapeHtml(apt.goiKham || '-')}</p>
+            `;
+        }
+
+        function renderRescheduleSummary() {
+            const container = document.getElementById('rescheduleSummary');
+            if (!container || !rescheduleState.appointment) return;
+
+            const apt = rescheduleState.appointment;
+            const selectedShift = rescheduleState.shifts.find((shift) => Number(shift.maCa) === Number(rescheduleState.selectedShiftId));
+            const selectedSlot = rescheduleState.slots.find((slot) => Number(slot.maSuat) === Number(rescheduleState.selectedSlotId));
+            const selectedDateLabel = formatDateFromRaw(rescheduleState.selectedDate);
+            const newTimeLabel = selectedSlot ? `${String(selectedSlot.gioBatDau || '').slice(0, 5)} - ${String(selectedSlot.gioKetThuc || '').slice(0, 5)}` : '-';
+
+            container.innerHTML = `
+                <div class="summary-row">
+                    <div class="summary-label">Lịch hiện tại</div>
+                    <div class="summary-value">${escapeHtml(apt.ngayKham || '-')} | ${escapeHtml(apt.gioKham || '-')}</div>
+                </div>
+                <div class="summary-row">
+                    <div class="summary-label">Ngày mới</div>
+                    <div class="summary-value">${escapeHtml(selectedDateLabel)}</div>
+                </div>
+                <div class="summary-row">
+                    <div class="summary-label">Buổi mới</div>
+                    <div class="summary-value">${escapeHtml(selectedShift ? (selectedShift.tenCa || '-') : '-')}</div>
+                </div>
+                <div class="summary-row">
+                    <div class="summary-label">Giờ mới</div>
+                    <div class="summary-value">${escapeHtml(newTimeLabel)}</div>
+                </div>
+            `;
+            updateRescheduleConfirmState();
+        }
+
+        function renderRescheduleShiftList() {
+            const container = document.getElementById('rescheduleShiftList');
+            if (!container) return;
+
+            if (!rescheduleState.shifts.length) {
+                container.innerHTML = '<div class="reschedule-empty">Không có buổi khám khả dụng trong ngày đã chọn.</div>';
+                rescheduleState.selectedShiftId = null;
+                rescheduleState.selectedSlotId = null;
+                renderRescheduleSummary();
+                return;
+            }
+
+            container.innerHTML = rescheduleState.shifts.map((shift) => {
+                const shiftId = Number(shift.maCa || 0);
+                const isSelected = Number(rescheduleState.selectedShiftId) === shiftId;
+                const isDisabled = !shift.available;
+                const label = shift.tenCa ? escapeHtml(shift.tenCa) : `Ca ${shiftId}`;
+                const time = `${String(shift.gioBatDau || '').slice(0, 5)} - ${String(shift.gioKetThuc || '').slice(0, 5)}`;
+                return `
+                    <button type="button" class="reschedule-chip ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" ${isDisabled ? 'disabled' : ''} onclick="${isDisabled ? '' : `selectRescheduleShift(${shiftId})`}">
+                        <span class="reschedule-slot-time">${label}</span>
+                        <span class="reschedule-slot-status">${escapeHtml(time)}${isDisabled ? ' - Bận' : ''}</span>
+                    </button>
+                `;
+            }).join('');
+
+            if (!rescheduleState.selectedShiftId) {
+                const firstAvailable = rescheduleState.shifts.find((shift) => shift.available);
+                if (firstAvailable) {
+                    rescheduleState.selectedShiftId = Number(firstAvailable.maCa || 0);
+                }
+            }
+
+            renderRescheduleSummary();
+        }
+
+        function renderRescheduleSlotList() {
+            const container = document.getElementById('rescheduleSlotList');
+            if (!container) return;
+
+            if (!rescheduleState.slots.length) {
+                container.innerHTML = '<div class="reschedule-empty">Không có giờ khám khả dụng cho buổi này.</div>';
+                rescheduleState.selectedSlotId = null;
+                renderRescheduleSummary();
+                return;
+            }
+
+            container.innerHTML = rescheduleState.slots.map((slot) => {
+                const slotId = Number(slot.maSuat || 0);
+                const isDisabled = !slot.available;
+                const isCurrentSlot = rescheduleState.appointment
+                    && Number(rescheduleState.appointment.maSuat || 0) === slotId
+                    && String(rescheduleState.appointment.ngayKhamRaw || '') === String(rescheduleState.selectedDate || '');
+                const isSelected = Number(rescheduleState.selectedSlotId) === slotId;
+                const time = `${String(slot.gioBatDau || '').slice(0, 5)} - ${String(slot.gioKetThuc || '').slice(0, 5)}`;
+                const status = isCurrentSlot ? 'Hiện tại' : (isDisabled ? 'Đã được đặt' : 'Còn trống');
+                return `
+                    <button type="button" class="reschedule-chip ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" ${isDisabled ? 'disabled' : ''} onclick="${isDisabled ? '' : `selectRescheduleSlot(${slotId})`}">
+                        <span class="reschedule-slot-time">${escapeHtml(time)}</span>
+                        <span class="reschedule-slot-status">${escapeHtml(status)}</span>
+                    </button>
+                `;
+            }).join('');
+
+            renderRescheduleSummary();
+        }
+
+        async function loadRescheduleShifts(preferredShiftId = null) {
+            const shiftContainer = document.getElementById('rescheduleShiftList');
+            const slotContainer = document.getElementById('rescheduleSlotList');
+            if (!shiftContainer || !slotContainer || !rescheduleState.appointment) return;
+
+            shiftContainer.innerHTML = '<div class="loading"><div class="spinner-border"></div></div>';
+            slotContainer.innerHTML = '<div class="reschedule-empty">Hãy chọn buổi để xem các giờ khám khả dụng.</div>';
+            updateRescheduleConfirmState();
+
+            try {
+                const response = await fetch(
+                    `${API_BASE_PATIENT}/get-available-shifts.php?maBacSi=${encodeURIComponent(rescheduleState.appointment.maBacSi)}&ngayKham=${encodeURIComponent(rescheduleState.selectedDate)}`
+                );
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.message || 'Không thể tải buổi khám');
+                }
+
+                rescheduleState.shifts = Array.isArray(data.data) ? data.data : [];
+                const preferred = Number(preferredShiftId || 0);
+                const availablePreferred = rescheduleState.shifts.find((shift) => Number(shift.maCa || 0) === preferred && shift.available);
+                const firstAvailable = rescheduleState.shifts.find((shift) => shift.available);
+                rescheduleState.selectedShiftId = availablePreferred
+                    ? Number(availablePreferred.maCa || 0)
+                    : (firstAvailable ? Number(firstAvailable.maCa || 0) : null);
+                rescheduleState.selectedSlotId = null;
+
+                renderRescheduleShiftList();
+
+                if (rescheduleState.selectedShiftId) {
+                    await loadRescheduleSlots(rescheduleState.selectedShiftId);
+                } else {
+                    slotContainer.innerHTML = '<div class="reschedule-empty">Không có buổi khám khả dụng trong ngày đã chọn.</div>';
+                    renderRescheduleSummary();
+                }
+            } catch (error) {
+                console.error('Load reschedule shifts error:', error);
+                shiftContainer.innerHTML = '<div class="reschedule-empty">Không thể tải dữ liệu buổi khám. Vui lòng thử lại.</div>';
+                slotContainer.innerHTML = '<div class="reschedule-empty">Không thể tải giờ khám.</div>';
+                showAlert('error', error.message || 'Không thể tải dữ liệu đổi lịch');
+            }
+        }
+
+        async function loadRescheduleSlots(shiftId) {
+            const slotContainer = document.getElementById('rescheduleSlotList');
+            if (!slotContainer || !rescheduleState.appointment) return;
+
+            rescheduleState.selectedShiftId = Number(shiftId || 0);
+            rescheduleState.selectedSlotId = null;
+            slotContainer.innerHTML = '<div class="loading"><div class="spinner-border"></div></div>';
+            updateRescheduleConfirmState();
+
+            try {
+                const response = await fetch(
+                    `${API_BASE_PATIENT}/get-available-slots.php?maBacSi=${encodeURIComponent(rescheduleState.appointment.maBacSi)}&ngayKham=${encodeURIComponent(rescheduleState.selectedDate)}&maCa=${encodeURIComponent(rescheduleState.selectedShiftId)}`
+                );
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.message || 'Không thể tải giờ khám');
+                }
+
+                rescheduleState.slots = Array.isArray(data.data) ? data.data : [];
+                renderRescheduleSlotList();
+            } catch (error) {
+                console.error('Load reschedule slots error:', error);
+                slotContainer.innerHTML = '<div class="reschedule-empty">Không thể tải giờ khám. Vui lòng thử lại.</div>';
+                showAlert('error', error.message || 'Không thể tải giờ khám');
+            }
+        }
+
+        function openRescheduleModal(encodedAppointment) {
+            try {
+                const appointment = JSON.parse(decodeURIComponentSafe(encodedAppointment));
+                if (!appointment || !Number(appointment.maLichKham || 0)) {
+                    throw new Error('Lịch khám không hợp lệ');
+                }
+
+                if (!appointment.canReschedule) {
+                    showAlert('error', appointment.rescheduleReason || 'Lịch này không thể đổi');
+                    return;
+                }
+
+                currentAppointmentId = Number(appointment.maLichKham);
+                currentRescheduleAppointment = appointment;
+                rescheduleState.appointment = appointment;
+                rescheduleState.selectedDate = appointment.ngayKhamRaw || '';
+                rescheduleState.selectedShiftId = null;
+                rescheduleState.selectedSlotId = null;
+                rescheduleState.shifts = [];
+                rescheduleState.slots = [];
+
+                renderRescheduleAppointmentInfo();
+
+                const dateInput = document.getElementById('rescheduleDate');
+                if (dateInput) {
+                    dateInput.min = getLocalDateInputValue();
+                    dateInput.value = rescheduleState.selectedDate;
+                }
+
+                const summary = document.getElementById('rescheduleSummary');
+                if (summary) {
+                    summary.innerHTML = `
+                        <div class="summary-row">
+                            <div class="summary-label">Lịch hiện tại</div>
+                            <div class="summary-value">${escapeHtml(appointment.ngayKham || '-')} | ${escapeHtml(appointment.gioKham || '-')}</div>
+                        </div>
+                        <div class="summary-row">
+                            <div class="summary-label">Ngày mới</div>
+                            <div class="summary-value">-</div>
+                        </div>
+                        <div class="summary-row">
+                            <div class="summary-label">Buổi mới</div>
+                            <div class="summary-value">-</div>
+                        </div>
+                        <div class="summary-row">
+                            <div class="summary-label">Giờ mới</div>
+                            <div class="summary-value">-</div>
+                        </div>
+                    `;
+                }
+
+                const modal = new bootstrap.Modal(document.getElementById('rescheduleModal'));
+                modal.show();
+                updateRescheduleConfirmState();
+                loadRescheduleShifts(appointment.maCa);
+            } catch (error) {
+                console.error('Open reschedule modal error:', error);
+                showAlert('error', error.message || 'Không thể mở modal đổi lịch');
+            }
+        }
+
+        function onRescheduleDateChange() {
+            const input = document.getElementById('rescheduleDate');
+            if (!input || !rescheduleState.appointment) return;
+
+            rescheduleState.selectedDate = input.value;
+            rescheduleState.selectedShiftId = null;
+            rescheduleState.selectedSlotId = null;
+
+            if (!rescheduleState.selectedDate) {
+                document.getElementById('rescheduleShiftList').innerHTML = '<div class="reschedule-empty">Vui lòng chọn ngày khám mới.</div>';
+                document.getElementById('rescheduleSlotList').innerHTML = '<div class="reschedule-empty">Hãy chọn ngày để xem các giờ khám khả dụng.</div>';
+                updateRescheduleConfirmState();
+                return;
+            }
+
+            loadRescheduleShifts(rescheduleState.appointment.maCa);
+        }
+
+        function selectRescheduleShift(shiftId) {
+            if (!rescheduleState.appointment) return;
+
+            const shift = rescheduleState.shifts.find((item) => Number(item.maCa || 0) === Number(shiftId || 0));
+            if (!shift || !shift.available) {
+                showAlert('error', 'Buổi này không khả dụng. Vui lòng chọn buổi khác.');
+                return;
+            }
+
+            rescheduleState.selectedShiftId = Number(shiftId || 0);
+            rescheduleState.selectedSlotId = null;
+            document.querySelectorAll('#rescheduleShiftList .reschedule-chip').forEach((chip, index) => {
+                const currentShift = rescheduleState.shifts[index];
+                chip.classList.toggle('selected', Number(currentShift?.maCa || 0) === rescheduleState.selectedShiftId);
+            });
+
+            loadRescheduleSlots(shiftId);
+        }
+
+        function selectRescheduleSlot(slotId) {
+            if (!rescheduleState.appointment) return;
+
+            const slot = rescheduleState.slots.find((item) => Number(item.maSuat || 0) === Number(slotId || 0));
+            if (!slot || !slot.available) {
+                showAlert('error', 'Giờ khám này không khả dụng. Vui lòng chọn giờ khác.');
+                return;
+            }
+
+            rescheduleState.selectedSlotId = Number(slotId || 0);
+            document.querySelectorAll('#rescheduleSlotList .reschedule-chip').forEach((chip, index) => {
+                const currentSlot = rescheduleState.slots[index];
+                chip.classList.toggle('selected', Number(currentSlot?.maSuat || 0) === rescheduleState.selectedSlotId);
+            });
+
+            renderRescheduleSummary();
+        }
+
+        async function confirmReschedule() {
+            if (!rescheduleState.appointment) {
+                showAlert('error', 'Không tìm thấy lịch khám để đổi');
+                return;
+            }
+
+            if (!rescheduleState.selectedDate || !rescheduleState.selectedShiftId || !rescheduleState.selectedSlotId) {
+                showAlert('error', 'Vui lòng chọn ngày, buổi và giờ khám mới!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_PATIENT}/reschedule-appointment.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        maLichKham: rescheduleState.appointment.maLichKham,
+                        ngayKham: rescheduleState.selectedDate,
+                        maCa: rescheduleState.selectedShiftId,
+                        maSuat: rescheduleState.selectedSlotId
+                    })
+                });
+
+                const data = await response.json();
+                if (!data.success) {
+                    showAlert('error', 'Lỗi: ' + (data.message || 'Không thể đổi lịch'));
+                    return;
+                }
+
+                showAlert('success', data.message || 'Đổi lịch thành công!');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('rescheduleModal'));
+                if (modal) modal.hide();
+                resetRescheduleState();
+
+                await Promise.all([
+                    loadAppointmentsByTab('upcoming', { showLoading: false }),
+                    loadAppointmentsByTab('history', { showLoading: false })
+                ]);
+            } catch (error) {
+                console.error('Reschedule error:', error);
+                showAlert('error', 'Có lỗi xảy ra. Vui lòng thử lại!');
+            }
         }
 
         function showError(tab, message) {

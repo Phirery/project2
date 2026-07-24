@@ -516,7 +516,7 @@ function sendAppointmentRescheduledEmails(mysqli $conn, int $maLichKham, array $
     $oldDate = formatVNDate($oldContext['ngayKham'] ?? null);
     $newDate = formatVNDate($newContext['ngayKham'] ?? null);
 
-    $oldSlot = (string)($oldContext['slotDisplay'] ?? 'N/A');
+    $oldSlot = appointmentTimeRange($oldContext);
     $newSlot = appointmentTimeRange($newContext);
 
     $eventKey = $maLichKham . ':reschedule:' . md5(json_encode([$oldContext, $newContext], JSON_UNESCAPED_UNICODE));

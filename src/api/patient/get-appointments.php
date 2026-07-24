@@ -2,6 +2,7 @@
 require_once '../../config/cors.php';
 require_once '../../config/db.php';
 require_once '../../config/session.php';
+require_once '../../includes/schedule-management.php';
 
 require_role('benhnhan');
 
@@ -76,18 +77,80 @@ function splitPatientNoteAndCancelReason($rawNote)
 function mapAppointmentRow($row)
 {
     list($patientNote, $cancelReason) = splitPatientNoteAndCancelReason($row['ghiChu'] ?? '');
+    $rescheduleState = buildAppointmentRescheduleState($row);
 
     return [
         'maLichKham' => (int)$row['maLichKham'],
+        'maBacSi' => (string)($row['maBacSi'] ?? ''),
+        'maCa' => (int)($row['maCa'] ?? 0),
+        'maSuat' => (int)($row['maSuat'] ?? 0),
+        'maGoi' => (int)($row['maGoi'] ?? 0),
+        'ngayKhamRaw' => (string)($row['ngayKham'] ?? ''),
         'ngayKham' => date('d/m/Y', strtotime($row['ngayKham'])),
         'gioKham' => substr($row['gioBatDau'], 0, 5) . ' - ' . substr($row['gioKetThuc'], 0, 5),
         'bacSi' => 'BS. ' . $row['tenBacSi'],
         'chuyenKhoa' => $row['tenChuyenKhoa'] ?: 'Đa khoa',
         'goiKham' => $row['tenGoi'],
         'giaGoi' => (float)$row['gia'],
+        'tenCa' => $row['tenCa'] ?? '',
+        'gioBatDau' => substr((string)($row['gioBatDau'] ?? ''), 0, 5),
+        'gioKetThuc' => substr((string)($row['gioKetThuc'] ?? ''), 0, 5),
         'trangThai' => $row['trangThai'],
         'ghiChuBenhNhan' => $patientNote,
-        'lyDoHuy' => $cancelReason
+        'lyDoHuy' => $cancelReason,
+        'soLanDoiLich' => (int)($row['soLanDoiLich'] ?? 0),
+        'thoiGianDoiLich' => $row['thoiGianDoiLich'] ?? null,
+        'canReschedule' => $rescheduleState['canReschedule'],
+        'rescheduleReason' => $rescheduleState['reason']
+    ];
+}
+
+function buildAppointmentRescheduleState(array $row): array
+{
+    $default = [
+        'canReschedule' => false,
+        'reason' => 'Không thể đổi lịch vào lúc này'
+    ];
+
+    if (($row['trangThai'] ?? '') !== 'Đã đặt') {
+        return [
+            'canReschedule' => false,
+            'reason' => 'Chỉ có thể đổi lịch cho các lịch đang ở trạng thái Đã đặt'
+        ];
+    }
+
+    if ((int)($row['soLanDoiLich'] ?? 0) >= 1) {
+        return [
+            'canReschedule' => false,
+            'reason' => 'Lịch này chỉ được đổi 1 lần'
+        ];
+    }
+
+    $tz = new DateTimeZone('Asia/Ho_Chi_Minh');
+    $appointmentTime = DateTimeImmutable::createFromFormat(
+        'Y-m-d H:i:s',
+        (string)($row['ngayKham'] ?? '') . ' ' . substr((string)($row['gioBatDau'] ?? ''), 0, 8),
+        $tz
+    );
+
+    if (!$appointmentTime) {
+        return $default;
+    }
+
+    $now = new DateTimeImmutable('now', $tz);
+    $cutoffMinutes = getAppointmentRescheduleLimitHours() * 60;
+    $remainingMinutes = (int)floor(($appointmentTime->getTimestamp() - $now->getTimestamp()) / 60);
+
+    if ($remainingMinutes < $cutoffMinutes) {
+        return [
+            'canReschedule' => false,
+            'reason' => 'Chỉ được đổi trước ' . getAppointmentRescheduleLimitHours() . ' giờ so với giờ khám'
+        ];
+    }
+
+    return [
+        'canReschedule' => true,
+        'reason' => 'Có thể đổi lịch'
     ];
 }
 
@@ -213,10 +276,13 @@ function fetchSummary($conn, $maBenhNhan)
 
 function fetchAppointmentsByTab($conn, $maBenhNhan, $tab, $page, $limit, $search, $status, $sort)
 {
+    ensureScheduleManagementSchema($conn);
+
     $baseJoinSql = "
         FROM lichkham lk
         JOIN bacsi bs ON lk.maBacSi = bs.maBacSi
         LEFT JOIN chuyenkhoa ck ON bs.maChuyenKhoa = ck.maChuyenKhoa
+        LEFT JOIN calamviec ca ON lk.maCa = ca.maCa
         JOIN goikham gk ON lk.maGoi = gk.maGoi
         JOIN suatkham sk ON lk.maSuat = sk.maSuat
     ";
@@ -307,11 +373,18 @@ function fetchAppointmentsByTab($conn, $maBenhNhan, $tab, $page, $limit, $search
     $detailSql = "
         SELECT
             lk.maLichKham,
+            lk.maBacSi,
             lk.ngayKham,
+            lk.maCa,
+            lk.maSuat,
+            lk.maGoi,
+            lk.soLanDoiLich,
+            lk.thoiGianDoiLich,
             lk.trangThai,
             lk.ghiChu,
             bs.tenBacSi,
             ck.tenChuyenKhoa,
+            ca.tenCa,
             gk.tenGoi,
             gk.gia,
             sk.gioBatDau,
@@ -319,6 +392,7 @@ function fetchAppointmentsByTab($conn, $maBenhNhan, $tab, $page, $limit, $search
         FROM lichkham lk
         JOIN bacsi bs ON lk.maBacSi = bs.maBacSi
         LEFT JOIN chuyenkhoa ck ON bs.maChuyenKhoa = ck.maChuyenKhoa
+        LEFT JOIN calamviec ca ON lk.maCa = ca.maCa
         JOIN goikham gk ON lk.maGoi = gk.maGoi
         JOIN suatkham sk ON lk.maSuat = sk.maSuat
         WHERE lk.maLichKham IN ($idPlaceholders)
