@@ -14,6 +14,8 @@ if (empty($maChuyenKhoa) || empty($ngayKham)) {
 }
 
 try {
+    $isDefaultOffDay = isScheduleSunday($ngayKham);
+
     $stmt = $conn->prepare("
         SELECT 
             bs.maBacSi, 
@@ -50,6 +52,10 @@ try {
     
     $doctors = [];
     while ($row = $result->fetch_assoc()) {
+        if ($isDefaultOffDay) {
+            $row['available'] = 0;
+        }
+
         $doctors[] = [
             'maBacSi' => $row['maBacSi'],
             'tenBacSi' => $row['tenBacSi'],

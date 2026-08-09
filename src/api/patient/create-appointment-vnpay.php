@@ -42,6 +42,14 @@ if ($ngayKham < $today) {
     exit;
 }
 
+if (!isDefaultWorkingScheduleDate($ngayKham)) {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Bác sĩ mặc định nghỉ vào Chủ nhật'
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
 try {
     ensureScheduleManagementSchema($conn);
     $conn->begin_transaction();

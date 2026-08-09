@@ -171,6 +171,391 @@ function getNormalizedScheduleDate(?string $date = null): string
     return date('Y-m-d');
 }
 
+function getScheduleMonthBounds(?string $referenceDate = null): array
+{
+    $normalizedDate = getNormalizedScheduleDate($referenceDate);
+    $monthStart = substr($normalizedDate, 0, 7) . '-01';
+    $start = DateTimeImmutable::createFromFormat('Y-m-d', $monthStart, new DateTimeZone('Asia/Ho_Chi_Minh'));
+
+    if (!$start) {
+        $start = new DateTimeImmutable('first day of this month', new DateTimeZone('Asia/Ho_Chi_Minh'));
+    }
+
+    $end = $start->modify('last day of this month');
+
+    return [
+        'month' => $start->format('Y-m'),
+        'startDate' => $start->format('Y-m-d'),
+        'endDate' => $end->format('Y-m-d')
+    ];
+}
+
+function getScheduleWeekdayIso(string $date): int
+{
+    $timestamp = strtotime($date);
+    if ($timestamp === false) {
+        return 0;
+    }
+
+    return (int)date('N', $timestamp);
+}
+
+function isScheduleSunday(string $date): bool
+{
+    return getScheduleWeekdayIso($date) === 7;
+}
+
+function isDefaultWorkingScheduleDate(string $date): bool
+{
+    return !isScheduleSunday($date);
+}
+
+function getDefaultWorkingShiftIdsForDate(mysqli $conn, string $date): array
+{
+    if (!isDefaultWorkingScheduleDate($date)) {
+        return [];
+    }
+
+    return array_map(
+        static fn(array $shift): int => (int)$shift['maCa'],
+        getShiftRows($conn)
+    );
+}
+
+function getDoctorLeaveRowsForRange(mysqli $conn, string $maBacSi, string $startDate, string $endDate): array
+{
+    ensureScheduleManagementSchema($conn);
+
+    $stmt = $conn->prepare(
+        "SELECT
+            maNghi,
+            ngayNghi,
+            maCa,
+            lyDo
+         FROM ngaynghi
+         WHERE maBacSi = ?
+           AND ngayNghi BETWEEN ? AND ?
+         ORDER BY ngayNghi ASC, maCa IS NULL DESC, maCa ASC, maNghi ASC"
+    );
+
+    if (!$stmt) {
+        return [];
+    }
+
+    $stmt->bind_param('sss', $maBacSi, $startDate, $endDate);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $rowsByDate = [];
+    while ($row = $result->fetch_assoc()) {
+        $date = (string)$row['ngayNghi'];
+        if (!isset($rowsByDate[$date])) {
+            $rowsByDate[$date] = [
+                'allDay' => false,
+                'shiftMap' => [],
+                'rows' => []
+            ];
+        }
+
+        $leaveRow = [
+            'maNghi' => (int)$row['maNghi'],
+            'maCa' => $row['maCa'] !== null ? (int)$row['maCa'] : null,
+            'lyDo' => $row['lyDo'] ?? null
+        ];
+
+        $rowsByDate[$date]['rows'][] = $leaveRow;
+        if ($leaveRow['maCa'] === null) {
+            $rowsByDate[$date]['allDay'] = true;
+            continue;
+        }
+
+        $rowsByDate[$date]['shiftMap'][$leaveRow['maCa']] = $leaveRow;
+    }
+
+    $stmt->close();
+
+    return $rowsByDate;
+}
+
+function buildDoctorMonthlySchedule(mysqli $conn, string $maBacSi, ?string $referenceDate = null): array
+{
+    ensureScheduleManagementSchema($conn);
+
+    $bounds = getScheduleMonthBounds($referenceDate);
+    $shifts = getShiftRows($conn);
+    $leaveRowsByDate = getDoctorLeaveRowsForRange($conn, $maBacSi, $bounds['startDate'], $bounds['endDate']);
+
+    $start = DateTimeImmutable::createFromFormat('Y-m-d', $bounds['startDate'], new DateTimeZone('Asia/Ho_Chi_Minh'));
+    $end = DateTimeImmutable::createFromFormat('Y-m-d', $bounds['endDate'], new DateTimeZone('Asia/Ho_Chi_Minh'));
+
+    if (!$start || !$end) {
+        throw new RuntimeException('Không thể tạo khung lịch tháng');
+    }
+
+    $days = [];
+    $workingCells = 0;
+    $offCells = 0;
+    $workingDays = 0;
+    $offDays = 0;
+
+    $period = new DatePeriod($start, new DateInterval('P1D'), $end->modify('+1 day'));
+    foreach ($period as $day) {
+        $date = $day->format('Y-m-d');
+        $weekday = (int)$day->format('N');
+        $defaultWorkingDay = $weekday >= 1 && $weekday <= 6;
+        $dayLeaves = $leaveRowsByDate[$date] ?? [
+            'allDay' => false,
+            'shiftMap' => [],
+            'rows' => []
+        ];
+
+        $shiftStates = [];
+        $dayWorkingCells = 0;
+        $dayOffCells = 0;
+
+        foreach ($shifts as $shift) {
+            $maCa = (int)$shift['maCa'];
+            $hasShiftLeave = isset($dayLeaves['shiftMap'][$maCa]);
+            $isWorking = $defaultWorkingDay && !$dayLeaves['allDay'] && !$hasShiftLeave;
+
+            if ($isWorking) {
+                $dayWorkingCells++;
+            } else {
+                $dayOffCells++;
+            }
+
+            $reason = null;
+            if (!$defaultWorkingDay) {
+                $reason = 'Chủ nhật nghỉ mặc định';
+            } elseif ($dayLeaves['allDay']) {
+                $reason = 'Bác sĩ không xếp lịch cho ngày này';
+            } elseif ($hasShiftLeave) {
+                $reason = 'Bác sĩ không xếp lịch cho ca này';
+            }
+
+            $shiftStates[] = [
+                'maCa' => $maCa,
+                'tenCa' => $shift['tenCa'],
+                'gioBatDau' => $shift['gioBatDau'],
+                'gioKetThuc' => $shift['gioKetThuc'],
+                'isWorking' => $isWorking,
+                'isDefaultWorking' => $defaultWorkingDay,
+                'reason' => $reason
+            ];
+        }
+
+        if ($dayWorkingCells > 0) {
+            $workingDays++;
+        } else {
+            $offDays++;
+        }
+
+        $workingCells += $dayWorkingCells;
+        $offCells += $dayOffCells;
+
+        $days[] = [
+            'date' => $date,
+            'weekday' => $weekday,
+            'isSunday' => $weekday === 7,
+            'isDefaultWorkingDay' => $defaultWorkingDay,
+            'hasLeave' => !empty($dayLeaves['rows']),
+            'shifts' => $shiftStates
+        ];
+    }
+
+    return [
+        'month' => $bounds['month'],
+        'startDate' => $bounds['startDate'],
+        'endDate' => $bounds['endDate'],
+        'shifts' => $shifts,
+        'days' => $days,
+        'summary' => [
+            'totalDays' => count($days),
+            'workingDays' => $workingDays,
+            'offDays' => $offDays,
+            'workingCells' => $workingCells,
+            'offCells' => $offCells
+        ]
+    ];
+}
+
+function normalizeScheduleCellSelection(array $input, array $allowedShiftIds, string $monthStart, string $monthEnd): array
+{
+    $selected = [];
+    $allowedShiftLookup = array_fill_keys(array_map('intval', $allowedShiftIds), true);
+
+    foreach ($input as $item) {
+        $date = null;
+        $maCa = null;
+
+        if (is_string($item)) {
+            $raw = trim($item);
+            if ($raw === '') {
+                continue;
+            }
+
+            if (preg_match('/^(\d{4}-\d{2}-\d{2})[|:#](\d+)$/', $raw, $matches)) {
+                $date = $matches[1];
+                $maCa = (int)$matches[2];
+            }
+        } elseif (is_array($item)) {
+            $date = trim((string)($item['date'] ?? $item['ngay'] ?? $item['ngayKham'] ?? $item['ngayNghi'] ?? ''));
+            $maCaValue = $item['maCa'] ?? $item['shiftId'] ?? $item['ca'] ?? null;
+            if ($maCaValue !== null && $maCaValue !== '') {
+                $maCa = (int)$maCaValue;
+            }
+        }
+
+        if (!$date || $maCa === null || $maCa <= 0) {
+            continue;
+        }
+
+        if ($date < $monthStart || $date > $monthEnd) {
+            throw new InvalidArgumentException('Lịch gửi lên phải nằm trong tháng đang xử lý');
+        }
+
+        if (!isset($allowedShiftLookup[$maCa])) {
+            throw new InvalidArgumentException('Ca làm việc không hợp lệ');
+        }
+
+        if (isScheduleSunday($date)) {
+            throw new InvalidArgumentException('Chủ nhật là ngày nghỉ mặc định');
+        }
+
+        $selected[$date . '|' . $maCa] = [
+            'date' => $date,
+            'maCa' => $maCa
+        ];
+    }
+
+    return $selected;
+}
+
+function getDoctorMonthlySchedulePayload(mysqli $conn, string $maBacSi, ?string $referenceDate = null): array
+{
+    $schedule = buildDoctorMonthlySchedule($conn, $maBacSi, $referenceDate);
+
+    return [
+        'success' => true,
+        'data' => $schedule
+    ];
+}
+
+function getDoctorAppointmentsForRange(mysqli $conn, string $maBacSi, string $startDate, string $endDate): array
+{
+    ensureScheduleManagementSchema($conn);
+
+    $stmt = $conn->prepare(
+        "SELECT
+            lk.maLichKham,
+            lk.ngayKham,
+            lk.maCa,
+            bn.tenBenhNhan,
+            ca.tenCa,
+            TIME_FORMAT(sk.gioBatDau, '%H:%i') AS gioBatDau,
+            TIME_FORMAT(sk.gioKetThuc, '%H:%i') AS gioKetThuc
+         FROM lichkham lk
+         JOIN benhnhan bn ON lk.maBenhNhan = bn.maBenhNhan
+         LEFT JOIN calamviec ca ON lk.maCa = ca.maCa
+         LEFT JOIN suatkham sk ON lk.maSuat = sk.maSuat
+         WHERE lk.maBacSi = ?
+           AND lk.ngayKham BETWEEN ? AND ?
+           AND lk.trangThai IN ('Chờ', 'Đã đặt')
+         ORDER BY lk.ngayKham ASC, lk.maCa ASC, sk.gioBatDau ASC, lk.maLichKham ASC"
+    );
+
+    if (!$stmt) {
+        return [];
+    }
+
+    $stmt->bind_param('sss', $maBacSi, $startDate, $endDate);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $appointments = [];
+    while ($row = $result->fetch_assoc()) {
+        $appointments[] = [
+            'maLichKham' => (int)$row['maLichKham'],
+            'ngayKham' => (string)$row['ngayKham'],
+            'maCa' => (int)$row['maCa'],
+            'tenBenhNhan' => $row['tenBenhNhan'],
+            'tenCa' => $row['tenCa'],
+            'gioBatDau' => $row['gioBatDau'],
+            'gioKetThuc' => $row['gioKetThuc']
+        ];
+    }
+
+    $stmt->close();
+
+    return $appointments;
+}
+
+function buildDoctorMonthlyScheduleUpdate(
+    mysqli $conn,
+    string $maBacSi,
+    ?string $referenceDate,
+    array $selectedCells,
+    string $reason = ''
+): array {
+    ensureScheduleManagementSchema($conn);
+
+    $bounds = getScheduleMonthBounds($referenceDate);
+    $shifts = getShiftRows($conn);
+    $shiftIds = array_map(static fn(array $shift): int => (int)$shift['maCa'], $shifts);
+    $selectedMap = normalizeScheduleCellSelection($selectedCells, $shiftIds, $bounds['startDate'], $bounds['endDate']);
+    $leaveRowsByDate = getDoctorLeaveRowsForRange($conn, $maBacSi, $bounds['startDate'], $bounds['endDate']);
+
+    $start = DateTimeImmutable::createFromFormat('Y-m-d', $bounds['startDate'], new DateTimeZone('Asia/Ho_Chi_Minh'));
+    $end = DateTimeImmutable::createFromFormat('Y-m-d', $bounds['endDate'], new DateTimeZone('Asia/Ho_Chi_Minh'));
+    if (!$start || !$end) {
+        throw new RuntimeException('Không thể xác định khoảng thời gian của tháng');
+    }
+
+    $defaultCellMap = [];
+    $period = new DatePeriod($start, new DateInterval('P1D'), $end->modify('+1 day'));
+    foreach ($period as $day) {
+        $date = $day->format('Y-m-d');
+        if (!isDefaultWorkingScheduleDate($date)) {
+            continue;
+        }
+
+        foreach ($shiftIds as $maCa) {
+            $defaultCellMap[$date . '|' . $maCa] = [
+                'date' => $date,
+                'maCa' => $maCa
+            ];
+        }
+    }
+
+    $offCellMap = array_diff_key($defaultCellMap, $selectedMap);
+    $appointments = getDoctorAppointmentsForRange($conn, $maBacSi, $bounds['startDate'], $bounds['endDate']);
+    $affectedAppointments = [];
+
+    foreach ($appointments as $appointment) {
+        $key = $appointment['ngayKham'] . '|' . (int)$appointment['maCa'];
+        if (!isset($offCellMap[$key])) {
+            continue;
+        }
+
+        $affectedAppointments[] = $appointment;
+    }
+
+    return [
+        'month' => $bounds['month'],
+        'startDate' => $bounds['startDate'],
+        'endDate' => $bounds['endDate'],
+        'shifts' => $shifts,
+        'selectedCells' => $selectedMap,
+        'offCells' => $offCellMap,
+        'leaveRowsByDate' => $leaveRowsByDate,
+        'appointments' => $appointments,
+        'affectedAppointments' => $affectedAppointments,
+        'cancelReason' => trim($reason) !== ''
+            ? trim($reason)
+            : 'Bác sĩ xếp lại lịch làm việc trong tháng'
+    ];
+}
+
 function getShiftRows(mysqli $conn): array
 {
     ensureScheduleManagementSchema($conn);

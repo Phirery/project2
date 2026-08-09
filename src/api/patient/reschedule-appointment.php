@@ -67,6 +67,10 @@ try {
         throw new Exception('Không thể đổi lịch sang ngày trong quá khứ');
     }
 
+    if (!isDefaultWorkingScheduleDate($ngayKham)) {
+        throw new Exception('Bác sĩ mặc định nghỉ vào Chủ nhật');
+    }
+
     $conn->begin_transaction();
 
     $stmt = $conn->prepare("

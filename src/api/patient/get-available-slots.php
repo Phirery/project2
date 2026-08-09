@@ -17,6 +17,7 @@ if (empty($maBacSi) || empty($ngayKham) || empty($maCa)) {
 
 try {
     ensureScheduleManagementSchema($conn);
+    $isDefaultOffDay = isScheduleSunday($ngayKham);
 
     // Bác sĩ đã xóa mềm thì không trả về slot
     $doctorStmt = $conn->prepare("
@@ -72,14 +73,14 @@ try {
             'maSuat' => $row['maSuat'],
             'gioBatDau' => $row['gioBatDau'],
             'gioKetThuc' => $row['gioKetThuc'],
-            'available' => !$isOff && !$isBooked
+            'available' => !$isDefaultOffDay && !$isOff && !$isBooked
         ];
     }
     
     echo json_encode([
         'success' => true,
         'data' => $availableSlots,
-        'doctorOff' => $isOff
+        'doctorOff' => $isOff || $isDefaultOffDay
     ], JSON_UNESCAPED_UNICODE);
 } catch (Exception $e) {
     echo json_encode([

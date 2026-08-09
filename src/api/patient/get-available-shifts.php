@@ -16,6 +16,8 @@ if (empty($maBacSi) || empty($ngayKham)) {
 }
 
 try {
+    $isDefaultOffDay = isScheduleSunday($ngayKham);
+
     $stmt = $conn->prepare("
         SELECT 
             c.maCa, 
@@ -45,7 +47,7 @@ try {
             'tenCa' => $row['tenCa'],
             'gioBatDau' => $row['gioBatDau'],
             'gioKetThuc' => $row['gioKetThuc'],
-            'available' => (bool)$row['available']
+            'available' => !$isDefaultOffDay && (bool)$row['available']
         ];
     }
     

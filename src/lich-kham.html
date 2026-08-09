@@ -482,6 +482,266 @@
             border: none;
         }
 
+        .schedule-modal {
+            overflow: hidden;
+        }
+
+        .schedule-modal .modal-header {
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .schedule-modal-subtitle {
+            display: block;
+            margin-top: 4px;
+            font-size: 0.92rem;
+            color: rgba(255, 255, 255, 0.88);
+        }
+
+        .schedule-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .schedule-toolbar-title {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .schedule-month-label {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #1f2937;
+        }
+
+        .schedule-month-hint {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .schedule-nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .schedule-summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .schedule-summary .summary-chip {
+            background: #f8fbff;
+            border-color: #dbeafe;
+        }
+
+        .schedule-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .schedule-legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 999px;
+            background: #f8f9fb;
+            border: 1px solid #e5e7eb;
+            color: #475569;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .schedule-legend-swatch {
+            width: 12px;
+            height: 12px;
+            border-radius: 999px;
+            flex: none;
+        }
+
+        .schedule-legend-swatch.on {
+            background: #22c55e;
+        }
+
+        .schedule-legend-swatch.off {
+            background: #94a3b8;
+        }
+
+        .schedule-legend-swatch.sunday {
+            background: #f59e0b;
+        }
+
+        .schedule-alert {
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 14px;
+            font-size: 0.92rem;
+        }
+
+        .schedule-alert.info {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e3a8a;
+        }
+
+        .schedule-alert.warning {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            color: #9a3412;
+        }
+
+        .schedule-alert.danger {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .schedule-grid-header {
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
+            color: #1d4ed8;
+            border-radius: 12px;
+            padding: 8px 6px;
+            text-align: center;
+            font-size: 0.82rem;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+        }
+
+        .schedule-day {
+            min-height: 136px;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 12px;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .schedule-day:hover {
+            transform: translateY(-1px);
+            border-color: #cbd5e1;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+        }
+
+        .schedule-day.is-sunday {
+            background: linear-gradient(180deg, #fffaf2 0%, #fff 100%);
+            border-color: #fde68a;
+        }
+
+        .schedule-day.is-empty {
+            background: #fafafa;
+            border-style: dashed;
+            border-color: #e5e7eb;
+        }
+
+        .schedule-day-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .schedule-day-number {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #111827;
+            line-height: 1;
+        }
+
+        .schedule-day-week {
+            margin-top: 4px;
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .schedule-day-tag {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 999px;
+            white-space: nowrap;
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .schedule-day.is-sunday .schedule-day-tag {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+
+        .schedule-shifts {
+            display: grid;
+            gap: 8px;
+        }
+
+        .schedule-shift {
+            width: 100%;
+            border: 1px solid #dbe2ea;
+            background: #fff;
+            border-radius: 12px;
+            padding: 8px 10px;
+            text-align: left;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .schedule-shift strong {
+            display: block;
+            font-size: 0.9rem;
+            color: #0f172a;
+        }
+
+        .schedule-shift small {
+            display: block;
+            margin-top: 2px;
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .schedule-shift.is-selected {
+            border-color: #0ea5e9;
+            background: #ecfeff;
+        }
+
+        .schedule-shift.is-off {
+            border-style: dashed;
+            background: #f8fafc;
+            color: #94a3b8;
+        }
+
+        .schedule-shift:disabled {
+            cursor: not-allowed;
+            opacity: 0.72;
+        }
+
+        .schedule-note {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 12px 14px;
+            color: #475569;
+        }
+
         .form-label {
             font-weight: 600;
             color: #495057;
@@ -599,6 +859,14 @@
             .calendar-month-nav .btn {
                 width: 100%;
             }
+
+            .schedule-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .schedule-day {
+                min-height: 120px;
+            }
         }
     </style>
 </head>
@@ -622,7 +890,7 @@
                 <i class="fas fa-calendar-alt"></i> Xem lịch
             </button>
             <button class="btn-leave" data-bs-toggle="modal" data-bs-target="#requestLeaveModal">
-                <i class="fas fa-calendar-times"></i> Xin nghỉ phép
+                <i class="fas fa-calendar-check"></i> Xếp lịch
             </button>
         </div>
 
@@ -732,43 +1000,65 @@
     </div>
 
     <div class="modal fade" id="requestLeaveModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
+        <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+            <div class="modal-content schedule-modal">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fas fa-calendar-times me-2"></i>Đăng ký nghỉ phép</h5>
+                    <div>
+                        <h5 class="modal-title"><i class="fas fa-calendar-check me-2"></i>Xếp lịch tháng</h5>
+                        <span class="schedule-modal-subtitle">Bật hoặc tắt từng ca trong tháng. Chủ nhật nghỉ mặc định.</span>
+                    </div>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="leaveForm">
-                        <div class="mb-3">
-                            <label class="form-label">Ngày nghỉ <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="leaveDate" required>
-                            <small class="text-muted">Chỉ được xin nghỉ từ ngày mai trở đi</small>
+                        <div class="schedule-toolbar">
+                            <div class="schedule-toolbar-title">
+                                <div class="schedule-month-label" id="scheduleMonthLabel">Tháng ...</div>
+                                <div class="schedule-month-hint">Mỗi ô là một ca làm việc. Bấm để tắt/bật ca đó.</div>
+                            </div>
+                            <div class="schedule-nav">
+                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="changeScheduleMonth(-1)">
+                                    <i class="fas fa-chevron-left me-1"></i>Tháng trước
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm" onclick="goToCurrentScheduleMonth()">
+                                    <i class="fas fa-calendar-day me-1"></i>Tháng này
+                                </button>
+                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="changeScheduleMonth(1)">
+                                    Tháng sau<i class="fas fa-chevron-right ms-1"></i>
+                                </button>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Ca làm việc <span class="text-danger">*</span></label>
-                            <select class="form-select" id="leaveShift" required>
-                                <option value="">-- Chọn ca --</option>
-                                <option value="1">Ca sáng (07:00 - 11:00)</option>
-                                <option value="2">Ca chiều (13:00 - 17:00)</option>
-                                <option value="all">Cả ngày</option>
-                            </select>
+
+                        <div class="schedule-summary" id="scheduleSummary"></div>
+
+                        <div class="schedule-legend">
+                            <div class="schedule-legend-item"><span class="schedule-legend-swatch on"></span>Ca làm việc đang mở</div>
+                            <div class="schedule-legend-item"><span class="schedule-legend-swatch off"></span>Ca không làm việc</div>
+                            <div class="schedule-legend-item"><span class="schedule-legend-swatch sunday"></span>Chủ nhật nghỉ mặc định</div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Lý do <span class="text-danger">*</span></label>
+
+                        <div id="scheduleModalAlert" class="schedule-alert info">
+                            Mở lịch tháng để bấm từng ca bạn muốn làm việc trong tháng này.
+                        </div>
+
+                        <div class="schedule-grid" id="scheduleCalendar"></div>
+
+                        <div class="mt-3 schedule-note">
+                            <i class="fas fa-info-circle me-2 text-primary"></i>
+                            Chỉ cần tắt những ô bạn không muốn làm việc. Hệ thống sẽ giữ mặc định từ Thứ 2 đến Thứ 7 và tự xem Chủ nhật là ngày nghỉ.
+                        </div>
+
+                        <div class="mb-3 mt-3">
+                            <label class="form-label">Lý do ghi chú <span class="text-muted">(không bắt buộc)</span></label>
                             <textarea class="form-control" id="leaveReason" rows="3"
-                                placeholder="Nhập lý do nghỉ phép..." required></textarea>
-                        </div>
-                        <div class="alert alert-warning">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            Lưu ý: Các lịch khám trong ca nghỉ sẽ cần được sắp xếp lại
+                                placeholder="Ví dụ: công tác, giảng dạy, nghỉ cá nhân..."></textarea>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-primary" onclick="submitLeaveRequest()">
-                        <i class="fas fa-paper-plane me-1"></i>Gửi yêu cầu
+                    <button type="button" class="btn btn-primary" onclick="submitWorkSchedule()">
+                        <i class="fas fa-save me-1"></i>Lưu lịch tháng
                     </button>
                 </div>
             </div>
@@ -806,6 +1096,307 @@
         let calendarDate = new Date();
         let monthlyAppointments = {};
         let sortOrder = 'desc';
+        const scheduleState = {
+            monthDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+            data: null,
+            selectedCells: new Set(),
+            loading: false
+        };
+
+        function formatYYYYMMDD(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function escapeHtml(text) {
+            return String(text ?? '')
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#039;');
+        }
+
+        function getScheduleCellKey(date, shiftId) {
+            return `${date}|${shiftId}`;
+        }
+
+        function getScheduleMonthLabel(date) {
+            return `Tháng ${date.getMonth() + 1}/${date.getFullYear()}`;
+        }
+
+        function setScheduleAlert(type, message) {
+            const el = document.getElementById('scheduleModalAlert');
+            if (!el) return;
+            el.className = `schedule-alert ${type || 'info'}`;
+            el.textContent = message || '';
+        }
+
+        function updateScheduleMonthLabel() {
+            const el = document.getElementById('scheduleMonthLabel');
+            if (el) el.textContent = getScheduleMonthLabel(scheduleState.monthDate);
+        }
+
+        function renderScheduleSummary() {
+            const container = document.getElementById('scheduleSummary');
+            if (!container) return;
+
+            const data = scheduleState.data;
+            if (!data) {
+                container.innerHTML = '';
+                return;
+            }
+
+            const totalCells = (data.days || []).reduce((sum, day) => {
+                return sum + (day.isDefaultWorkingDay ? (day.shifts?.length || 0) : 0);
+            }, 0);
+
+            const workingCells = scheduleState.selectedCells.size;
+            const offCells = Math.max(totalCells - workingCells, 0);
+            const workingDays = (data.days || []).filter(day =>
+                (day.shifts || []).some(shift => scheduleState.selectedCells.has(getScheduleCellKey(day.date, shift.maCa)))
+            ).length;
+            const offDays = Math.max((data.summary?.totalDays || 0) - workingDays, 0);
+
+            container.innerHTML = `
+                <div class="summary-chip"><i class="fas fa-calendar-check"></i>Ngày có lịch: <strong>${workingDays}</strong></div>
+                <div class="summary-chip"><i class="fas fa-calendar-times"></i>Ngày nghỉ: <strong>${offDays}</strong></div>
+                <div class="summary-chip"><i class="fas fa-check-circle"></i>Ca đang mở: <strong>${workingCells}</strong></div>
+                <div class="summary-chip"><i class="fas fa-ban"></i>Ca đã tắt: <strong>${offCells}</strong></div>
+            `;
+        }
+
+        function renderScheduleCalendar() {
+            const container = document.getElementById('scheduleCalendar');
+            if (!container) return;
+
+            if (scheduleState.loading) {
+                container.innerHTML = `
+                    <div class="schedule-note text-center w-100">
+                        <div class="spinner-border text-primary mb-3" role="status" aria-hidden="true"></div>
+                        <div>Đang tải lịch tháng...</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const data = scheduleState.data;
+            if (!data || !Array.isArray(data.days) || !Array.isArray(data.shifts)) {
+                container.innerHTML = '<div class="schedule-note w-100">Chưa có dữ liệu lịch tháng.</div>';
+                return;
+            }
+
+            const year = scheduleState.monthDate.getFullYear();
+            const month = scheduleState.monthDate.getMonth();
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const dayHeaders = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+            const dayMap = new Map(data.days.map(day => [day.date, day]));
+
+            let html = dayHeaders.map(day => `<div class="schedule-grid-header">${day}</div>`).join('');
+            for (let i = 0; i < firstDay; i++) {
+                html += '<div class="schedule-day is-empty" aria-hidden="true"></div>';
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                const dateKey = formatYYYYMMDD(date);
+                const dayData = dayMap.get(dateKey) || {
+                    date: dateKey,
+                    weekday: date.getDay() === 0 ? 7 : date.getDay(),
+                    isSunday: date.getDay() === 0,
+                    isDefaultWorkingDay: date.getDay() !== 0,
+                    shifts: data.shifts.map(shift => ({
+                        maCa: shift.maCa,
+                        tenCa: shift.tenCa,
+                        gioBatDau: shift.gioBatDau,
+                        gioKetThuc: shift.gioKetThuc,
+                        isWorking: false
+                    }))
+                };
+                const selectedCount = (dayData.shifts || []).filter(shift => scheduleState.selectedCells.has(getScheduleCellKey(dayData.date, shift.maCa))).length;
+                const isSunday = !!dayData.isSunday;
+                const dayTag = isSunday
+                    ? 'Chủ nhật nghỉ'
+                    : selectedCount > 0
+                        ? `${selectedCount}/${(dayData.shifts || []).length} ca đang mở`
+                        : 'Đang tắt';
+
+                const shiftButtons = (dayData.shifts || []).map(shift => {
+                    const key = getScheduleCellKey(dayData.date, shift.maCa);
+                    const selected = scheduleState.selectedCells.has(key);
+                    const statusText = selected ? 'Đang mở' : 'Đã tắt';
+                    const timeText = `${String(shift.gioBatDau || '').substring(0, 5)} - ${String(shift.gioKetThuc || '').substring(0, 5)}`;
+
+                    return `
+                        <button type="button"
+                            class="schedule-shift ${selected ? 'is-selected' : 'is-off'}"
+                            ${isSunday ? 'disabled' : ''}
+                            aria-pressed="${selected ? 'true' : 'false'}"
+                            onclick="${isSunday ? '' : `toggleScheduleCell('${dayData.date}', ${shift.maCa})`}">
+                            <strong>${escapeHtml(shift.tenCa || `Ca ${shift.maCa}`)}</strong>
+                            <small>${escapeHtml(timeText)} · ${statusText}</small>
+                        </button>
+                    `;
+                }).join('');
+
+                html += `
+                    <div class="schedule-day ${isSunday ? 'is-sunday' : ''}">
+                        <div class="schedule-day-head">
+                            <div>
+                                <div class="schedule-day-number">${day}</div>
+                                <div class="schedule-day-week">${dayData.weekday === 7 ? 'CN' : `T${dayData.weekday}`}</div>
+                            </div>
+                            <span class="schedule-day-tag">${escapeHtml(dayTag)}</span>
+                        </div>
+                        <div class="schedule-shifts">
+                            ${shiftButtons}
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        async function loadWorkSchedule(referenceDate = scheduleState.monthDate) {
+            scheduleState.loading = true;
+            scheduleState.monthDate = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), 1);
+            updateScheduleMonthLabel();
+            setScheduleAlert('info', 'Đang tải lịch tháng...');
+            renderScheduleSummary();
+            renderScheduleCalendar();
+
+            try {
+                const response = await fetch(
+                    `${API_BASE}/get-work-schedule.php?month=${encodeURIComponent(formatYYYYMMDD(scheduleState.monthDate))}`,
+                    { credentials: 'include' }
+                );
+                const data = await response.json();
+
+                if (data.success) {
+                    scheduleState.data = data.data || null;
+                    scheduleState.selectedCells = new Set();
+                    (scheduleState.data?.days || []).forEach(day => {
+                        (day.shifts || []).forEach(shift => {
+                            if (shift.isWorking) {
+                                scheduleState.selectedCells.add(getScheduleCellKey(day.date, shift.maCa));
+                            }
+                        });
+                    });
+                    setScheduleAlert('info', 'Bấm vào từng ca để bật hoặc tắt lịch làm việc.');
+                } else {
+                    scheduleState.data = null;
+                    scheduleState.selectedCells = new Set();
+                    setScheduleAlert('danger', data.message || 'Không thể tải lịch tháng');
+                    showAlert('error', data.message || 'Không thể tải lịch tháng');
+                }
+            } catch (error) {
+                console.error('Error loading work schedule:', error);
+                scheduleState.data = null;
+                scheduleState.selectedCells = new Set();
+                setScheduleAlert('danger', 'Lỗi kết nối server khi tải lịch tháng');
+                showAlert('error', 'Lỗi kết nối server');
+            } finally {
+                scheduleState.loading = false;
+                updateScheduleMonthLabel();
+                renderScheduleSummary();
+                renderScheduleCalendar();
+            }
+        }
+
+        function changeScheduleMonth(offset) {
+            scheduleState.monthDate = new Date(
+                scheduleState.monthDate.getFullYear(),
+                scheduleState.monthDate.getMonth() + offset,
+                1
+            );
+            loadWorkSchedule(scheduleState.monthDate);
+        }
+
+        function goToCurrentScheduleMonth() {
+            scheduleState.monthDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+            loadWorkSchedule(scheduleState.monthDate);
+        }
+
+        function toggleScheduleCell(date, shiftId) {
+            if (!scheduleState.data) return;
+
+            const day = (scheduleState.data.days || []).find(item => item.date === date);
+            if (!day || day.isSunday) return;
+
+            const key = getScheduleCellKey(date, shiftId);
+            if (scheduleState.selectedCells.has(key)) {
+                scheduleState.selectedCells.delete(key);
+            } else {
+                scheduleState.selectedCells.add(key);
+            }
+
+            renderScheduleSummary();
+            renderScheduleCalendar();
+        }
+
+        async function submitWorkSchedule() {
+            const reason = document.getElementById('leaveReason')?.value.trim() || '';
+            if (!scheduleState.data) {
+                showAlert('error', 'Đang tải lịch tháng, vui lòng đợi một chút');
+                return;
+            }
+
+            try {
+                const selectedCells = Array.from(scheduleState.selectedCells).map(key => {
+                    const [date, shiftId] = key.split('|');
+                    return { date, maCa: Number(shiftId) };
+                });
+
+                const response = await fetch(`${API_BASE}/save-work-schedule.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        month: formatYYYYMMDD(scheduleState.monthDate),
+                        selectedCells,
+                        reason
+                    })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    let message = data.message || 'Đã lưu lịch làm việc thành công!';
+                    if (Array.isArray(data.data?.affectedPreview) && data.data.affectedPreview.length > 0) {
+                        const previewText = data.data.affectedPreview
+                            .map(item => `${item.tenBenhNhan} (${item.ngayKham || 'N/A'} - ${item.tenCa || 'N/A'})`)
+                            .join(', ');
+                        message += ` Các lịch đã ảnh hưởng: ${previewText}${data.data.affectedAppointments > data.data.affectedPreview.length ? ', ...' : ''}.`;
+                    }
+                    if (data.data?.mailSummary?.attempted > 0 && data.data.mailSummary.sent < data.data.mailSummary.attempted) {
+                        const skipped = Number(data.data.mailSummary.skipped || 0);
+                        const failed = Number(data.data.mailSummary.failed || 0);
+                        if (skipped > 0) {
+                            message += ` Một số email không gửi được vì bệnh nhân chưa có email hợp lệ (${skipped}).`;
+                        }
+                        if (failed > 0) {
+                            message += ` Có ${failed} email gặp lỗi gửi, nhưng lịch đã được cập nhật.`;
+                        }
+                    }
+
+                    showAlert('success', message);
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('requestLeaveModal'));
+                    if (modal) modal.hide();
+                    document.getElementById('leaveForm')?.reset();
+                    loadAppointments();
+                } else {
+                    showAlert('error', data.message || 'Không thể lưu lịch');
+                    setScheduleAlert('danger', data.message || 'Không thể lưu lịch');
+                }
+            } catch (error) {
+                console.error('Error submitting work schedule:', error);
+                showAlert('error', 'Lỗi kết nối server');
+                setScheduleAlert('danger', 'Lỗi kết nối server khi lưu lịch');
+            }
+        }
 
         function getAppointmentUiStatus(appointment) {
             if (appointment.trangThai === 'Hủy') {
@@ -857,10 +1448,26 @@
             updateDateDisplay();
             loadAppointments(1);
 
-            // Set min date for leave request
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            document.getElementById('leaveDate').min = window.DoctorPageHelper.formatDateToYYYYMMDD(tomorrow);
+            const scheduleModal = document.getElementById('requestLeaveModal');
+            if (scheduleModal) {
+                scheduleModal.addEventListener('show.bs.modal', () => {
+                    scheduleState.monthDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+                    scheduleState.data = null;
+                    scheduleState.selectedCells = new Set();
+                    updateScheduleMonthLabel();
+                    renderScheduleSummary();
+                    renderScheduleCalendar();
+                });
+
+                scheduleModal.addEventListener('shown.bs.modal', () => {
+                    loadWorkSchedule(scheduleState.monthDate);
+                });
+
+                scheduleModal.addEventListener('hidden.bs.modal', () => {
+                    document.getElementById('leaveForm')?.reset();
+                    setScheduleAlert('info', 'Bấm vào từng ca để bật hoặc tắt lịch làm việc.');
+                });
+            }
         });
 
         function buildAppointmentsQuery(page = 1) {
@@ -1176,45 +1783,6 @@
                 if (data.success) { showAlert('success', 'Đã hủy lịch khám!'); loadAppointments(); }
                 else { showAlert('error', data.message || 'Không thể hủy'); }
             } catch (error) { console.error('Error cancelling appointment:', error); showAlert('error', 'Lỗi kết nối server'); }
-        }
-
-        async function submitLeaveRequest() {
-            const date = document.getElementById('leaveDate').value;
-            const shift = document.getElementById('leaveShift').value;
-            const reason = document.getElementById('leaveReason').value.trim();
-            if (!date || !shift || !reason) { showAlert('error', 'Vui lòng điền đầy đủ thông tin'); return; }
-            const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1); tomorrow.setHours(0, 0, 0, 0);
-            const selectedDate = new Date(date); selectedDate.setHours(0, 0, 0, 0);
-            if (selectedDate < tomorrow) { showAlert('error', 'Chỉ được xin nghỉ từ ngày mai trở đi'); return; }
-            try {
-                const response = await fetch(`${API_BASE}/request-leave.php`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ ngayNghi: date, maCa: shift === 'all' ? null : parseInt(shift), lyDo: reason }) });
-                const data = await response.json();
-                if (data.success) {
-                    let message = data.message || 'Gửi yêu cầu nghỉ phép thành công!';
-                    if (Array.isArray(data.affectedPreview) && data.affectedPreview.length > 0) {
-                        const previewText = data.affectedPreview
-                            .map(item => `${item.tenBenhNhan} (${item.tenCa || 'N/A'}${item.gioBatDau ? ` ${item.gioBatDau.substring(0, 5)}-${item.gioKetThuc.substring(0, 5)}` : ''})`)
-                            .join(', ');
-                        message += ` Các lịch đã hủy: ${previewText}${data.affectedAppointments > data.affectedPreview.length ? ', ...' : ''}.`;
-                    }
-
-                    if (data.mailSummary?.attempted > 0 && data.mailSummary.sent < data.mailSummary.attempted) {
-                        const skipped = Number(data.mailSummary.skipped || 0);
-                        const failed = Number(data.mailSummary.failed || 0);
-                        if (skipped > 0) {
-                            message += ` Một số email không gửi được vì bệnh nhân chưa có email hợp lệ (${skipped}).`;
-                        }
-                        if (failed > 0) {
-                            message += ` Có ${failed} email gặp lỗi gửi, nhưng lịch khám đã được hủy trong hệ thống.`;
-                        }
-                    }
-                    showAlert('success', message);
-                    bootstrap.Modal.getInstance(document.getElementById('requestLeaveModal')).hide();
-                    document.getElementById('leaveForm').reset();
-                    loadAppointments();
-                }
-                else { showAlert('error', data.message || 'Không thể gửi yêu cầu'); }
-            } catch (error) { console.error('Error submitting leave request:', error); showAlert('error', 'Lỗi kết nối server'); }
         }
 
         function calculateAge(birthDate) {

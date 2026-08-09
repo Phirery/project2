@@ -16,6 +16,7 @@ if (empty($maBacSi) || empty($ngayKham)) {
 
 try {
     ensureScheduleManagementSchema($conn);
+    $isDefaultOffDay = isScheduleSunday($ngayKham);
 
     $doctorStmt = $conn->prepare("
         SELECT COUNT(*) AS count
@@ -92,7 +93,7 @@ try {
             $row['gioBatDau'],
             $row['gioKetThuc']
         ) !== null;
-        $isDoctorOff = $offAllDay || in_array($maCa, $offShifts);
+        $isDoctorOff = $isDefaultOffDay || $offAllDay || in_array($maCa, $offShifts);
         
         // Xác định trạng thái
         $status = 'available';
@@ -126,7 +127,7 @@ try {
         'success' => true,
         'data' => $schedule,
         'ngayKham' => $ngayKham,
-        'offAllDay' => $offAllDay
+        'offAllDay' => $offAllDay || $isDefaultOffDay
     ], JSON_UNESCAPED_UNICODE);
     
 } catch (Exception $e) {
