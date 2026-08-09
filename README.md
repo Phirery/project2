@@ -1,7 +1,5 @@
 # Eden Health - Project Context & Developer Reference
 
-This document serves as a high-density, token-efficient technical overview and operational runbook optimized for AI Agents and Human Developers.
-
 ## 🚀 Quick Specs
 - **Category:** IT Graduation Project (Đồ án Công nghệ Thông tin) - Healthcare & Appointment Management System.
 - **Frontend Environment:** Pure HTML/CSS/Vanilla JS. Served via VS Code **Live Server** (`http://localhost:5500`).
@@ -77,7 +75,7 @@ src/
 
 ### 3. Frontend Setup (Live Server)
 - Open the workspace in VS Code.
-- Launch `index.html` via **Live Server** (defaults to `http://127.0.0.1:5500` or `http://localhost:5500`).
+- Launch `index.html` via **Live Server** (defaults to `http://localhost:5500`).
 - Ensure CORS in `config/cors.php` allows requests from port `5500`.
 
 ### 4. AI & LLM Integration Setup

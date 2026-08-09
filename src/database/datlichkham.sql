@@ -1,17 +1,47 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Máy chủ: 127.0.0.1
+-- Thời gian đã tạo: Th8 08, 2026 lúc 08:01 PM
+-- Phiên bản máy phục vụ: 10.4.32-MariaDB
+-- Phiên bản PHP: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
-SET time_zone = "+07:00";
+SET time_zone = "+00:00";
 
-CREATE TABLE bacsi (
-  nguoiDungId int(11) NOT NULL,
-  maBacSi varchar(20) NOT NULL,
-  tenBacSi varchar(100) DEFAULT NULL,
-  maChuyenKhoa varchar(10) DEFAULT NULL,
-  moTa text,
-  gioiTinh enum('nam','nu') DEFAULT NULL,
-  namLamViec smallint(5) UNSIGNED DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO bacsi (nguoiDungId, maBacSi, tenBacSi, maChuyenKhoa, moTa, gioiTinh, namLamViec) VALUES
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Cơ sở dữ liệu: `datlichkham`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `bacsi`
+--
+
+CREATE TABLE `bacsi` (
+  `nguoiDungId` int(11) NOT NULL,
+  `maBacSi` varchar(20) NOT NULL,
+  `tenBacSi` varchar(100) DEFAULT NULL,
+  `maChuyenKhoa` varchar(10) DEFAULT NULL,
+  `moTa` text DEFAULT NULL,
+  `gioiTinh` enum('nam','nu') DEFAULT NULL,
+  `namLamViec` smallint(5) UNSIGNED DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `bacsi`
+--
+
+INSERT INTO `bacsi` (`nguoiDungId`, `maBacSi`, `tenBacSi`, `maChuyenKhoa`, `moTa`, `gioiTinh`, `namLamViec`) VALUES
 (2, 'bs1', 'Trần Văn Bảo', 'EYE102501', '', 'nam', 2021),
 (16, 'BS20251121009', 'Lê Thanh Bình', 'PED102501', 'Bác sĩ chuyên khoa II Nhi khoa. 10 năm công tác tại Bệnh viện Nhi Đồng 1. Rất mát tay và yêu trẻ, chuyên điều trị các bệnh hô hấp ở trẻ nhỏ.', 'nam', 2015),
 (17, 'BS20251121010', 'Nguyễn Thị Kim Anh', 'PED102502', 'Tốt nghiệp loại Giỏi Đại học Y Dược. Chuyên gia về chăm sóc và nuôi dưỡng trẻ sơ sinh, đặc biệt là trẻ sinh non nhẹ cân.', 'nu', 2013),
@@ -54,27 +84,39 @@ INSERT INTO bacsi (nguoiDungId, maBacSi, tenBacSi, maChuyenKhoa, moTa, gioiTinh,
 (54, 'BS20251121047', 'Nguyễn Bá Duy', 'ENT102503', 'Chuyên phẫu thuật cắt Amidan bằng công nghệ Plasma. Điều trị hiệu quả các bệnh lý khàn tiếng, hạt xơ dây thanh.', 'nam', 2019),
 (55, 'BS20251121048', 'Hồ Tiên', 'ENT102503', 'Chuyên gia đầu ngành về bệnh lý ung thư vòm họng và thanh quản. Giảng viên kiêm nhiệm Đại học Y Dược.', 'nu', 2019),
 (56, 'BS20251121049', 'Trịnh Quốc Thái', 'DEN102501', 'Bác sĩ trẻ nhiệt huyết, tốt nghiệp Thủ khoa Răng Hàm Mặt. Ứng dụng công nghệ kỹ thuật số trong hàn răng và điều trị tủy.', 'nam', 2024),
-(57, 'BS20251121050', 'Bùi Thị Xuân', 'DEN102501', 'Hơn 20 năm kinh nghiệm trong nha khoa gia đình. Nhẹ nhàng, tâm lý, chuyên điều trị sâu răng cho trẻ em không gây đau.', 'nu', 2010),
-(101, 'BS_DEMO_01', 'Lê Thành Nam', 'PED102501', 'Bác sĩ chuyên khoa Nhi với 5 năm kinh nghiệm.', 'nam', 2021);
+(57, 'BS20251121050', 'Bùi Thị Xuân', 'DEN102501', 'Hơn 20 năm kinh nghiệm trong nha khoa gia đình. Nhẹ nhàng, tâm lý, chuyên điều trị sâu răng cho trẻ em không gây đau.', 'nu', 2010);
 
-CREATE TABLE benhnhan (
-  nguoiDungId int(11) NOT NULL,
-  maBenhNhan varchar(20) NOT NULL,
-  tenBenhNhan varchar(100) DEFAULT NULL,
-  ngaySinh date DEFAULT NULL,
-  gioiTinh enum('nam','nu','khac') DEFAULT NULL,
-  soTheBHYT varchar(15) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- --------------------------------------------------------
 
-INSERT INTO benhnhan (nguoiDungId, maBenhNhan, tenBenhNhan, ngaySinh, gioiTinh, soTheBHYT) VALUES
+--
+-- Cấu trúc bảng cho bảng `benhnhan`
+--
+
+CREATE TABLE `benhnhan` (
+  `nguoiDungId` int(11) NOT NULL,
+  `maBenhNhan` varchar(20) NOT NULL,
+  `tenBenhNhan` varchar(100) DEFAULT NULL,
+  `ngaySinh` date DEFAULT NULL,
+  `gioiTinh` enum('nam','nu','khac') DEFAULT NULL,
+  `soTheBHYT` varchar(15) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `benhnhan`
+--
+
+INSERT INTO `benhnhan` (`nguoiDungId`, `maBenhNhan`, `tenBenhNhan`, `ngaySinh`, `gioiTinh`, `soTheBHYT`) VALUES
 (1, 'bn1', 'Nguyễn Văn Anh', '2000-01-01', 'nam', ''),
 (8, 'BN202511082304701', 'Dương Thanh Hóa', '2005-10-09', 'nam', ''),
 (11, 'BN202511101515250', 'Đinh Quốc Thịnh', '1999-11-09', 'khac', 'BH189318214111'),
 (15, 'BN2025111712142915', 'Trần Văn Hoàng', '2000-12-31', 'nam', NULL),
 (58, 'BN2025112200000058', 'Võ Quốc Thái', '2000-11-21', 'nam', NULL),
 (59, 'BN2025112200000059', 'Lê Minh Tuyền', '2005-11-21', 'nam', NULL),
-(61, 'BN2026030400000061', 'Nguyễn Đạt', '2005-10-09', 'nam', NULL),
-(102, 'BN_DEMO_01', 'Hoàng Long', '1995-05-15', 'nam', NULL);
+(61, 'BN2026030400000061', 'Nguyễn Đạt', '2005-10-09', 'nam', NULL);
+
+--
+-- Bẫy `benhnhan`
+--
 DELIMITER $$
 CREATE TRIGGER `validate_birthdate_before_insert` BEFORE INSERT ON `benhnhan` FOR EACH ROW BEGIN
     IF NEW.ngaySinh > CURDATE() THEN
@@ -92,40 +134,69 @@ END
 $$
 DELIMITER ;
 
-CREATE TABLE calamviec (
-  maCa int(11) NOT NULL,
-  tenCa varchar(30) NOT NULL,
-  gioBatDau time NOT NULL,
-  gioKetThuc time NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- --------------------------------------------------------
 
-INSERT INTO calamviec (maCa, tenCa, gioBatDau, gioKetThuc) VALUES
+--
+-- Cấu trúc bảng cho bảng `calamviec`
+--
+
+CREATE TABLE `calamviec` (
+  `maCa` int(11) NOT NULL,
+  `tenCa` varchar(30) NOT NULL,
+  `gioBatDau` time NOT NULL,
+  `gioKetThuc` time NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `calamviec`
+--
+
+INSERT INTO `calamviec` (`maCa`, `tenCa`, `gioBatDau`, `gioKetThuc`) VALUES
 (1, 'Ca sáng', '07:00:00', '11:00:00'),
 (2, 'Ca chiều', '13:00:00', '17:00:00');
 
-CREATE TABLE chitietdonthuoc (
-  id int(11) NOT NULL,
-  maDonThuoc int(11) DEFAULT NULL,
-  maThuoc int(11) DEFAULT NULL,
-  soLuong int(11) DEFAULT NULL,
-  lieuDung text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- --------------------------------------------------------
 
-INSERT INTO chitietdonthuoc (id, maDonThuoc, maThuoc, soLuong, lieuDung) VALUES
+--
+-- Cấu trúc bảng cho bảng `chitietdonthuoc`
+--
+
+CREATE TABLE `chitietdonthuoc` (
+  `id` int(11) NOT NULL,
+  `maDonThuoc` int(11) DEFAULT NULL,
+  `maThuoc` int(11) DEFAULT NULL,
+  `soLuong` int(11) DEFAULT NULL,
+  `lieuDung` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `chitietdonthuoc`
+--
+
+INSERT INTO `chitietdonthuoc` (`id`, `maDonThuoc`, `maThuoc`, `soLuong`, `lieuDung`) VALUES
 (1, 1, 2, 5, 'Uống 1 viên/lần, 4-6 giờ/lần. Uống ngay sau ăn'),
 (2, 1, 17, 5, 'Uống 1-2 viên/ngày sau bữa ăn'),
 (5, 3, 61, 5, 'Uống theo chỉ định bác sĩ. Không vượt quá 1.2mg/lần'),
-(6, 3, 16, 5, 'Hòa tan 1 viên trong 200ml nước, uống 1 lần/ngày sau ăn'),
-(7, 4, 2, 5, 'Uống 1 viên/lần, 4-6 giờ/lần. Uống ngay sau ăn');
+(6, 3, 16, 5, 'Hòa tan 1 viên trong 200ml nước, uống 1 lần/ngày sau ăn');
 
-CREATE TABLE chuyenkhoa (
-  maChuyenKhoa varchar(10) NOT NULL,
-  tenChuyenKhoa varchar(100) NOT NULL,
-  maKhoa varchar(10) DEFAULT NULL,
-  moTa text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- --------------------------------------------------------
 
-INSERT INTO chuyenkhoa (maChuyenKhoa, tenChuyenKhoa, maKhoa, moTa) VALUES
+--
+-- Cấu trúc bảng cho bảng `chuyenkhoa`
+--
+
+CREATE TABLE `chuyenkhoa` (
+  `maChuyenKhoa` varchar(10) NOT NULL,
+  `tenChuyenKhoa` varchar(100) NOT NULL,
+  `maKhoa` varchar(10) DEFAULT NULL,
+  `moTa` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `chuyenkhoa`
+--
+
+INSERT INTO `chuyenkhoa` (`maChuyenKhoa`, `tenChuyenKhoa`, `maKhoa`, `moTa`) VALUES
 ('CAR102501', 'Tim Mạch Nội Khoa', 'CAR1025', 'Chẩn đoán và điều trị các bệnh tim bằng thuốc, như tăng huyết áp, rối loạn nhịp tim, suy tim. Khoa chú trọng điều trị lâu dài và phòng ngừa tái phát.'),
 ('CAR102502', 'Tim Mạch Can Thiệp', 'CAR1025', 'Thực hiện các thủ thuật như nong mạch, đặt stent, chụp mạch vành. Khoa phối hợp chặt chẽ với nội tim mạch để quản lý bệnh nhân sau can thiệp.'),
 ('DEN102501', 'Nha Khoa Tổng Quát', 'DEN1025', 'Khám, trám, nhổ răng và điều trị sâu răng. Khoa tiếp nhận hầu hết các ca bệnh răng miệng thông thường.'),
@@ -156,21 +227,35 @@ INSERT INTO chuyenkhoa (maChuyenKhoa, tenChuyenKhoa, maKhoa, moTa) VALUES
 ('SUR102504', 'Ngoại Tiết Niệu', 'SUR1025', 'Điều trị bằng phẫu thuật cho các bệnh lý thận, bàng quang và tuyến tiền liệt. Khoa ứng dụng công nghệ nội soi và laser trong điều trị.'),
 ('SUR102505', 'Ngoại Lồng Ngực – Tim Mạch', 'SUR1025', 'Chuyên về phẫu thuật tim, phổi và mạch máu lớn. Các ca mổ đòi hỏi kỹ thuật cao được thực hiện tại đây.');
 
-CREATE TABLE doimatkhau (
-  id int(11) NOT NULL,
-  nguoiDungId int(11) NOT NULL,
-  trangThai enum('Chờ','Đã xử lý','Từ chối') DEFAULT 'Chờ',
-  thoiGianYeuCau datetime DEFAULT CURRENT_TIMESTAMP,
-  thoiGianXuLy datetime DEFAULT NULL,
-  nguoiXuLy int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- --------------------------------------------------------
 
-INSERT INTO doimatkhau (id, nguoiDungId, trangThai, thoiGianYeuCau, thoiGianXuLy, nguoiXuLy) VALUES
+--
+-- Cấu trúc bảng cho bảng `doimatkhau`
+--
+
+CREATE TABLE `doimatkhau` (
+  `id` int(11) NOT NULL,
+  `nguoiDungId` int(11) NOT NULL,
+  `trangThai` enum('Chờ','Đã xử lý','Từ chối') DEFAULT 'Chờ',
+  `thoiGianYeuCau` datetime DEFAULT current_timestamp(),
+  `thoiGianXuLy` datetime DEFAULT NULL,
+  `nguoiXuLy` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `doimatkhau`
+--
+
+INSERT INTO `doimatkhau` (`id`, `nguoiDungId`, `trangThai`, `thoiGianYeuCau`, `thoiGianXuLy`, `nguoiXuLy`) VALUES
 (6, 58, 'Đã xử lý', '2025-11-24 22:12:44', '2025-11-24 22:13:00', 3),
 (7, 2, 'Đã xử lý', '2025-11-24 22:14:15', '2025-11-24 22:14:26', 3),
 (8, 58, 'Từ chối', '2025-11-24 22:17:16', '2025-11-24 22:18:00', 3),
 (9, 58, 'Từ chối', '2025-11-24 22:20:20', '2025-11-24 22:20:35', 3),
 (12, 29, 'Đã xử lý', '2026-03-04 23:25:19', '2026-03-04 23:25:55', 3);
+
+--
+-- Bẫy `doimatkhau`
+--
 DELIMITER $$
 CREATE TRIGGER `after_doimatkhau_insert` AFTER INSERT ON `doimatkhau` FOR EACH ROW BEGIN
     DECLARE userName VARCHAR(100);
@@ -199,7 +284,7 @@ CREATE TRIGGER `after_doimatkhau_insert` AFTER INSERT ON `doimatkhau` FOR EACH R
         userPhone,
         'Cấp lại mật khẩu',
         'Yêu cầu cấp lại mật khẩu',
-        CONCAT('Người dùng ' COLLATE utf8mb4_general_ci, userName, ' (' COLLATE utf8mb4_general_ci, userRole, ') yêu cầu cấp lại mật khẩu' COLLATE utf8mb4_general_ci),
+        CONCAT('Người dùng ', userName, ' (', userRole, ') yêu cầu cấp lại mật khẩu'),
         NOW(),
         0,
         'Chờ'
@@ -219,82 +304,115 @@ END
 $$
 DELIMITER ;
 
-CREATE TABLE donthuoc (
-  maDonThuoc int(11) NOT NULL,
-  maLichKham int(11) DEFAULT NULL,
-  chuanDoan text,
-  loiDanBacSi text,
-  ngayKeDon datetime DEFAULT CURRENT_TIMESTAMP,
-  tongTienThuoc decimal(10,2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- --------------------------------------------------------
 
-INSERT INTO donthuoc (maDonThuoc, maLichKham, chuanDoan, loiDanBacSi, ngayKeDon, tongTienThuoc) VALUES
-(1, 79, 'Đau đầu, thiếu vitamin', 'Uống sau khi ăn', '2026-04-18 20:34:45', '31500.00'),
-(3, 82, 'Vẫn ổn', '', '2026-04-19 02:06:12', '77500.00'),
-(4, 90, 'Đau chân không rõ nguyên do', 'Uống lúc nào cũng được', '2026-04-19 21:59:50', '22500.00');
+--
+-- Cấu trúc bảng cho bảng `donthuoc`
+--
 
-CREATE TABLE goikham (
-  maGoi int(11) NOT NULL,
-  tenGoi varchar(100) NOT NULL,
-  moTa text,
-  thoiLuong int(11) DEFAULT '40',
-  gia decimal(10,2) NOT NULL,
-  isActive tinyint(1) NOT NULL DEFAULT '1'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE `donthuoc` (
+  `maDonThuoc` int(11) NOT NULL,
+  `maLichKham` int(11) DEFAULT NULL,
+  `chuanDoan` text DEFAULT NULL,
+  `loiDanBacSi` text DEFAULT NULL,
+  `ngayKeDon` datetime DEFAULT current_timestamp(),
+  `tongTienThuoc` decimal(10,2) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO goikham (maGoi, tenGoi, moTa, thoiLuong, gia, isActive) VALUES
-(1, 'Gói khám thường', 'Khám với bác sĩ tổng quát', 60, '150000.00', 1),
-(2, 'Gói khám cao cấp', 'Khám với bác sĩ chuyên gia', 60, '250000.00', 1);
+--
+-- Đang đổ dữ liệu cho bảng `donthuoc`
+--
 
-CREATE TABLE hoadon (
-  maHoaDon int(11) NOT NULL,
-  maLichKham int(11) DEFAULT NULL,
-  soTien decimal(10,2) DEFAULT NULL,
-  ngayTao datetime DEFAULT CURRENT_TIMESTAMP,
-  trangThai enum('Chưa thanh toán','Đã thanh toán') DEFAULT 'Chưa thanh toán',
-  phuongThuc enum('TienMat','VNPAY') DEFAULT NULL,
-  vnp_TransactionNo varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+INSERT INTO `donthuoc` (`maDonThuoc`, `maLichKham`, `chuanDoan`, `loiDanBacSi`, `ngayKeDon`, `tongTienThuoc`) VALUES
+(1, 79, 'Đau đầu, thiếu vitamin', 'Uống sau khi ăn', '2026-04-18 20:34:45', 31500.00),
+(3, 82, 'Vẫn ổn', '', '2026-04-19 02:06:12', 77500.00);
 
-INSERT INTO hoadon (maHoaDon, maLichKham, soTien, ngayTao, trangThai, phuongThuc, vnp_TransactionNo) VALUES
-(1, 77, '150000.00', '2026-02-23 22:55:04', 'Chưa thanh toán', NULL, NULL),
-(2, 78, '250000.00', '2026-02-23 22:55:43', 'Chưa thanh toán', NULL, NULL),
-(3, 79, '150000.00', '2026-04-04 02:15:55', 'Chưa thanh toán', NULL, NULL),
-(4, 80, '250000.00', '2026-04-04 03:10:47', 'Chưa thanh toán', NULL, NULL),
-(5, 81, '250000.00', '2026-04-18 20:43:40', 'Chưa thanh toán', NULL, NULL),
-(6, 82, '150000.00', '2026-04-18 20:45:02', 'Chưa thanh toán', NULL, NULL),
-(7, 83, '250000.00', '2026-04-19 17:20:55', 'Chưa thanh toán', NULL, NULL),
-(8, 84, '250000.00', '2026-04-19 17:21:37', 'Chưa thanh toán', NULL, NULL),
-(9, 88, '250000.00', '2026-04-19 21:41:33', 'Chưa thanh toán', NULL, NULL),
-(10, 89, '250000.00', '2026-04-19 21:48:44', 'Chưa thanh toán', NULL, NULL),
-(11, 90, '150000.00', '2026-04-19 21:57:48', 'Chưa thanh toán', NULL, NULL),
-(12, 91, '250000.00', '2026-04-19 22:02:32', 'Chưa thanh toán', NULL, NULL),
-(13, 92, '250000.00', '2026-04-19 22:04:08', 'Chưa thanh toán', NULL, NULL),
-(14, 93, '250000.00', '2026-04-19 22:05:03', 'Chưa thanh toán', NULL, NULL),
-(15, 94, '250000.00', '2026-04-19 22:05:51', 'Chưa thanh toán', NULL, NULL),
-(16, 95, '250000.00', '2026-04-19 22:06:24', 'Chưa thanh toán', NULL, NULL),
-(17, 96, '250000.00', '2026-04-19 22:06:48', 'Chưa thanh toán', NULL, NULL),
-(18, 97, '250000.00', '2026-04-19 22:52:18', 'Chưa thanh toán', NULL, NULL);
+-- --------------------------------------------------------
 
-CREATE TABLE hosobenhan (
-  maHoSo varchar(20) NOT NULL,
-  maBenhNhan varchar(20) DEFAULT NULL,
-  maBacSi varchar(20) DEFAULT NULL,
-  maLichKham int(11) DEFAULT NULL,
-  chanDoan text,
-  dieuTri text,
-  trangThai enum('Chưa hoàn thành','Đã hoàn thành') DEFAULT 'Chưa hoàn thành',
-  ngayTao datetime DEFAULT CURRENT_TIMESTAMP,
-  ngayHoanThanh datetime DEFAULT NULL,
-  ghiChu text,
-  ngayKham datetime DEFAULT NULL,
-  isDeleted tinyint(1) NOT NULL DEFAULT '0',
-  deletedAt datetime DEFAULT NULL,
-  deletedBy int(11) DEFAULT NULL,
-  deleteReason text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+--
+-- Cấu trúc bảng cho bảng `goikham`
+--
 
-INSERT INTO hosobenhan (maHoSo, maBenhNhan, maBacSi, maLichKham, chanDoan, dieuTri, trangThai, ngayTao, ngayHoanThanh, ghiChu, ngayKham, isDeleted, deletedAt, deletedBy, deleteReason) VALUES
+CREATE TABLE `goikham` (
+  `maGoi` int(11) NOT NULL,
+  `tenGoi` varchar(100) NOT NULL,
+  `moTa` text DEFAULT NULL,
+  `thoiLuong` int(11) DEFAULT 40,
+  `gia` decimal(10,2) NOT NULL,
+  `isActive` tinyint(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `goikham`
+--
+
+INSERT INTO `goikham` (`maGoi`, `tenGoi`, `moTa`, `thoiLuong`, `gia`, `isActive`) VALUES
+(1, 'Gói khám thường', 'Khám với bác sĩ tổng quát', 60, 150000.00, 1),
+(2, 'Gói khám cao cấp', 'Khám với bác sĩ chuyên gia', 60, 250000.00, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `hoadon`
+--
+
+CREATE TABLE `hoadon` (
+  `maHoaDon` int(11) NOT NULL,
+  `maLichKham` int(11) DEFAULT NULL,
+  `soTien` decimal(10,2) DEFAULT NULL,
+  `ngayTao` datetime DEFAULT current_timestamp(),
+  `trangThai` enum('Chưa thanh toán','Đã thanh toán') DEFAULT 'Chưa thanh toán',
+  `phuongThuc` enum('TienMat','VNPAY') DEFAULT NULL,
+  `vnp_TransactionNo` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `hoadon`
+--
+
+INSERT INTO `hoadon` (`maHoaDon`, `maLichKham`, `soTien`, `ngayTao`, `trangThai`, `phuongThuc`, `vnp_TransactionNo`) VALUES
+(1, 77, 150000.00, '2026-02-23 22:55:04', 'Chưa thanh toán', NULL, NULL),
+(2, 78, 250000.00, '2026-02-23 22:55:43', 'Chưa thanh toán', NULL, NULL),
+(3, 79, 150000.00, '2026-04-04 02:15:55', 'Chưa thanh toán', NULL, NULL),
+(4, 80, 250000.00, '2026-04-04 03:10:47', 'Chưa thanh toán', NULL, NULL),
+(5, 81, 250000.00, '2026-04-18 20:43:40', 'Chưa thanh toán', NULL, NULL),
+(6, 82, 150000.00, '2026-04-18 20:45:02', 'Chưa thanh toán', NULL, NULL),
+(7, 83, 250000.00, '2026-04-19 17:20:55', 'Chưa thanh toán', NULL, NULL),
+(8, 84, 250000.00, '2026-04-19 17:21:37', 'Chưa thanh toán', NULL, NULL),
+(9, 85, 250000.00, '2026-07-22 23:57:37', 'Chưa thanh toán', NULL, NULL),
+(10, 86, 250000.00, '2026-07-23 00:12:10', 'Đã thanh toán', 'VNPAY', '15631936'),
+(11, 87, 150000.00, '2026-07-23 00:34:55', 'Đã thanh toán', 'VNPAY', '15631958'),
+(12, 88, 250000.00, '2026-07-24 19:54:05', 'Đã thanh toán', 'VNPAY', '15634368');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `hosobenhan`
+--
+
+CREATE TABLE `hosobenhan` (
+  `maHoSo` varchar(20) NOT NULL,
+  `maBenhNhan` varchar(20) DEFAULT NULL,
+  `maBacSi` varchar(20) DEFAULT NULL,
+  `maLichKham` int(11) DEFAULT NULL,
+  `chanDoan` text DEFAULT NULL,
+  `dieuTri` text DEFAULT NULL,
+  `trangThai` enum('Chưa hoàn thành','Đã hoàn thành') DEFAULT 'Chưa hoàn thành',
+  `ngayTao` datetime DEFAULT current_timestamp(),
+  `ngayHoanThanh` datetime DEFAULT NULL,
+  `ghiChu` text DEFAULT NULL,
+  `ngayKham` datetime DEFAULT NULL,
+  `isDeleted` tinyint(1) NOT NULL DEFAULT 0,
+  `deletedAt` datetime DEFAULT NULL,
+  `deletedBy` int(11) DEFAULT NULL,
+  `deleteReason` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `hosobenhan`
+--
+
+INSERT INTO `hosobenhan` (`maHoSo`, `maBenhNhan`, `maBacSi`, `maLichKham`, `chanDoan`, `dieuTri`, `trangThai`, `ngayTao`, `ngayHoanThanh`, `ghiChu`, `ngayKham`, `isDeleted`, `deletedAt`, `deletedBy`, `deleteReason`) VALUES
 ('HS20251118184754834', 'BN2025111712142915', 'bs1', 26, 'Xong', 'Xong', 'Đã hoàn thành', '2025-11-18 18:47:54', '2025-11-18 19:33:24', '', NULL, 0, NULL, NULL, NULL),
 ('HS20251119083129501', 'BN2025111712142915', 'bs1', 30, '1', '1', 'Đã hoàn thành', '2025-11-19 08:31:29', '2025-11-19 08:31:52', '1', '2025-11-19 00:00:00', 0, NULL, NULL, NULL),
 ('HS20251119083135625', 'bn1', 'bs1', 29, '2', '2', 'Đã hoàn thành', '2025-11-19 08:31:35', '2025-11-19 08:31:55', '2', '2025-11-19 00:00:00', 0, NULL, NULL, NULL),
@@ -315,15 +433,25 @@ INSERT INTO hosobenhan (maHoSo, maBenhNhan, maBacSi, maLichKham, chanDoan, dieuT
 ('HS20260418203519154', 'BN2025112200000058', 'bs1', 67, '', '', 'Chưa hoàn thành', '2026-04-18 20:35:19', NULL, '', '2025-12-03 00:00:00', 0, NULL, NULL, NULL),
 ('HS20260418203525789', 'bn1', 'bs1', 66, '', '', 'Chưa hoàn thành', '2026-04-18 20:35:25', NULL, '', '2025-12-03 00:00:00', 0, NULL, NULL, NULL),
 ('HS20260419020444496', 'bn1', 'bs1', 82, 'Vẫn ổn', 'Ổn', 'Đã hoàn thành', '2026-04-19 02:04:44', '2026-04-19 02:06:12', '', '2026-04-18 00:00:00', 0, NULL, NULL, NULL),
-('HS20260419215821604', 'BN_DEMO_01', 'BS_DEMO_01', 90, 'Đau chân không rõ nguyên do', 'Uống thuốc, hạn chế chạy, mang vật nặng', 'Đã hoàn thành', '2026-04-19 21:58:21', '2026-04-19 21:59:50', '', '2026-04-19 00:00:00', 0, NULL, NULL, NULL);
+('HS20260708000430988', 'bn1', 'bs1', 81, '', '', 'Chưa hoàn thành', '2026-07-08 00:04:30', NULL, '', '2026-04-20 00:00:00', 0, NULL, NULL, NULL);
 
-CREATE TABLE khoa (
-  maKhoa varchar(10) NOT NULL,
-  tenKhoa varchar(100) NOT NULL,
-  moTa text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- --------------------------------------------------------
 
-INSERT INTO khoa (maKhoa, tenKhoa, moTa) VALUES
+--
+-- Cấu trúc bảng cho bảng `khoa`
+--
+
+CREATE TABLE `khoa` (
+  `maKhoa` varchar(10) NOT NULL,
+  `tenKhoa` varchar(100) NOT NULL,
+  `moTa` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `khoa`
+--
+
+INSERT INTO `khoa` (`maKhoa`, `tenKhoa`, `moTa`) VALUES
 ('CAR1025', 'Khoa Tim mạch', 'Khoa Tim mạch tập trung khám và điều trị các bệnh về tim và mạch máu. Đây là khoa chuyên sâu trong chẩn đoán, theo dõi và phục hồi chức năng tim mạch.'),
 ('DEN1025', 'Khoa Răng – Hàm – Mặt', 'Khoa này chuyên điều trị các bệnh lý răng miệng, hàm và vùng mặt. Ngoài điều trị, khoa còn thực hiện phẫu thuật thẩm mỹ và chỉnh hình hàm mặt.'),
 ('DER1025', 'Khoa Da liễu', 'Khoa Da liễu chuyên khám và điều trị các bệnh ngoài da, tóc, móng. Ngoài điều trị bệnh, khoa còn cung cấp dịch vụ thẩm mỹ da như laser, trị sẹo và nám.'),
@@ -334,85 +462,95 @@ INSERT INTO khoa (maKhoa, tenKhoa, moTa) VALUES
 ('PED1025', 'Khoa Nhi', 'Khoa Nhi chịu trách nhiệm chăm sóc sức khỏe cho trẻ sơ sinh và trẻ em. Khoa chuyên điều trị các bệnh thường gặp ở trẻ nhỏ, từ hô hấp đến tim mạch bẩm sinh.'),
 ('SUR1025', 'Khoa Ngoại', 'Khoa Ngoại đảm nhiệm các ca phẫu thuật và điều trị bằng can thiệp ngoại khoa. Tại đây tiếp nhận các trường hợp cần mổ từ đơn giản đến phức tạp.');
 
-CREATE TABLE lichkham (
-  maLichKham int(11) NOT NULL,
-  maBacSi varchar(20) NOT NULL,
-  maBenhNhan varchar(20) NOT NULL,
-  ngayKham date NOT NULL,
-  maCa int(11) NOT NULL,
-  maSuat int(11) NOT NULL,
-  maGoi int(11) DEFAULT NULL,
-  trangThai enum('Chờ','Đã đặt','Hoàn thành','Hủy') DEFAULT 'Đã đặt',
-  ghiChu text,
-  nguoiHuy enum('benhnhan','bacsi','quantri','hethong') DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- --------------------------------------------------------
 
-INSERT INTO lichkham (maLichKham, maBacSi, maBenhNhan, ngayKham, maCa, maSuat, maGoi, trangThai, ghiChu, nguoiHuy) VALUES
-(8, 'bs1', 'bn1', '2025-11-12', 1, 1, 1, 'Hủy', NULL, NULL),
-(26, 'bs1', 'BN2025111712142915', '2025-11-18', 1, 2, 2, 'Hoàn thành', NULL, NULL),
-(27, 'bs1', 'BN202511101515250', '2025-11-19', 1, 1, 1, 'Hoàn thành', NULL, NULL),
-(28, 'bs1', 'BN202511082304701', '2025-11-19', 1, 6, 1, 'Hoàn thành', NULL, NULL),
-(29, 'bs1', 'bn1', '2025-11-19', 2, 7, 2, 'Hoàn thành', NULL, NULL),
-(30, 'bs1', 'BN2025111712142915', '2025-11-19', 2, 12, 2, 'Hoàn thành', NULL, NULL),
-(35, 'BS20251121022', 'bn1', '2025-11-22', 1, 1, 1, 'Hủy', '1\n[Lý do hủy]: 1', NULL),
-(36, 'BS20251121022', 'bn1', '2025-11-22', 1, 2, 1, 'Hủy', '1\n[Lý do hủy]: a', NULL),
-(38, 'BS20251121027', 'bn1', '2025-11-24', 1, 1, 1, 'Hủy', 'Không\n[Lý do hủy]: x', NULL),
-(39, 'BS20251121027', 'BN2025112200000058', '2025-11-24', 1, 2, 2, 'Hủy', '1\n[Lý do hủy]: Thử', NULL),
-(40, 'BS20251121028', 'BN2025112200000058', '2025-11-29', 1, 1, 2, 'Hủy', '\n[Lý do hủy]: Hủy', NULL),
-(41, 'BS20251121027', 'BN2025112200000058', '2025-11-24', 1, 2, 2, 'Hủy', '1\n[Lý do hủy]: 1', NULL),
-(42, 'BS20251121027', 'BN2025112200000058', '2025-11-24', 1, 2, 2, 'Hủy', '2\n[Lý do hủy]: 2', NULL),
-(43, 'BS20251121027', 'BN2025112200000058', '2025-11-23', 1, 4, 2, 'Hủy', '\n[Lý do hủy]: a', NULL),
-(44, 'BS20251121028', 'BN2025112200000058', '2025-11-23', 2, 12, 2, 'Hủy', '\n[Lý do hủy]: a', NULL),
-(45, 'bs1', 'BN2025112200000058', '2025-11-23', 1, 6, 2, 'Hoàn thành', '', NULL),
-(46, 'bs1', 'BN2025112200000058', '2025-11-23', 2, 12, 2, 'Hoàn thành', '', NULL),
-(47, 'bs1', 'bn1', '2025-12-01', 1, 3, 2, 'Hủy', '22121\n[Lý do hủy]: 2', NULL),
-(48, 'BS20251121022', 'bn1', '2025-12-01', 1, 2, 1, 'Hủy', '1\n[Lý do hủy]: 2', NULL),
-(49, 'BS20251121022', 'bn1', '2025-12-01', 1, 2, 1, 'Hủy', 'ds\n[Lý do hủy]: ds', NULL),
-(50, 'BS20251121022', 'bn1', '2025-12-02', 1, 2, 2, 'Hủy', 'f\n[Lý do hủy]: f1', NULL),
-(51, 'BS20251121022', 'bn1', '2025-12-01', 2, 11, 1, 'Hủy', '1\n[Lý do hủy]: 1', NULL),
-(52, 'BS20251121022', 'bn1', '2025-12-03', 1, 3, 2, 'Hủy', '', NULL),
-(53, 'BS20251121022', 'bn1', '2025-12-01', 1, 4, 2, 'Hủy', '', NULL),
-(54, 'BS20251121022', 'bn1', '2025-11-30', 1, 3, 2, 'Hoàn thành', '', NULL),
-(55, 'BS20251121022', 'bn1', '2025-12-06', 1, 3, 2, 'Hủy', '', NULL),
-(56, 'BS20251121022', 'bn1', '2025-12-01', 1, 6, 1, 'Hủy', '\n[Lý do hủy]: a', NULL),
-(57, 'BS20251121022', 'bn1', '2025-12-01', 1, 3, 2, 'Hủy', '', NULL),
-(58, 'BS20251121022', 'bn1', '2025-12-01', 1, 6, 2, 'Hủy', '\n[Lý do hủy]: a', 'benhnhan'),
-(59, 'BS20251121022', 'bn1', '2025-12-01', 1, 4, 1, 'Hủy', '1', 'bacsi'),
-(60, 'BS20251121022', 'bn1', '2025-12-03', 1, 3, 1, 'Hủy', '12121\n[Lý do hủy]: adsdada', 'benhnhan'),
-(61, 'BS20251121022', 'bn1', '2025-12-02', 1, 6, 2, 'Hủy', 'test\n[Lý do hủy]: bận việc', 'benhnhan'),
-(62, 'bs1', 'bn1', '2025-12-01', 1, 4, 1, 'Hủy', '\n[Lý do hủy]: 1', 'benhnhan'),
-(63, 'BS20251121028', 'bn1', '2025-12-05', 1, 4, 2, 'Hủy', '\n[Lý do hủy]: 1', 'benhnhan'),
-(64, 'bs1', 'bn1', '2025-11-30', 1, 1, 2, 'Hoàn thành', '', NULL),
-(65, 'bs1', 'BN2025112200000058', '2025-11-30', 2, 8, 2, 'Hoàn thành', '', NULL),
-(66, 'bs1', 'bn1', '2025-12-03', 1, 1, 1, 'Hoàn thành', 'Bệnh nhân tái khám, sức khỏe tốt.', NULL),
-(67, 'bs1', 'BN2025112200000058', '2025-12-03', 1, 2, 2, 'Đã đặt', 'Đau đầu nhẹ, cần kiểm tra huyết áp.', NULL),
-(68, 'bs1', 'BN2025111712142915', '2025-12-03', 1, 3, 1, 'Hủy', 'Bận việc đột xuất\n[Lý do hủy]: Bệnh nhân yêu cầu hủy', NULL),
-(69, 'bs1', 'BN202511082304701', '2025-12-03', 2, 7, 2, 'Đã đặt', NULL, NULL),
-(70, 'bs1', 'bn1', '2025-12-04', 1, 1, 1, 'Hủy', 'Khám tổng quát\n[Lý do hủy]: 1', 'benhnhan'),
-(71, 'bs1', 'BN2025112200000059', '2025-12-04', 1, 2, 1, 'Đã đặt', NULL, NULL),
-(72, 'bs1', 'BN202511101515250', '2025-12-04', 1, 3, 2, 'Đã đặt', 'Có triệu chứng sốt nhẹ', NULL),
-(73, 'bs1', 'BN2025111712142915', '2025-12-05', 2, 10, 2, 'Đã đặt', 'Tái khám theo hẹn', NULL),
-(74, 'bs1', 'bn1', '2025-12-02', 2, 11, 2, 'Hủy', 'không\n[Lý do hủy]: 1', 'benhnhan'),
-(75, 'BS20251121022', 'bn1', '2025-12-05', 1, 1, 1, 'Hủy', '\n[Lý do hủy]: 1', 'benhnhan'),
-(76, 'BS20251121027', 'BN2025112200000058', '2025-12-05', 1, 1, 1, 'Đã đặt', '', NULL),
-(77, 'BS20251121022', 'bn1', '2026-02-24', 1, 3, 1, 'Hủy', 'Không!', 'bacsi'),
-(78, 'BS20251121022', 'bn1', '2026-02-24', 1, 4, 2, 'Hủy', '', 'bacsi'),
-(79, 'bs1', 'bn1', '2026-04-11', 2, 8, 1, 'Hoàn thành', '', NULL),
-(80, 'bs1', 'bn1', '2026-04-04', 1, 4, 2, 'Hủy', '\n[Lý do hủy]: Không có lí do', 'benhnhan'),
-(81, 'bs1', 'bn1', '2026-04-20', 1, 5, 2, 'Đã đặt', 'Không', NULL),
-(82, 'bs1', 'bn1', '2026-04-18', 2, 12, 1, 'Hoàn thành', '', NULL),
-(83, 'BS20251121030', 'bn1', '2026-04-20', 2, 10, 2, 'Hủy', '\n[Lý do hủy]: Bận việc', 'benhnhan'),
-(84, 'BS20251121027', 'bn1', '2026-04-22', 1, 68, 2, 'Đã đặt', '', NULL),
-(88, 'bs1', 'BN_DEMO_01', '2026-04-20', 2, 12, 2, 'Đã đặt', '', NULL),
-(89, 'BS_DEMO_01', 'BN_DEMO_01', '2026-04-22', 2, 72, 2, 'Đã đặt', '', NULL),
-(90, 'BS_DEMO_01', 'BN_DEMO_01', '2026-04-19', 2, 12, 1, 'Hoàn thành', '', NULL),
-(91, 'BS_DEMO_01', 'bn1', '2026-04-20', 2, 12, 2, 'Đã đặt', '', NULL),
-(92, 'BS_DEMO_01', 'bn1', '2026-04-21', 2, 72, 2, 'Đã đặt', '', NULL),
-(93, 'bs1', 'bn1', '2026-04-21', 2, 71, 2, 'Đã đặt', '', NULL),
-(94, 'bs1', 'BN_DEMO_01', '2026-04-21', 2, 72, 2, 'Đã đặt', '', NULL),
-(95, 'BS_DEMO_01', 'BN_DEMO_01', '2026-04-20', 2, 10, 2, 'Hủy', '', 'bacsi'),
-(96, 'BS_DEMO_01', 'BN_DEMO_01', '2026-04-21', 2, 71, 2, 'Đã đặt', '', NULL),
-(97, 'BS_DEMO_01', 'BN_DEMO_01', '2026-04-20', 2, 11, 2, 'Hủy', '\n[Lý do hủy]: Bận việc', 'bacsi');
+--
+-- Cấu trúc bảng cho bảng `lichkham`
+--
+
+CREATE TABLE `lichkham` (
+  `maLichKham` int(11) NOT NULL,
+  `maBacSi` varchar(20) NOT NULL,
+  `maBenhNhan` varchar(20) NOT NULL,
+  `ngayKham` date NOT NULL,
+  `maCa` int(11) NOT NULL,
+  `maSuat` int(11) NOT NULL,
+  `maGoi` int(11) DEFAULT NULL,
+  `trangThai` enum('Chờ','Đã đặt','Hoàn thành','Hủy') DEFAULT 'Đã đặt',
+  `ghiChu` text DEFAULT NULL,
+  `nguoiHuy` enum('benhnhan','bacsi','quantri','hethong') DEFAULT NULL,
+  `soLanDoiLich` tinyint(1) NOT NULL DEFAULT 0,
+  `thoiGianDoiLich` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `lichkham`
+--
+
+INSERT INTO `lichkham` (`maLichKham`, `maBacSi`, `maBenhNhan`, `ngayKham`, `maCa`, `maSuat`, `maGoi`, `trangThai`, `ghiChu`, `nguoiHuy`, `soLanDoiLich`, `thoiGianDoiLich`) VALUES
+(8, 'bs1', 'bn1', '2025-11-12', 1, 1, 1, 'Hủy', NULL, NULL, 0, NULL),
+(26, 'bs1', 'BN2025111712142915', '2025-11-18', 1, 2, 2, 'Hoàn thành', NULL, NULL, 0, NULL),
+(27, 'bs1', 'BN202511101515250', '2025-11-19', 1, 1, 1, 'Hoàn thành', NULL, NULL, 0, NULL),
+(28, 'bs1', 'BN202511082304701', '2025-11-19', 1, 6, 1, 'Hoàn thành', NULL, NULL, 0, NULL),
+(29, 'bs1', 'bn1', '2025-11-19', 2, 7, 2, 'Hoàn thành', NULL, NULL, 0, NULL),
+(30, 'bs1', 'BN2025111712142915', '2025-11-19', 2, 12, 2, 'Hoàn thành', NULL, NULL, 0, NULL),
+(35, 'BS20251121022', 'bn1', '2025-11-22', 1, 1, 1, 'Hủy', '1\n[Lý do hủy]: 1', NULL, 0, NULL),
+(36, 'BS20251121022', 'bn1', '2025-11-22', 1, 2, 1, 'Hủy', '1\n[Lý do hủy]: a', NULL, 0, NULL),
+(38, 'BS20251121027', 'bn1', '2025-11-24', 1, 1, 1, 'Hủy', 'Không\n[Lý do hủy]: x', NULL, 0, NULL),
+(39, 'BS20251121027', 'BN2025112200000058', '2025-11-24', 1, 2, 2, 'Hủy', '1\n[Lý do hủy]: Thử', NULL, 0, NULL),
+(40, 'BS20251121028', 'BN2025112200000058', '2025-11-29', 1, 1, 2, 'Hủy', '\n[Lý do hủy]: Hủy', NULL, 0, NULL),
+(41, 'BS20251121027', 'BN2025112200000058', '2025-11-24', 1, 2, 2, 'Hủy', '1\n[Lý do hủy]: 1', NULL, 0, NULL),
+(42, 'BS20251121027', 'BN2025112200000058', '2025-11-24', 1, 2, 2, 'Hủy', '2\n[Lý do hủy]: 2', NULL, 0, NULL),
+(43, 'BS20251121027', 'BN2025112200000058', '2025-11-23', 1, 4, 2, 'Hủy', '\n[Lý do hủy]: a', NULL, 0, NULL),
+(44, 'BS20251121028', 'BN2025112200000058', '2025-11-23', 2, 12, 2, 'Hủy', '\n[Lý do hủy]: a', NULL, 0, NULL),
+(45, 'bs1', 'BN2025112200000058', '2025-11-23', 1, 6, 2, 'Hoàn thành', '', NULL, 0, NULL),
+(46, 'bs1', 'BN2025112200000058', '2025-11-23', 2, 12, 2, 'Hoàn thành', '', NULL, 0, NULL),
+(47, 'bs1', 'bn1', '2025-12-01', 1, 3, 2, 'Hủy', '22121\n[Lý do hủy]: 2', NULL, 0, NULL),
+(48, 'BS20251121022', 'bn1', '2025-12-01', 1, 2, 1, 'Hủy', '1\n[Lý do hủy]: 2', NULL, 0, NULL),
+(49, 'BS20251121022', 'bn1', '2025-12-01', 1, 2, 1, 'Hủy', 'ds\n[Lý do hủy]: ds', NULL, 0, NULL),
+(50, 'BS20251121022', 'bn1', '2025-12-02', 1, 2, 2, 'Hủy', 'f\n[Lý do hủy]: f1', NULL, 0, NULL),
+(51, 'BS20251121022', 'bn1', '2025-12-01', 2, 11, 1, 'Hủy', '1\n[Lý do hủy]: 1', NULL, 0, NULL),
+(52, 'BS20251121022', 'bn1', '2025-12-03', 1, 3, 2, 'Hủy', '', NULL, 0, NULL),
+(53, 'BS20251121022', 'bn1', '2025-12-01', 1, 4, 2, 'Hủy', '', NULL, 0, NULL),
+(54, 'BS20251121022', 'bn1', '2025-11-30', 1, 3, 2, 'Hoàn thành', '', NULL, 0, NULL),
+(55, 'BS20251121022', 'bn1', '2025-12-06', 1, 3, 2, 'Hủy', '', NULL, 0, NULL),
+(56, 'BS20251121022', 'bn1', '2025-12-01', 1, 6, 1, 'Hủy', '\n[Lý do hủy]: a', NULL, 0, NULL),
+(57, 'BS20251121022', 'bn1', '2025-12-01', 1, 3, 2, 'Hủy', '', NULL, 0, NULL),
+(58, 'BS20251121022', 'bn1', '2025-12-01', 1, 6, 2, 'Hủy', '\n[Lý do hủy]: a', 'benhnhan', 0, NULL),
+(59, 'BS20251121022', 'bn1', '2025-12-01', 1, 4, 1, 'Hủy', '1', 'bacsi', 0, NULL),
+(60, 'BS20251121022', 'bn1', '2025-12-03', 1, 3, 1, 'Hủy', '12121\n[Lý do hủy]: adsdada', 'benhnhan', 0, NULL),
+(61, 'BS20251121022', 'bn1', '2025-12-02', 1, 6, 2, 'Hủy', 'test\n[Lý do hủy]: bận việc', 'benhnhan', 0, NULL),
+(62, 'bs1', 'bn1', '2025-12-01', 1, 4, 1, 'Hủy', '\n[Lý do hủy]: 1', 'benhnhan', 0, NULL),
+(63, 'BS20251121028', 'bn1', '2025-12-05', 1, 4, 2, 'Hủy', '\n[Lý do hủy]: 1', 'benhnhan', 0, NULL),
+(64, 'bs1', 'bn1', '2025-11-30', 1, 1, 2, 'Hoàn thành', '', NULL, 0, NULL),
+(65, 'bs1', 'BN2025112200000058', '2025-11-30', 2, 8, 2, 'Hoàn thành', '', NULL, 0, NULL),
+(66, 'bs1', 'bn1', '2025-12-03', 1, 1, 1, 'Hoàn thành', 'Bệnh nhân tái khám, sức khỏe tốt.', NULL, 0, NULL),
+(67, 'bs1', 'BN2025112200000058', '2025-12-03', 1, 2, 2, 'Đã đặt', 'Đau đầu nhẹ, cần kiểm tra huyết áp.', NULL, 0, NULL),
+(68, 'bs1', 'BN2025111712142915', '2025-12-03', 1, 3, 1, 'Hủy', 'Bận việc đột xuất\n[Lý do hủy]: Bệnh nhân yêu cầu hủy', NULL, 0, NULL),
+(69, 'bs1', 'BN202511082304701', '2025-12-03', 2, 7, 2, 'Đã đặt', NULL, NULL, 0, NULL),
+(70, 'bs1', 'bn1', '2025-12-04', 1, 1, 1, 'Hủy', 'Khám tổng quát\n[Lý do hủy]: 1', 'benhnhan', 0, NULL),
+(71, 'bs1', 'BN2025112200000059', '2025-12-04', 1, 2, 1, 'Đã đặt', NULL, NULL, 0, NULL),
+(72, 'bs1', 'BN202511101515250', '2025-12-04', 1, 3, 2, 'Đã đặt', 'Có triệu chứng sốt nhẹ', NULL, 0, NULL),
+(73, 'bs1', 'BN2025111712142915', '2025-12-05', 2, 10, 2, 'Đã đặt', 'Tái khám theo hẹn', NULL, 0, NULL),
+(74, 'bs1', 'bn1', '2025-12-02', 2, 11, 2, 'Hủy', 'không\n[Lý do hủy]: 1', 'benhnhan', 0, NULL),
+(75, 'BS20251121022', 'bn1', '2025-12-05', 1, 1, 1, 'Hủy', '\n[Lý do hủy]: 1', 'benhnhan', 0, NULL),
+(76, 'BS20251121027', 'BN2025112200000058', '2025-12-05', 1, 1, 1, 'Đã đặt', '', NULL, 0, NULL),
+(77, 'BS20251121022', 'bn1', '2026-02-24', 1, 3, 1, 'Hủy', 'Không!', 'bacsi', 0, NULL),
+(78, 'BS20251121022', 'bn1', '2026-02-24', 1, 4, 2, 'Hủy', '', 'bacsi', 0, NULL),
+(79, 'bs1', 'bn1', '2026-04-11', 2, 8, 1, 'Hoàn thành', '', NULL, 0, NULL),
+(80, 'bs1', 'bn1', '2026-04-04', 1, 4, 2, 'Hủy', '\n[Lý do hủy]: Không có lí do', 'benhnhan', 0, NULL),
+(81, 'bs1', 'bn1', '2026-04-20', 1, 5, 2, 'Hủy', 'Không\n[Lý do hủy]: Bận', 'benhnhan', 0, NULL),
+(82, 'bs1', 'bn1', '2026-04-18', 2, 12, 1, 'Hoàn thành', '', NULL, 0, NULL),
+(83, 'BS20251121030', 'bn1', '2026-04-20', 2, 10, 2, 'Hủy', '\n[Lý do hủy]: Bận', 'benhnhan', 0, NULL),
+(84, 'BS20251121027', 'bn1', '2026-04-22', 1, 68, 2, 'Hủy', '\n[Lý do hủy]: Bận', 'benhnhan', 0, NULL),
+(85, 'bs1', 'bn1', '2026-07-23', 1, 68, 2, 'Chờ', '', NULL, 0, NULL),
+(86, 'bs1', 'bn1', '2026-07-23', 1, 67, 2, 'Hủy', '\n[Lý do hủy]: Bận', 'benhnhan', 0, NULL),
+(87, 'bs1', 'bn1', '2026-07-24', 1, 68, 1, 'Hủy', '\n[Lý do hủy]: Bận', 'benhnhan', 0, NULL),
+(88, 'bs1', 'bn1', '2026-07-26', 1, 68, 2, 'Đã đặt', '', NULL, 1, '2026-07-24 19:55:42');
+
+--
+-- Bẫy `lichkham`
+--
 DELIMITER $$
 CREATE TRIGGER `after_lichkham_insert` AFTER INSERT ON `lichkham` FOR EACH ROW BEGIN
     DECLARE patientName VARCHAR(100);
@@ -425,9 +563,9 @@ CREATE TRIGGER `after_lichkham_insert` AFTER INSERT ON `lichkham` FOR EACH ROW B
     SELECT tenCa INTO shiftName FROM calamviec WHERE maCa = NEW.maCa;
     SET appointmentDate = IFNULL(DATE_FORMAT(NEW.ngayKham, '%d/%m/%Y'), '(chưa có ngày)');
     
-    -- Xử lý ghi chú: Thêm COLLATE để tránh lỗi mix collation
+    -- Xử lý ghi chú: Nếu có ghi chú thì thêm vào nội dung
     IF NEW.ghiChu IS NOT NULL AND NEW.ghiChu != '' THEN
-        SET noteText = CONCAT('. Ghi chú: ' COLLATE utf8mb4_general_ci, NEW.ghiChu);
+        SET noteText = CONCAT('. Ghi chú: ', NEW.ghiChu);
     END IF;
     
     INSERT INTO thongbaolichkham (maBacSi, maLichKham, loai, tieuDe, noiDung, thoiGian, daXem)
@@ -437,10 +575,10 @@ CREATE TRIGGER `after_lichkham_insert` AFTER INSERT ON `lichkham` FOR EACH ROW B
         'Đặt lịch',
         'Lịch khám mới',
         CONCAT(
-            'Bệnh nhân ' COLLATE utf8mb4_general_ci, patientName, 
-            ' đã đặt lịch khám vào ngày ' COLLATE utf8mb4_general_ci, appointmentDate, 
-            ' - ' COLLATE utf8mb4_general_ci, shiftName,
-            noteText
+            'Bệnh nhân ', patientName, 
+            ' đã đặt lịch khám vào ngày ', appointmentDate, 
+            ' - ', shiftName,
+            noteText -- Thêm phần ghi chú vào đây
         ),
         NOW(),
         0
@@ -463,7 +601,7 @@ CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW B
         SELECT tenBenhNhan INTO patientName FROM benhnhan WHERE maBenhNhan = NEW.maBenhNhan;
         SELECT tenBacSi INTO doctorName FROM bacsi WHERE maBacSi = NEW.maBacSi;
         SELECT tenCa INTO shiftName FROM calamviec WHERE maCa = NEW.maCa;
-        SELECT CONCAT(SUBSTRING(gioBatDau, 1, 5), ' - ' COLLATE utf8mb4_general_ci, SUBSTRING(gioKetThuc, 1, 5))
+        SELECT CONCAT(SUBSTRING(gioBatDau, 1, 5), ' - ', SUBSTRING(gioKetThuc, 1, 5))
         INTO slotTime FROM suatkham WHERE maSuat = NEW.maSuat;
         SET appointmentDate = DATE_FORMAT(NEW.ngayKham, '%d/%m/%Y');
 
@@ -492,9 +630,9 @@ CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW B
                     'Hủy lịch',
                     'Lịch khám đã hủy',
                     CONCAT(
-                        'Bệnh nhân ' COLLATE utf8mb4_general_ci, patientName,
-                        ' đã hủy lịch khám ngày ' COLLATE utf8mb4_general_ci, appointmentDate, ' - ' COLLATE utf8mb4_general_ci, shiftName,
-                        '. Lý do: ' COLLATE utf8mb4_general_ci, reason
+                        'Bệnh nhân ', patientName,
+                        ' đã hủy lịch khám ngày ', appointmentDate, ' - ', shiftName,
+                        '. Lý do: ', reason
                     ),
                     NOW(),
                     0
@@ -524,10 +662,10 @@ CREATE TRIGGER `after_lichkham_update` AFTER UPDATE ON `lichkham` FOR EACH ROW B
                     'Lịch khám',
                     'Lịch khám bị hủy',
                     CONCAT(
-                        'Lịch khám ngày ' COLLATE utf8mb4_general_ci, appointmentDate,
-                        ' đã bị hủy bởi ' COLLATE utf8mb4_general_ci, cancelSource,
-                        '. Lý do: ' COLLATE utf8mb4_general_ci, reason,
-                        '. Vui lòng đặt lịch mới.' COLLATE utf8mb4_general_ci
+                        'Lịch khám ngày ', appointmentDate,
+                        ' đã bị hủy bởi ', cancelSource,
+                        '. Lý do: ', reason,
+                        '. Vui lòng đặt lịch mới.'
                     ),
                     NOW(),
                     0
@@ -539,40 +677,59 @@ END
 $$
 DELIMITER ;
 
-CREATE TABLE lienhe (
-  maLienHe int(11) NOT NULL,
-  hoTen varchar(100) NOT NULL,
-  email varchar(100) NOT NULL,
-  soDienThoai varchar(15) NOT NULL,
-  chuDe varchar(100) NOT NULL,
-  noiDung text NOT NULL,
-  trangThai enum('Chưa xử lý','Đã xử lý') NOT NULL DEFAULT 'Chưa xử lý',
-  thoiGianGui datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  nguoiXuLy int(11) DEFAULT NULL,
-  thoiGianXuLy datetime DEFAULT NULL,
-  ghiChu text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- --------------------------------------------------------
 
-INSERT INTO lienhe (maLienHe, hoTen, email, soDienThoai, chuDe, noiDung, trangThai, thoiGianGui, nguoiXuLy, thoiGianXuLy, ghiChu) VALUES
+--
+-- Cấu trúc bảng cho bảng `lienhe`
+--
+
+CREATE TABLE `lienhe` (
+  `maLienHe` int(11) NOT NULL,
+  `hoTen` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `soDienThoai` varchar(15) NOT NULL,
+  `chuDe` varchar(100) NOT NULL,
+  `noiDung` text NOT NULL,
+  `trangThai` enum('Chưa xử lý','Đã xử lý') NOT NULL DEFAULT 'Chưa xử lý',
+  `thoiGianGui` datetime NOT NULL DEFAULT current_timestamp(),
+  `nguoiXuLy` int(11) DEFAULT NULL,
+  `thoiGianXuLy` datetime DEFAULT NULL,
+  `ghiChu` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `lienhe`
+--
+
+INSERT INTO `lienhe` (`maLienHe`, `hoTen`, `email`, `soDienThoai`, `chuDe`, `noiDung`, `trangThai`, `thoiGianGui`, `nguoiXuLy`, `thoiGianXuLy`, `ghiChu`) VALUES
 (1, 'Test', 'test@gmail.com', '0123456789', 'Khác', 'test', 'Đã xử lý', '2025-11-23 19:21:51', 3, '2025-11-26 09:50:39', NULL),
 (2, 'testtwo', 'two@gmail.vn', '0987654321', 'Khác', 'a', 'Đã xử lý', '2025-11-23 19:42:29', 3, '2025-11-26 09:50:35', NULL),
 (3, 'hovaten', 'example@gamil.com', '0123456789', 'Khác', 'test n', 'Đã xử lý', '2025-11-24 17:10:15', 3, '2025-11-26 09:50:31', NULL),
 (4, 'Nguyễn Đạt', 'dat123456789fa+lienhe1@gmail.com', '0123123123', 'Khác', 'Hi', 'Đã xử lý', '2026-03-04 23:58:56', 3, '2026-03-05 00:01:02', 'Gửi lại lời chào cho khách hàng'),
-(5, 'dat', 'ntdatcntt2311055@student.ctuet.edu.vn', '0987987987', 'Tư vấn dịch vụ', 'Xin tư vấn ạ', 'Đã xử lý', '2026-04-19 02:02:33', 100, '2026-04-19 21:26:24', 'Ok bạn'),
-(6, 'Đạt', 'nguyendat992005@gmail.com', '0987987654', 'Khác', 'Xin chào', 'Chưa xử lý', '2026-04-19 22:30:33', NULL, NULL, NULL);
+(5, 'dat', 'ntdatcntt2311055@student.ctuet.edu.vn', '0987987987', 'Tư vấn dịch vụ', 'Xin tư vấn ạ', 'Chưa xử lý', '2026-04-19 02:02:33', NULL, NULL, NULL);
 
-CREATE TABLE mail_notification_log (
-  id int(11) NOT NULL,
-  event_code varchar(64) NOT NULL,
-  event_key varchar(191) NOT NULL,
-  recipient_email varchar(150) NOT NULL,
-  status enum('sent','failed','skipped') NOT NULL DEFAULT 'sent',
-  error_message text,
-  payload longtext,
-  sent_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- --------------------------------------------------------
 
-INSERT INTO mail_notification_log (id, event_code, event_key, recipient_email, status, error_message, payload, sent_at) VALUES
+--
+-- Cấu trúc bảng cho bảng `mail_notification_log`
+--
+
+CREATE TABLE `mail_notification_log` (
+  `id` int(11) NOT NULL,
+  `event_code` varchar(64) NOT NULL,
+  `event_key` varchar(191) NOT NULL,
+  `recipient_email` varchar(150) NOT NULL,
+  `status` enum('sent','failed','skipped') NOT NULL DEFAULT 'sent',
+  `error_message` text DEFAULT NULL,
+  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`payload`)),
+  `sent_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `mail_notification_log`
+--
+
+INSERT INTO `mail_notification_log` (`id`, `event_code`, `event_key`, `recipient_email`, `status`, `error_message`, `payload`, `sent_at`) VALUES
 (1, 'appointment_cancelled_patient', '61:cancel:2025-12-02:4caa2073cbd316a4c37de3eacd5ddb36', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thong bao huy lich kham #61\"}', '2026-02-23 22:47:46'),
 (2, 'appointment_booked_patient', '77:booked:2026-02-24:3', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Xac nhan dat lich kham #77\"}', '2026-02-23 22:55:08'),
 (3, 'appointment_booked_patient', '78:booked:2026-02-24:4', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Xac nhan dat lich kham #78\"}', '2026-02-23 22:55:48'),
@@ -611,69 +768,76 @@ INSERT INTO mail_notification_log (id, event_code, event_key, recipient_email, s
 (36, 'schedule_preset_changed_doctor', 'schedule_preset:2026-04-21:30', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Cập nhật lịch biểu khám từ 21\\/04\\/2026\"}', '2026-04-19 16:24:53'),
 (37, 'appointment_booked_patient', '83:booked:2026-04-20:10', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Xác nhận đặt lịch khám #83\"}', '2026-04-19 17:20:56'),
 (38, 'appointment_booked_patient', '84:booked:2026-04-22:68', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Xác nhận đặt lịch khám #84\"}', '2026-04-19 17:21:38'),
-(39, 'contact_processed', '5:contact:processed:2026-04-19 21:26:24', 'ntdatcntt2311055@student.ctuet.edu.vn', 'sent', NULL, '{\"subject\":\"Liên hệ #5 đã được xử lý\"}', '2026-04-19 21:26:26'),
-(40, 'appointment_booked_patient', '88:booked:2026-04-20:12', 'dat123456789fa+benhnhan_demo@gmail.com', 'sent', NULL, '{\"subject\":\"Xác nhận đặt lịch khám #88\"}', '2026-04-19 21:41:34'),
-(41, 'appointment_booked_doctor', '88:booked:2026-04-20:12', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo có lịch khám mới #88\"}', '2026-04-19 21:41:35'),
-(42, 'appointment_booked_patient', '89:booked:2026-04-22:72', 'dat123456789fa+benhnhan_demo@gmail.com', 'sent', NULL, '{\"subject\":\"Xác nhận đặt lịch khám #89\"}', '2026-04-19 21:48:50'),
-(43, 'appointment_booked_doctor', '89:booked:2026-04-22:72', 'dat123456789fa+bacsi_demo@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo có lịch khám mới #89\"}', '2026-04-19 21:48:51'),
-(44, 'appointment_booked_patient', '90:booked:2026-04-19:12', 'dat123456789fa+benhnhan_demo@gmail.com', 'sent', NULL, '{\"subject\":\"Xác nhận đặt lịch khám #90\"}', '2026-04-19 21:57:49'),
-(45, 'appointment_booked_doctor', '90:booked:2026-04-19:12', 'dat123456789fa+bacsi_demo@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo có lịch khám mới #90\"}', '2026-04-19 21:57:50'),
-(46, 'medical_record_ready', 'HS20260419215821604:record_ready', 'dat123456789fa+benhnhan_demo@gmail.com', 'sent', NULL, '{\"subject\":\"Hồ sơ khám bệnh đã cập nhật #HS20260419215821604\"}', '2026-04-19 21:59:51'),
-(47, 'appointment_booked_patient', '91:booked:2026-04-20:12', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Xác nhận đặt lịch khám #91\"}', '2026-04-19 22:02:33'),
-(48, 'appointment_booked_doctor', '91:booked:2026-04-20:12', 'dat123456789fa+bacsi_demo@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo có lịch khám mới #91\"}', '2026-04-19 22:02:34'),
-(49, 'appointment_cancelled_patient', '83:cancel:2026-04-20:4f0bede0e5256ac94c2a7bd88de98688', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám #83\"}', '2026-04-19 22:02:56'),
-(50, 'appointment_booked_patient', '92:booked:2026-04-21:72', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Xác nhận đặt lịch khám #92\"}', '2026-04-19 22:04:08'),
-(51, 'appointment_booked_doctor', '92:booked:2026-04-21:72', 'dat123456789fa+bacsi_demo@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo có lịch khám mới #92\"}', '2026-04-19 22:04:09'),
-(52, 'appointment_booked_patient', '93:booked:2026-04-21:71', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Xác nhận đặt lịch khám #93\"}', '2026-04-19 22:05:04'),
-(53, 'appointment_booked_doctor', '93:booked:2026-04-21:71', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo có lịch khám mới #93\"}', '2026-04-19 22:05:05'),
-(54, 'appointment_booked_patient', '94:booked:2026-04-21:72', 'dat123456789fa+benhnhan_demo@gmail.com', 'sent', NULL, '{\"subject\":\"Xác nhận đặt lịch khám #94\"}', '2026-04-19 22:05:52'),
-(55, 'appointment_booked_doctor', '94:booked:2026-04-21:72', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo có lịch khám mới #94\"}', '2026-04-19 22:05:53'),
-(56, 'appointment_booked_patient', '95:booked:2026-04-20:10', 'dat123456789fa+benhnhan_demo@gmail.com', 'sent', NULL, '{\"subject\":\"Xác nhận đặt lịch khám #95\"}', '2026-04-19 22:06:24'),
-(57, 'appointment_booked_doctor', '95:booked:2026-04-20:10', 'dat123456789fa+bacsi_demo@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo có lịch khám mới #95\"}', '2026-04-19 22:06:25'),
-(58, 'appointment_booked_patient', '96:booked:2026-04-21:71', 'dat123456789fa+benhnhan_demo@gmail.com', 'sent', NULL, '{\"subject\":\"Xác nhận đặt lịch khám #96\"}', '2026-04-19 22:06:55'),
-(59, 'appointment_booked_doctor', '96:booked:2026-04-21:71', 'dat123456789fa+bacsi_demo@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo có lịch khám mới #96\"}', '2026-04-19 22:06:56'),
-(60, 'contact_received', '6:contact:received', 'nguyendat992005@gmail.com', 'sent', NULL, '{\"subject\":\"Đã tiếp nhận liên hệ #6\"}', '2026-04-19 22:30:33'),
-(61, 'auth_profile_otp', 'profile_otp:102:075416:1776612871', 'dat123456789fa+benhnhan_demo@gmail.com', 'sent', NULL, '{\"subject\":\"Mã OTP đổi mật khẩu - Eden Health\"}', '2026-04-19 22:34:32'),
-(62, 'appointment_cancelled_patient', '95:cancel:2026-04-20:132871a092b30ba97de5220678d6527f', 'dat123456789fa+benhnhan_demo@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám #95\"}', '2026-04-19 22:37:27'),
-(63, 'appointment_cancelled_doctor', '95:cancel:2026-04-20:132871a092b30ba97de5220678d6527f', 'dat123456789fa+bacsi_demo@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám bệnh nhân #95\"}', '2026-04-19 22:37:28'),
-(64, 'appointment_booked_patient', '97:booked:2026-04-20:11', 'dat123456789fa+benhnhan_demo@gmail.com', 'sent', NULL, '{\"subject\":\"Xác nhận đặt lịch khám #97\"}', '2026-04-19 22:52:19'),
-(65, 'appointment_booked_doctor', '97:booked:2026-04-20:11', 'dat123456789fa+bacsi_demo@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo có lịch khám mới #97\"}', '2026-04-19 22:52:20'),
-(66, 'appointment_cancelled_patient', '97:cancel:2026-04-20:1d25a2b78ead98d3f6efdc73949fee6d', 'dat123456789fa+benhnhan_demo@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám #97\"}', '2026-04-19 22:54:08'),
-(67, 'appointment_cancelled_doctor', '97:cancel:2026-04-20:1d25a2b78ead98d3f6efdc73949fee6d', 'dat123456789fa+bacsi_demo@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám bệnh nhân #97\"}', '2026-04-19 22:54:09');
+(39, 'payment_success', '10:payment:success:15631936:Đã thanh toán', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thanh toán thành công hóa đơn #10\"}', '2026-07-23 00:14:03'),
+(40, 'payment_success', '11:payment:success:15631958:Đã thanh toán', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thanh toán thành công hóa đơn #11\"}', '2026-07-23 00:35:31'),
+(41, 'payment_success', '12:payment:success:15634368:Đã thanh toán', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thanh toán thành công hóa đơn #12\"}', '2026-07-24 19:55:02'),
+(42, 'appointment_rescheduled_patient', '88:reschedule:ee9d6361a63b0c6ddda7e3e7ad4601b3', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo cập nhật lịch khám #88\"}', '2026-07-24 19:55:43'),
+(43, 'appointment_rescheduled_doctor', '88:reschedule:ee9d6361a63b0c6ddda7e3e7ad4601b3', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo cập nhật lịch khám bác sĩ #88\"}', '2026-07-24 19:55:44'),
+(44, 'appointment_cancelled_patient', '81:cancel:2026-04-20:9553728325dea6087ab1a894eaf1038a', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám #81\"}', '2026-07-24 19:55:56'),
+(45, 'appointment_cancelled_doctor', '81:cancel:2026-04-20:9553728325dea6087ab1a894eaf1038a', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám bệnh nhân #81\"}', '2026-07-24 19:55:57'),
+(46, 'appointment_cancelled_patient', '83:cancel:2026-04-20:9553728325dea6087ab1a894eaf1038a', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám #83\"}', '2026-07-24 19:56:01'),
+(47, 'appointment_cancelled_patient', '84:cancel:2026-04-22:9553728325dea6087ab1a894eaf1038a', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám #84\"}', '2026-07-24 19:56:07'),
+(48, 'appointment_cancelled_patient', '86:cancel:2026-07-23:9553728325dea6087ab1a894eaf1038a', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám #86\"}', '2026-07-24 19:56:13'),
+(49, 'appointment_cancelled_doctor', '86:cancel:2026-07-23:9553728325dea6087ab1a894eaf1038a', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám bệnh nhân #86\"}', '2026-07-24 19:56:14'),
+(50, 'appointment_cancelled_patient', '87:cancel:2026-07-24:9553728325dea6087ab1a894eaf1038a', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám #87\"}', '2026-07-24 19:56:21'),
+(51, 'appointment_cancelled_doctor', '87:cancel:2026-07-24:9553728325dea6087ab1a894eaf1038a', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám bệnh nhân #87\"}', '2026-07-24 19:56:22');
 
-CREATE TABLE medicine_stock_log (
-  id int(11) NOT NULL,
-  maThuoc int(11) NOT NULL,
-  maLichKham int(11) DEFAULT NULL,
-  maHoSo varchar(30) DEFAULT NULL,
-  changeQty int(11) NOT NULL,
-  balanceAfter int(11) NOT NULL,
-  actionType varchar(32) NOT NULL,
-  note varchar(255) DEFAULT NULL,
-  createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- --------------------------------------------------------
 
-INSERT INTO medicine_stock_log (id, maThuoc, maLichKham, maHoSo, changeQty, balanceAfter, actionType, note, createdAt) VALUES
+--
+-- Cấu trúc bảng cho bảng `medicine_stock_log`
+--
+
+CREATE TABLE `medicine_stock_log` (
+  `id` int(11) NOT NULL,
+  `maThuoc` int(11) NOT NULL,
+  `maLichKham` int(11) DEFAULT NULL,
+  `maHoSo` varchar(30) DEFAULT NULL,
+  `changeQty` int(11) NOT NULL,
+  `balanceAfter` int(11) NOT NULL,
+  `actionType` varchar(32) NOT NULL,
+  `note` varchar(255) DEFAULT NULL,
+  `createdAt` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `medicine_stock_log`
+--
+
+INSERT INTO `medicine_stock_log` (`id`, `maThuoc`, `maLichKham`, `maHoSo`, `changeQty`, `balanceAfter`, `actionType`, `note`, `createdAt`) VALUES
 (1, 2, 79, 'HS20260418203208441', -5, 195, 'deduct', 'Dong bo toa thuoc cho ho so HS20260418203208441', '2026-04-18 20:34:45'),
 (2, 17, 79, 'HS20260418203208441', -5, 395, 'deduct', 'Dong bo toa thuoc cho ho so HS20260418203208441', '2026-04-18 20:34:45'),
 (3, 16, 82, 'HS20260419020444496', -5, 295, 'deduct', 'Dong bo toa thuoc cho ho so HS20260419020444496', '2026-04-19 02:06:12'),
-(4, 61, 82, 'HS20260419020444496', -5, 75, 'deduct', 'Dong bo toa thuoc cho ho so HS20260419020444496', '2026-04-19 02:06:12'),
-(5, 2, 90, 'HS20260419215821604', -5, 190, 'deduct', 'Dong bo toa thuoc cho ho so HS20260419215821604', '2026-04-19 21:59:50');
+(4, 61, 82, 'HS20260419020444496', -5, 75, 'deduct', 'Dong bo toa thuoc cho ho so HS20260419020444496', '2026-04-19 02:06:12');
 
-CREATE TABLE ngaynghi (
-  maNghi int(11) NOT NULL,
-  maBacSi varchar(20) NOT NULL,
-  ngayNghi date NOT NULL,
-  maCa int(11) DEFAULT NULL,
-  lyDo text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- --------------------------------------------------------
 
-INSERT INTO ngaynghi (maNghi, maBacSi, ngayNghi, maCa, lyDo) VALUES
+--
+-- Cấu trúc bảng cho bảng `ngaynghi`
+--
+
+CREATE TABLE `ngaynghi` (
+  `maNghi` int(11) NOT NULL,
+  `maBacSi` varchar(20) NOT NULL,
+  `ngayNghi` date NOT NULL,
+  `maCa` int(11) DEFAULT NULL,
+  `lyDo` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `ngaynghi`
+--
+
+INSERT INTO `ngaynghi` (`maNghi`, `maBacSi`, `ngayNghi`, `maCa`, `lyDo`) VALUES
 (7, 'bs1', '2025-11-27', 1, '0'),
 (8, 'bs1', '2025-11-27', 2, 'Thử'),
 (9, 'bs1', '2025-12-03', 1, 'Thích'),
 (10, 'bs1', '2026-04-19', 1, 'Bận'),
 (11, 'bs1', '2026-04-19', 2, 'Bận');
+
+--
+-- Bẫy `ngaynghi`
+--
 DELIMITER $$
 CREATE TRIGGER `after_ngaynghi_delete` AFTER DELETE ON `ngaynghi` FOR EACH ROW BEGIN
     DECLARE doctorName VARCHAR(100);
@@ -701,8 +865,8 @@ CREATE TRIGGER `after_ngaynghi_delete` AFTER DELETE ON `ngaynghi` FOR EACH ROW B
         doctorUserId,
         'Hủy nghỉ',
         'Hủy đơn nghỉ phép',
-        CONCAT('Bác sĩ ' COLLATE utf8mb4_general_ci, doctorName, ' đã hủy đơn nghỉ phép ngày ' COLLATE utf8mb4_general_ci, leaveDate, 
-               IF(OLD.maCa = 1, ' - Ca sáng' COLLATE utf8mb4_general_ci, ' - Ca chiều' COLLATE utf8mb4_general_ci)),
+        CONCAT('Bác sĩ ', doctorName, ' đã hủy đơn nghỉ phép ngày ', leaveDate, 
+               IF(OLD.maCa = 1, ' - Ca sáng', ' - Ca chiều')),
         NOW(),
         0
     );
@@ -743,7 +907,7 @@ CREATE TRIGGER `after_ngaynghi_insert` AFTER INSERT ON `ngaynghi` FOR EACH ROW B
         END IF;
 
         UPDATE thongbaoadmin
-        SET noiDung = CONCAT('Bác sĩ ' COLLATE utf8mb4_general_ci, doctorName, ' xin nghỉ phép vào ngày ' COLLATE utf8mb4_general_ci, DATE_FORMAT(NEW.ngayNghi, '%d/%m/%Y'), ' - Cả ngày. Lý do: ' COLLATE utf8mb4_general_ci, finalReason),
+        SET noiDung = CONCAT('Bác sĩ ', doctorName, ' xin nghỉ phép vào ngày ', DATE_FORMAT(NEW.ngayNghi, '%d/%m/%Y'), ' - Cả ngày. Lý do: ', finalReason),
             thoiGian = NOW(), -- Cập nhật lại thời gian mới nhất
             daXem = 0         -- Đẩy lên thành chưa xem
         WHERE maThongBao = existingNotifID;
@@ -758,9 +922,9 @@ CREATE TRIGGER `after_ngaynghi_insert` AFTER INSERT ON `ngaynghi` FOR EACH ROW B
             doctorUserId,
             'Nghỉ phép',
             'Đơn xin nghỉ phép',
-            CONCAT('Bác sĩ ' COLLATE utf8mb4_general_ci, doctorName, ' xin nghỉ phép vào ngày ' COLLATE utf8mb4_general_ci, DATE_FORMAT(NEW.ngayNghi, '%d/%m/%Y'), 
-                   IF(NEW.maCa = 1, ' - Ca sáng' COLLATE utf8mb4_general_ci, ' - Ca chiều' COLLATE utf8mb4_general_ci), 
-                   '. Lý do: ' COLLATE utf8mb4_general_ci, finalReason),
+            CONCAT('Bác sĩ ', doctorName, ' xin nghỉ phép vào ngày ', DATE_FORMAT(NEW.ngayNghi, '%d/%m/%Y'), 
+                   IF(NEW.maCa = 1, ' - Ca sáng', ' - Ca chiều'), 
+                   '. Lý do: ', finalReason),
             NOW(),
             0,
             NEW.ngayNghi -- Lưu ngày để check trùng
@@ -770,24 +934,34 @@ END
 $$
 DELIMITER ;
 
-CREATE TABLE nguoidung (
-  id int(11) NOT NULL,
-  tenDangNhap varchar(50) NOT NULL,
-  matKhau varchar(255) NOT NULL,
-  soDienThoai varchar(16) DEFAULT NULL,
-  email varchar(100) DEFAULT NULL,
-  vaiTro enum('benhnhan','bacsi','quantri') NOT NULL,
-  trangThai enum('Hoạt Động','Khóa') NOT NULL DEFAULT 'Hoạt Động',
-  ngayCapNhatTaiKhoan datetime DEFAULT NULL,
-  ngayCapNhatMatKhau datetime DEFAULT NULL,
-  avatar varchar(255) DEFAULT 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png',
-  isDeleted tinyint(1) NOT NULL DEFAULT '0',
-  deletedAt datetime DEFAULT NULL,
-  deletedBy int(11) DEFAULT NULL,
-  deleteReason text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- --------------------------------------------------------
 
-INSERT INTO nguoidung (id, tenDangNhap, matKhau, soDienThoai, email, vaiTro, trangThai, ngayCapNhatTaiKhoan, ngayCapNhatMatKhau, avatar, isDeleted, deletedAt, deletedBy, deleteReason) VALUES
+--
+-- Cấu trúc bảng cho bảng `nguoidung`
+--
+
+CREATE TABLE `nguoidung` (
+  `id` int(11) NOT NULL,
+  `tenDangNhap` varchar(50) NOT NULL,
+  `matKhau` varchar(255) NOT NULL,
+  `soDienThoai` varchar(16) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `vaiTro` enum('benhnhan','bacsi','quantri') NOT NULL,
+  `trangThai` enum('Hoạt Động','Khóa') NOT NULL DEFAULT 'Hoạt Động',
+  `ngayCapNhatTaiKhoan` datetime DEFAULT NULL,
+  `ngayCapNhatMatKhau` datetime DEFAULT NULL,
+  `avatar` varchar(255) DEFAULT 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png',
+  `isDeleted` tinyint(1) NOT NULL DEFAULT 0,
+  `deletedAt` datetime DEFAULT NULL,
+  `deletedBy` int(11) DEFAULT NULL,
+  `deleteReason` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `nguoidung`
+--
+
+INSERT INTO `nguoidung` (`id`, `tenDangNhap`, `matKhau`, `soDienThoai`, `email`, `vaiTro`, `trangThai`, `ngayCapNhatTaiKhoan`, `ngayCapNhatMatKhau`, `avatar`, `isDeleted`, `deletedAt`, `deletedBy`, `deleteReason`) VALUES
 (1, 'nguoidung1', '$2y$10$Y8HGcx2vQmfKgEb3Kp.Xfu41/ZmWMs9y78oKa5OhnSfuOjk/yC3hy', '0987654322', 'dat123456789fa@gmail.com', 'benhnhan', 'Hoạt Động', '2026-03-25 00:14:08', '2026-03-02 21:35:49', 'https://res.cloudinary.com/dlnevod7e/image/upload/v1776517111/Images/bacsi_1.gif', 0, NULL, NULL, NULL),
 (2, 'nguoidung2', '$2y$10$7G5Z78wzljUpOrRM0rS3zeDIGO3PNEao6/RbvbqvbYwRdqQtZ1kYq', '0987654323', 'dat123456789fa+nguoidung2@gmail.com', 'bacsi', 'Hoạt Động', '2026-02-24 00:46:34', '2025-12-02 12:15:59', 'https://res.cloudinary.com/dlnevod7e/image/upload/v1775243680/Images/bacsi_2.gif', 0, NULL, NULL, NULL),
 (3, 'nguoidung3', '$2y$10$/0FrHldUcP41w29..ISGO.rhD3NHA.YBmYWzOoxe9jnZBnpm97v1G', '0987654321', 'nguoidung3@gmail.com', 'quantri', 'Hoạt Động', NULL, '2025-12-02 12:16:42', 'https://res.cloudinary.com/dlnevod7e/image/upload/v1776535076/Images/bacsi_3.gif', 0, NULL, NULL, NULL),
@@ -838,32 +1012,48 @@ INSERT INTO nguoidung (id, tenDangNhap, matKhau, soDienThoai, email, vaiTro, tra
 (57, 'buithixuan', 'buithixuan2004', '0933004002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
 (58, 'test1', '$2y$10$QRCJtDF7COPA8NViycczmOk.0srx9hql/gbe97mzpr5CQxI2q9/Di', '0111111111', 'dat123456789fa+benhnhan4@gmail.com', 'benhnhan', 'Hoạt Động', '2025-11-22 23:31:28', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
 (59, 'test2', 'Eden24112025', '0222222222', 'dat123456789fa+benhnhan5@gmail.com', 'benhnhan', 'Hoạt Động', '2025-11-22 23:33:27', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(61, 'benhnhan3', '$2y$10$OCV02D1gSyYuyT1ufFWgdOaDEOOUEFGhHrXPNcjOabtdykjrTibpm', '0123123123', 'dat123456789fa+web2@gmail.com', 'benhnhan', 'Hoạt Động', '2026-03-04 15:50:05', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(100, 'admin_demo', '$2y$10$Y8HGcx2vQmfKgEb3Kp.Xfu41/ZmWMs9y78oKa5OhnSfuOjk/yC3hy', '0911222333', 'dat123456789fa+admin_demo@gmail.com', 'quantri', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1776608856/Images/bacsi_100.png', 0, NULL, NULL, NULL),
-(101, 'bacsi_demo', '$2y$10$Y8HGcx2vQmfKgEb3Kp.Xfu41/ZmWMs9y78oKa5OhnSfuOjk/yC3hy', '0922333444', 'dat123456789fa+bacsi_demo@gmail.com', 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(102, 'benhnhan_demo', '$2y$10$pxVT5FiWwpiePpBQU.6E0uFWhjI7EUAJAp5x4JDOfs1ww.SRpWK8u', '0933444555', 'dat123456789fa+benhnhan_demo@gmail.com', 'benhnhan', 'Hoạt Động', NULL, '2026-04-19 22:35:14', 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL);
+(61, 'benhnhan3', '$2y$10$OCV02D1gSyYuyT1ufFWgdOaDEOOUEFGhHrXPNcjOabtdykjrTibpm', '0123123123', 'dat123456789fa+web2@gmail.com', 'benhnhan', 'Hoạt Động', '2026-03-04 15:50:05', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL);
 
-CREATE TABLE quantrivien (
-  nguoiDungId int(11) NOT NULL,
-  maQuanTriVien varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- --------------------------------------------------------
 
-INSERT INTO quantrivien (nguoiDungId, maQuanTriVien) VALUES
-(3, 'admin1'),
-(100, 'admin2');
+--
+-- Cấu trúc bảng cho bảng `quantrivien`
+--
 
-CREATE TABLE suatkham (
-  maSuat int(11) NOT NULL,
-  maCa int(11) NOT NULL,
-  gioBatDau time NOT NULL,
-  gioKetThuc time NOT NULL,
-  isActive tinyint(1) NOT NULL DEFAULT '1',
-  effectiveFrom date NOT NULL DEFAULT '1900-01-01',
-  effectiveTo date DEFAULT NULL,
-  presetMinutes int(11) NOT NULL DEFAULT '40'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE `quantrivien` (
+  `nguoiDungId` int(11) NOT NULL,
+  `maQuanTriVien` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO suatkham (maSuat, maCa, gioBatDau, gioKetThuc, isActive, effectiveFrom, effectiveTo, presetMinutes) VALUES
+--
+-- Đang đổ dữ liệu cho bảng `quantrivien`
+--
+
+INSERT INTO `quantrivien` (`nguoiDungId`, `maQuanTriVien`) VALUES
+(3, 'admin1');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `suatkham`
+--
+
+CREATE TABLE `suatkham` (
+  `maSuat` int(11) NOT NULL,
+  `maCa` int(11) NOT NULL,
+  `gioBatDau` time NOT NULL,
+  `gioKetThuc` time NOT NULL,
+  `isActive` tinyint(1) NOT NULL DEFAULT 1,
+  `effectiveFrom` date NOT NULL DEFAULT '1900-01-01',
+  `effectiveTo` date DEFAULT NULL,
+  `presetMinutes` int(11) NOT NULL DEFAULT 40
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `suatkham`
+--
+
+INSERT INTO `suatkham` (`maSuat`, `maCa`, `gioBatDau`, `gioKetThuc`, `isActive`, `effectiveFrom`, `effectiveTo`, `presetMinutes`) VALUES
 (1, 1, '07:00:00', '07:40:00', 0, '1900-01-01', '2026-04-20', 40),
 (2, 1, '07:40:00', '08:20:00', 0, '1900-01-01', '2026-04-20', 40),
 (3, 1, '08:20:00', '09:00:00', 0, '1900-01-01', '2026-04-20', 40),
@@ -885,23 +1075,33 @@ INSERT INTO suatkham (maSuat, maCa, gioBatDau, gioKetThuc, isActive, effectiveFr
 (71, 2, '15:00:00', '16:00:00', 1, '2026-04-21', NULL, 60),
 (72, 2, '16:00:00', '17:00:00', 1, '2026-04-21', NULL, 60);
 
-CREATE TABLE thongbaoadmin (
-  maThongBao int(11) NOT NULL,
-  nguoiDungId int(11) NOT NULL,
-  maNghi int(11) DEFAULT NULL,
-  maYeuCau int(11) DEFAULT NULL,
-  soDienThoai varchar(16) DEFAULT NULL,
-  loai enum('Nghỉ phép','Hủy nghỉ','Cấp lại mật khẩu') NOT NULL DEFAULT 'Nghỉ phép',
-  tieuDe varchar(255) NOT NULL,
-  noiDung text NOT NULL,
-  thoiGian datetime DEFAULT CURRENT_TIMESTAMP,
-  daXem tinyint(1) DEFAULT '0',
-  trangThai enum('Chờ','Đã xử lý','Từ chối') DEFAULT 'Chờ',
-  thoiGianXuLy datetime DEFAULT NULL,
-  ngayLienQuan date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- --------------------------------------------------------
 
-INSERT INTO thongbaoadmin (maThongBao, nguoiDungId, maNghi, maYeuCau, soDienThoai, loai, tieuDe, noiDung, thoiGian, daXem, trangThai, thoiGianXuLy, ngayLienQuan) VALUES
+--
+-- Cấu trúc bảng cho bảng `thongbaoadmin`
+--
+
+CREATE TABLE `thongbaoadmin` (
+  `maThongBao` int(11) NOT NULL,
+  `nguoiDungId` int(11) NOT NULL,
+  `maNghi` int(11) DEFAULT NULL,
+  `maYeuCau` int(11) DEFAULT NULL,
+  `soDienThoai` varchar(16) DEFAULT NULL,
+  `loai` enum('Nghỉ phép','Hủy nghỉ','Cấp lại mật khẩu') NOT NULL DEFAULT 'Nghỉ phép',
+  `tieuDe` varchar(255) NOT NULL,
+  `noiDung` text NOT NULL,
+  `thoiGian` datetime DEFAULT current_timestamp(),
+  `daXem` tinyint(1) DEFAULT 0,
+  `trangThai` enum('Chờ','Đã xử lý','Từ chối') DEFAULT 'Chờ',
+  `thoiGianXuLy` datetime DEFAULT NULL,
+  `ngayLienQuan` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `thongbaoadmin`
+--
+
+INSERT INTO `thongbaoadmin` (`maThongBao`, `nguoiDungId`, `maNghi`, `maYeuCau`, `soDienThoai`, `loai`, `tieuDe`, `noiDung`, `thoiGian`, `daXem`, `trangThai`, `thoiGianXuLy`, `ngayLienQuan`) VALUES
 (1, 58, NULL, 6, '0111111111', 'Cấp lại mật khẩu', 'Yêu cầu cấp lại mật khẩu', 'Người dùng test1 (benhnhan) yêu cầu cấp lại mật khẩu', '2025-11-24 22:12:44', 1, 'Đã xử lý', '2025-11-24 22:13:00', NULL),
 (3, 2, 7, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn BBD xin nghỉ phép vào ngày 27/11/2025 - Cả ngày. Lý do: Thử', '2025-11-24 22:15:13', 1, 'Chờ', NULL, '2025-11-27'),
 (4, 58, NULL, 8, '0111111111', 'Cấp lại mật khẩu', 'Yêu cầu cấp lại mật khẩu', 'Người dùng test1 (benhnhan) yêu cầu cấp lại mật khẩu', '2025-11-24 22:17:16', 1, 'Từ chối', '2025-11-24 22:18:00', NULL),
@@ -910,17 +1110,27 @@ INSERT INTO thongbaoadmin (maThongBao, nguoiDungId, maNghi, maYeuCau, soDienThoa
 (9, 29, NULL, 12, '0912007002', 'Cấp lại mật khẩu', 'Yêu cầu cấp lại mật khẩu', 'Người dùng nguyenhoanganh (bacsi) yêu cầu cấp lại mật khẩu', '2026-03-04 23:25:19', 1, 'Đã xử lý', '2026-03-04 23:25:55', NULL),
 (10, 2, 10, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn Bảo xin nghỉ phép vào ngày 19/04/2026 - Cả ngày. Lý do: Bận', '2026-04-18 20:36:30', 1, 'Chờ', NULL, '2026-04-19');
 
-CREATE TABLE thongbaobenhnhan (
-  maThongBao int(11) NOT NULL,
-  maBenhNhan varchar(20) NOT NULL,
-  loai enum('Hệ thống','Lịch khám','Mật khẩu','Khác') NOT NULL DEFAULT 'Hệ thống',
-  tieuDe varchar(255) NOT NULL,
-  noiDung text NOT NULL,
-  thoiGian datetime DEFAULT CURRENT_TIMESTAMP,
-  daXem tinyint(1) DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- --------------------------------------------------------
 
-INSERT INTO thongbaobenhnhan (maThongBao, maBenhNhan, loai, tieuDe, noiDung, thoiGian, daXem) VALUES
+--
+-- Cấu trúc bảng cho bảng `thongbaobenhnhan`
+--
+
+CREATE TABLE `thongbaobenhnhan` (
+  `maThongBao` int(11) NOT NULL,
+  `maBenhNhan` varchar(20) NOT NULL,
+  `loai` enum('Hệ thống','Lịch khám','Mật khẩu','Khác') NOT NULL DEFAULT 'Hệ thống',
+  `tieuDe` varchar(255) NOT NULL,
+  `noiDung` text NOT NULL,
+  `thoiGian` datetime DEFAULT current_timestamp(),
+  `daXem` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `thongbaobenhnhan`
+--
+
+INSERT INTO `thongbaobenhnhan` (`maThongBao`, `maBenhNhan`, `loai`, `tieuDe`, `noiDung`, `thoiGian`, `daXem`) VALUES
 (1, 'BN2025112200000058', 'Mật khẩu', 'Cấp lại mật khẩu', 'Mật khẩu mới của bạn là: Eden24112025. Vui lòng đổi mật khẩu sau khi đăng nhập.', '2025-11-24 22:13:00', 1),
 (2, 'BN2025112200000058', 'Hệ thống', 'Yêu cầu bị từ chối', 'Yêu cầu cấp lại mật khẩu của bạn đã bị từ chối. Vui lòng liên hệ quản trị viên để biết thêm chi tiết.', '2025-11-24 22:18:00', 1),
 (3, 'BN2025112200000058', 'Hệ thống', 'Yêu cầu bị từ chối', 'Yêu cầu cấp lại mật khẩu của bạn đã bị từ chối. Vui lòng liên hệ quản trị viên để biết thêm chi tiết.', '2025-11-24 22:20:35', 1),
@@ -932,23 +1142,30 @@ INSERT INTO thongbaobenhnhan (maThongBao, maBenhNhan, loai, tieuDe, noiDung, tho
 (9, 'bn1', 'Lịch khám', 'Lịch khám bị hủy', 'Lịch khám ngày 24/02/2026 đã bị hủy bởi Bác sĩ. Lý do: Không có lý do cụ thể. Vui lòng đặt lịch mới.', '2026-02-23 22:57:53', 1),
 (10, 'bn1', 'Lịch khám', 'Lịch khám bị hủy', 'Lịch khám ngày 24/02/2026 đã bị hủy bởi Bác sĩ. Lý do: Không có lý do cụ thể. Vui lòng đặt lịch mới.', '2026-02-25 23:19:29', 1),
 (11, 'bn1', 'Lịch khám', 'Hồ sơ khám bệnh đã hoàn tất', 'Hồ sơ HS20260418203208441 của bạn đã được bác sĩ cập nhật hoàn tất. Lịch khám #79, ngày 11/04/2026, bác sĩ Trần Văn Bảo. Chẩn đoán: Đau đầu, thiếu vitamin', '2026-04-18 20:34:45', 1),
-(12, 'bn1', 'Lịch khám', 'Hồ sơ khám bệnh đã hoàn tất', 'Hồ sơ HS20260419020444496 của bạn đã được bác sĩ cập nhật hoàn tất. Lịch khám #82, ngày 18/04/2026, bác sĩ Trần Văn Bảo. Chẩn đoán: Vẫn ổn', '2026-04-19 02:06:12', 1),
-(13, 'BN_DEMO_01', 'Lịch khám', 'Hồ sơ khám bệnh đã hoàn tất', 'Hồ sơ HS20260419215821604 của bạn đã được bác sĩ cập nhật hoàn tất. Lịch khám #90, ngày 19/04/2026, bác sĩ Lê Thành Nam. Chẩn đoán: Đau chân không rõ nguyên do', '2026-04-19 21:59:50', 1),
-(14, 'BN_DEMO_01', 'Lịch khám', 'Lịch khám bị hủy', 'Lịch khám ngày 20/04/2026 đã bị hủy bởi Bác s?. Lý do: Không có lý do c? th?. Vui lòng đặt lịch mới.', '2026-04-19 22:37:26', 1),
-(15, 'BN_DEMO_01', 'Lịch khám', 'Lịch khám bị hủy', 'Lịch khám ngày 20/04/2026 đã bị hủy bởi Bác s?. Lý do: B?n vi?c. Vui lòng đặt lịch mới.', '2026-04-19 22:54:07', 1);
+(12, 'bn1', 'Lịch khám', 'Hồ sơ khám bệnh đã hoàn tất', 'Hồ sơ HS20260419020444496 của bạn đã được bác sĩ cập nhật hoàn tất. Lịch khám #82, ngày 18/04/2026, bác sĩ Trần Văn Bảo. Chẩn đoán: Vẫn ổn', '2026-04-19 02:06:12', 1);
 
-CREATE TABLE thongbaolichkham (
-  maThongBao int(11) NOT NULL,
-  maBacSi varchar(20) NOT NULL,
-  maLichKham int(11) DEFAULT NULL,
-  loai enum('Đặt lịch','Hủy lịch') NOT NULL,
-  tieuDe varchar(255) NOT NULL,
-  noiDung text NOT NULL,
-  thoiGian datetime DEFAULT CURRENT_TIMESTAMP,
-  daXem tinyint(1) DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- --------------------------------------------------------
 
-INSERT INTO thongbaolichkham (maThongBao, maBacSi, maLichKham, loai, tieuDe, noiDung, thoiGian, daXem) VALUES
+--
+-- Cấu trúc bảng cho bảng `thongbaolichkham`
+--
+
+CREATE TABLE `thongbaolichkham` (
+  `maThongBao` int(11) NOT NULL,
+  `maBacSi` varchar(20) NOT NULL,
+  `maLichKham` int(11) DEFAULT NULL,
+  `loai` enum('Đặt lịch','Hủy lịch') NOT NULL,
+  `tieuDe` varchar(255) NOT NULL,
+  `noiDung` text NOT NULL,
+  `thoiGian` datetime DEFAULT current_timestamp(),
+  `daXem` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `thongbaolichkham`
+--
+
+INSERT INTO `thongbaolichkham` (`maThongBao`, `maBacSi`, `maLichKham`, `loai`, `tieuDe`, `noiDung`, `thoiGian`, `daXem`) VALUES
 (1, 'bs1', 26, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Trần Văn H đã đặt lịch khám vào ngày 18/11/2025 - Ca sáng', '2025-11-18 03:44:15', 1),
 (2, 'bs1', 27, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân AAAAAAAA đã đặt lịch khám vào ngày 19/11/2025 - Ca sáng', '2025-11-18 18:48:42', 1),
 (3, 'bs1', 28, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân ABCs đã đặt lịch khám vào ngày 19/11/2025 - Ca sáng', '2025-11-18 18:48:59', 1),
@@ -1190,7 +1407,7 @@ INSERT INTO thongbaolichkham (maThongBao, maBacSi, maLichKham, loai, tieuDe, noi
 (259, 'BS20251121033', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
 (260, 'BS20251121034', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
 (261, 'BS20251121035', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0);
-INSERT INTO thongbaolichkham (maThongBao, maBacSi, maLichKham, loai, tieuDe, noiDung, thoiGian, daXem) VALUES
+INSERT INTO `thongbaolichkham` (`maThongBao`, `maBacSi`, `maLichKham`, `loai`, `tieuDe`, `noiDung`, `thoiGian`, `daXem`) VALUES
 (262, 'BS20251121036', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
 (263, 'BS20251121037', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
 (264, 'BS20251121038', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
@@ -1208,344 +1425,533 @@ INSERT INTO thongbaolichkham (maThongBao, maBacSi, maLichKham, loai, tieuDe, noi
 (276, 'BS20251121050', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
 (277, 'BS20251121030', 83, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 20/04/2026 - Ca chiều', '2026-04-19 17:20:55', 0),
 (278, 'BS20251121027', 84, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 22/04/2026 - Ca sáng', '2026-04-19 17:21:37', 0),
-(279, 'bs1', 88, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Hoàng Long đã đặt lịch khám vào ngày 20/04/2026 - Ca chi?u', '2026-04-19 21:41:33', 0),
-(280, 'BS_DEMO_01', 89, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Hoàng Long đã đặt lịch khám vào ngày 22/04/2026 - Ca chi?u', '2026-04-19 21:48:44', 1),
-(281, 'BS_DEMO_01', 90, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Hoàng Long đã đặt lịch khám vào ngày 19/04/2026 - Ca chi?u', '2026-04-19 21:57:48', 1),
-(282, 'BS_DEMO_01', 91, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguy?n V?n Anh đã đặt lịch khám vào ngày 20/04/2026 - Ca chi?u', '2026-04-19 22:02:32', 1),
-(283, 'BS20251121030', 83, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguy?n V?n Anh đã hủy lịch khám ngày 20/04/2026 - Ca chi?u. Lý do: B?n vi?c', '2026-04-19 22:02:55', 0),
-(284, 'BS_DEMO_01', 92, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguy?n V?n Anh đã đặt lịch khám vào ngày 21/04/2026 - Ca chi?u', '2026-04-19 22:04:08', 1),
-(285, 'bs1', 93, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguy?n V?n Anh đã đặt lịch khám vào ngày 21/04/2026 - Ca chi?u', '2026-04-19 22:05:03', 0),
-(286, 'bs1', 94, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Hoàng Long đã đặt lịch khám vào ngày 21/04/2026 - Ca chi?u', '2026-04-19 22:05:51', 0),
-(287, 'BS_DEMO_01', 95, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Hoàng Long đã đặt lịch khám vào ngày 20/04/2026 - Ca chi?u', '2026-04-19 22:06:24', 1),
-(288, 'BS_DEMO_01', 96, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Hoàng Long đã đặt lịch khám vào ngày 21/04/2026 - Ca chi?u', '2026-04-19 22:06:48', 1),
-(289, 'BS_DEMO_01', 97, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Hoàng Long đã đặt lịch khám vào ngày 20/04/2026 - Ca chi?u', '2026-04-19 22:52:18', 1);
+(279, 'bs1', 85, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 23/07/2026 - Ca sáng', '2026-07-22 23:57:37', 0),
+(280, 'bs1', 86, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 23/07/2026 - Ca sáng', '2026-07-23 00:12:10', 0),
+(281, 'bs1', 87, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 24/07/2026 - Ca sáng', '2026-07-23 00:34:55', 0),
+(282, 'bs1', 88, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 27/07/2026 - Ca sáng', '2026-07-24 19:54:05', 0),
+(283, 'bs1', 81, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 20/04/2026 - Ca sáng. Lý do: Bận', '2026-07-24 19:55:55', 0),
+(284, 'BS20251121030', 83, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 20/04/2026 - Ca chiều. Lý do: Bận', '2026-07-24 19:56:01', 0),
+(285, 'BS20251121027', 84, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 22/04/2026 - Ca sáng. Lý do: Bận', '2026-07-24 19:56:06', 0),
+(286, 'bs1', 86, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 23/07/2026 - Ca sáng. Lý do: Bận', '2026-07-24 19:56:12', 0),
+(287, 'bs1', 87, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 24/07/2026 - Ca sáng. Lý do: Bận', '2026-07-24 19:56:20', 0);
 
-CREATE TABLE thuoc (
-  maThuoc int(11) NOT NULL,
-  tenThuoc varchar(100) NOT NULL,
-  donViTinh varchar(20) DEFAULT NULL,
-  soLuongTon int(11) DEFAULT '0',
-  giaTien decimal(10,2) DEFAULT NULL,
-  cachDungMacDinh text,
-  loaiThuoc varchar(50) DEFAULT NULL COMMENT 'Loại thuốc: kháng sinh, giảm đau, vitamin...',
-  nhaSanXuat varchar(100) DEFAULT NULL COMMENT 'Nhà sản xuất / Nguồn gốc',
-  hanSuDung date DEFAULT NULL COMMENT 'Hạn sử dụng mặc định',
-  nguongCanhBao int(11) NOT NULL DEFAULT '10' COMMENT 'Ngưỡng cảnh báo tồn kho thấp'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- --------------------------------------------------------
 
-INSERT INTO thuoc (maThuoc, tenThuoc, donViTinh, soLuongTon, giaTien, cachDungMacDinh, loaiThuoc, nhaSanXuat, hanSuDung, nguongCanhBao) VALUES
-(1, 'Paracetamol 500mg', 'Viên', 500, '1500.00', 'Uống 1-2 viên/lần, 4-6 giờ/lần, tối đa 8 viên/ngày', 'Giảm đau / Hạ sốt', 'Hậu Giang Pharma', '2027-06-30', 50),
-(2, 'Paracetamol 650mg (Efferalgan)', 'Viên', 190, '4500.00', 'Uống 1 viên/lần, 4-6 giờ/lần. Uống ngay sau ăn', 'Giảm đau / Hạ sốt', 'UPSA - Pháp', '2026-12-31', 20),
-(3, 'Ibuprofen 400mg', 'Viên', 300, '3200.00', 'Uống 1 viên/lần sau ăn, 3 lần/ngày. Không dùng khi đói', 'Giảm đau / Hạ sốt', 'DHG Pharma', '2027-03-31', 30),
-(4, 'Diclofenac 50mg', 'Viên', 150, '2800.00', 'Uống 1 viên/lần, 2-3 lần/ngày sau bữa ăn', 'Giảm đau / Hạ sốt', 'Pymepharco', '2026-09-30', 20),
-(5, 'Meloxicam 7.5mg', 'Viên', 120, '4200.00', 'Uống 1 viên/ngày trong bữa ăn. Không dùng quá 15mg/ngày', 'Giảm đau / Hạ sốt', 'Boehringer Ingelheim', '2027-01-31', 15),
-(6, 'Celecoxib 200mg', 'Viên', 100, '8500.00', 'Uống 1-2 viên/ngày. Uống cùng bữa ăn', 'Giảm đau / Hạ sốt', 'Pfizer', '2026-11-30', 10),
-(7, 'Amoxicillin 500mg', 'Viên', 400, '4500.00', 'Uống 1 viên x 3 lần/ngày, cách đều 8 giờ. Uống hết liều', 'Kháng sinh', 'Stada', '2026-08-31', 40),
-(8, 'Amoxicillin + Clavulanic 625mg', 'Viên', 200, '12000.00', 'Uống 1 viên x 2 lần/ngày trong bữa ăn', 'Kháng sinh', 'GlaxoSmithKline', '2026-10-31', 20),
-(9, 'Azithromycin 500mg', 'Viên', 180, '9500.00', 'Uống 1 viên/ngày x 3 ngày liên tục, xa bữa ăn 1 giờ', 'Kháng sinh', 'Pfizer', '2027-02-28', 15),
-(10, 'Ciprofloxacin 500mg', 'Viên', 200, '5500.00', 'Uống 1 viên x 2 lần/ngày. Uống nhiều nước, xa antacid', 'Kháng sinh', 'Bayer', '2026-07-31', 20),
-(11, 'Doxycycline 100mg', 'Viên', 150, '4800.00', 'Uống 1 viên x 2 lần/ngày sau bữa ăn. Uống đủ nước', 'Kháng sinh', 'Pymepharco', '2026-12-31', 15),
-(12, 'Cefuroxime 500mg', 'Viên', 120, '18000.00', 'Uống 1 viên x 2 lần/ngày sau bữa ăn', 'Kháng sinh', 'GlaxoSmithKline', '2026-09-30', 10),
-(13, 'Metronidazole 500mg', 'Viên', 250, '2500.00', 'Uống 1 viên x 3 lần/ngày trong bữa ăn. Không uống rượu', 'Kháng sinh', 'Hậu Giang Pharma', '2027-04-30', 25),
-(14, 'Clarithromycin 250mg', 'Viên', 100, '12500.00', 'Uống 1 viên x 2 lần/ngày, cách đều 12 giờ', 'Kháng sinh', 'Abbott', '2026-11-30', 10),
-(15, 'Trimethoprim + SMX 480mg', 'Viên', 200, '3500.00', 'Uống 2 viên x 2 lần/ngày. Uống nhiều nước', 'Kháng sinh', 'DHG Pharma', '2026-08-31', 20),
-(16, 'Vitamin C 1000mg (Sủi)', 'Viên', 295, '3500.00', 'Hòa tan 1 viên trong 200ml nước, uống 1 lần/ngày sau ăn', 'Vitamin & Khoáng chất', 'Meyer-BPC', '2027-06-30', 30),
-(17, 'Vitamin B Complex', 'Viên', 395, '1800.00', 'Uống 1-2 viên/ngày sau bữa ăn', 'Vitamin & Khoáng chất', 'DHG Pharma', '2027-05-31', 40),
-(18, 'Vitamin D3 2000IU', 'Viên', 200, '5500.00', 'Uống 1 viên/ngày trong bữa ăn có chất béo', 'Vitamin & Khoáng chất', 'Ostelin', '2027-08-31', 20),
-(19, 'Canxi + D3 (Calcium Sandoz)', 'Viên', 250, '4200.00', 'Nhai hoặc ngậm 1-2 viên/ngày. Không uống cùng sắt', 'Vitamin & Khoáng chất', 'Novartis', '2027-07-31', 25),
-(20, 'Sắt Fumarate 200mg', 'Viên', 200, '3800.00', 'Uống 1 viên/ngày xa bữa ăn. Có thể uống cùng Vitamin C', 'Vitamin & Khoáng chất', 'Pymepharco', '2026-12-31', 20),
-(21, 'Magie B6', 'Viên', 300, '4500.00', 'Uống 2-6 viên/ngày chia nhiều lần trong bữa ăn', 'Vitamin & Khoáng chất', 'Sanofi', '2027-03-31', 30),
-(22, 'Kẽm Gluconate 70mg', 'Viên', 150, '3200.00', 'Uống 1 viên/ngày sau bữa ăn', 'Vitamin & Khoáng chất', 'DHG Pharma', '2027-02-28', 15),
-(23, 'Omega-3 1000mg', 'Viên', 200, '8500.00', 'Uống 1-2 viên/ngày trong bữa ăn', 'Vitamin & Khoáng chất', 'Nature Made', '2027-09-30', 20),
-(24, 'Omeprazole 20mg', 'Viên', 300, '3500.00', 'Uống 1 viên trước bữa ăn sáng 30 phút', 'Tiêu hóa', 'Stada', '2026-10-31', 30),
-(25, 'Pantoprazole 40mg', 'Viên', 200, '7500.00', 'Uống 1 viên/ngày trước bữa ăn sáng 30-60 phút', 'Tiêu hóa', 'Pymepharco', '2026-12-31', 20),
-(26, 'Domperidone 10mg', 'Viên', 300, '2200.00', 'Uống 1 viên x 3 lần/ngày trước bữa ăn 15-30 phút', 'Tiêu hóa', 'Janssen', '2026-09-30', 30),
-(27, 'Metoclopramide 10mg', 'Viên', 200, '1800.00', 'Uống 1 viên x 3 lần/ngày trước bữa ăn 30 phút', 'Tiêu hóa', 'DHG Pharma', '2026-08-31', 20),
-(28, 'Smecta 3g', 'Gói', 200, '8500.00', 'Pha 1 gói với 50ml nước, uống 3 lần/ngày xa bữa ăn', 'Tiêu hóa', 'Ipsen', '2027-01-31', 20),
-(29, 'Loperamide 2mg', 'Viên', 200, '3200.00', 'Uống 2 viên lần đầu, sau đó 1 viên sau mỗi lần tiêu chảy', 'Tiêu hóa', 'Janssen', '2026-11-30', 20),
-(30, 'Men vi sinh Enterogermina', 'Ống', 150, '15000.00', 'Uống 1-2 ống/ngày trong hoặc sau bữa ăn', 'Tiêu hóa', 'Sanofi', '2026-07-31', 8),
-(31, 'Simethicone 40mg', 'Viên', 300, '2500.00', 'Nhai 2-4 viên sau bữa ăn và trước khi ngủ', 'Tiêu hóa', 'Pymepharco', '2027-02-28', 30),
-(32, 'Amlodipine 5mg', 'Viên', 200, '2800.00', 'Uống 1 viên/ngày, cùng giờ mỗi ngày, có thể cùng bữa ăn', 'Tim mạch', 'Pfizer', '2027-04-30', 20),
-(33, 'Losartan 50mg', 'Viên', 180, '4500.00', 'Uống 1 viên/ngày, cùng giờ', 'Tim mạch', 'MSD', '2027-03-31', 15),
-(34, 'Atenolol 50mg', 'Viên', 150, '2200.00', 'Uống 1 viên/ngày vào buổi sáng', 'Tim mạch', 'AstraZeneca', '2026-10-31', 15),
-(35, 'Bisoprolol 5mg', 'Viên', 150, '5500.00', 'Uống 1 viên/ngày trong bữa sáng', 'Tim mạch', 'Merck', '2026-11-30', 15),
-(36, 'Aspirin 81mg (Cardio)', 'Viên', 300, '3200.00', 'Uống 1 viên/ngày sau ăn tối', 'Tim mạch', 'Bayer', '2027-06-30', 30),
-(37, 'Atorvastatin 10mg', 'Viên', 200, '8500.00', 'Uống 1 viên/ngày, có thể bất kỳ lúc nào', 'Tim mạch', 'Pfizer', '2027-05-31', 20),
-(38, 'Cetirizine 10mg', 'Viên', 300, '2800.00', 'Uống 1 viên/ngày vào buổi tối', 'Hô hấp', 'UCB', '2027-04-30', 30),
-(39, 'Loratadine 10mg', 'Viên', 300, '2200.00', 'Uống 1 viên/ngày vào buổi sáng', 'Hô hấp', 'Pymepharco', '2027-03-31', 30),
-(40, 'Ambroxol 30mg', 'Viên', 250, '2500.00', 'Uống 1 viên x 3 lần/ngày sau bữa ăn', 'Hô hấp', 'Boehringer Ingelheim', '2026-11-30', 25),
-(41, 'Acetylcysteine 600mg (Sủi)', 'Viên', 180, '9500.00', 'Hòa tan 1 viên trong 200ml nước, uống 1 lần/ngày', 'Hô hấp', 'Zambon', '2026-12-31', 15),
-(42, 'Bromhexine 8mg', 'Viên', 200, '1800.00', 'Uống 1 viên x 3 lần/ngày sau bữa ăn', 'Hô hấp', 'Hậu Giang Pharma', '2026-10-31', 20),
-(43, 'Montelukast 10mg', 'Viên', 120, '12000.00', 'Uống 1 viên/ngày vào buổi tối', 'Hô hấp', 'MSD', '2027-02-28', 10),
-(44, 'Fexofenadine 120mg', 'Viên', 150, '8500.00', 'Uống 1 viên x 2 lần/ngày trước bữa ăn 1 giờ', 'Hô hấp', 'Sanofi', '2027-01-31', 15),
-(45, 'Clotrimazole cream 1%', 'Tuýp', 100, '25000.00', 'Thoa một lớp mỏng lên vùng da tổn thương 2-3 lần/ngày', 'Da liễu', 'Bayer', '2026-08-31', 10),
-(46, 'Hydrocortisone cream 1%', 'Tuýp', 80, '28000.00', 'Thoa nhẹ lên vùng da viêm 1-2 lần/ngày. Không dùng quá 7 ngày', 'Da liễu', 'DHG Pharma', '2026-12-31', 8),
-(47, 'Acyclovir 400mg', 'Viên', 100, '8500.00', 'Uống 1 viên x 3-5 lần/ngày theo chỉ định bác sĩ', 'Da liễu', 'GlaxoSmithKline', '2026-11-30', 10),
-(48, 'Betamethasone 0.1% cream', 'Tuýp', 80, '35000.00', 'Thoa 1-2 lần/ngày lên vùng da. Không thoa mặt, vùng kín', 'Da liễu', 'GlaxoSmithKline', '2027-03-31', 8),
-(49, 'Piracetam 800mg', 'Viên', 200, '5500.00', 'Uống 2-4 viên x 3 lần/ngày sau bữa ăn', 'Thần kinh', 'UCB', '2026-10-31', 20),
-(50, 'Cinnarizine 25mg', 'Viên', 300, '2200.00', 'Uống 1 viên x 3 lần/ngày sau bữa ăn', 'Thần kinh', 'Janssen', '2026-12-31', 30),
-(51, 'Betahistine 16mg', 'Viên', 200, '6500.00', 'Uống 1 viên x 3 lần/ngày trong bữa ăn', 'Thần kinh', 'Abbott', '2027-01-31', 20),
-(52, 'Flunarizine 5mg', 'Viên', 150, '4500.00', 'Uống 1-2 viên/ngày vào buổi tối', 'Thần kinh', 'Janssen', '2026-11-30', 15),
-(53, 'Metformin 500mg', 'Viên', 400, '1800.00', 'Uống 1-2 viên x 2-3 lần/ngày trong bữa ăn', 'Nội tiết', 'Merck', '2027-06-30', 40),
-(54, 'Metformin 1000mg', 'Viên', 250, '3200.00', 'Uống 1 viên x 2 lần/ngày trong bữa ăn', 'Nội tiết', 'Merck', '2027-05-31', 25),
-(55, 'Glipizide 5mg', 'Viên', 200, '3500.00', 'Uống 1 viên x 1-2 lần/ngày trước bữa ăn 30 phút', 'Nội tiết', 'Pfizer', '2026-10-31', 20),
-(56, 'Levothyroxine 50mcg', 'Viên', 150, '8500.00', 'Uống 1 viên/ngày lúc đói, trước ăn sáng 30 phút', 'Nội tiết', 'Merck', '2026-12-31', 15),
-(57, 'Glibenclamide 5mg', 'Viên', 200, '2800.00', 'Uống 1-3 viên/ngày trước bữa ăn sáng', 'Nội tiết', 'Hậu Giang Pharma', '2026-09-30', 20),
-(58, 'Prednisolone 5mg', 'Viên', 300, '1500.00', 'Uống theo chỉ định bác sĩ. Uống sau ăn sáng', 'Kháng viêm', 'DHG Pharma', '2026-12-31', 30),
-(59, 'Methylprednisolone 16mg', 'Viên', 150, '9500.00', 'Uống theo chỉ định bác sĩ sau bữa ăn sáng', 'Kháng viêm', 'Pfizer', '2026-10-31', 15),
-(60, 'Dexamethasone 0.5mg', 'Viên', 200, '1200.00', 'Uống theo chỉ định bác sĩ', 'Kháng viêm', 'Pymepharco', '2026-08-31', 20),
-(61, 'Colchicine 0.6mg', 'Viên', 75, '12000.00', 'Uống theo chỉ định bác sĩ. Không vượt quá 1.2mg/lần', 'Kháng viêm', 'Takeda', '2026-11-30', 8),
-(62, 'Tobramycin nhỏ mắt 0.3%', 'Lọ', 100, '35000.00', 'Nhỏ 1-2 giọt vào mắt x 4 lần/ngày', 'Mắt', 'Alcon', '2026-07-31', 10),
-(63, 'Nước muối sinh lý 0.9%', 'Lọ', 500, '5000.00', 'Rửa mắt, mũi hoặc vệ sinh vết thương theo nhu cầu', 'Mắt', 'Hậu Giang Pharma', '2027-12-31', 50),
-(64, 'Xylometazoline xịt mũi 0.1%', 'Lọ', 150, '28000.00', 'Xịt 2-3 lần vào mỗi bên mũi x 2-3 lần/ngày. Không dùng >7 ngày', 'Tai mũi họng', 'GlaxoSmithKline', '2026-09-30', 15),
-(65, 'Strepsils (Viêm họng)', 'Viên', 200, '8500.00', 'Ngậm 1 viên mỗi 2-3 giờ, tối đa 8 viên/ngày', 'Tai mũi họng', 'Reckitt', '2027-02-28', 20),
-(66, 'Oresol (ORS)', 'Gói', 300, '3500.00', 'Pha 1 gói với 200ml nước sôi để nguội, uống sau mỗi lần tiêu chảy', 'Điện giải', 'DHG Pharma', '2027-08-31', 30),
-(67, 'Hydrite (Bù điện giải)', 'Gói', 200, '4500.00', 'Pha 1 gói với 200ml nước sôi để nguội, uống từng ngụm nhỏ', 'Điện giải', 'Stada', '2027-06-30', 20),
-(68, 'Povidone Iodine 10% (Betadine)', 'Chai', 200, '45000.00', 'Bôi trực tiếp lên vết thương đã rửa sạch, 1-2 lần/ngày', 'Sát khuẩn', 'Mundipharma', '2027-06-30', 20),
-(69, 'Cồn Ethanol 70°', 'Chai', 300, '18000.00', 'Sát trùng da, dụng cụ trước và sau thủ thuật', 'Sát khuẩn', 'DHG Pharma', '2027-12-31', 30),
-(70, 'Hydrogen Peroxide 3%', 'Chai', 150, '12000.00', 'Sử dụng để rửa vết thương, pha loãng 1:1 với nước', 'Sát khuẩn', 'Hậu Giang Pharma', '2027-10-31', 15),
-(71, 'Furosemide 40mg', 'Viên', 150, '2200.00', 'Uống 1 viên/ngày vào buổi sáng. Uống sau ăn', 'Lợi tiểu', 'Sanofi', '2026-10-31', 15),
-(72, 'Allopurinol 300mg', 'Viên', 150, '3200.00', 'Uống 1 viên/ngày sau bữa ăn. Uống nhiều nước', 'Gout', 'Pymepharco', '2027-03-31', 15),
-(73, 'Clopidogrel 75mg', 'Viên', 120, '15000.00', 'Uống 1 viên/ngày sau bữa ăn', 'Chống đông', 'Sanofi', '2027-01-31', 10),
-(74, 'Warfarin 2mg', 'Viên', 80, '8500.00', 'Uống theo chỉ định bác sĩ, cùng giờ mỗi ngày', 'Chống đông', 'Orion', '2026-12-31', 10),
-(75, 'Epinephrine 1mg/mL (tiêm)', 'Ống', 30, '45000.00', 'Chỉ dùng trong cấp cứu phản vệ, theo chỉ định bác sĩ', 'Cấp cứu', 'Aguettant', '2026-08-31', 3),
-(76, 'Atropine 0.5mg (tiêm)', 'Ống', 30, '38000.00', 'Dùng theo chỉ định bác sĩ, tiêm tĩnh mạch hoặc bắp', 'Cấp cứu', 'DHG Pharma', '2026-07-31', 3),
-(77, 'Paracetamol 500mg', 'Viên', 100, '2500.00', 'Uống sau ăn 30 phút', 'Giảm đau / Hạ sốt', 'Hậu Giang', '2026-12-31', 10),
-(78, 'Amoxicillin 500mg', 'Viên', 50, '8000.00', 'Uống 3 lần/ngày', 'Kháng sinh', 'Stada', '2026-09-01', 5);
+--
+-- Cấu trúc bảng cho bảng `thuoc`
+--
 
+CREATE TABLE `thuoc` (
+  `maThuoc` int(11) NOT NULL,
+  `tenThuoc` varchar(100) NOT NULL,
+  `donViTinh` varchar(20) DEFAULT NULL,
+  `soLuongTon` int(11) DEFAULT 0,
+  `giaTien` decimal(10,2) DEFAULT NULL,
+  `cachDungMacDinh` text DEFAULT NULL,
+  `loaiThuoc` varchar(50) DEFAULT NULL COMMENT 'Loại thuốc: kháng sinh, giảm đau, vitamin...',
+  `nhaSanXuat` varchar(100) DEFAULT NULL COMMENT 'Nhà sản xuất / Nguồn gốc',
+  `hanSuDung` date DEFAULT NULL COMMENT 'Hạn sử dụng mặc định',
+  `nguongCanhBao` int(11) NOT NULL DEFAULT 10 COMMENT 'Ngưỡng cảnh báo tồn kho thấp'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-ALTER TABLE bacsi
-  ADD PRIMARY KEY (maBacSi),
-  ADD UNIQUE KEY nguoiDungId (nguoiDungId),
-  ADD KEY maChuyenKhoa (maChuyenKhoa),
-  ADD KEY idx_bacsi_ten_ma (tenBacSi,maBacSi),
-  ADD KEY idx_bacsi_chuyenkhoa_ten_ma (maChuyenKhoa,tenBacSi,maBacSi);
+--
+-- Đang đổ dữ liệu cho bảng `thuoc`
+--
 
-ALTER TABLE benhnhan
-  ADD PRIMARY KEY (maBenhNhan),
-  ADD UNIQUE KEY nguoiDungId (nguoiDungId);
+INSERT INTO `thuoc` (`maThuoc`, `tenThuoc`, `donViTinh`, `soLuongTon`, `giaTien`, `cachDungMacDinh`, `loaiThuoc`, `nhaSanXuat`, `hanSuDung`, `nguongCanhBao`) VALUES
+(1, 'Paracetamol 500mg', 'Viên', 500, 1500.00, 'Uống 1-2 viên/lần, 4-6 giờ/lần, tối đa 8 viên/ngày', 'Giảm đau / Hạ sốt', 'Hậu Giang Pharma', '2027-06-30', 50),
+(2, 'Paracetamol 650mg (Efferalgan)', 'Viên', 195, 4500.00, 'Uống 1 viên/lần, 4-6 giờ/lần. Uống ngay sau ăn', 'Giảm đau / Hạ sốt', 'UPSA - Pháp', '2026-12-31', 20),
+(3, 'Ibuprofen 400mg', 'Viên', 300, 3200.00, 'Uống 1 viên/lần sau ăn, 3 lần/ngày. Không dùng khi đói', 'Giảm đau / Hạ sốt', 'DHG Pharma', '2027-03-31', 30),
+(4, 'Diclofenac 50mg', 'Viên', 150, 2800.00, 'Uống 1 viên/lần, 2-3 lần/ngày sau bữa ăn', 'Giảm đau / Hạ sốt', 'Pymepharco', '2026-09-30', 20),
+(5, 'Meloxicam 7.5mg', 'Viên', 120, 4200.00, 'Uống 1 viên/ngày trong bữa ăn. Không dùng quá 15mg/ngày', 'Giảm đau / Hạ sốt', 'Boehringer Ingelheim', '2027-01-31', 15),
+(6, 'Celecoxib 200mg', 'Viên', 100, 8500.00, 'Uống 1-2 viên/ngày. Uống cùng bữa ăn', 'Giảm đau / Hạ sốt', 'Pfizer', '2026-11-30', 10),
+(7, 'Amoxicillin 500mg', 'Viên', 400, 4500.00, 'Uống 1 viên x 3 lần/ngày, cách đều 8 giờ. Uống hết liều', 'Kháng sinh', 'Stada', '2026-08-31', 40),
+(8, 'Amoxicillin + Clavulanic 625mg', 'Viên', 200, 12000.00, 'Uống 1 viên x 2 lần/ngày trong bữa ăn', 'Kháng sinh', 'GlaxoSmithKline', '2026-10-31', 20),
+(9, 'Azithromycin 500mg', 'Viên', 180, 9500.00, 'Uống 1 viên/ngày x 3 ngày liên tục, xa bữa ăn 1 giờ', 'Kháng sinh', 'Pfizer', '2027-02-28', 15),
+(10, 'Ciprofloxacin 500mg', 'Viên', 200, 5500.00, 'Uống 1 viên x 2 lần/ngày. Uống nhiều nước, xa antacid', 'Kháng sinh', 'Bayer', '2026-07-31', 20),
+(11, 'Doxycycline 100mg', 'Viên', 150, 4800.00, 'Uống 1 viên x 2 lần/ngày sau bữa ăn. Uống đủ nước', 'Kháng sinh', 'Pymepharco', '2026-12-31', 15),
+(12, 'Cefuroxime 500mg', 'Viên', 120, 18000.00, 'Uống 1 viên x 2 lần/ngày sau bữa ăn', 'Kháng sinh', 'GlaxoSmithKline', '2026-09-30', 10),
+(13, 'Metronidazole 500mg', 'Viên', 250, 2500.00, 'Uống 1 viên x 3 lần/ngày trong bữa ăn. Không uống rượu', 'Kháng sinh', 'Hậu Giang Pharma', '2027-04-30', 25),
+(14, 'Clarithromycin 250mg', 'Viên', 100, 12500.00, 'Uống 1 viên x 2 lần/ngày, cách đều 12 giờ', 'Kháng sinh', 'Abbott', '2026-11-30', 10),
+(15, 'Trimethoprim + SMX 480mg', 'Viên', 200, 3500.00, 'Uống 2 viên x 2 lần/ngày. Uống nhiều nước', 'Kháng sinh', 'DHG Pharma', '2026-08-31', 20),
+(16, 'Vitamin C 1000mg (Sủi)', 'Viên', 295, 3500.00, 'Hòa tan 1 viên trong 200ml nước, uống 1 lần/ngày sau ăn', 'Vitamin & Khoáng chất', 'Meyer-BPC', '2027-06-30', 30),
+(17, 'Vitamin B Complex', 'Viên', 395, 1800.00, 'Uống 1-2 viên/ngày sau bữa ăn', 'Vitamin & Khoáng chất', 'DHG Pharma', '2027-05-31', 40),
+(18, 'Vitamin D3 2000IU', 'Viên', 200, 5500.00, 'Uống 1 viên/ngày trong bữa ăn có chất béo', 'Vitamin & Khoáng chất', 'Ostelin', '2027-08-31', 20),
+(19, 'Canxi + D3 (Calcium Sandoz)', 'Viên', 250, 4200.00, 'Nhai hoặc ngậm 1-2 viên/ngày. Không uống cùng sắt', 'Vitamin & Khoáng chất', 'Novartis', '2027-07-31', 25),
+(20, 'Sắt Fumarate 200mg', 'Viên', 200, 3800.00, 'Uống 1 viên/ngày xa bữa ăn. Có thể uống cùng Vitamin C', 'Vitamin & Khoáng chất', 'Pymepharco', '2026-12-31', 20),
+(21, 'Magie B6', 'Viên', 300, 4500.00, 'Uống 2-6 viên/ngày chia nhiều lần trong bữa ăn', 'Vitamin & Khoáng chất', 'Sanofi', '2027-03-31', 30),
+(22, 'Kẽm Gluconate 70mg', 'Viên', 150, 3200.00, 'Uống 1 viên/ngày sau bữa ăn', 'Vitamin & Khoáng chất', 'DHG Pharma', '2027-02-28', 15),
+(23, 'Omega-3 1000mg', 'Viên', 200, 8500.00, 'Uống 1-2 viên/ngày trong bữa ăn', 'Vitamin & Khoáng chất', 'Nature Made', '2027-09-30', 20),
+(24, 'Omeprazole 20mg', 'Viên', 300, 3500.00, 'Uống 1 viên trước bữa ăn sáng 30 phút', 'Tiêu hóa', 'Stada', '2026-10-31', 30),
+(25, 'Pantoprazole 40mg', 'Viên', 200, 7500.00, 'Uống 1 viên/ngày trước bữa ăn sáng 30-60 phút', 'Tiêu hóa', 'Pymepharco', '2026-12-31', 20),
+(26, 'Domperidone 10mg', 'Viên', 300, 2200.00, 'Uống 1 viên x 3 lần/ngày trước bữa ăn 15-30 phút', 'Tiêu hóa', 'Janssen', '2026-09-30', 30),
+(27, 'Metoclopramide 10mg', 'Viên', 200, 1800.00, 'Uống 1 viên x 3 lần/ngày trước bữa ăn 30 phút', 'Tiêu hóa', 'DHG Pharma', '2026-08-31', 20),
+(28, 'Smecta 3g', 'Gói', 200, 8500.00, 'Pha 1 gói với 50ml nước, uống 3 lần/ngày xa bữa ăn', 'Tiêu hóa', 'Ipsen', '2027-01-31', 20),
+(29, 'Loperamide 2mg', 'Viên', 200, 3200.00, 'Uống 2 viên lần đầu, sau đó 1 viên sau mỗi lần tiêu chảy', 'Tiêu hóa', 'Janssen', '2026-11-30', 20),
+(30, 'Men vi sinh Enterogermina', 'Ống', 150, 15000.00, 'Uống 1-2 ống/ngày trong hoặc sau bữa ăn', 'Tiêu hóa', 'Sanofi', '2026-07-31', 8),
+(31, 'Simethicone 40mg', 'Viên', 300, 2500.00, 'Nhai 2-4 viên sau bữa ăn và trước khi ngủ', 'Tiêu hóa', 'Pymepharco', '2027-02-28', 30),
+(32, 'Amlodipine 5mg', 'Viên', 200, 2800.00, 'Uống 1 viên/ngày, cùng giờ mỗi ngày, có thể cùng bữa ăn', 'Tim mạch', 'Pfizer', '2027-04-30', 20),
+(33, 'Losartan 50mg', 'Viên', 180, 4500.00, 'Uống 1 viên/ngày, cùng giờ', 'Tim mạch', 'MSD', '2027-03-31', 15),
+(34, 'Atenolol 50mg', 'Viên', 150, 2200.00, 'Uống 1 viên/ngày vào buổi sáng', 'Tim mạch', 'AstraZeneca', '2026-10-31', 15),
+(35, 'Bisoprolol 5mg', 'Viên', 150, 5500.00, 'Uống 1 viên/ngày trong bữa sáng', 'Tim mạch', 'Merck', '2026-11-30', 15),
+(36, 'Aspirin 81mg (Cardio)', 'Viên', 300, 3200.00, 'Uống 1 viên/ngày sau ăn tối', 'Tim mạch', 'Bayer', '2027-06-30', 30),
+(37, 'Atorvastatin 10mg', 'Viên', 200, 8500.00, 'Uống 1 viên/ngày, có thể bất kỳ lúc nào', 'Tim mạch', 'Pfizer', '2027-05-31', 20),
+(38, 'Cetirizine 10mg', 'Viên', 300, 2800.00, 'Uống 1 viên/ngày vào buổi tối', 'Hô hấp', 'UCB', '2027-04-30', 30),
+(39, 'Loratadine 10mg', 'Viên', 300, 2200.00, 'Uống 1 viên/ngày vào buổi sáng', 'Hô hấp', 'Pymepharco', '2027-03-31', 30),
+(40, 'Ambroxol 30mg', 'Viên', 250, 2500.00, 'Uống 1 viên x 3 lần/ngày sau bữa ăn', 'Hô hấp', 'Boehringer Ingelheim', '2026-11-30', 25),
+(41, 'Acetylcysteine 600mg (Sủi)', 'Viên', 180, 9500.00, 'Hòa tan 1 viên trong 200ml nước, uống 1 lần/ngày', 'Hô hấp', 'Zambon', '2026-12-31', 15),
+(42, 'Bromhexine 8mg', 'Viên', 200, 1800.00, 'Uống 1 viên x 3 lần/ngày sau bữa ăn', 'Hô hấp', 'Hậu Giang Pharma', '2026-10-31', 20),
+(43, 'Montelukast 10mg', 'Viên', 120, 12000.00, 'Uống 1 viên/ngày vào buổi tối', 'Hô hấp', 'MSD', '2027-02-28', 10),
+(44, 'Fexofenadine 120mg', 'Viên', 150, 8500.00, 'Uống 1 viên x 2 lần/ngày trước bữa ăn 1 giờ', 'Hô hấp', 'Sanofi', '2027-01-31', 15),
+(45, 'Clotrimazole cream 1%', 'Tuýp', 100, 25000.00, 'Thoa một lớp mỏng lên vùng da tổn thương 2-3 lần/ngày', 'Da liễu', 'Bayer', '2026-08-31', 10),
+(46, 'Hydrocortisone cream 1%', 'Tuýp', 80, 28000.00, 'Thoa nhẹ lên vùng da viêm 1-2 lần/ngày. Không dùng quá 7 ngày', 'Da liễu', 'DHG Pharma', '2026-12-31', 8),
+(47, 'Acyclovir 400mg', 'Viên', 100, 8500.00, 'Uống 1 viên x 3-5 lần/ngày theo chỉ định bác sĩ', 'Da liễu', 'GlaxoSmithKline', '2026-11-30', 10),
+(48, 'Betamethasone 0.1% cream', 'Tuýp', 80, 35000.00, 'Thoa 1-2 lần/ngày lên vùng da. Không thoa mặt, vùng kín', 'Da liễu', 'GlaxoSmithKline', '2027-03-31', 8),
+(49, 'Piracetam 800mg', 'Viên', 200, 5500.00, 'Uống 2-4 viên x 3 lần/ngày sau bữa ăn', 'Thần kinh', 'UCB', '2026-10-31', 20),
+(50, 'Cinnarizine 25mg', 'Viên', 300, 2200.00, 'Uống 1 viên x 3 lần/ngày sau bữa ăn', 'Thần kinh', 'Janssen', '2026-12-31', 30),
+(51, 'Betahistine 16mg', 'Viên', 200, 6500.00, 'Uống 1 viên x 3 lần/ngày trong bữa ăn', 'Thần kinh', 'Abbott', '2027-01-31', 20),
+(52, 'Flunarizine 5mg', 'Viên', 150, 4500.00, 'Uống 1-2 viên/ngày vào buổi tối', 'Thần kinh', 'Janssen', '2026-11-30', 15),
+(53, 'Metformin 500mg', 'Viên', 400, 1800.00, 'Uống 1-2 viên x 2-3 lần/ngày trong bữa ăn', 'Nội tiết', 'Merck', '2027-06-30', 40),
+(54, 'Metformin 1000mg', 'Viên', 250, 3200.00, 'Uống 1 viên x 2 lần/ngày trong bữa ăn', 'Nội tiết', 'Merck', '2027-05-31', 25),
+(55, 'Glipizide 5mg', 'Viên', 200, 3500.00, 'Uống 1 viên x 1-2 lần/ngày trước bữa ăn 30 phút', 'Nội tiết', 'Pfizer', '2026-10-31', 20),
+(56, 'Levothyroxine 50mcg', 'Viên', 150, 8500.00, 'Uống 1 viên/ngày lúc đói, trước ăn sáng 30 phút', 'Nội tiết', 'Merck', '2026-12-31', 15),
+(57, 'Glibenclamide 5mg', 'Viên', 200, 2800.00, 'Uống 1-3 viên/ngày trước bữa ăn sáng', 'Nội tiết', 'Hậu Giang Pharma', '2026-09-30', 20),
+(58, 'Prednisolone 5mg', 'Viên', 300, 1500.00, 'Uống theo chỉ định bác sĩ. Uống sau ăn sáng', 'Kháng viêm', 'DHG Pharma', '2026-12-31', 30),
+(59, 'Methylprednisolone 16mg', 'Viên', 150, 9500.00, 'Uống theo chỉ định bác sĩ sau bữa ăn sáng', 'Kháng viêm', 'Pfizer', '2026-10-31', 15),
+(60, 'Dexamethasone 0.5mg', 'Viên', 200, 1200.00, 'Uống theo chỉ định bác sĩ', 'Kháng viêm', 'Pymepharco', '2026-08-31', 20),
+(61, 'Colchicine 0.6mg', 'Viên', 75, 12000.00, 'Uống theo chỉ định bác sĩ. Không vượt quá 1.2mg/lần', 'Kháng viêm', 'Takeda', '2026-11-30', 8),
+(62, 'Tobramycin nhỏ mắt 0.3%', 'Lọ', 100, 35000.00, 'Nhỏ 1-2 giọt vào mắt x 4 lần/ngày', 'Mắt', 'Alcon', '2026-07-31', 10),
+(63, 'Nước muối sinh lý 0.9%', 'Lọ', 500, 5000.00, 'Rửa mắt, mũi hoặc vệ sinh vết thương theo nhu cầu', 'Mắt', 'Hậu Giang Pharma', '2027-12-31', 50),
+(64, 'Xylometazoline xịt mũi 0.1%', 'Lọ', 150, 28000.00, 'Xịt 2-3 lần vào mỗi bên mũi x 2-3 lần/ngày. Không dùng >7 ngày', 'Tai mũi họng', 'GlaxoSmithKline', '2026-09-30', 15),
+(65, 'Strepsils (Viêm họng)', 'Viên', 200, 8500.00, 'Ngậm 1 viên mỗi 2-3 giờ, tối đa 8 viên/ngày', 'Tai mũi họng', 'Reckitt', '2027-02-28', 20),
+(66, 'Oresol (ORS)', 'Gói', 300, 3500.00, 'Pha 1 gói với 200ml nước sôi để nguội, uống sau mỗi lần tiêu chảy', 'Điện giải', 'DHG Pharma', '2027-08-31', 30),
+(67, 'Hydrite (Bù điện giải)', 'Gói', 200, 4500.00, 'Pha 1 gói với 200ml nước sôi để nguội, uống từng ngụm nhỏ', 'Điện giải', 'Stada', '2027-06-30', 20),
+(68, 'Povidone Iodine 10% (Betadine)', 'Chai', 200, 45000.00, 'Bôi trực tiếp lên vết thương đã rửa sạch, 1-2 lần/ngày', 'Sát khuẩn', 'Mundipharma', '2027-06-30', 20),
+(69, 'Cồn Ethanol 70°', 'Chai', 300, 18000.00, 'Sát trùng da, dụng cụ trước và sau thủ thuật', 'Sát khuẩn', 'DHG Pharma', '2027-12-31', 30),
+(70, 'Hydrogen Peroxide 3%', 'Chai', 150, 12000.00, 'Sử dụng để rửa vết thương, pha loãng 1:1 với nước', 'Sát khuẩn', 'Hậu Giang Pharma', '2027-10-31', 15),
+(71, 'Furosemide 40mg', 'Viên', 150, 2200.00, 'Uống 1 viên/ngày vào buổi sáng. Uống sau ăn', 'Lợi tiểu', 'Sanofi', '2026-10-31', 15),
+(72, 'Allopurinol 300mg', 'Viên', 150, 3200.00, 'Uống 1 viên/ngày sau bữa ăn. Uống nhiều nước', 'Gout', 'Pymepharco', '2027-03-31', 15),
+(73, 'Clopidogrel 75mg', 'Viên', 120, 15000.00, 'Uống 1 viên/ngày sau bữa ăn', 'Chống đông', 'Sanofi', '2027-01-31', 10),
+(74, 'Warfarin 2mg', 'Viên', 80, 8500.00, 'Uống theo chỉ định bác sĩ, cùng giờ mỗi ngày', 'Chống đông', 'Orion', '2026-12-31', 10),
+(75, 'Epinephrine 1mg/mL (tiêm)', 'Ống', 30, 45000.00, 'Chỉ dùng trong cấp cứu phản vệ, theo chỉ định bác sĩ', 'Cấp cứu', 'Aguettant', '2026-08-31', 3),
+(76, 'Atropine 0.5mg (tiêm)', 'Ống', 30, 38000.00, 'Dùng theo chỉ định bác sĩ, tiêm tĩnh mạch hoặc bắp', 'Cấp cứu', 'DHG Pharma', '2026-07-31', 3),
+(77, 'Paracetamol 500mg', 'Viên', 100, 2500.00, 'Uống sau ăn 30 phút', 'Giảm đau / Hạ sốt', 'Hậu Giang', '2026-12-31', 10),
+(78, 'Amoxicillin 500mg', 'Viên', 50, 8000.00, 'Uống 3 lần/ngày', 'Kháng sinh', 'Stada', '2026-09-01', 5);
 
-ALTER TABLE calamviec
-  ADD PRIMARY KEY (maCa);
+--
+-- Chỉ mục cho các bảng đã đổ
+--
 
-ALTER TABLE chitietdonthuoc
-  ADD PRIMARY KEY (id),
-  ADD KEY maDonThuoc (maDonThuoc),
-  ADD KEY maThuoc (maThuoc);
+--
+-- Chỉ mục cho bảng `bacsi`
+--
+ALTER TABLE `bacsi`
+  ADD PRIMARY KEY (`maBacSi`),
+  ADD UNIQUE KEY `nguoiDungId` (`nguoiDungId`),
+  ADD KEY `maChuyenKhoa` (`maChuyenKhoa`),
+  ADD KEY `idx_bacsi_ten_ma` (`tenBacSi`,`maBacSi`),
+  ADD KEY `idx_bacsi_chuyenkhoa_ten_ma` (`maChuyenKhoa`,`tenBacSi`,`maBacSi`);
 
-ALTER TABLE chuyenkhoa
-  ADD PRIMARY KEY (maChuyenKhoa),
-  ADD KEY maKhoa (maKhoa),
-  ADD KEY idx_chuyenkhoa_makhoa_mack (maKhoa,maChuyenKhoa);
+--
+-- Chỉ mục cho bảng `benhnhan`
+--
+ALTER TABLE `benhnhan`
+  ADD PRIMARY KEY (`maBenhNhan`),
+  ADD UNIQUE KEY `nguoiDungId` (`nguoiDungId`);
 
-ALTER TABLE doimatkhau
-  ADD PRIMARY KEY (id),
-  ADD KEY nguoiDungId (nguoiDungId),
-  ADD KEY nguoiXuLy (nguoiXuLy);
+--
+-- Chỉ mục cho bảng `calamviec`
+--
+ALTER TABLE `calamviec`
+  ADD PRIMARY KEY (`maCa`);
 
-ALTER TABLE donthuoc
-  ADD PRIMARY KEY (maDonThuoc),
-  ADD KEY maLichKham (maLichKham);
+--
+-- Chỉ mục cho bảng `chitietdonthuoc`
+--
+ALTER TABLE `chitietdonthuoc`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `maDonThuoc` (`maDonThuoc`),
+  ADD KEY `maThuoc` (`maThuoc`);
 
-ALTER TABLE goikham
-  ADD PRIMARY KEY (maGoi);
+--
+-- Chỉ mục cho bảng `chuyenkhoa`
+--
+ALTER TABLE `chuyenkhoa`
+  ADD PRIMARY KEY (`maChuyenKhoa`),
+  ADD KEY `maKhoa` (`maKhoa`),
+  ADD KEY `idx_chuyenkhoa_makhoa_mack` (`maKhoa`,`maChuyenKhoa`);
 
-ALTER TABLE hoadon
-  ADD PRIMARY KEY (maHoaDon),
-  ADD KEY maLichKham (maLichKham);
+--
+-- Chỉ mục cho bảng `doimatkhau`
+--
+ALTER TABLE `doimatkhau`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `nguoiDungId` (`nguoiDungId`),
+  ADD KEY `nguoiXuLy` (`nguoiXuLy`);
 
-ALTER TABLE hosobenhan
-  ADD PRIMARY KEY (maHoSo),
-  ADD KEY maBenhNhan (maBenhNhan),
-  ADD KEY maBacSi (maBacSi),
-  ADD KEY maLichKham (maLichKham),
-  ADD KEY idx_hosobenhan_isDeleted (isDeleted);
+--
+-- Chỉ mục cho bảng `donthuoc`
+--
+ALTER TABLE `donthuoc`
+  ADD PRIMARY KEY (`maDonThuoc`),
+  ADD KEY `maLichKham` (`maLichKham`);
 
-ALTER TABLE khoa
-  ADD PRIMARY KEY (maKhoa);
+--
+-- Chỉ mục cho bảng `goikham`
+--
+ALTER TABLE `goikham`
+  ADD PRIMARY KEY (`maGoi`);
 
-ALTER TABLE lichkham
-  ADD PRIMARY KEY (maLichKham),
-  ADD KEY maBacSi (maBacSi),
-  ADD KEY maBenhNhan (maBenhNhan),
-  ADD KEY maCa (maCa),
-  ADD KEY maSuat (maSuat),
-  ADD KEY maGoi (maGoi);
+--
+-- Chỉ mục cho bảng `hoadon`
+--
+ALTER TABLE `hoadon`
+  ADD PRIMARY KEY (`maHoaDon`),
+  ADD KEY `maLichKham` (`maLichKham`);
 
-ALTER TABLE lienhe
-  ADD PRIMARY KEY (maLienHe),
-  ADD KEY fk_lienhe_nguoixuly (nguoiXuLy),
-  ADD KEY idx_trangThai (trangThai),
-  ADD KEY idx_thoiGianGui (thoiGianGui);
+--
+-- Chỉ mục cho bảng `hosobenhan`
+--
+ALTER TABLE `hosobenhan`
+  ADD PRIMARY KEY (`maHoSo`),
+  ADD KEY `maBenhNhan` (`maBenhNhan`),
+  ADD KEY `maBacSi` (`maBacSi`),
+  ADD KEY `maLichKham` (`maLichKham`),
+  ADD KEY `idx_hosobenhan_isDeleted` (`isDeleted`);
 
-ALTER TABLE mail_notification_log
-  ADD PRIMARY KEY (id),
-  ADD UNIQUE KEY uq_mail_event_recipient (event_code,event_key,recipient_email),
-  ADD KEY idx_mail_sent_at (sent_at);
+--
+-- Chỉ mục cho bảng `khoa`
+--
+ALTER TABLE `khoa`
+  ADD PRIMARY KEY (`maKhoa`);
 
-ALTER TABLE medicine_stock_log
-  ADD PRIMARY KEY (id),
-  ADD KEY idx_medicine_stock_log_maThuoc (maThuoc),
-  ADD KEY idx_medicine_stock_log_maLichKham (maLichKham),
-  ADD KEY idx_medicine_stock_log_maHoSo (maHoSo),
-  ADD KEY idx_medicine_stock_log_createdAt (createdAt);
+--
+-- Chỉ mục cho bảng `lichkham`
+--
+ALTER TABLE `lichkham`
+  ADD PRIMARY KEY (`maLichKham`),
+  ADD KEY `maBacSi` (`maBacSi`),
+  ADD KEY `maBenhNhan` (`maBenhNhan`),
+  ADD KEY `maCa` (`maCa`),
+  ADD KEY `maSuat` (`maSuat`),
+  ADD KEY `maGoi` (`maGoi`);
 
-ALTER TABLE ngaynghi
-  ADD PRIMARY KEY (maNghi),
-  ADD KEY maBacSi (maBacSi),
-  ADD KEY maCa (maCa);
+--
+-- Chỉ mục cho bảng `lienhe`
+--
+ALTER TABLE `lienhe`
+  ADD PRIMARY KEY (`maLienHe`),
+  ADD KEY `fk_lienhe_nguoixuly` (`nguoiXuLy`),
+  ADD KEY `idx_trangThai` (`trangThai`),
+  ADD KEY `idx_thoiGianGui` (`thoiGianGui`);
 
-ALTER TABLE nguoidung
-  ADD PRIMARY KEY (id),
-  ADD UNIQUE KEY tenDangNhap (tenDangNhap),
-  ADD UNIQUE KEY soDienThoai (soDienThoai),
-  ADD UNIQUE KEY email (email),
-  ADD KEY idx_nguoidung_isDeleted (isDeleted);
+--
+-- Chỉ mục cho bảng `mail_notification_log`
+--
+ALTER TABLE `mail_notification_log`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_mail_event_recipient` (`event_code`,`event_key`,`recipient_email`),
+  ADD KEY `idx_mail_sent_at` (`sent_at`);
 
-ALTER TABLE quantrivien
-  ADD PRIMARY KEY (maQuanTriVien),
-  ADD UNIQUE KEY nguoiDungId (nguoiDungId);
+--
+-- Chỉ mục cho bảng `medicine_stock_log`
+--
+ALTER TABLE `medicine_stock_log`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_medicine_stock_log_maThuoc` (`maThuoc`),
+  ADD KEY `idx_medicine_stock_log_maLichKham` (`maLichKham`),
+  ADD KEY `idx_medicine_stock_log_maHoSo` (`maHoSo`),
+  ADD KEY `idx_medicine_stock_log_createdAt` (`createdAt`);
 
-ALTER TABLE suatkham
-  ADD PRIMARY KEY (maSuat),
-  ADD UNIQUE KEY uniq_suatkham_slot_version (maCa,gioBatDau,gioKetThuc,effectiveFrom),
-  ADD KEY maCa (maCa);
+--
+-- Chỉ mục cho bảng `ngaynghi`
+--
+ALTER TABLE `ngaynghi`
+  ADD PRIMARY KEY (`maNghi`),
+  ADD KEY `maBacSi` (`maBacSi`),
+  ADD KEY `maCa` (`maCa`);
 
-ALTER TABLE thongbaoadmin
-  ADD PRIMARY KEY (maThongBao),
-  ADD KEY fk_tba_nguoidung (nguoiDungId),
-  ADD KEY fk_tba_ngaynghi (maNghi),
-  ADD KEY fk_tba_yeucau (maYeuCau);
+--
+-- Chỉ mục cho bảng `nguoidung`
+--
+ALTER TABLE `nguoidung`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `tenDangNhap` (`tenDangNhap`),
+  ADD UNIQUE KEY `soDienThoai` (`soDienThoai`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD KEY `idx_nguoidung_isDeleted` (`isDeleted`);
 
-ALTER TABLE thongbaobenhnhan
-  ADD PRIMARY KEY (maThongBao),
-  ADD KEY maBenhNhan (maBenhNhan),
-  ADD KEY idx_daxem (daXem),
-  ADD KEY idx_thoigian (thoiGian);
+--
+-- Chỉ mục cho bảng `quantrivien`
+--
+ALTER TABLE `quantrivien`
+  ADD PRIMARY KEY (`maQuanTriVien`),
+  ADD UNIQUE KEY `nguoiDungId` (`nguoiDungId`);
 
-ALTER TABLE thongbaolichkham
-  ADD PRIMARY KEY (maThongBao),
-  ADD KEY maBacSi (maBacSi),
-  ADD KEY maLichKham (maLichKham),
-  ADD KEY idx_daxem (daXem),
-  ADD KEY idx_thoigian (thoiGian);
+--
+-- Chỉ mục cho bảng `suatkham`
+--
+ALTER TABLE `suatkham`
+  ADD PRIMARY KEY (`maSuat`),
+  ADD UNIQUE KEY `uniq_suatkham_slot_version` (`maCa`,`gioBatDau`,`gioKetThuc`,`effectiveFrom`),
+  ADD KEY `maCa` (`maCa`);
 
-ALTER TABLE thuoc
-  ADD PRIMARY KEY (maThuoc),
-  ADD UNIQUE KEY idx_tenThuoc (tenThuoc),
-  ADD KEY idx_loaiThuoc (loaiThuoc);
+--
+-- Chỉ mục cho bảng `thongbaoadmin`
+--
+ALTER TABLE `thongbaoadmin`
+  ADD PRIMARY KEY (`maThongBao`),
+  ADD KEY `fk_tba_nguoidung` (`nguoiDungId`),
+  ADD KEY `fk_tba_ngaynghi` (`maNghi`),
+  ADD KEY `fk_tba_yeucau` (`maYeuCau`);
 
+--
+-- Chỉ mục cho bảng `thongbaobenhnhan`
+--
+ALTER TABLE `thongbaobenhnhan`
+  ADD PRIMARY KEY (`maThongBao`),
+  ADD KEY `maBenhNhan` (`maBenhNhan`),
+  ADD KEY `idx_daxem` (`daXem`),
+  ADD KEY `idx_thoigian` (`thoiGian`);
 
-ALTER TABLE calamviec
-  MODIFY maCa int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+--
+-- Chỉ mục cho bảng `thongbaolichkham`
+--
+ALTER TABLE `thongbaolichkham`
+  ADD PRIMARY KEY (`maThongBao`),
+  ADD KEY `maBacSi` (`maBacSi`),
+  ADD KEY `maLichKham` (`maLichKham`),
+  ADD KEY `idx_daxem` (`daXem`),
+  ADD KEY `idx_thoigian` (`thoiGian`);
 
-ALTER TABLE chitietdonthuoc
-  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+--
+-- Chỉ mục cho bảng `thuoc`
+--
+ALTER TABLE `thuoc`
+  ADD PRIMARY KEY (`maThuoc`),
+  ADD KEY `idx_tenThuoc` (`tenThuoc`),
+  ADD KEY `idx_loaiThuoc` (`loaiThuoc`);
 
-ALTER TABLE doimatkhau
-  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+--
+-- AUTO_INCREMENT cho các bảng đã đổ
+--
 
-ALTER TABLE donthuoc
-  MODIFY maDonThuoc int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+--
+-- AUTO_INCREMENT cho bảng `calamviec`
+--
+ALTER TABLE `calamviec`
+  MODIFY `maCa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
-ALTER TABLE goikham
-  MODIFY maGoi int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+--
+-- AUTO_INCREMENT cho bảng `chitietdonthuoc`
+--
+ALTER TABLE `chitietdonthuoc`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
-ALTER TABLE hoadon
-  MODIFY maHoaDon int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+--
+-- AUTO_INCREMENT cho bảng `doimatkhau`
+--
+ALTER TABLE `doimatkhau`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
-ALTER TABLE lichkham
-  MODIFY maLichKham int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=98;
+--
+-- AUTO_INCREMENT cho bảng `donthuoc`
+--
+ALTER TABLE `donthuoc`
+  MODIFY `maDonThuoc` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
-ALTER TABLE lienhe
-  MODIFY maLienHe int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+--
+-- AUTO_INCREMENT cho bảng `goikham`
+--
+ALTER TABLE `goikham`
+  MODIFY `maGoi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
-ALTER TABLE mail_notification_log
-  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+--
+-- AUTO_INCREMENT cho bảng `hoadon`
+--
+ALTER TABLE `hoadon`
+  MODIFY `maHoaDon` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
-ALTER TABLE medicine_stock_log
-  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+--
+-- AUTO_INCREMENT cho bảng `lichkham`
+--
+ALTER TABLE `lichkham`
+  MODIFY `maLichKham` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
 
-ALTER TABLE ngaynghi
-  MODIFY maNghi int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+--
+-- AUTO_INCREMENT cho bảng `lienhe`
+--
+ALTER TABLE `lienhe`
+  MODIFY `maLienHe` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
-ALTER TABLE nguoidung
-  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
+--
+-- AUTO_INCREMENT cho bảng `mail_notification_log`
+--
+ALTER TABLE `mail_notification_log`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
-ALTER TABLE suatkham
-  MODIFY maSuat int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
+--
+-- AUTO_INCREMENT cho bảng `medicine_stock_log`
+--
+ALTER TABLE `medicine_stock_log`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
-ALTER TABLE thongbaoadmin
-  MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+--
+-- AUTO_INCREMENT cho bảng `ngaynghi`
+--
+ALTER TABLE `ngaynghi`
+  MODIFY `maNghi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
-ALTER TABLE thongbaobenhnhan
-  MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+--
+-- AUTO_INCREMENT cho bảng `nguoidung`
+--
+ALTER TABLE `nguoidung`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
-ALTER TABLE thongbaolichkham
-  MODIFY maThongBao int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=290;
+--
+-- AUTO_INCREMENT cho bảng `suatkham`
+--
+ALTER TABLE `suatkham`
+  MODIFY `maSuat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 
-ALTER TABLE thuoc
-  MODIFY maThuoc int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
+--
+-- AUTO_INCREMENT cho bảng `thongbaoadmin`
+--
+ALTER TABLE `thongbaoadmin`
+  MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
+--
+-- AUTO_INCREMENT cho bảng `thongbaobenhnhan`
+--
+ALTER TABLE `thongbaobenhnhan`
+  MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
-ALTER TABLE bacsi
-  ADD CONSTRAINT bacsi_ibfk_1 FOREIGN KEY (nguoiDungId) REFERENCES nguoidung (id) ON DELETE CASCADE,
-  ADD CONSTRAINT bacsi_ibfk_2 FOREIGN KEY (maChuyenKhoa) REFERENCES chuyenkhoa (maChuyenKhoa) ON DELETE SET NULL;
+--
+-- AUTO_INCREMENT cho bảng `thongbaolichkham`
+--
+ALTER TABLE `thongbaolichkham`
+  MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=288;
 
-ALTER TABLE benhnhan
-  ADD CONSTRAINT benhnhan_ibfk_1 FOREIGN KEY (nguoiDungId) REFERENCES nguoidung (id) ON DELETE CASCADE;
+--
+-- AUTO_INCREMENT cho bảng `thuoc`
+--
+ALTER TABLE `thuoc`
+  MODIFY `maThuoc` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
 
-ALTER TABLE chitietdonthuoc
-  ADD CONSTRAINT chitietdonthuoc_ibfk_1 FOREIGN KEY (maDonThuoc) REFERENCES donthuoc (maDonThuoc),
-  ADD CONSTRAINT chitietdonthuoc_ibfk_2 FOREIGN KEY (maThuoc) REFERENCES thuoc (maThuoc);
+--
+-- Các ràng buộc cho các bảng đã đổ
+--
 
-ALTER TABLE chuyenkhoa
-  ADD CONSTRAINT chuyenkhoa_ibfk_1 FOREIGN KEY (maKhoa) REFERENCES khoa (maKhoa) ON DELETE CASCADE;
+--
+-- Các ràng buộc cho bảng `bacsi`
+--
+ALTER TABLE `bacsi`
+  ADD CONSTRAINT `bacsi_ibfk_1` FOREIGN KEY (`nguoiDungId`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `bacsi_ibfk_2` FOREIGN KEY (`maChuyenKhoa`) REFERENCES `chuyenkhoa` (`maChuyenKhoa`) ON DELETE SET NULL;
 
-ALTER TABLE doimatkhau
-  ADD CONSTRAINT doimatkhau_ibfk_1 FOREIGN KEY (nguoiDungId) REFERENCES nguoidung (id) ON DELETE CASCADE,
-  ADD CONSTRAINT doimatkhau_ibfk_2 FOREIGN KEY (nguoiXuLy) REFERENCES nguoidung (id) ON DELETE SET NULL;
+--
+-- Các ràng buộc cho bảng `benhnhan`
+--
+ALTER TABLE `benhnhan`
+  ADD CONSTRAINT `benhnhan_ibfk_1` FOREIGN KEY (`nguoiDungId`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE;
 
-ALTER TABLE donthuoc
-  ADD CONSTRAINT donthuoc_ibfk_1 FOREIGN KEY (maLichKham) REFERENCES lichkham (maLichKham);
+--
+-- Các ràng buộc cho bảng `chitietdonthuoc`
+--
+ALTER TABLE `chitietdonthuoc`
+  ADD CONSTRAINT `chitietdonthuoc_ibfk_1` FOREIGN KEY (`maDonThuoc`) REFERENCES `donthuoc` (`maDonThuoc`),
+  ADD CONSTRAINT `chitietdonthuoc_ibfk_2` FOREIGN KEY (`maThuoc`) REFERENCES `thuoc` (`maThuoc`);
 
-ALTER TABLE hoadon
-  ADD CONSTRAINT hoadon_ibfk_1 FOREIGN KEY (maLichKham) REFERENCES lichkham (maLichKham);
+--
+-- Các ràng buộc cho bảng `chuyenkhoa`
+--
+ALTER TABLE `chuyenkhoa`
+  ADD CONSTRAINT `chuyenkhoa_ibfk_1` FOREIGN KEY (`maKhoa`) REFERENCES `khoa` (`maKhoa`) ON DELETE CASCADE;
 
-ALTER TABLE hosobenhan
-  ADD CONSTRAINT hosobenhan_ibfk_1 FOREIGN KEY (maBenhNhan) REFERENCES benhnhan (maBenhNhan) ON DELETE CASCADE,
-  ADD CONSTRAINT hosobenhan_ibfk_2 FOREIGN KEY (maBacSi) REFERENCES bacsi (maBacSi) ON DELETE SET NULL,
-  ADD CONSTRAINT hosobenhan_ibfk_3 FOREIGN KEY (maLichKham) REFERENCES lichkham (maLichKham) ON DELETE SET NULL;
+--
+-- Các ràng buộc cho bảng `doimatkhau`
+--
+ALTER TABLE `doimatkhau`
+  ADD CONSTRAINT `doimatkhau_ibfk_1` FOREIGN KEY (`nguoiDungId`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `doimatkhau_ibfk_2` FOREIGN KEY (`nguoiXuLy`) REFERENCES `nguoidung` (`id`) ON DELETE SET NULL;
 
-ALTER TABLE lichkham
-  ADD CONSTRAINT lichkham_ibfk_1 FOREIGN KEY (maBacSi) REFERENCES bacsi (maBacSi),
-  ADD CONSTRAINT lichkham_ibfk_2 FOREIGN KEY (maBenhNhan) REFERENCES benhnhan (maBenhNhan),
-  ADD CONSTRAINT lichkham_ibfk_3 FOREIGN KEY (maCa) REFERENCES calamviec (maCa),
-  ADD CONSTRAINT lichkham_ibfk_4 FOREIGN KEY (maSuat) REFERENCES suatkham (maSuat),
-  ADD CONSTRAINT lichkham_ibfk_5 FOREIGN KEY (maGoi) REFERENCES goikham (maGoi);
+--
+-- Các ràng buộc cho bảng `donthuoc`
+--
+ALTER TABLE `donthuoc`
+  ADD CONSTRAINT `donthuoc_ibfk_1` FOREIGN KEY (`maLichKham`) REFERENCES `lichkham` (`maLichKham`);
 
-ALTER TABLE lienhe
-  ADD CONSTRAINT fk_lienhe_nguoixuly FOREIGN KEY (nguoiXuLy) REFERENCES nguoidung (id) ON DELETE SET NULL;
+--
+-- Các ràng buộc cho bảng `hoadon`
+--
+ALTER TABLE `hoadon`
+  ADD CONSTRAINT `hoadon_ibfk_1` FOREIGN KEY (`maLichKham`) REFERENCES `lichkham` (`maLichKham`);
 
-ALTER TABLE ngaynghi
-  ADD CONSTRAINT ngaynghi_ibfk_1 FOREIGN KEY (maBacSi) REFERENCES bacsi (maBacSi),
-  ADD CONSTRAINT ngaynghi_ibfk_2 FOREIGN KEY (maCa) REFERENCES calamviec (maCa);
+--
+-- Các ràng buộc cho bảng `hosobenhan`
+--
+ALTER TABLE `hosobenhan`
+  ADD CONSTRAINT `hosobenhan_ibfk_1` FOREIGN KEY (`maBenhNhan`) REFERENCES `benhnhan` (`maBenhNhan`) ON DELETE CASCADE,
+  ADD CONSTRAINT `hosobenhan_ibfk_2` FOREIGN KEY (`maBacSi`) REFERENCES `bacsi` (`maBacSi`) ON DELETE SET NULL,
+  ADD CONSTRAINT `hosobenhan_ibfk_3` FOREIGN KEY (`maLichKham`) REFERENCES `lichkham` (`maLichKham`) ON DELETE SET NULL;
 
-ALTER TABLE quantrivien
-  ADD CONSTRAINT quantrivien_ibfk_1 FOREIGN KEY (nguoiDungId) REFERENCES nguoidung (id) ON DELETE CASCADE;
+--
+-- Các ràng buộc cho bảng `lichkham`
+--
+ALTER TABLE `lichkham`
+  ADD CONSTRAINT `lichkham_ibfk_1` FOREIGN KEY (`maBacSi`) REFERENCES `bacsi` (`maBacSi`),
+  ADD CONSTRAINT `lichkham_ibfk_2` FOREIGN KEY (`maBenhNhan`) REFERENCES `benhnhan` (`maBenhNhan`),
+  ADD CONSTRAINT `lichkham_ibfk_3` FOREIGN KEY (`maCa`) REFERENCES `calamviec` (`maCa`),
+  ADD CONSTRAINT `lichkham_ibfk_4` FOREIGN KEY (`maSuat`) REFERENCES `suatkham` (`maSuat`),
+  ADD CONSTRAINT `lichkham_ibfk_5` FOREIGN KEY (`maGoi`) REFERENCES `goikham` (`maGoi`);
 
-ALTER TABLE suatkham
-  ADD CONSTRAINT suatkham_ibfk_1 FOREIGN KEY (maCa) REFERENCES calamviec (maCa);
+--
+-- Các ràng buộc cho bảng `lienhe`
+--
+ALTER TABLE `lienhe`
+  ADD CONSTRAINT `fk_lienhe_nguoixuly` FOREIGN KEY (`nguoiXuLy`) REFERENCES `nguoidung` (`id`) ON DELETE SET NULL;
 
-ALTER TABLE thongbaoadmin
-  ADD CONSTRAINT fk_tba_ngaynghi FOREIGN KEY (maNghi) REFERENCES ngaynghi (maNghi) ON DELETE SET NULL,
-  ADD CONSTRAINT fk_tba_nguoidung FOREIGN KEY (nguoiDungId) REFERENCES nguoidung (id) ON DELETE CASCADE,
-  ADD CONSTRAINT fk_tba_yeucau FOREIGN KEY (maYeuCau) REFERENCES doimatkhau (id) ON DELETE SET NULL;
+--
+-- Các ràng buộc cho bảng `ngaynghi`
+--
+ALTER TABLE `ngaynghi`
+  ADD CONSTRAINT `ngaynghi_ibfk_1` FOREIGN KEY (`maBacSi`) REFERENCES `bacsi` (`maBacSi`),
+  ADD CONSTRAINT `ngaynghi_ibfk_2` FOREIGN KEY (`maCa`) REFERENCES `calamviec` (`maCa`);
 
-ALTER TABLE thongbaobenhnhan
-  ADD CONSTRAINT thongbaobenhnhan_ibfk_1 FOREIGN KEY (maBenhNhan) REFERENCES benhnhan (maBenhNhan) ON DELETE CASCADE;
+--
+-- Các ràng buộc cho bảng `quantrivien`
+--
+ALTER TABLE `quantrivien`
+  ADD CONSTRAINT `quantrivien_ibfk_1` FOREIGN KEY (`nguoiDungId`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE;
 
-ALTER TABLE thongbaolichkham
-  ADD CONSTRAINT thongbao_ibfk_1 FOREIGN KEY (maBacSi) REFERENCES bacsi (maBacSi) ON DELETE CASCADE,
-  ADD CONSTRAINT thongbao_ibfk_2 FOREIGN KEY (maLichKham) REFERENCES lichkham (maLichKham) ON DELETE SET NULL;
+--
+-- Các ràng buộc cho bảng `suatkham`
+--
+ALTER TABLE `suatkham`
+  ADD CONSTRAINT `suatkham_ibfk_1` FOREIGN KEY (`maCa`) REFERENCES `calamviec` (`maCa`);
+
+--
+-- Các ràng buộc cho bảng `thongbaoadmin`
+--
+ALTER TABLE `thongbaoadmin`
+  ADD CONSTRAINT `fk_tba_ngaynghi` FOREIGN KEY (`maNghi`) REFERENCES `ngaynghi` (`maNghi`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_tba_nguoidung` FOREIGN KEY (`nguoiDungId`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_tba_yeucau` FOREIGN KEY (`maYeuCau`) REFERENCES `doimatkhau` (`id`) ON DELETE SET NULL;
+
+--
+-- Các ràng buộc cho bảng `thongbaobenhnhan`
+--
+ALTER TABLE `thongbaobenhnhan`
+  ADD CONSTRAINT `thongbaobenhnhan_ibfk_1` FOREIGN KEY (`maBenhNhan`) REFERENCES `benhnhan` (`maBenhNhan`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `thongbaolichkham`
+--
+ALTER TABLE `thongbaolichkham`
+  ADD CONSTRAINT `thongbao_ibfk_1` FOREIGN KEY (`maBacSi`) REFERENCES `bacsi` (`maBacSi`) ON DELETE CASCADE,
+  ADD CONSTRAINT `thongbao_ibfk_2` FOREIGN KEY (`maLichKham`) REFERENCES `lichkham` (`maLichKham`) ON DELETE SET NULL;
 COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

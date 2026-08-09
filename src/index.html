@@ -1026,6 +1026,30 @@
             cursor: not-allowed;
         }
 
+        .ai-mode-select {
+            flex: 0 0 138px;
+            height: 40px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            background: #fff;
+            padding: 0 10px;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .ai-mode-select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        .ai-mode-select:disabled {
+            background: var(--light-bg);
+            cursor: not-allowed;
+        }
+
         .ai-send-btn {
             width: 40px;
             height: 40px;
@@ -1202,6 +1226,11 @@
                 min-height: 220px;
                 max-height: 300px;
             }
+
+            .ai-mode-select {
+                flex-basis: 120px;
+                font-size: 0.78rem;
+            }
         }
 
         @media (max-width: 430px) {
@@ -1216,6 +1245,10 @@
             .quick-link,
             .home-card {
                 flex-basis: 86%;
+            }
+
+            .ai-mode-select {
+                flex-basis: 108px;
             }
         }
     </style>
@@ -1564,6 +1597,11 @@
 
                         <div class="ai-chat-input">
                             <input type="text" id="aiSymptomInput" placeholder="Mô tả triệu chứng của bạn..." maxlength="1000" autocomplete="off">
+                            <select id="aiModeSelect" class="ai-mode-select" aria-label="Chọn kiểu trả lời">
+                                <option value="fast">Nhanh</option>
+                                <option value="expert" selected>Chuyên gia</option>
+                                <option value="deep">Chẩn đoán sâu</option>
+                            </select>
                             <button type="button" class="ai-send-btn" id="aiSendBtn" title="Gửi">
                                 <i class="fas fa-paper-plane"></i>
                             </button>
@@ -1704,6 +1742,7 @@
         // ─── AI Suggest Specialty ───
         function initAiSuggest() {
             const input = document.getElementById('aiSymptomInput');
+            const modeSelect = document.getElementById('aiModeSelect');
             const sendBtn = document.getElementById('aiSendBtn');
             const messagesContainer = document.getElementById('aiChatMessages');
             const quickTags = document.querySelectorAll('.ai-quick-tag');
@@ -1715,6 +1754,7 @@
             function setProcessing(state) {
                 isProcessing = state;
                 input.disabled = state;
+                if (modeSelect) modeSelect.disabled = state;
                 sendBtn.disabled = state;
                 if (state) {
                     sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
@@ -1824,6 +1864,7 @@
 
             async function sendMessage(symptoms) {
                 const trimmed = symptoms.trim();
+                const mode = modeSelect ? modeSelect.value : 'expert';
                 if (!trimmed || trimmed.length < 5) {
                     addErrorMessage('Vui lòng mô tả triệu chứng ít nhất 5 ký tự để AI có thể phân tích chính xác hơn.');
                     return;
@@ -1846,7 +1887,7 @@
                     const response = await fetch(apiUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ symptoms: trimmed })
+                        body: JSON.stringify({ symptoms: trimmed, mode })
                     });
 
                     hideTyping();

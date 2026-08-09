@@ -4,11 +4,12 @@ require_once __DIR__ . '/../config/llm.php';
 /**
  * ─── Call AnythingLLM API ───
  * @param string $message The message to send to the AI
+ * @param string $workspaceSlug Workspace slug to target a fixed model/RAG setup
  * @return array The response array containing 'success', 'data' or 'error'
  */
-function callAnythingLLM(string $message): array
+function callAnythingLLM(string $message, string $workspaceSlug): array
 {
-    $url = ANYTHINGLLM_BASE_URL . '/api/v1/workspace/' . ANYTHINGLLM_WORKSPACE_SLUG . '/chat';
+    $url = ANYTHINGLLM_BASE_URL . '/api/v1/workspace/' . rawurlencode($workspaceSlug) . '/chat';
 
     $payload = json_encode([
         'message' => $message,
