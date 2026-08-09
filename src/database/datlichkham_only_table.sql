@@ -697,7 +697,7 @@ CREATE TABLE `thongbaolichkham` (
   `maThongBao` int(11) NOT NULL,
   `maBacSi` varchar(20) NOT NULL,
   `maLichKham` int(11) DEFAULT NULL,
-  `loai` enum('Đặt lịch','Hủy lịch') NOT NULL,
+  `loai` enum('Đặt lịch','Hủy lịch','Hệ thống') NOT NULL,
   `tieuDe` varchar(255) NOT NULL,
   `noiDung` text NOT NULL,
   `thoiGian` datetime DEFAULT current_timestamp(),

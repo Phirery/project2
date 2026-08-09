@@ -33,5 +33,7 @@ return [
 
         'account_locked' => true,
         'account_unlocked' => true,
+
+        'admin_custom_broadcast' => true,
     ],
 ];

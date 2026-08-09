@@ -1,13 +1,4 @@
-src/config/mail.php
-src/config/cloudinary.php
-src/config/db-config.php
 src/DEPLOY_CHECKLIST.md
 src/database/migrations/*
-!src/database/migrations/20260413_add_schedule_management_flags.sql
-src/test
-src/test.py
-src/test2.py
-src/logoweb31032026.png
 docs
-skills-lock.json
 .agents

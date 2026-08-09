@@ -390,6 +390,7 @@
                             <option value="Hủy lịch">Hủy lịch</option>
                             <option value="Cấp lại mật khẩu">Cấp lại mật khẩu</option>
                             <option value="Cập nhật lịch biểu">Cập nhật lịch biểu</option>
+                            <option value="Hệ thống">Hệ thống</option>
                         </select></div>
                     <div class="col-md-2"><select class="form-select" id="statusFilter" onchange="applyFilters()">
                             <option value="">Tất cả</option>
@@ -529,7 +530,7 @@
                 if (notif.loai === 'Đặt lịch') { typeClass = 'booking'; icon = 'fa-calendar-plus'; }
                 else if (notif.loai === 'Hủy lịch') { typeClass = 'cancel'; icon = 'fa-calendar-times'; }
                 else if (notif.loai === 'Cấp lại mật khẩu') { typeClass = 'password'; icon = 'fa-key'; }
-                else if (notif.loai === 'Cập nhật lịch biểu') { typeClass = 'system'; icon = 'fa-calendar-day'; }
+                else if (notif.loai === 'Cập nhật lịch biểu' || notif.loai === 'Hệ thống') { typeClass = 'system'; icon = 'fa-calendar-day'; }
                 else { typeClass = 'booking'; icon = 'fa-bell'; }
                 return `
                     <div class="notification-item ${isUnread ? 'unread' : ''}" onclick="markAsRead(${notif.maThongBao})">

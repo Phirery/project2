@@ -358,6 +358,308 @@
             border-color: var(--primary-purple);
         }
 
+        .custom-tabs {
+            border-bottom: 2px solid #e8eef5;
+            padding: 0 25px;
+            margin-bottom: 0;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: thin;
+        }
+
+        .custom-tabs .nav-item {
+            flex: 0 0 auto;
+        }
+
+        .custom-tabs .nav-link {
+            border: none;
+            color: #666;
+            font-weight: 600;
+            padding: 15px 18px 16px;
+            position: relative;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            background: transparent;
+        }
+
+        .custom-tabs .nav-link:hover {
+            color: var(--primary-purple);
+        }
+
+        .custom-tabs .nav-link.active {
+            color: var(--primary-purple);
+            border-bottom-color: var(--primary-purple);
+            background: transparent;
+        }
+
+        .custom-tabs .badge {
+            font-size: 0.72rem;
+            padding: 3px 8px;
+            border-radius: 999px;
+        }
+
+        #adminNotificationSection {
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .management-tab-content {
+            padding: 22px;
+        }
+
+        .management-tab-content .filter-section,
+        .management-tab-content .table-section {
+            box-shadow: none;
+            border: 1px solid #edf0f5;
+            background: #fcfdff;
+        }
+
+        .compose-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        .compose-card,
+        .recipient-panel {
+            border-radius: 18px;
+            background: #fff;
+        }
+
+        .compose-card {
+            padding: 22px;
+        }
+
+        .recipient-panel {
+            padding: 22px;
+        }
+
+        .compose-card .table-header,
+        .recipient-panel .table-header {
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+        }
+
+        .compose-card .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+
+        .compose-card .form-control,
+        .compose-card .form-select,
+        .compose-card .form-check-input {
+            border-radius: 12px;
+        }
+
+        .compose-card .form-control,
+        .compose-card .form-select {
+            min-height: 46px;
+            border-color: #dfe5ee;
+            box-shadow: none;
+        }
+
+        .compose-card .form-control:focus,
+        .compose-card .form-select:focus,
+        .recipient-panel .form-control:focus {
+            border-color: rgba(102, 126, 234, 0.65);
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.12);
+        }
+
+        .compose-card textarea.form-control {
+            min-height: 180px;
+            padding-top: 14px;
+            padding-bottom: 14px;
+        }
+
+        .compose-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        #sendBroadcastBtn.btn-add {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 46px;
+            padding: 0 20px;
+            border: 0;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+            color: #fff;
+            font-weight: 600;
+            line-height: 1;
+            box-shadow: 0 8px 18px rgba(102, 126, 234, 0.22);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        }
+
+        #sendBroadcastBtn.btn-add:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.28);
+            filter: brightness(1.02);
+            color: #fff;
+        }
+
+        #sendBroadcastBtn.btn-add:focus,
+        #sendBroadcastBtn.btn-add:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.18), 0 12px 24px rgba(102, 126, 234, 0.28);
+            color: #fff;
+        }
+
+        #sendBroadcastBtn.btn-add:active {
+            transform: translateY(0);
+            box-shadow: 0 6px 14px rgba(102, 126, 234, 0.2);
+        }
+
+        #sendBroadcastBtn.btn-add:disabled {
+            cursor: not-allowed;
+            opacity: 0.75;
+            transform: none;
+            box-shadow: none;
+        }
+
+        #resetBroadcastBtn.btn {
+            min-height: 46px;
+            padding: 0 18px;
+            border-radius: 999px;
+            border: 1px solid #d8e0ea;
+            background: #fff;
+            color: #5b6472;
+            font-weight: 600;
+            line-height: 1;
+            box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+        }
+
+        #resetBroadcastBtn.btn:hover {
+            transform: translateY(-1px);
+            background: #f8fafc;
+            border-color: #c9d4e3;
+            box-shadow: 0 10px 18px rgba(15, 23, 42, 0.08);
+            color: #364152;
+        }
+
+        #resetBroadcastBtn.btn:focus,
+        #resetBroadcastBtn.btn:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.14), 0 10px 18px rgba(15, 23, 42, 0.08);
+        }
+
+        #resetBroadcastBtn.btn:active {
+            transform: translateY(0);
+            box-shadow: 0 6px 12px rgba(15, 23, 42, 0.06);
+        }
+
+        .recipient-panel {
+            position: sticky;
+            top: 16px;
+            align-self: start;
+        }
+
+        .recipient-picker-note {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+
+        .recipient-results {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+            max-height: 396px;
+            overflow: auto;
+            padding-right: 4px;
+        }
+
+        .recipient-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 15px;
+            border: 1px solid #e6ebf2;
+            border-radius: 14px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .recipient-item:hover {
+            border-color: rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 14px rgba(102, 126, 234, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .recipient-item.selected {
+            background: #f0f4ff;
+            border-color: rgba(102, 126, 234, 0.55);
+        }
+
+        .recipient-main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .recipient-name {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 6px;
+        }
+
+        .recipient-meta {
+            color: #6b7280;
+            font-size: 0.86rem;
+            line-height: 1.45;
+        }
+
+        .recipient-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #e8f0ff;
+            color: #1d4ed8;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .selected-recipient-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .selected-recipient-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 13px;
+            border-radius: 999px;
+            background: #f6f8ff;
+            border: 1px solid #dfe7ff;
+            color: #394150;
+            font-size: 0.86rem;
+        }
+
+        .selected-recipient-chip button {
+            border: none;
+            background: transparent;
+            color: #6c757d;
+            padding: 0;
+            line-height: 1;
+        }
+
         @media (max-width: 768px) {
             .section-card {
                 padding: 15px;
@@ -407,6 +709,33 @@
                 align-items: center;
             }
 
+            .custom-tabs {
+                padding: 0 15px;
+            }
+
+            .management-tab-content {
+                padding: 16px;
+            }
+
+            .compose-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .recipient-panel {
+                position: static;
+            }
+
+            .compose-card,
+            .recipient-panel {
+                padding: 18px;
+                border-radius: 16px;
+            }
+
+            .custom-tabs .nav-link {
+                padding: 13px 14px 14px;
+            }
+
         }
     </style>
 </head>
@@ -443,63 +772,184 @@
             </div>
         </div>
 
-        <div class="section-card">
-            <div class="card-header">
-                <h5><i class="fas fa-list me-2"></i>Danh sách thông báo</h5>
-                <div class="header-actions">
-                    <button class="btn btn-sm btn-outline-primary" onclick="markAllAsRead()"
-                        title="Đánh dấu tất cả đã đọc">
-                        <i class="fas fa-check-double"></i>
+        <div class="section-card" id="adminNotificationSection">
+            <ul class="nav nav-tabs custom-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="inbox-tab" data-bs-toggle="tab" data-bs-target="#inboxPane"
+                        type="button" role="tab" aria-controls="inboxPane" aria-selected="true">
+                        <i class="fas fa-inbox me-2"></i>Nhận thông báo
                     </button>
-                    <button class="btn btn-sm btn-outline-danger" onclick="deleteAllRead()" title="Xóa đã đọc">
-                        <i class="fas fa-trash"></i>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="compose-tab" data-bs-toggle="tab" data-bs-target="#composePane"
+                        type="button" role="tab" aria-controls="composePane" aria-selected="false">
+                        <i class="fas fa-paper-plane me-2"></i>Gửi thông báo
                     </button>
-                </div>
-            </div>
+                </li>
+            </ul>
 
-            <div class="filter-section">
-                <div class="row g-2 filter-grid align-items-end">
-                    <div class="col-12 col-lg-6">
-                        <label class="form-label">Tìm kiếm</label>
-                        <div class="filter-control-wrap">
-                            <input type="text" class="form-control" id="searchInput" placeholder="Tìm kiếm thông báo...">
-                            <button type="button" class="filter-clear-btn" aria-label="Xóa tìm kiếm thông báo">
-                                <i class="fas fa-times"></i>
+            <div class="tab-content management-tab-content">
+                <div class="tab-pane fade show active" id="inboxPane" role="tabpanel" aria-labelledby="inbox-tab">
+                    <div class="card-header">
+                        <h5><i class="fas fa-list me-2"></i>Danh sách thông báo</h5>
+                        <div class="header-actions">
+                            <button class="btn btn-sm btn-outline-primary" onclick="markAllAsRead()"
+                                title="Đánh dấu tất cả đã đọc">
+                                <i class="fas fa-check-double"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteAllRead()" title="Xóa đã đọc">
+                                <i class="fas fa-trash"></i>
                             </button>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-6 col-lg-3">
-                        <label class="form-label">Loại</label>
-                        <select class="form-select" id="typeFilter">
-                            <option value="">Tất cả loại</option>
-                            <option value="Nghỉ phép">Nghỉ phép</option>
-                            <option value="Hủy nghỉ">Hủy nghỉ</option>
-                            <option value="Cấp lại mật khẩu">Cấp lại mật khẩu</option>
-                        </select>
+
+                    <div class="filter-section">
+                        <div class="row g-2 filter-grid align-items-end">
+                            <div class="col-12 col-lg-6">
+                                <label class="form-label">Tìm kiếm</label>
+                                <div class="filter-control-wrap">
+                                    <input type="text" class="form-control" id="searchInput" placeholder="Tìm kiếm thông báo...">
+                                    <button type="button" class="filter-clear-btn" aria-label="Xóa tìm kiếm thông báo">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-3">
+                                <label class="form-label">Loại</label>
+                                <select class="form-select" id="typeFilter">
+                                    <option value="">Tất cả loại</option>
+                                    <option value="Nghỉ phép">Nghỉ phép</option>
+                                    <option value="Hủy nghỉ">Hủy nghỉ</option>
+                                    <option value="Cấp lại mật khẩu">Cấp lại mật khẩu</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-3">
+                                <label class="form-label">Trạng thái</label>
+                                <select class="form-select" id="statusFilter">
+                                    <option value="">Tất cả</option>
+                                    <option value="unread">Chưa đọc</option>
+                                    <option value="read">Đã đọc</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-12 col-sm-6 col-lg-3">
-                        <label class="form-label">Trạng thái</label>
-                        <select class="form-select" id="statusFilter">
-                            <option value="">Tất cả</option>
-                            <option value="unread">Chưa đọc</option>
-                            <option value="read">Đã đọc</option>
-                        </select>
+
+                    <div id="loadingIndicator" class="loading" style="display: none;">
+                        <div class="spinner-border text-primary"></div>
+                        <p class="mt-3">Đang tải...</p>
+                    </div>
+
+                    <div class="notifications-container" id="notificationsList"></div>
+
+                    <div class="pagination-container">
+                        <div class="text-muted" id="recordInfo">Hiển thị 0 - 0 của 0 thông báo</div>
+                        <nav>
+                            <ul class="pagination" id="paginationContainer"></ul>
+                        </nav>
                     </div>
                 </div>
-            </div>
 
-            <div id="loadingIndicator" class="loading" style="display: none;">
-                <div class="spinner-border text-primary"></div>
-                <p class="mt-3">Đang tải...</p>
-            </div>
+                <div class="tab-pane fade" id="composePane" role="tabpanel" aria-labelledby="compose-tab">
+                    <div class="compose-grid">
+                        <div class="table-section compose-card">
+                            <div class="table-header">
+                                <h5><i class="fas fa-pen-to-square me-2"></i>Soạn thông báo</h5>
+                                <span class="text-muted small">Gửi trong web, mail, hoặc cả hai</span>
+                            </div>
 
-            <div class="notifications-container" id="notificationsList"></div>
+                            <form id="broadcastForm">
+                                <div class="mb-3">
+                                    <label class="form-label">Nhóm nhận <span class="text-danger">*</span></label>
+                                    <div class="d-flex flex-wrap gap-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="patient" id="recipientPatient" checked>
+                                            <label class="form-check-label" for="recipientPatient">Bệnh nhân</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="doctor" id="recipientDoctor">
+                                            <label class="form-check-label" for="recipientDoctor">Bác sĩ</label>
+                                        </div>
+                                    </div>
+                                    <div class="recipient-picker-note">Có thể chọn một hoặc cả hai nhóm nhận.</div>
+                                </div>
 
-            <div class="pagination-container">
-                <div class="text-muted" id="recordInfo">Hiển thị 0 - 0 của 0 thông báo</div>
-                <nav>
-                    <ul class="pagination" id="paginationContainer"></ul>
-                </nav>
+                                <div class="mb-3">
+                                    <label class="form-label">Phạm vi gửi <span class="text-danger">*</span></label>
+                                    <div class="d-flex flex-wrap gap-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="broadcastScope" id="scopeAll" value="all" checked>
+                                            <label class="form-check-label" for="scopeAll">Gửi cho tất cả trong nhóm đã chọn</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="broadcastScope" id="scopeSelected" value="selected">
+                                            <label class="form-check-label" for="scopeSelected">Chọn từng người nhận</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Kênh gửi <span class="text-danger">*</span></label>
+                                    <div class="d-flex flex-wrap gap-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="web" id="channelWeb" checked>
+                                            <label class="form-check-label" for="channelWeb">Trong web</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="mail" id="channelMail">
+                                            <label class="form-check-label" for="channelMail">Mail</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="broadcastTitle" class="form-label">Tiêu đề <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="broadcastTitle" maxlength="255" placeholder="Nhập tiêu đề thông báo">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="broadcastContent" class="form-label">Nội dung <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" id="broadcastContent" rows="8" placeholder="Nhập nội dung thông báo tùy chọn..."></textarea>
+                                </div>
+
+                                <div class="compose-actions">
+                                    <button type="button" class="btn btn-outline-secondary" id="resetBroadcastBtn">Xóa nội dung</button>
+                                    <button type="submit" class="btn-add" id="sendBroadcastBtn">
+                                        <i class="fas fa-paper-plane me-2"></i>Gửi thông báo
+                                    </button>
+                                </div>
+                            </form>
+
+                            <div id="broadcastResult" class="mt-3"></div>
+                        </div>
+
+                        <div class="table-section recipient-panel" id="recipientPanel">
+                            <div class="table-header">
+                                <h5><i class="fas fa-users me-2"></i>Chọn người nhận</h5>
+                                <span class="badge bg-primary-subtle text-primary-emphasis" id="recipientCountBadge">0</span>
+                            </div>
+
+                            <div class="filter-section">
+                                <label class="form-label">Tìm kiếm người nhận</label>
+                                <div class="filter-control-wrap">
+                                    <input type="text" class="form-control" id="recipientSearchInput" placeholder="Tìm theo tên, mã hoặc email...">
+                                    <button type="button" class="filter-clear-btn" id="clearRecipientSearchBtn" aria-label="Xóa tìm kiếm người nhận">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="recipient-picker-note" id="recipientSearchHint">Chọn chế độ "Chọn từng người nhận" để bắt đầu tìm kiếm.</div>
+                            </div>
+
+                            <div id="recipientLoading" class="loading" style="display: none; padding: 20px;">
+                                <div class="spinner-border text-primary"></div>
+                                <p class="mt-3">Đang tải người nhận...</p>
+                            </div>
+
+                            <div class="recipient-results" id="recipientResults"></div>
+
+                            <div class="selected-recipient-list" id="selectedRecipientsList"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -519,12 +969,17 @@
         let lastNotificationCount = 0;
         let notificationFilterTimer;
         let notificationSummaryMode = 'all';
+        let recipientSearchTimer;
+        let recipientSearchRequestId = 0;
+        let broadcastRecipients = [];
+        const selectedBroadcastRecipients = new Map();
 
         document.addEventListener('DOMContentLoaded', function () {
             markPageAsViewed();
             loadNotifications();
             startAutoRefresh();
             setupRealtimeFilters();
+            setupBroadcastComposer();
 
             // Mobile menu
             // Scroll to top
@@ -549,6 +1004,380 @@
 
             updateSummaryModeState();
             window.AdminSummary?.refreshClearableFilters?.();
+        }
+
+        function setupBroadcastComposer() {
+            const scopeInputs = document.querySelectorAll('input[name="broadcastScope"]');
+            const roleInputs = [document.getElementById('recipientPatient'), document.getElementById('recipientDoctor')].filter(Boolean);
+            const channelInputs = [document.getElementById('channelWeb'), document.getElementById('channelMail')].filter(Boolean);
+            const recipientSearchInput = document.getElementById('recipientSearchInput');
+            const clearRecipientSearchBtn = document.getElementById('clearRecipientSearchBtn');
+            const broadcastForm = document.getElementById('broadcastForm');
+            const resetBroadcastBtn = document.getElementById('resetBroadcastBtn');
+
+            scopeInputs.forEach((input) => input.addEventListener('change', () => {
+                updateBroadcastComposerState();
+                if (getBroadcastScope() === 'selected') {
+                    queueRecipientSearch(true);
+                }
+            }));
+            roleInputs.forEach((input) => input.addEventListener('change', () => {
+                pruneSelectedRecipientsToActiveRoles();
+                updateBroadcastComposerState();
+                if (getBroadcastScope() === 'selected') {
+                    queueRecipientSearch(true);
+                } else {
+                    renderSelectedRecipients();
+                }
+            }));
+            channelInputs.forEach((input) => input.addEventListener('change', updateBroadcastComposerState));
+
+            recipientSearchInput?.addEventListener('input', () => queueRecipientSearch());
+            clearRecipientSearchBtn?.addEventListener('click', () => {
+                if (recipientSearchInput) recipientSearchInput.value = '';
+                queueRecipientSearch(true);
+            });
+
+            broadcastForm?.addEventListener('submit', handleBroadcastSubmit);
+            resetBroadcastBtn?.addEventListener('click', resetBroadcastForm);
+
+            updateBroadcastComposerState();
+            renderSelectedRecipients();
+        }
+
+        function getBroadcastScope() {
+            return document.querySelector('input[name="broadcastScope"]:checked')?.value || 'all';
+        }
+
+        function getBroadcastRoles() {
+            const roles = [];
+            if (document.getElementById('recipientPatient')?.checked) roles.push('patient');
+            if (document.getElementById('recipientDoctor')?.checked) roles.push('doctor');
+            return roles;
+        }
+
+        function getBroadcastChannels() {
+            const channels = [];
+            if (document.getElementById('channelWeb')?.checked) channels.push('web');
+            if (document.getElementById('channelMail')?.checked) channels.push('mail');
+            return channels;
+        }
+
+        function escapeHtml(text) {
+            return String(text ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function updateBroadcastComposerState() {
+            const scope = getBroadcastScope();
+            const roles = getBroadcastRoles();
+            const recipientPanel = document.getElementById('recipientPanel');
+            const recipientSearchInput = document.getElementById('recipientSearchInput');
+            const recipientResults = document.getElementById('recipientResults');
+            const recipientSearchHint = document.getElementById('recipientSearchHint');
+            const recipientLoading = document.getElementById('recipientLoading');
+
+            if (recipientSearchInput) {
+                recipientSearchInput.disabled = scope !== 'selected';
+            }
+
+            if (scope === 'selected') {
+                recipientPanel?.classList.add('is-selected-mode');
+                recipientSearchHint && (recipientSearchHint.textContent = roles.length === 0
+                    ? 'Vui lòng chọn nhóm nhận trước khi tìm kiếm.'
+                    : 'Nhập từ khóa để tìm và chọn từng người nhận.');
+                if (!recipientSearchInput?.value.trim()) {
+                    recipientResults.innerHTML = '<div class="text-center py-4 text-muted">Nhập từ khóa hoặc giữ trống để xem danh sách gợi ý.</div>';
+                }
+                if (recipientLoading) recipientLoading.style.display = 'none';
+                document.getElementById('recipientCountBadge').textContent = `${selectedBroadcastRecipients.size}`;
+            } else {
+                recipientPanel?.classList.remove('is-selected-mode');
+                recipientSearchHint && (recipientSearchHint.textContent = 'Chế độ hiện tại sẽ gửi cho toàn bộ người nhận thuộc nhóm đã chọn.');
+                recipientResults.innerHTML = '<div class="text-center py-4 text-muted">Đang ở chế độ gửi toàn bộ. Chuyển sang "Chọn từng người nhận" nếu muốn lọc chi tiết.</div>';
+                if (recipientLoading) recipientLoading.style.display = 'none';
+                document.getElementById('recipientCountBadge').textContent = `${selectedBroadcastRecipients.size}`;
+            }
+
+            renderSelectedRecipients();
+        }
+
+        function queueRecipientSearch(force = false) {
+            clearTimeout(recipientSearchTimer);
+            if (force) {
+                loadRecipientSuggestions();
+                return;
+            }
+
+            recipientSearchTimer = setTimeout(() => loadRecipientSuggestions(), 220);
+        }
+
+        async function loadRecipientSuggestions() {
+            const scope = getBroadcastScope();
+            const roles = getBroadcastRoles();
+            const recipientSearchInput = document.getElementById('recipientSearchInput');
+            const recipientResults = document.getElementById('recipientResults');
+            const recipientLoading = document.getElementById('recipientLoading');
+            const recipientSearchHint = document.getElementById('recipientSearchHint');
+
+            if (scope !== 'selected') {
+                return;
+            }
+
+            if (roles.length === 0) {
+                recipientResults.innerHTML = '<div class="text-center py-4 text-muted">Hãy chọn ít nhất một nhóm nhận.</div>';
+                document.getElementById('recipientCountBadge').textContent = `${selectedBroadcastRecipients.size}`;
+                return;
+            }
+
+            const search = recipientSearchInput?.value.trim() || '';
+            const requestId = ++recipientSearchRequestId;
+
+            if (recipientLoading) recipientLoading.style.display = 'block';
+
+            try {
+                const params = new URLSearchParams();
+                params.set('roles', roles.join(','));
+                params.set('search', search);
+                params.set('limit', '20');
+
+                const response = await fetch(`${API_BASE_ADMIN}/get-notification-recipients.php?${params.toString()}`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (requestId !== recipientSearchRequestId) {
+                    return;
+                }
+
+                if (data.success) {
+                    broadcastRecipients = Array.isArray(data.data) ? data.data : [];
+                    renderRecipientSuggestions();
+                    const total = Number(data.total || broadcastRecipients.length || 0);
+                    if (recipientSearchHint) {
+                        recipientSearchHint.textContent = total > 0
+                            ? `Tìm thấy ${total} người nhận. Đã chọn ${selectedBroadcastRecipients.size}.`
+                            : 'Không tìm thấy người nhận phù hợp.';
+                    }
+                } else {
+                    recipientResults.innerHTML = `<div class="text-center py-4 text-danger">${escapeHtml(data.message || 'Không thể tải danh sách người nhận')}</div>`;
+                }
+            } catch (error) {
+                console.error('Error loading recipients:', error);
+                recipientResults.innerHTML = '<div class="text-center py-4 text-danger">Lỗi kết nối server khi tải người nhận.</div>';
+            } finally {
+                if (recipientLoading) recipientLoading.style.display = 'none';
+            }
+        }
+
+        function renderRecipientSuggestions() {
+            const recipientResults = document.getElementById('recipientResults');
+            if (!recipientResults) return;
+
+            if (!broadcastRecipients.length) {
+                recipientResults.innerHTML = '<div class="text-center py-4 text-muted">Không có người nhận để hiển thị.</div>';
+                document.getElementById('recipientCountBadge').textContent = `${selectedBroadcastRecipients.size}`;
+                return;
+            }
+
+            recipientResults.innerHTML = broadcastRecipients.map((recipient) => {
+                const key = `${recipient.recipientRole}:${recipient.recipientId}`;
+                const isSelected = selectedBroadcastRecipients.has(key);
+                const extraLabel = recipient.extraLabel ? ` · ${escapeHtml(recipient.extraLabel)}` : '';
+                return `
+                    <div class="recipient-item ${isSelected ? 'selected' : ''}" role="button" tabindex="0"
+                        onclick="toggleBroadcastRecipient('${escapeHtml(recipient.recipientRole)}', '${escapeHtml(recipient.recipientId)}')">
+                        <input class="form-check-input mt-1" type="checkbox" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation(); toggleBroadcastRecipient('${escapeHtml(recipient.recipientRole)}', '${escapeHtml(recipient.recipientId)}'); return false;">
+                        <div class="recipient-main">
+                            <div class="recipient-name">${escapeHtml(recipient.recipientName)}</div>
+                            <div class="recipient-meta">
+                                <span class="recipient-badge"><i class="fas fa-user-tag"></i>${escapeHtml(recipient.roleLabel)}</span>
+                                ${recipient.recipientEmail ? `<div class="mt-1"><i class="fas fa-envelope me-1"></i>${escapeHtml(recipient.recipientEmail)}</div>` : ''}
+                                ${recipient.recipientId ? `<div><i class="fas fa-id-card me-1"></i>${escapeHtml(recipient.recipientId)}</div>` : ''}
+                                ${extraLabel ? `<div>${extraLabel}</div>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('recipientCountBadge').textContent = `${selectedBroadcastRecipients.size}`;
+        }
+
+        function toggleBroadcastRecipient(role, id) {
+            const key = `${String(role).toLowerCase()}:${String(id)}`;
+            if (selectedBroadcastRecipients.has(key)) {
+                selectedBroadcastRecipients.delete(key);
+            } else {
+                const matched = broadcastRecipients.find((item) => `${item.recipientRole}:${item.recipientId}` === key);
+                if (!matched) return;
+                selectedBroadcastRecipients.set(key, matched);
+            }
+
+            renderRecipientSuggestions();
+            renderSelectedRecipients();
+        }
+
+        function renderSelectedRecipients() {
+            const selectedList = document.getElementById('selectedRecipientsList');
+            if (!selectedList) return;
+
+            document.getElementById('recipientCountBadge').textContent = `${selectedBroadcastRecipients.size}`;
+
+            if (selectedBroadcastRecipients.size === 0) {
+                selectedList.innerHTML = '<div class="text-muted small">Chưa chọn người nhận cụ thể.</div>';
+                return;
+            }
+
+            selectedList.innerHTML = Array.from(selectedBroadcastRecipients.values()).map((recipient) => {
+                const key = `${recipient.recipientRole}:${recipient.recipientId}`;
+                return `
+                    <span class="selected-recipient-chip">
+                        <i class="fas fa-user"></i>
+                        ${escapeHtml(recipient.recipientName)}
+                        <button type="button" aria-label="Bỏ chọn ${escapeHtml(recipient.recipientName)}"
+                            onclick="removeBroadcastRecipient('${escapeHtml(recipient.recipientRole)}', '${escapeHtml(recipient.recipientId)}')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </span>
+                `;
+            }).join('');
+        }
+
+        function removeBroadcastRecipient(role, id) {
+            const key = `${String(role).toLowerCase()}:${String(id)}`;
+            selectedBroadcastRecipients.delete(key);
+            renderSelectedRecipients();
+            renderRecipientSuggestions();
+        }
+
+        function pruneSelectedRecipientsToActiveRoles() {
+            const activeRoles = new Set(getBroadcastRoles());
+            for (const [key, recipient] of selectedBroadcastRecipients.entries()) {
+                if (!activeRoles.has(recipient.recipientRole)) {
+                    selectedBroadcastRecipients.delete(key);
+                }
+            }
+        }
+
+        function resetBroadcastForm() {
+            const form = document.getElementById('broadcastForm');
+            form?.reset();
+            document.getElementById('recipientPatient').checked = true;
+            document.getElementById('recipientDoctor').checked = false;
+            document.getElementById('channelWeb').checked = true;
+            document.getElementById('channelMail').checked = false;
+            document.getElementById('scopeAll').checked = true;
+            document.getElementById('recipientSearchInput').value = '';
+            broadcastRecipients = [];
+            selectedBroadcastRecipients.clear();
+            document.getElementById('broadcastResult').innerHTML = '';
+            updateBroadcastComposerState();
+            if (getBroadcastScope() === 'selected') {
+                queueRecipientSearch(true);
+            }
+        }
+
+        async function handleBroadcastSubmit(event) {
+            event.preventDefault();
+
+            const title = document.getElementById('broadcastTitle')?.value.trim() || '';
+            const content = document.getElementById('broadcastContent')?.value.trim() || '';
+            const roles = getBroadcastRoles();
+            const channels = getBroadcastChannels();
+            const scope = getBroadcastScope();
+            const sendBtn = document.getElementById('sendBroadcastBtn');
+            const resultBox = document.getElementById('broadcastResult');
+
+            if (!title || !content) {
+                showBroadcastResult('danger', 'Vui lòng nhập đầy đủ tiêu đề và nội dung.');
+                return;
+            }
+
+            if (!roles.length) {
+                showBroadcastResult('danger', 'Vui lòng chọn ít nhất một nhóm người nhận.');
+                return;
+            }
+
+            if (!channels.length) {
+                showBroadcastResult('danger', 'Vui lòng chọn ít nhất một kênh gửi.');
+                return;
+            }
+
+            if (scope === 'selected' && selectedBroadcastRecipients.size === 0) {
+                showBroadcastResult('danger', 'Chế độ chọn từng người nhận đang bật nhưng chưa có người nhận nào được chọn.');
+                return;
+            }
+
+            const payload = {
+                title,
+                content,
+                scope,
+                roles,
+                channels
+            };
+
+            if (scope === 'selected') {
+                payload.recipients = Array.from(selectedBroadcastRecipients.values()).map((recipient) => ({
+                    role: recipient.recipientRole,
+                    id: recipient.recipientId
+                }));
+            }
+
+            if (sendBtn) {
+                sendBtn.disabled = true;
+                sendBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Đang gửi...';
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_ADMIN}/send-custom-notification.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    const targets = Number(data.data?.targets || 0);
+                    const webSent = Number(data.data?.results?.web?.sent || 0);
+                    const mailSent = Number(data.data?.results?.mail?.sent || 0);
+                    showBroadcastResult('success', `Đã gửi thành công cho ${targets} người nhận. Web: ${webSent}, mail: ${mailSent}.`);
+                    const form = document.getElementById('broadcastForm');
+                    if (form) form.reset();
+                    document.getElementById('recipientPatient').checked = true;
+                    document.getElementById('channelWeb').checked = true;
+                    document.getElementById('scopeAll').checked = true;
+                    selectedBroadcastRecipients.clear();
+                    broadcastRecipients = [];
+                    updateBroadcastComposerState();
+                } else {
+                    showBroadcastResult('danger', data.message || 'Không thể gửi thông báo.');
+                }
+            } catch (error) {
+                console.error('Error sending broadcast:', error);
+                showBroadcastResult('danger', 'Lỗi kết nối server khi gửi thông báo.');
+            } finally {
+                if (sendBtn) {
+                    sendBtn.disabled = false;
+                    sendBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Gửi thông báo';
+                }
+            }
+        }
+
+        function showBroadcastResult(type, message) {
+            const resultBox = document.getElementById('broadcastResult');
+            if (!resultBox) return;
+
+            resultBox.innerHTML = `
+                <div class="alert alert-${type} mb-0" role="alert">
+                    ${escapeHtml(message)}
+                </div>
+            `;
         }
 
         function queueNotificationFilter() {

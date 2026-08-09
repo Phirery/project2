@@ -241,6 +241,46 @@ function buildEmailLayout(string $title, string $contentHtml): string {
     ";
 }
 
+function buildAdminBroadcastEmailContent(string $recipientName, string $headline, string $content): string {
+    $safeRecipient = htmlspecialchars($recipientName !== '' ? $recipientName : 'bạn', ENT_QUOTES, 'UTF-8');
+    $safeHeadline = htmlspecialchars($headline, ENT_QUOTES, 'UTF-8');
+    $safeContent = nl2br(htmlspecialchars($content, ENT_QUOTES, 'UTF-8'));
+    $siteName = htmlspecialchars(mailSiteName(), ENT_QUOTES, 'UTF-8');
+
+    return "
+        <h2 style='margin:0 0 12px;'>{$safeHeadline}</h2>
+        <p>Xin chào <strong>{$safeRecipient}</strong>,</p>
+        <div style='margin:18px 0;padding:18px;border:1px solid #e6ebf2;border-radius:12px;background:#f8fafc;line-height:1.7;white-space:pre-line;'>
+            {$safeContent}
+        </div>
+        <p>Thông báo này được gửi từ <strong>{$siteName}</strong>.</p>
+    ";
+}
+
+function sendAdminBroadcastMail(
+    mysqli $conn,
+    string $eventKey,
+    string $recipientEmail,
+    string $recipientName,
+    string $subject,
+    string $headline,
+    string $content
+): array {
+    $subject = trim($subject) !== '' ? trim($subject) : trim($headline);
+    $html = buildEmailLayout($subject, buildAdminBroadcastEmailContent($recipientName, $headline, $content));
+    $text = trim($headline . "\n\n" . $content);
+
+    return sendTransactionalMail(
+        $conn,
+        'admin_custom_broadcast',
+        $eventKey,
+        $recipientEmail,
+        $subject,
+        $html,
+        $text
+    );
+}
+
 function getAppointmentMailContext(mysqli $conn, int $maLichKham): ?array {
     $sql = "
         SELECT
