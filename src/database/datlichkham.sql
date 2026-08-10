@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th8 08, 2026 lúc 08:01 PM
+-- Thời gian đã tạo: Th8 10, 2026 lúc 11:07 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -706,7 +706,7 @@ INSERT INTO `lienhe` (`maLienHe`, `hoTen`, `email`, `soDienThoai`, `chuDe`, `noi
 (2, 'testtwo', 'two@gmail.vn', '0987654321', 'Khác', 'a', 'Đã xử lý', '2025-11-23 19:42:29', 3, '2025-11-26 09:50:35', NULL),
 (3, 'hovaten', 'example@gamil.com', '0123456789', 'Khác', 'test n', 'Đã xử lý', '2025-11-24 17:10:15', 3, '2025-11-26 09:50:31', NULL),
 (4, 'Nguyễn Đạt', 'dat123456789fa+lienhe1@gmail.com', '0123123123', 'Khác', 'Hi', 'Đã xử lý', '2026-03-04 23:58:56', 3, '2026-03-05 00:01:02', 'Gửi lại lời chào cho khách hàng'),
-(5, 'dat', 'ntdatcntt2311055@student.ctuet.edu.vn', '0987987987', 'Tư vấn dịch vụ', 'Xin tư vấn ạ', 'Chưa xử lý', '2026-04-19 02:02:33', NULL, NULL, NULL);
+(5, 'dat', 'ntdatcntt2311055@student.ctuet.edu.vn', '0987987987', 'Tư vấn dịch vụ', 'Xin tư vấn ạ', 'Đã xử lý', '2026-04-19 02:02:33', 3, '2026-08-10 21:36:05', NULL);
 
 -- --------------------------------------------------------
 
@@ -780,7 +780,14 @@ INSERT INTO `mail_notification_log` (`id`, `event_code`, `event_key`, `recipient
 (48, 'appointment_cancelled_patient', '86:cancel:2026-07-23:9553728325dea6087ab1a894eaf1038a', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám #86\"}', '2026-07-24 19:56:13'),
 (49, 'appointment_cancelled_doctor', '86:cancel:2026-07-23:9553728325dea6087ab1a894eaf1038a', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám bệnh nhân #86\"}', '2026-07-24 19:56:14'),
 (50, 'appointment_cancelled_patient', '87:cancel:2026-07-24:9553728325dea6087ab1a894eaf1038a', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám #87\"}', '2026-07-24 19:56:21'),
-(51, 'appointment_cancelled_doctor', '87:cancel:2026-07-24:9553728325dea6087ab1a894eaf1038a', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám bệnh nhân #87\"}', '2026-07-24 19:56:22');
+(51, 'appointment_cancelled_doctor', '87:cancel:2026-07-24:9553728325dea6087ab1a894eaf1038a', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám bệnh nhân #87\"}', '2026-07-24 19:56:22'),
+(52, 'admin_custom_broadcast', '11cb1f620b88739546b43b5f156e500e', 'abcd@gmail.com', 'sent', NULL, '{\"subject\":\"Kiểm tra tính năng\"}', '2026-08-09 18:59:30'),
+(53, 'admin_custom_broadcast', '32a1db68d989b1debae3b0e1a4ca3c25', 'dat123456789fa+benhnhan5@gmail.com', 'sent', NULL, '{\"subject\":\"Kiểm tra tính năng\"}', '2026-08-09 18:59:31'),
+(54, 'admin_custom_broadcast', 'a2b1a99f12c581be119bd06709bd8313', 'dat123456789+bacsi1@gmail.com', 'sent', NULL, '{\"subject\":\"Kiểm tra tính năng\"}', '2026-08-09 18:59:32'),
+(55, 'admin_custom_broadcast', '2f9d87eedb1c5262ab2d0354ab615161', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Kiểm tra tính năng\"}', '2026-08-09 18:59:32'),
+(56, 'admin_custom_broadcast', 'b767d20047604b38c2284936029e1df6', 'dat123456789fa+web2@gmail.com', 'sent', NULL, '{\"subject\":\"Kiểm tra tính năng\"}', '2026-08-09 18:59:33'),
+(57, 'admin_custom_broadcast', '4dffcff70bed69dc49e2d4e887ca0b24', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Kiểm tra tính năng\"}', '2026-08-09 18:59:34'),
+(58, 'admin_custom_broadcast', 'cd0c6ff7537e7d549a8e2b9c358c2430', 'dat123456789fa+benhnhan4@gmail.com', 'sent', NULL, '{\"subject\":\"Kiểm tra tính năng\"}', '2026-08-09 18:59:35');
 
 -- --------------------------------------------------------
 
@@ -946,7 +953,7 @@ CREATE TABLE `nguoidung` (
   `matKhau` varchar(255) NOT NULL,
   `soDienThoai` varchar(16) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
-  `vaiTro` enum('benhnhan','bacsi','quantri') NOT NULL,
+  `vaiTro` enum('benhnhan','bacsi','quantri','nhanvien') NOT NULL,
   `trangThai` enum('Hoạt Động','Khóa') NOT NULL DEFAULT 'Hoạt Động',
   `ngayCapNhatTaiKhoan` datetime DEFAULT NULL,
   `ngayCapNhatMatKhau` datetime DEFAULT NULL,
@@ -1012,7 +1019,32 @@ INSERT INTO `nguoidung` (`id`, `tenDangNhap`, `matKhau`, `soDienThoai`, `email`,
 (57, 'buithixuan', 'buithixuan2004', '0933004002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
 (58, 'test1', '$2y$10$QRCJtDF7COPA8NViycczmOk.0srx9hql/gbe97mzpr5CQxI2q9/Di', '0111111111', 'dat123456789fa+benhnhan4@gmail.com', 'benhnhan', 'Hoạt Động', '2025-11-22 23:31:28', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
 (59, 'test2', 'Eden24112025', '0222222222', 'dat123456789fa+benhnhan5@gmail.com', 'benhnhan', 'Hoạt Động', '2025-11-22 23:33:27', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(61, 'benhnhan3', '$2y$10$OCV02D1gSyYuyT1ufFWgdOaDEOOUEFGhHrXPNcjOabtdykjrTibpm', '0123123123', 'dat123456789fa+web2@gmail.com', 'benhnhan', 'Hoạt Động', '2026-03-04 15:50:05', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL);
+(61, 'benhnhan3', '$2y$10$OCV02D1gSyYuyT1ufFWgdOaDEOOUEFGhHrXPNcjOabtdykjrTibpm', '0123123123', 'dat123456789fa+web2@gmail.com', 'benhnhan', 'Hoạt Động', '2026-03-04 15:50:05', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(62, 'nhanvien1', '$2y$10$X/FiT1cE/0pNiSX4jxq1zuLNCtacn53jy1Efkv6U6bA9p6DX8HT5m', '0367367367', 'dat123456789fa+nhanvien1@gmail.com', 'nhanvien', 'Hoạt Động', '2026-08-11 02:59:47', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(63, 'nhanvien2', '$2y$10$yISWwzA9BUI3MctX26NCC.r2PFFvyXaDOGKgOoc/cJGGhXgRZUkm.', '0363636367', 'dat123456789fa+nhanvien2@gmail.com', 'nhanvien', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `nhanvien`
+--
+
+CREATE TABLE `nhanvien` (
+  `nguoiDungId` int(11) NOT NULL,
+  `maNhanVien` varchar(20) NOT NULL,
+  `tenNhanVien` varchar(100) DEFAULT NULL,
+  `loaiNhanVien` varchar(50) DEFAULT NULL,
+  `gioiTinh` enum('nam','nu') DEFAULT NULL,
+  `ngayVaoLam` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `nhanvien`
+--
+
+INSERT INTO `nhanvien` (`nguoiDungId`, `maNhanVien`, `tenNhanVien`, `loaiNhanVien`, `gioiTinh`, `ngayVaoLam`) VALUES
+(62, 'NV2026001', 'Nguyễn Văn Z', 'tiepnhan', 'nam', '2026-08-11'),
+(63, 'NV202608110353204', 'Nguyễn Thị Y', 'tiepnhan', 'nu', '2026-08-11');
 
 -- --------------------------------------------------------
 
@@ -1142,7 +1174,14 @@ INSERT INTO `thongbaobenhnhan` (`maThongBao`, `maBenhNhan`, `loai`, `tieuDe`, `n
 (9, 'bn1', 'Lịch khám', 'Lịch khám bị hủy', 'Lịch khám ngày 24/02/2026 đã bị hủy bởi Bác sĩ. Lý do: Không có lý do cụ thể. Vui lòng đặt lịch mới.', '2026-02-23 22:57:53', 1),
 (10, 'bn1', 'Lịch khám', 'Lịch khám bị hủy', 'Lịch khám ngày 24/02/2026 đã bị hủy bởi Bác sĩ. Lý do: Không có lý do cụ thể. Vui lòng đặt lịch mới.', '2026-02-25 23:19:29', 1),
 (11, 'bn1', 'Lịch khám', 'Hồ sơ khám bệnh đã hoàn tất', 'Hồ sơ HS20260418203208441 của bạn đã được bác sĩ cập nhật hoàn tất. Lịch khám #79, ngày 11/04/2026, bác sĩ Trần Văn Bảo. Chẩn đoán: Đau đầu, thiếu vitamin', '2026-04-18 20:34:45', 1),
-(12, 'bn1', 'Lịch khám', 'Hồ sơ khám bệnh đã hoàn tất', 'Hồ sơ HS20260419020444496 của bạn đã được bác sĩ cập nhật hoàn tất. Lịch khám #82, ngày 18/04/2026, bác sĩ Trần Văn Bảo. Chẩn đoán: Vẫn ổn', '2026-04-19 02:06:12', 1);
+(12, 'bn1', 'Lịch khám', 'Hồ sơ khám bệnh đã hoàn tất', 'Hồ sơ HS20260419020444496 của bạn đã được bác sĩ cập nhật hoàn tất. Lịch khám #82, ngày 18/04/2026, bác sĩ Trần Văn Bảo. Chẩn đoán: Vẫn ổn', '2026-04-19 02:06:12', 1),
+(13, 'BN202511082304701', 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:29', 0),
+(14, 'BN2025112200000059', 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:30', 0),
+(15, 'bn1', 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:32', 1),
+(16, 'BN2026030400000061', 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:32', 0),
+(17, 'BN2025111712142915', 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:34', 0),
+(18, 'BN2025112200000058', 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:34', 0),
+(19, 'BN202511101515250', 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:35', 0);
 
 -- --------------------------------------------------------
 
@@ -1154,7 +1193,7 @@ CREATE TABLE `thongbaolichkham` (
   `maThongBao` int(11) NOT NULL,
   `maBacSi` varchar(20) NOT NULL,
   `maLichKham` int(11) DEFAULT NULL,
-  `loai` enum('Đặt lịch','Hủy lịch','Hệ thống') NOT NULL,
+  `loai` enum('Đặt lịch','Hủy lịch','Hệ thống') NOT NULL DEFAULT 'Đặt lịch',
   `tieuDe` varchar(255) NOT NULL,
   `noiDung` text NOT NULL,
   `thoiGian` datetime DEFAULT current_timestamp(),
@@ -1425,15 +1464,58 @@ INSERT INTO `thongbaolichkham` (`maThongBao`, `maBacSi`, `maLichKham`, `loai`, `
 (276, 'BS20251121050', NULL, '', 'Lịch biểu khám đã được cập nhật', 'Preset lịch khám đã thay đổi từ 40 phút sang 60 phút. Hiệu lực từ 21/04/2026. Các lịch trước thời điểm này vẫn giữ nguyên cấu hình cũ.', '2026-04-19 17:19:55', 0),
 (277, 'BS20251121030', 83, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 20/04/2026 - Ca chiều', '2026-04-19 17:20:55', 0),
 (278, 'BS20251121027', 84, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 22/04/2026 - Ca sáng', '2026-04-19 17:21:37', 0),
-(279, 'bs1', 85, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 23/07/2026 - Ca sáng', '2026-07-22 23:57:37', 0),
-(280, 'bs1', 86, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 23/07/2026 - Ca sáng', '2026-07-23 00:12:10', 0),
-(281, 'bs1', 87, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 24/07/2026 - Ca sáng', '2026-07-23 00:34:55', 0),
-(282, 'bs1', 88, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 27/07/2026 - Ca sáng', '2026-07-24 19:54:05', 0),
-(283, 'bs1', 81, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 20/04/2026 - Ca sáng. Lý do: Bận', '2026-07-24 19:55:55', 0),
+(279, 'bs1', 85, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 23/07/2026 - Ca sáng', '2026-07-22 23:57:37', 1),
+(280, 'bs1', 86, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 23/07/2026 - Ca sáng', '2026-07-23 00:12:10', 1),
+(281, 'bs1', 87, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 24/07/2026 - Ca sáng', '2026-07-23 00:34:55', 1),
+(282, 'bs1', 88, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 27/07/2026 - Ca sáng', '2026-07-24 19:54:05', 1),
+(283, 'bs1', 81, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 20/04/2026 - Ca sáng. Lý do: Bận', '2026-07-24 19:55:55', 1),
 (284, 'BS20251121030', 83, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 20/04/2026 - Ca chiều. Lý do: Bận', '2026-07-24 19:56:01', 0),
 (285, 'BS20251121027', 84, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 22/04/2026 - Ca sáng. Lý do: Bận', '2026-07-24 19:56:06', 0),
-(286, 'bs1', 86, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 23/07/2026 - Ca sáng. Lý do: Bận', '2026-07-24 19:56:12', 0),
-(287, 'bs1', 87, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 24/07/2026 - Ca sáng. Lý do: Bận', '2026-07-24 19:56:20', 0);
+(286, 'bs1', 86, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 23/07/2026 - Ca sáng. Lý do: Bận', '2026-07-24 19:56:12', 1),
+(287, 'bs1', 87, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 24/07/2026 - Ca sáng. Lý do: Bận', '2026-07-24 19:56:20', 1),
+(288, 'BS20251121016', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:29', 0),
+(289, 'BS20251121050', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:29', 0),
+(290, 'BS20251121039', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:29', 0),
+(291, 'BS20251121033', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:30', 0),
+(292, 'BS20251121013', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:30', 0),
+(293, 'BS20251121048', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:30', 0),
+(294, 'BS20251121041', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:31', 0),
+(295, 'BS20251121009', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:31', 0),
+(296, 'BS20251121030', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:31', 0),
+(297, 'BS20251121023', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:31', 0),
+(298, 'BS20251121018', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:31', 0),
+(299, 'BS20251121036', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:31', 0),
+(300, 'BS20251121044', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:31', 0),
+(301, 'BS20251121045', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:31', 0),
+(302, 'BS20251121047', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:31', 0),
+(303, 'BS20251121022', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:31', 0),
+(304, 'BS20251121029', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:32', 0),
+(305, 'BS20251121019', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:32', 0),
+(306, 'BS20251121010', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:32', 0),
+(307, 'BS20251121042', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:32', 0),
+(308, 'BS20251121032', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:32', 0),
+(309, 'BS20251121026', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:32', 0),
+(310, 'BS20251121037', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:32', 0),
+(311, 'BS20251121017', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:33', 0),
+(312, 'BS20251121025', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:33', 0),
+(313, 'BS20251121040', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:33', 0),
+(314, 'BS20251121012', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:33', 0),
+(315, 'BS20251121031', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:33', 0),
+(316, 'BS20251121011', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:33', 0),
+(317, 'BS20251121020', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:33', 0),
+(318, 'BS20251121024', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:33', 0),
+(319, 'BS20251121038', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:33', 0),
+(320, 'BS20251121027', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:33', 0),
+(321, 'bs1', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:33', 1),
+(322, 'BS20251121049', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:34', 0),
+(323, 'BS20251121046', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:34', 0),
+(324, 'BS20251121021', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:35', 0),
+(325, 'BS20251121034', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:35', 0),
+(326, 'BS20251121014', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:35', 0),
+(327, 'BS20251121015', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:35', 0),
+(328, 'BS20251121035', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:35', 0),
+(329, 'BS20251121028', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:35', 0),
+(330, 'BS20251121043', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:35', 0);
 
 -- --------------------------------------------------------
 
@@ -1682,6 +1764,13 @@ ALTER TABLE `nguoidung`
   ADD KEY `idx_nguoidung_isDeleted` (`isDeleted`);
 
 --
+-- Chỉ mục cho bảng `nhanvien`
+--
+ALTER TABLE `nhanvien`
+  ADD PRIMARY KEY (`maNhanVien`),
+  ADD UNIQUE KEY `nguoiDungId` (`nguoiDungId`);
+
+--
 -- Chỉ mục cho bảng `quantrivien`
 --
 ALTER TABLE `quantrivien`
@@ -1788,7 +1877,7 @@ ALTER TABLE `lienhe`
 -- AUTO_INCREMENT cho bảng `mail_notification_log`
 --
 ALTER TABLE `mail_notification_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT cho bảng `medicine_stock_log`
@@ -1806,7 +1895,7 @@ ALTER TABLE `ngaynghi`
 -- AUTO_INCREMENT cho bảng `nguoidung`
 --
 ALTER TABLE `nguoidung`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT cho bảng `suatkham`
@@ -1824,13 +1913,13 @@ ALTER TABLE `thongbaoadmin`
 -- AUTO_INCREMENT cho bảng `thongbaobenhnhan`
 --
 ALTER TABLE `thongbaobenhnhan`
-  MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT cho bảng `thongbaolichkham`
 --
 ALTER TABLE `thongbaolichkham`
-  MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=288;
+  MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=331;
 
 --
 -- AUTO_INCREMENT cho bảng `thuoc`
@@ -1917,6 +2006,12 @@ ALTER TABLE `lienhe`
 ALTER TABLE `ngaynghi`
   ADD CONSTRAINT `ngaynghi_ibfk_1` FOREIGN KEY (`maBacSi`) REFERENCES `bacsi` (`maBacSi`),
   ADD CONSTRAINT `ngaynghi_ibfk_2` FOREIGN KEY (`maCa`) REFERENCES `calamviec` (`maCa`);
+
+--
+-- Các ràng buộc cho bảng `nhanvien`
+--
+ALTER TABLE `nhanvien`
+  ADD CONSTRAINT `nhanvien_ibfk_1` FOREIGN KEY (`nguoiDungId`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE;
 
 --
 -- Các ràng buộc cho bảng `quantrivien`

@@ -16,6 +16,7 @@ SELECT
     CASE 
         WHEN nd.vaiTro = 'benhnhan' THEN bn.tenBenhNhan
         WHEN nd.vaiTro = 'bacsi' THEN bs.tenBacSi
+        WHEN nd.vaiTro = 'nhanvien' THEN nv.tenNhanVien
         ELSE 'Admin'
     END AS hoTen, 
     CASE 
@@ -25,6 +26,7 @@ SELECT
     CASE 
         WHEN nd.vaiTro = 'benhnhan' THEN bn.gioiTinh
         WHEN nd.vaiTro = 'bacsi' THEN bs.gioiTinh
+        WHEN nd.vaiTro = 'nhanvien' THEN nv.gioiTinh
         ELSE NULL
     END AS gioiTinh, 
     CASE 
@@ -50,10 +52,23 @@ SELECT
     CASE 
         WHEN nd.vaiTro = 'bacsi' THEN k.tenKhoa
         ELSE NULL
-    END AS tenKhoa
+    END AS tenKhoa,
+    CASE 
+        WHEN nd.vaiTro = 'nhanvien' THEN nv.maNhanVien
+        ELSE NULL
+    END AS maNhanVien,
+    CASE 
+        WHEN nd.vaiTro = 'nhanvien' THEN nv.loaiNhanVien
+        ELSE NULL
+    END AS loaiNhanVien,
+    CASE 
+        WHEN nd.vaiTro = 'nhanvien' THEN nv.ngayVaoLam
+        ELSE NULL
+    END AS ngayVaoLam
 FROM nguoidung nd
 LEFT JOIN benhnhan bn ON nd.id = bn.nguoiDungId
 LEFT JOIN bacsi bs ON nd.id = bs.nguoiDungId
+LEFT JOIN nhanvien nv ON nd.id = nv.nguoiDungId
 LEFT JOIN chuyenkhoa ck ON bs.maChuyenKhoa = ck.maChuyenKhoa
 LEFT JOIN khoa k ON ck.maKhoa = k.maKhoa
 WHERE nd.isDeleted = 0

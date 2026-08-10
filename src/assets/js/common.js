@@ -59,6 +59,7 @@ function normalizeRole(rawRole) {
     if (normalized === 'benhnhan' || normalized === 'patient') return 'benhnhan';
     if (normalized === 'bacsi' || normalized === 'doctor') return 'bacsi';
     if (normalized === 'quantri' || normalized === 'admin' || normalized === 'administrator' || normalized === 'quantrivien') return 'quantri';
+    if (normalized === 'nhanvien' || normalized === 'staff') return 'nhanvien';
 
     return normalized;
 }
@@ -182,7 +183,7 @@ async function checkLoginStatus() {
         if (data.success) {
             const fullName = data.data.fullName || data.data.username || 'Người dùng';
             const normalizedRole = normalizeRole(data.data.role);
-            const shouldShowSupportChat = normalizedRole !== 'bacsi' && normalizedRole !== 'quantri';
+            const shouldShowSupportChat = normalizedRole !== 'bacsi' && normalizedRole !== 'quantri' && normalizedRole !== 'nhanvien';
 
             // Desktop
             if (authButtons) authButtons.style.display = 'none';
@@ -342,6 +343,8 @@ function updateProfileLink(role) {
         profileLinks.forEach(link => link.href = 'dashboard-doctor.html');
     } else if (normalizedRole === 'quantri') {
         profileLinks.forEach(link => link.href = 'dashboard-admin.html');
+    } else if (normalizedRole === 'nhanvien') {
+        profileLinks.forEach(link => link.href = 'dashboard-nhanvien.html');
     }
 }
 
@@ -349,7 +352,8 @@ function applyRoleNavigation(role) {
     const normalizedRole = normalizeRole(role);
     const isDoctor = normalizedRole === 'bacsi';
     const isAdmin = normalizedRole === 'quantri';
-    const isStaff = isDoctor || isAdmin;
+    const isStaffAccount = normalizedRole === 'nhanvien';
+    const isStaff = isDoctor || isAdmin || isStaffAccount;
     const shouldShowPatientItems = Boolean(normalizedRole) && !isStaff;
 
     const patientDesktopItems = document.querySelectorAll('.nav-item-patient-only');
@@ -364,7 +368,7 @@ function applyRoleNavigation(role) {
         setMenuItemVisible(item, shouldShowPatientItems);
     });
 
-    const dashboardHref = isDoctor ? 'dashboard-doctor.html' : (isAdmin ? 'dashboard-admin.html' : '');
+    const dashboardHref = isDoctor ? 'dashboard-doctor.html' : (isAdmin ? 'dashboard-admin.html' : (isStaffAccount ? 'dashboard-nhanvien.html' : ''));
 
     dashboardDesktopItems.forEach(item => {
         setMenuItemVisible(item, isStaff);

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th8 08, 2026 lúc 08:01 PM
+-- Thời gian đã tạo: Th8 10, 2026 lúc 11:08 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -36,6 +36,8 @@ CREATE TABLE `bacsi` (
   `gioiTinh` enum('nam','nu') DEFAULT NULL,
   `namLamViec` smallint(5) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
 
 --
 -- Cấu trúc bảng cho bảng `benhnhan`
@@ -83,14 +85,6 @@ CREATE TABLE `calamviec` (
   `gioKetThuc` time NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `calamviec`
---
-
-INSERT INTO `calamviec` (`maCa`, `tenCa`, `gioBatDau`, `gioKetThuc`) VALUES
-(1, 'Ca sáng', '07:00:00', '11:00:00'),
-(2, 'Ca chiều', '13:00:00', '17:00:00');
-
 -- --------------------------------------------------------
 
 --
@@ -105,6 +99,7 @@ CREATE TABLE `chitietdonthuoc` (
   `lieuDung` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
 
 --
 -- Cấu trúc bảng cho bảng `chuyenkhoa`
@@ -117,6 +112,7 @@ CREATE TABLE `chuyenkhoa` (
   `moTa` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
 
 --
 -- Cấu trúc bảng cho bảng `doimatkhau`
@@ -130,7 +126,6 @@ CREATE TABLE `doimatkhau` (
   `thoiGianXuLy` datetime DEFAULT NULL,
   `nguoiXuLy` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 
 --
 -- Bẫy `doimatkhau`
@@ -198,6 +193,7 @@ CREATE TABLE `donthuoc` (
   `tongTienThuoc` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
 
 --
 -- Cấu trúc bảng cho bảng `goikham`
@@ -211,14 +207,6 @@ CREATE TABLE `goikham` (
   `gia` decimal(10,2) NOT NULL,
   `isActive` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `goikham`
---
-
-INSERT INTO `goikham` (`maGoi`, `tenGoi`, `moTa`, `thoiLuong`, `gia`, `isActive`) VALUES
-(1, 'Gói khám thường', 'Khám với bác sĩ tổng quát', 60, 150000.00, 1),
-(2, 'Gói khám cao cấp', 'Khám với bác sĩ chuyên gia', 60, 250000.00, 1);
 
 -- --------------------------------------------------------
 
@@ -235,6 +223,8 @@ CREATE TABLE `hoadon` (
   `phuongThuc` enum('TienMat','VNPAY') DEFAULT NULL,
   `vnp_TransactionNo` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
 
 --
 -- Cấu trúc bảng cho bảng `hosobenhan`
@@ -258,6 +248,8 @@ CREATE TABLE `hosobenhan` (
   `deleteReason` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
 -- Cấu trúc bảng cho bảng `khoa`
 --
@@ -267,6 +259,8 @@ CREATE TABLE `khoa` (
   `tenKhoa` varchar(100) NOT NULL,
   `moTa` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
 
 --
 -- Cấu trúc bảng cho bảng `lichkham`
@@ -436,6 +430,7 @@ CREATE TABLE `lienhe` (
   `ghiChu` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
 
 --
 -- Cấu trúc bảng cho bảng `mail_notification_log`
@@ -452,6 +447,8 @@ CREATE TABLE `mail_notification_log` (
   `sent_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
 -- Cấu trúc bảng cho bảng `medicine_stock_log`
 --
@@ -467,6 +464,8 @@ CREATE TABLE `medicine_stock_log` (
   `note` varchar(255) DEFAULT NULL,
   `createdAt` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
 
 --
 -- Cấu trúc bảng cho bảng `ngaynghi`
@@ -591,7 +590,7 @@ CREATE TABLE `nguoidung` (
   `matKhau` varchar(255) NOT NULL,
   `soDienThoai` varchar(16) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
-  `vaiTro` enum('benhnhan','bacsi','quantri') NOT NULL,
+  `vaiTro` enum('benhnhan','bacsi','quantri','nhanvien') NOT NULL,
   `trangThai` enum('Hoạt Động','Khóa') NOT NULL DEFAULT 'Hoạt Động',
   `ngayCapNhatTaiKhoan` datetime DEFAULT NULL,
   `ngayCapNhatMatKhau` datetime DEFAULT NULL,
@@ -602,6 +601,23 @@ CREATE TABLE `nguoidung` (
   `deleteReason` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `nhanvien`
+--
+
+CREATE TABLE `nhanvien` (
+  `nguoiDungId` int(11) NOT NULL,
+  `maNhanVien` varchar(20) NOT NULL,
+  `tenNhanVien` varchar(100) DEFAULT NULL,
+  `loaiNhanVien` varchar(50) DEFAULT NULL,
+  `gioiTinh` enum('nam','nu') DEFAULT NULL,
+  `ngayVaoLam` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
 --
 -- Cấu trúc bảng cho bảng `quantrivien`
 --
@@ -611,6 +627,7 @@ CREATE TABLE `quantrivien` (
   `maQuanTriVien` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
 
 --
 -- Cấu trúc bảng cho bảng `suatkham`
@@ -626,32 +643,6 @@ CREATE TABLE `suatkham` (
   `effectiveTo` date DEFAULT NULL,
   `presetMinutes` int(11) NOT NULL DEFAULT 40
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `suatkham`
---
-
-INSERT INTO `suatkham` (`maSuat`, `maCa`, `gioBatDau`, `gioKetThuc`, `isActive`, `effectiveFrom`, `effectiveTo`, `presetMinutes`) VALUES
-(1, 1, '07:00:00', '07:40:00', 0, '1900-01-01', '2026-04-20', 40),
-(2, 1, '07:40:00', '08:20:00', 0, '1900-01-01', '2026-04-20', 40),
-(3, 1, '08:20:00', '09:00:00', 0, '1900-01-01', '2026-04-20', 40),
-(4, 1, '09:00:00', '09:40:00', 0, '1900-01-01', '2026-04-20', 40),
-(5, 1, '09:40:00', '10:20:00', 0, '1900-01-01', '2026-04-20', 40),
-(6, 1, '10:20:00', '11:00:00', 0, '1900-01-01', '2026-04-20', 40),
-(7, 2, '13:00:00', '13:40:00', 0, '1900-01-01', '2026-04-20', 40),
-(8, 2, '13:40:00', '14:20:00', 0, '1900-01-01', '2026-04-20', 40),
-(9, 2, '14:20:00', '15:00:00', 0, '1900-01-01', '2026-04-20', 40),
-(10, 2, '15:00:00', '15:40:00', 0, '1900-01-01', '2026-04-20', 40),
-(11, 2, '15:40:00', '16:20:00', 0, '1900-01-01', '2026-04-20', 40),
-(12, 2, '16:20:00', '17:00:00', 0, '1900-01-01', '2026-04-20', 40),
-(65, 1, '07:00:00', '08:00:00', 1, '2026-04-21', NULL, 60),
-(66, 1, '08:00:00', '09:00:00', 1, '2026-04-21', NULL, 60),
-(67, 1, '09:00:00', '10:00:00', 1, '2026-04-21', NULL, 60),
-(68, 1, '10:00:00', '11:00:00', 1, '2026-04-21', NULL, 60),
-(69, 2, '13:00:00', '14:00:00', 1, '2026-04-21', NULL, 60),
-(70, 2, '14:00:00', '15:00:00', 1, '2026-04-21', NULL, 60),
-(71, 2, '15:00:00', '16:00:00', 1, '2026-04-21', NULL, 60),
-(72, 2, '16:00:00', '17:00:00', 1, '2026-04-21', NULL, 60);
 
 -- --------------------------------------------------------
 
@@ -675,6 +666,8 @@ CREATE TABLE `thongbaoadmin` (
   `ngayLienQuan` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
 -- Cấu trúc bảng cho bảng `thongbaobenhnhan`
 --
@@ -689,6 +682,8 @@ CREATE TABLE `thongbaobenhnhan` (
   `daXem` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
 -- Cấu trúc bảng cho bảng `thongbaolichkham`
 --
@@ -697,12 +692,14 @@ CREATE TABLE `thongbaolichkham` (
   `maThongBao` int(11) NOT NULL,
   `maBacSi` varchar(20) NOT NULL,
   `maLichKham` int(11) DEFAULT NULL,
-  `loai` enum('Đặt lịch','Hủy lịch','Hệ thống') NOT NULL,
+  `loai` enum('Đặt lịch','Hủy lịch','Hệ thống') NOT NULL DEFAULT 'Đặt lịch',
   `tieuDe` varchar(255) NOT NULL,
   `noiDung` text NOT NULL,
   `thoiGian` datetime DEFAULT current_timestamp(),
   `daXem` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
 
 --
 -- Cấu trúc bảng cho bảng `thuoc`
@@ -865,6 +862,13 @@ ALTER TABLE `nguoidung`
   ADD KEY `idx_nguoidung_isDeleted` (`isDeleted`);
 
 --
+-- Chỉ mục cho bảng `nhanvien`
+--
+ALTER TABLE `nhanvien`
+  ADD PRIMARY KEY (`maNhanVien`),
+  ADD UNIQUE KEY `nguoiDungId` (`nguoiDungId`);
+
+--
 -- Chỉ mục cho bảng `quantrivien`
 --
 ALTER TABLE `quantrivien`
@@ -923,103 +927,103 @@ ALTER TABLE `thuoc`
 -- AUTO_INCREMENT cho bảng `calamviec`
 --
 ALTER TABLE `calamviec`
-  MODIFY `maCa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `maCa` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `chitietdonthuoc`
 --
 ALTER TABLE `chitietdonthuoc`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `doimatkhau`
 --
 ALTER TABLE `doimatkhau`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `donthuoc`
 --
 ALTER TABLE `donthuoc`
-  MODIFY `maDonThuoc` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `maDonThuoc` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `goikham`
 --
 ALTER TABLE `goikham`
-  MODIFY `maGoi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `maGoi` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `hoadon`
 --
 ALTER TABLE `hoadon`
-  MODIFY `maHoaDon` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `maHoaDon` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `lichkham`
 --
 ALTER TABLE `lichkham`
-  MODIFY `maLichKham` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
+  MODIFY `maLichKham` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `lienhe`
 --
 ALTER TABLE `lienhe`
-  MODIFY `maLienHe` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `maLienHe` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `mail_notification_log`
 --
 ALTER TABLE `mail_notification_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `medicine_stock_log`
 --
 ALTER TABLE `medicine_stock_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `ngaynghi`
 --
 ALTER TABLE `ngaynghi`
-  MODIFY `maNghi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `maNghi` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `nguoidung`
 --
 ALTER TABLE `nguoidung`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `suatkham`
 --
 ALTER TABLE `suatkham`
-  MODIFY `maSuat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
+  MODIFY `maSuat` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `thongbaoadmin`
 --
 ALTER TABLE `thongbaoadmin`
-  MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `thongbaobenhnhan`
 --
 ALTER TABLE `thongbaobenhnhan`
-  MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `thongbaolichkham`
 --
 ALTER TABLE `thongbaolichkham`
-  MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=288;
+  MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `thuoc`
 --
 ALTER TABLE `thuoc`
-  MODIFY `maThuoc` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
+  MODIFY `maThuoc` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
@@ -1100,6 +1104,12 @@ ALTER TABLE `lienhe`
 ALTER TABLE `ngaynghi`
   ADD CONSTRAINT `ngaynghi_ibfk_1` FOREIGN KEY (`maBacSi`) REFERENCES `bacsi` (`maBacSi`),
   ADD CONSTRAINT `ngaynghi_ibfk_2` FOREIGN KEY (`maCa`) REFERENCES `calamviec` (`maCa`);
+
+--
+-- Các ràng buộc cho bảng `nhanvien`
+--
+ALTER TABLE `nhanvien`
+  ADD CONSTRAINT `nhanvien_ibfk_1` FOREIGN KEY (`nguoiDungId`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE;
 
 --
 -- Các ràng buộc cho bảng `quantrivien`

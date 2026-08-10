@@ -59,7 +59,24 @@ if (isset($_SESSION['id']) && isset($_SESSION['vaiTro'])) {
             // Log lỗi nếu cần, nhưng vẫn trả về tên đăng nhập nếu truy vấn lỗi
             // error_log("Lỗi truy vấn tên bệnh nhân: " . $e->getMessage()); 
         }
-    } 
+    } elseif ($userRole === 'nhanvien') {
+        try {
+            $stmt = $conn->prepare("SELECT tenNhanVien FROM nhanvien WHERE nguoiDungId = ?");
+            $stmt->bind_param("i", $userId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows > 0) {
+                $staff = $result->fetch_assoc();
+                if (!empty($staff['tenNhanVien'])) {
+                    $hoTenHienThi = $staff['tenNhanVien'];
+                }
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            // Giữ tên đăng nhập nếu truy vấn lỗi
+        }
+    }
 
     echo json_encode([
         'success' => true,
