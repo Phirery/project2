@@ -22,7 +22,7 @@ if ($vaiTro === '' || $tenDangNhap === '' || $matKhau === '' || $soDienThoai ===
     exit;
 }
 
-if (!in_array($vaiTro, ['benhnhan', 'bacsi', 'quantri'], true)) {
+if (!in_array($vaiTro, ['benhnhan', 'bacsi', 'quantri', 'nhanvien'], true)) {
     echo json_encode([
         'success' => false,
         'message' => 'Vai trò không hợp lệ'
@@ -222,6 +222,41 @@ try {
             throw new Exception('Không thể tạo hồ sơ bác sĩ');
         }
         $stmtInsertDoctor->close();
+    } elseif ($vaiTro === 'nhanvien') {
+        $loaiNhanVien = trim((string)($data['loaiNhanVien'] ?? ''));
+        $gioiTinh = trim((string)($data['gioiTinh'] ?? ''));
+        $ngayVaoLam = trim((string)($data['ngayVaoLam'] ?? ''));
+
+        $gioiTinh = $gioiTinh !== '' ? $gioiTinh : null;
+        if ($gioiTinh !== null && !in_array($gioiTinh, ['nam', 'nu'], true)) {
+            throw new Exception('Giới tính nhân viên không hợp lệ');
+        }
+
+        $ngayVaoLam = ($ngayVaoLam !== '' && strtotime($ngayVaoLam) !== false) ? $ngayVaoLam : null;
+        $loaiNhanVien = $loaiNhanVien !== '' ? $loaiNhanVien : null;
+
+        $maNhanVien = 'NV' . date('YmdHi') . sprintf('%03d', rand(0, 999));
+        $stmtInsertStaff = $conn->prepare("
+            INSERT INTO nhanvien (nguoiDungId, maNhanVien, tenNhanVien, loaiNhanVien, gioiTinh, ngayVaoLam)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ");
+        if (!$stmtInsertStaff) {
+            throw new Exception('Không thể khởi tạo tạo hồ sơ nhân viên');
+        }
+        $stmtInsertStaff->bind_param(
+            "isssss",
+            $nguoiDungId,
+            $maNhanVien,
+            $hoTen,
+            $loaiNhanVien,
+            $gioiTinh,
+            $ngayVaoLam
+        );
+        if (!$stmtInsertStaff->execute()) {
+            $stmtInsertStaff->close();
+            throw new Exception('Không thể tạo hồ sơ nhân viên');
+        }
+        $stmtInsertStaff->close();
     } else {
         $maQuanTriVien = 'ADMIN' . date('YmdHi') . sprintf('%03d', rand(0, 999));
         $stmtInsertAdmin = $conn->prepare("

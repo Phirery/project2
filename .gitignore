@@ -2,3 +2,4 @@ src/DEPLOY_CHECKLIST.md
 src/database/migrations/*
 docs
 .agents
+.codegraph

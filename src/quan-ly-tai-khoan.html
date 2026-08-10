@@ -152,6 +152,11 @@
             color: #856404;
         }
 
+        .role-badge.nhanvien {
+            background: #ede7f6;
+            color: #5e35b1;
+        }
+
         .status-badge {
             padding: 5px 12px;
             border-radius: 15px;
@@ -362,6 +367,7 @@
                         <option value="benhnhan">Bệnh nhân</option>
                         <option value="bacsi">Bác sĩ</option>
                         <option value="quantri">Quản trị viên</option>
+                        <option value="nhanvien">Nhân viên</option>
                     </select>
                 </div>
                 <div class="col-12 col-sm-6 col-lg-3">
@@ -410,7 +416,8 @@
                     <ul class="pagination" id="paginationContainer"></ul>
                 </nav>
             </div>
-        </div>
+        </div>
+
     </div>
 
     <!-- Modal Thêm Tài Khoản -->
@@ -431,6 +438,7 @@
                                     <option value="benhnhan">Bệnh nhân</option>
                                     <option value="bacsi">Bác sĩ</option>
                                     <option value="quantri">Quản trị viên</option>
+                                    <option value="nhanvien">Nhân viên</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
@@ -508,6 +516,36 @@
                                         <label class="form-label">Mô tả</label>
                                         <textarea class="form-control" id="doctorDescription" rows="3" placeholder="Nhập mô tả về bác sĩ (tùy chọn)"></textarea>
                                         <small class="text-muted">Thông tin về kinh nghiệm, chuyên môn...</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Staff Fields -->
+                            <div id="staffFields" style="display: none;">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Loại nhân viên</label>
+                                        <input type="text" class="form-control" id="staffType" list="staffTypeOptions" placeholder="VD: Check-in, Xét nghiệm, X-quang...">
+                                        <datalist id="staffTypeOptions">
+                                            <option value="Check-in">
+                                            <option value="Xét nghiệm">
+                                            <option value="X-quang">
+                                            <option value="Nội soi">
+                                            <option value="Phát thuốc">
+                                        </datalist>
+                                        <small class="text-muted">Có thể để trống nếu chưa phân loại, hoặc tự nhập loại mới.</small>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Giới tính</label>
+                                        <select class="form-select" id="staffGender">
+                                            <option value="">-- Chọn --</option>
+                                            <option value="nam">Nam</option>
+                                            <option value="nu">Nữ</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Ngày vào làm</label>
+                                        <input type="date" class="form-control" id="staffStartDate">
                                     </div>
                                 </div>
                             </div>
@@ -695,7 +733,8 @@ let currentPage = 1;
                 const roleText = {
                     'benhnhan': 'Bệnh nhân',
                     'bacsi': 'Bác sĩ',
-                    'quantri': 'Quản trị viên'
+                    'quantri': 'Quản trị viên',
+                    'nhanvien': 'Nhân viên'
                 }[acc.vaiTro];
                 
                 const isLocked = acc.trangThai === 'Khóa';
@@ -871,6 +910,7 @@ let currentPage = 1;
             const role = document.getElementById('roleSelect').value;
             const patientFields = document.getElementById('patientFields');
             const doctorFields = document.getElementById('doctorFields');
+            const staffFields = document.getElementById('staffFields');
             const birthDate = document.getElementById('birthDate');
             const patientGender = document.getElementById('patientGender');
             const doctorGender = document.getElementById('doctorGender');
@@ -879,6 +919,7 @@ let currentPage = 1;
             
             patientFields.style.display = 'none';
             doctorFields.style.display = 'none';
+            staffFields.style.display = 'none';
             birthDate.required = false;
             patientGender.required = false;
             doctorGender.required = false;
@@ -898,6 +939,8 @@ let currentPage = 1;
                 const currentYear = new Date().getFullYear();
                 doctorWorkYear.value = currentYear;
                 doctorWorkYear.setAttribute('max', currentYear);
+            } else if (role === 'nhanvien') {
+                staffFields.style.display = 'block';
             }
         }
 
@@ -905,6 +948,7 @@ let currentPage = 1;
             document.getElementById('accountForm').reset();
             document.getElementById('patientFields').style.display = 'none';
             document.getElementById('doctorFields').style.display = 'none';
+            document.getElementById('staffFields').style.display = 'none';
             document.getElementById('birthDate').required = false;
             document.getElementById('patientGender').required = false;
             document.getElementById('doctorGender').required = false;
@@ -940,7 +984,8 @@ let currentPage = 1;
             const roleText = {
                 'benhnhan': 'Bệnh nhân',
                 'bacsi': 'Bác sĩ',
-                'quantri': 'Quản trị viên'
+                'quantri': 'Quản trị viên',
+                'nhanvien': 'Nhân viên'
             }[account.vaiTro];
             
             const isLocked = account.trangThai === 'Khóa';
@@ -982,6 +1027,13 @@ let currentPage = 1;
                     <div class="col-12"><strong>Khoa:</strong> ${account.tenKhoa || 'N/A'}</div>
                     <div class="col-12"><strong>Chuyên khoa:</strong> ${account.tenChuyenKhoa || 'N/A'}</div>
                     ${account.moTa ? `<div class="col-12"><strong>Mô tả:</strong><br>${account.moTa}</div>` : ''}
+                `;
+            } else if (account.vaiTro === 'nhanvien') {
+                detailsHtml += `
+                    <div class="col-12"><strong>Mã nhân viên:</strong> ${account.maNhanVien || 'N/A'}</div>
+                    <div class="col-12"><strong>Loại nhân viên:</strong> ${account.loaiNhanVien || 'Chưa phân loại'}</div>
+                    <div class="col-12"><strong>Giới tính:</strong> ${formatGender(account.gioiTinh)}</div>
+                    <div class="col-12"><strong>Ngày vào làm:</strong> ${formatDate(account.ngayVaoLam)}</div>
                 `;
             }
             
@@ -1113,6 +1165,10 @@ let currentPage = 1;
                     showAlert('error', 'Vui lòng chọn chuyên khoa cho bác sĩ!');
                     return;
                 }
+            } else if (role === 'nhanvien') {
+                data.loaiNhanVien = document.getElementById('staffType').value.trim();
+                data.gioiTinh = document.getElementById('staffGender').value;
+                data.ngayVaoLam = document.getElementById('staffStartDate').value;
             }
             
             try {

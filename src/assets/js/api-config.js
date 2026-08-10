@@ -47,6 +47,7 @@
                 admin: apiRoot + '/admin',
                 auth: apiRoot + '/auth',
                 doctor: apiRoot + '/doctor',
+                staff: apiRoot + '/staff',
                 patient: apiRoot + '/patient',
                 payment: apiRoot + '/payment',
                 user: apiRoot + '/user'

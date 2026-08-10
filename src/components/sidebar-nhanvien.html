@@ -1,0 +1,65 @@
+<!-- Mobile Overlay -->
+<div class="mobile-overlay" id="mobileOverlay"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header" onclick="window.location.href='../index.html'">
+        <h4><i class="fas fa-hospital-alt"></i> Eden Staff</h4>
+        <p>Hệ thống nhân viên</p>
+    </div>
+    <ul class="sidebar-menu">
+        <li><a href="dashboard-nhanvien.html" data-page="dashboard-nhanvien">
+                <i class="fas fa-chart-line"></i> Dashboard</a></li>
+        <!-- TODO: Các mục menu nghiệp vụ (check-in, xét nghiệm, x-quang, nội soi, phát thuốc...)
+             sẽ được bổ sung khi các vai trò nhân viên cụ thể được triển khai. -->
+
+        <li class="user-logout-item">
+            <div class="user-info-sidebar" onclick="window.location.href='tai-khoan-ca-nhan.html'"
+                style="cursor: pointer;">
+                <div class="user-avatar" id="sidebarUserAvatar">NV</div>
+                <div class="user-details">
+                    <div class="user-name" id="sidebarUserName">Đang tải...</div>
+                    <div class="user-role">Nhân viên</div>
+                </div>
+            </div>
+            <button class="logout-btn-sidebar" onclick="handleLogout()">
+                <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+            </button>
+        </li>
+    </ul>
+</div>
+
+<!-- Main Content Wrapper -->
+<div class="main-content">
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <h5 id="pageTitle"><i class="fas fa-chart-line me-2"></i>Dashboard</h5>
+        </div>
+        <div class="top-bar-right">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <div class="logout-header">
+            <div class="user-avatar" id="topUserAvatar" onclick="window.location.href='tai-khoan-ca-nhan.html'" style="cursor: pointer;">NV</div>
+            <div class="user-details" onclick="window.location.href='tai-khoan-ca-nhan.html'" style="cursor: pointer;">
+                <div class="user-name" id="topUserName">Đang tải...</div>
+                <div class="user-role">Nhân viên</div>
+            </div>
+            <button class="logout-btn-desktop" onclick="handleLogout()">
+                <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+            </button>
+        </div>
+    </div>
+
+    <!-- Content Area - This is where page content will go -->
+    <div class="content-area" id="staffContentArea">
+        <!-- Page specific content will be inserted here -->
+    </div>
+</div>
+
+<!-- Scroll to Top Button -->
+<button id="scrollTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+    <i class="fas fa-chevron-up"></i>
+</button>
