@@ -1,0 +1,73 @@
+[CodeGraph daemon] Listening on \\.\pipe\codegraph-b70856836f3033aa (pid 14396, v1.3.0). Idle timeout 300000ms.
+[CodeGraph MCP] File watcher active — graph will auto-sync on changes
+[CodeGraph MCP] Query pool: up to 11 worker thread(s) for concurrent reads.
+[CodeGraph MCP] Caught up 2 file(s) changed since last run
+[CodeGraph daemon] Another daemon (pid 3348) already holds the lock; exiting.
+[CodeGraph daemon] Listening on \\.\pipe\codegraph-b70856836f3033aa (pid 3348, v1.3.0). Idle timeout 300000ms.
+[CodeGraph MCP] File watcher active — graph will auto-sync on changes
+[CodeGraph MCP] Query pool: up to 11 worker thread(s) for concurrent reads.
+[CodeGraph MCP] Auto-synced 1 file(s) in 280ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 134ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 118ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 123ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 121ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 123ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 126ms
+[CodeGraph daemon] Shutting down (idle timeout; clients=0).
+[CodeGraph daemon] Listening on \\.\pipe\codegraph-b70856836f3033aa (pid 9780, v1.3.0). Idle timeout 300000ms.
+[CodeGraph MCP] File watcher active — graph will auto-sync on changes
+[CodeGraph MCP] Query pool: up to 11 worker thread(s) for concurrent reads.
+[CodeGraph daemon] Shutting down (idle timeout; clients=0).
+[CodeGraph daemon] Listening on \\.\pipe\codegraph-b70856836f3033aa (pid 5004, v1.3.0). Idle timeout 300000ms.
+[CodeGraph MCP] File watcher active — graph will auto-sync on changes
+[CodeGraph MCP] Query pool: up to 11 worker thread(s) for concurrent reads.
+[CodeGraph daemon] Shutting down (idle timeout; clients=0).
+[CodeGraph daemon] Listening on \\.\pipe\codegraph-b70856836f3033aa (pid 18008, v1.3.0). Idle timeout 300000ms.
+[CodeGraph MCP] File watcher active — graph will auto-sync on changes
+[CodeGraph MCP] Query pool: up to 11 worker thread(s) for concurrent reads.
+[CodeGraph daemon] Another daemon (pid 17264) already holds the lock; exiting.
+[CodeGraph daemon] Listening on \\.\pipe\codegraph-b70856836f3033aa (pid 17264, v1.3.0). Idle timeout 300000ms.
+[CodeGraph MCP] File watcher active — graph will auto-sync on changes
+[CodeGraph MCP] Query pool: up to 11 worker thread(s) for concurrent reads.
+[CodeGraph MCP] Auto-synced 1 file(s) in 463ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 215ms
+[CodeGraph daemon] Listening on \\.\pipe\codegraph-b70856836f3033aa (pid 3740, v1.3.0). Idle timeout 300000ms.
+[CodeGraph MCP] File watcher active — graph will auto-sync on changes
+[CodeGraph MCP] Query pool: up to 11 worker thread(s) for concurrent reads.
+[CodeGraph MCP] Caught up 2 file(s) changed since last run
+[CodeGraph daemon] Another daemon (pid 7648) already holds the lock; exiting.
+[CodeGraph daemon] Listening on \\.\pipe\codegraph-b70856836f3033aa (pid 7648, v1.3.0). Idle timeout 300000ms.
+[CodeGraph MCP] File watcher active — graph will auto-sync on changes
+[CodeGraph MCP] Query pool: up to 11 worker thread(s) for concurrent reads.
+[CodeGraph MCP] Caught up 3 file(s) changed since last run
+[CodeGraph MCP] Auto-synced 1 file(s) in 126ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 156ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 125ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 154ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 154ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 123ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 118ms
+[CodeGraph daemon] Another daemon (pid 7648) already holds the lock; exiting.
+[CodeGraph daemon] Another daemon (pid 7648) already holds the lock; exiting.
+[CodeGraph daemon] Another daemon (pid 7648) already holds the lock; exiting.
+[CodeGraph daemon] Listening on \\.\pipe\codegraph-b70856836f3033aa (pid 1396, v1.3.0). Idle timeout 300000ms.
+[CodeGraph MCP] File watcher active — graph will auto-sync on changes
+[CodeGraph MCP] Query pool: up to 11 worker thread(s) for concurrent reads.
+[CodeGraph daemon] Another daemon (pid 14896) already holds the lock; exiting.
+[CodeGraph daemon] Listening on \\.\pipe\codegraph-b70856836f3033aa (pid 14896, v1.3.0). Idle timeout 300000ms.
+[CodeGraph MCP] File watcher active — graph will auto-sync on changes
+[CodeGraph MCP] Query pool: up to 11 worker thread(s) for concurrent reads.
+[CodeGraph MCP] Auto-synced 1 file(s) in 290ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 147ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 138ms
+[CodeGraph MCP] Auto-synced 2 file(s) in 123ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 131ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 113ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 113ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 114ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 117ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 119ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 122ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 118ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 116ms
+[CodeGraph MCP] Auto-synced 1 file(s) in 117ms
