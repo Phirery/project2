@@ -10,7 +10,7 @@ try {
     if ($vaiTro === 'benhnhan') {
         $stmt = $conn->prepare("
             SELECT nd.tenDangNhap, nd.soDienThoai, nd.email, nd.vaiTro, nd.avatar,
-                   bn.tenBenhNhan as hoTen, bn.ngaySinh, bn.gioiTinh, bn.soTheBHYT,
+                   bn.maBenhNhan, bn.tenBenhNhan as hoTen, bn.ngaySinh, bn.gioiTinh, bn.soTheBHYT,
                    nd.ngayCapNhatTaiKhoan
             FROM nguoidung nd
             JOIN benhnhan bn ON nd.id = bn.nguoiDungId
