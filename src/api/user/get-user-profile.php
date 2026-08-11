@@ -28,6 +28,15 @@ try {
             LEFT JOIN khoa k ON ck.maKhoa = k.maKhoa
             WHERE nd.id = ? AND nd.isDeleted = 0
         ");
+    } elseif ($vaiTro === 'nhanvien') {
+        $stmt = $conn->prepare("
+            SELECT nd.tenDangNhap, nd.soDienThoai, nd.email, nd.vaiTro, nd.avatar,
+                   nv.tenNhanVien as hoTen, nv.maNhanVien, nv.loaiNhanVien, nv.gioiTinh, nv.ngayVaoLam,
+                   nd.ngayCapNhatTaiKhoan
+            FROM nguoidung nd
+            JOIN nhanvien nv ON nd.id = nv.nguoiDungId
+            WHERE nd.id = ? AND nd.isDeleted = 0
+        ");
     } else {
         $stmt = $conn->prepare("
             SELECT nd.tenDangNhap, nd.soDienThoai, nd.email, nd.vaiTro, nd.avatar,
