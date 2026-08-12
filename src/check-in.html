@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check-in bệnh nhân - Nhân Viên</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="favicon.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link id="sidebar-nhanvien-css" rel="stylesheet" href="assets/css/sidebar-nhanvien.css">
+    <style>
+        .ci-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 28px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 24px;
+        }
+
+        .ci-panel h5 {
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 18px;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .search-row input {
+            flex: 1 1 260px;
+        }
+
+        .btn-primary-ci {
+            background: var(--primary-blue);
+            border: none;
+            color: #fff;
+        }
+
+        .btn-primary-ci:hover {
+            background: var(--primary-blue-dark);
+            color: #fff;
+        }
+
+        .patient-card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 14px;
+        }
+
+        .patient-card .maBenhNhan {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .appt-card {
+            border: 1px solid var(--primary-blue-light);
+            background: var(--primary-blue-light);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .stt-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+            color: #fff;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .step-select {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .choice-chip {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.15s;
+            background: #fff;
+        }
+
+        .choice-chip:hover {
+            border-color: var(--primary-blue);
+        }
+
+        .choice-chip.active {
+            background: var(--primary-blue);
+            color: #fff;
+            border-color: var(--primary-blue);
+        }
+
+        .choice-chip.disabled {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .queue-table th, .queue-table td {
+            vertical-align: middle;
+            font-size: 0.9rem;
+        }
+
+        .badge-waiting { background: #fff3cd; color: #856404; }
+        .badge-inprogress { background: #cfe2ff; color: #084298; }
+        .badge-done { background: #d1fae5; color: #065f46; }
+
+        #qrScannerModalBody {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #qrReader {
+            width: 100%;
+            max-width: 360px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-placeholder"></div>
+
+    <div id="page-content" style="display:none;">
+        <h3 class="section-title"
+            style="font-size:1.8rem;font-weight:700;color:#333;margin-bottom:25px;padding-bottom:10px;border-bottom:3px solid var(--primary-blue);display:inline-block;">
+            Check-in bệnh nhân
+        </h3>
+
+        <!-- Bước 1: Tìm bệnh nhân -->
+        <div class="ci-panel">
+            <h5><i class="fas fa-search me-2"></i>Tìm bệnh nhân</h5>
+            <div class="search-row">
+                <input type="text" id="searchInput" class="form-control" placeholder="Nhập mã bệnh nhân hoặc số điện thoại...">
+                <button class="btn btn-primary-ci" id="btnSearch"><i class="fas fa-search me-1"></i> Tìm</button>
+                <button class="btn btn-outline-secondary" id="btnScanQr"><i class="fas fa-qrcode me-1"></i> Quét QR</button>
+            </div>
+        </div>
+
+        <!-- Kết quả tìm kiếm / các luồng xử lý -->
+        <div id="resultArea"></div>
+
+        <!-- Hàng đợi hôm nay -->
+        <div class="ci-panel">
+            <h5><i class="fas fa-list-ol me-2"></i>Hàng đợi khám hôm nay</h5>
+            <div id="queueOverview" class="text-muted">Đang tải...</div>
+            <div id="queueDetail" style="margin-top:16px;"></div>
+        </div>
+    </div>
+
+    <!-- Modal quét QR -->
+    <div class="modal fade" id="qrScannerModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-qrcode me-2"></i>Quét mã QR bệnh nhân</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" id="btnCloseQrModal"></button>
+                </div>
+                <div class="modal-body" id="qrScannerModalBody">
+                    <div id="qrReader"></div>
+                    <p class="text-muted mt-2 small">Đưa mã QR trong trang "Tài khoản cá nhân" của bệnh nhân vào khung hình</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="assets/js/api-config.js"></script>
+    <script src="assets/js/config-nhanvien.js"></script>
+    <script src="assets/js/sidebar-nhanvien.js"></script>
+    <script src="assets/js/check-in.js"></script>
+</body>
+
+</html>

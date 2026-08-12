@@ -202,6 +202,7 @@
 
         const pageTitles = {
             'dashboard-nhanvien.html': '<i class="fas fa-chart-line me-2"></i>Dashboard',
+            'check-in.html': '<i class="fas fa-door-open me-2"></i>Check-in bệnh nhân',
             'tai-khoan-ca-nhan.html': '<i class="fas fa-user-circle me-2"></i>Tài khoản'
         };
 
