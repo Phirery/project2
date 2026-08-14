@@ -11,41 +11,105 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link id="sidebar-nhanvien-css" rel="stylesheet" href="assets/css/sidebar-nhanvien.css">
+    <link rel="stylesheet" href="assets/css/admin-summary.css">
     <style>
-        .ci-panel {
-            background: white;
+        .section-card {
+            background: #fff;
             border-radius: 15px;
-            padding: 28px;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            margin-bottom: 24px;
+            overflow: hidden;
         }
 
-        .ci-panel h5 {
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 18px;
+        .custom-tabs {
+            border-bottom: 2px solid #e8eef5;
+            padding: 0 25px;
+            margin-bottom: 0;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: thin;
         }
 
-        .search-row {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+        .custom-tabs .nav-item { flex: 0 0 auto; }
 
-        .search-row input {
-            flex: 1 1 260px;
-        }
-
-        .btn-primary-ci {
-            background: var(--primary-blue);
+        .custom-tabs .nav-link {
             border: none;
-            color: #fff;
+            color: #666;
+            font-weight: 600;
+            padding: 14px 18px;
+            position: relative;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            background: transparent;
         }
 
-        .btn-primary-ci:hover {
-            background: var(--primary-blue-dark);
-            color: #fff;
+        .custom-tabs .nav-link:hover { color: var(--primary-blue); }
+
+        .custom-tabs .nav-link.active {
+            color: var(--primary-blue);
+            border-bottom-color: var(--primary-blue);
+            background: transparent;
         }
+
+        .management-tab-content { padding: 24px; }
+
+        .search-section {
+            background: #fcfdff;
+            border: 1px solid #edf0f5;
+            border-radius: 12px;
+            padding: 20px 25px;
+            margin-bottom: 20px;
+        }
+
+        .search-section .form-label { font-weight: 600; color: #495057; margin-bottom: 8px; }
+
+        .table-section {
+            background: white;
+            border: 1px solid #edf0f5;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .table-header h5 { color: #333; font-weight: 700; margin: 0; }
+
+        .custom-table { width: 100%; border-collapse: collapse; }
+
+        .custom-table thead th {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            color: #495057;
+            font-weight: 600;
+            padding: 14px;
+            border: none;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .custom-table tbody tr {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+        }
+
+        .custom-table tbody tr.is-clickable { cursor: pointer; }
+        .custom-table tbody tr.is-clickable:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
+
+        .custom-table tbody td { padding: 14px; vertical-align: middle; font-size: 0.9rem; }
+        .custom-table tbody tr td:first-child { border-radius: 8px 0 0 8px; }
+        .custom-table tbody tr td:last-child { border-radius: 0 8px 8px 0; }
+
+        .btn-primary-ci { background: var(--primary-blue); border: none; color: #fff; }
+        .btn-primary-ci:hover { background: var(--primary-blue-dark); color: #fff; }
 
         .patient-card {
             border: 1px solid var(--border-color);
@@ -54,10 +118,7 @@
             margin-bottom: 14px;
         }
 
-        .patient-card .maBenhNhan {
-            font-size: 0.8rem;
-            color: #888;
-        }
+        .patient-card .maBenhNhan { font-size: 0.8rem; color: #888; }
 
         .appt-card {
             border: 1px solid var(--primary-blue-light);
@@ -85,12 +146,7 @@
             font-weight: 700;
         }
 
-        .step-select {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
+        .step-select { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
 
         .choice-chip {
             border: 1px solid var(--border-color);
@@ -102,40 +158,33 @@
             background: #fff;
         }
 
-        .choice-chip:hover {
-            border-color: var(--primary-blue);
-        }
-
-        .choice-chip.active {
-            background: var(--primary-blue);
-            color: #fff;
-            border-color: var(--primary-blue);
-        }
-
-        .choice-chip.disabled {
-            opacity: 0.4;
-            pointer-events: none;
-        }
-
-        .queue-table th, .queue-table td {
-            vertical-align: middle;
-            font-size: 0.9rem;
-        }
+        .choice-chip:hover { border-color: var(--primary-blue); }
+        .choice-chip.active { background: var(--primary-blue); color: #fff; border-color: var(--primary-blue); }
+        .choice-chip.disabled { opacity: 0.4; pointer-events: none; }
 
         .badge-waiting { background: #fff3cd; color: #856404; }
         .badge-inprogress { background: #cfe2ff; color: #084298; }
         .badge-done { background: #d1fae5; color: #065f46; }
 
-        #qrScannerModalBody {
+        .search-result-item {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            cursor: pointer;
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            transition: 0.15s;
         }
 
-        #qrReader {
-            width: 100%;
-            max-width: 360px;
-        }
+        .search-result-item:hover { border-color: var(--primary-blue); background: var(--primary-blue-light); }
+
+        #qrReader { width: 100%; max-width: 360px; margin: 0 auto; }
+
+        .empty-hint { color: #888; text-align: center; padding: 30px 10px; }
     </style>
 </head>
 
@@ -148,36 +197,145 @@
             Check-in bệnh nhân
         </h3>
 
-        <!-- Bước 1: Tìm bệnh nhân -->
-        <div class="ci-panel">
-            <h5><i class="fas fa-search me-2"></i>Tìm bệnh nhân</h5>
-            <div class="search-row">
-                <input type="text" id="searchInput" class="form-control" placeholder="Nhập mã bệnh nhân hoặc số điện thoại...">
-                <button class="btn btn-primary-ci" id="btnSearch"><i class="fas fa-search me-1"></i> Tìm</button>
-                <button class="btn btn-outline-secondary" id="btnScanQr"><i class="fas fa-qrcode me-1"></i> Quét QR</button>
+        <div class="section-card" id="checkinSection">
+            <ul class="nav nav-tabs custom-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="checkin-tab" data-bs-toggle="tab" data-bs-target="#checkinPane"
+                        type="button" role="tab" aria-controls="checkinPane" aria-selected="true">
+                        <i class="fas fa-door-open me-2"></i>Check-in bệnh nhân
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="queue-tab" data-bs-toggle="tab" data-bs-target="#queuePane"
+                        type="button" role="tab" aria-controls="queuePane" aria-selected="false">
+                        <i class="fas fa-list-ol me-2"></i>Hàng đợi khám hôm nay
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content management-tab-content">
+                <!-- ===================== TAB 1: CHECK-IN ===================== -->
+                <div class="tab-pane fade show active" id="checkinPane" role="tabpanel" aria-labelledby="checkin-tab">
+
+                    <div class="search-section">
+                        <label class="form-label">Tìm bệnh nhân (mã BN / SĐT / họ tên / mã thẻ BHYT)</label>
+                        <div class="filter-control-wrap">
+                            <input type="text" id="searchInput" class="form-control" placeholder="Nhập từ khóa...">
+                            <button type="button" class="filter-clear-btn" aria-label="Xóa tìm kiếm">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="d-flex gap-2 mt-3 flex-wrap">
+                            <button class="btn btn-primary-ci" id="btnSearch"><i class="fas fa-search me-1"></i> Tìm</button>
+                            <button class="btn btn-outline-secondary" id="btnScanQr"><i class="fas fa-camera me-1"></i> Quét QR (camera)</button>
+                            <button class="btn btn-outline-secondary" id="btnImportQr"><i class="fas fa-file-image me-1"></i> Quét QR từ ảnh</button>
+                            <input type="file" id="qrFileInput" accept="image/*" hidden>
+                            <div id="qrFileReader" style="display:none;"></div>
+                            <button class="btn btn-outline-primary ms-auto" id="btnNewPatient"><i class="fas fa-user-plus me-1"></i> Tạo bệnh nhân mới</button>
+                        </div>
+                    </div>
+
+                    <div id="searchResultsList"></div>
+
+                    <div id="resultArea"></div>
+
+                    <div class="table-section">
+                        <div class="table-header">
+                            <h5><i class="fas fa-calendar-day me-2"></i>Bệnh nhân có lịch khám hôm nay (chưa check-in)</h5>
+                        </div>
+                        <div class="filter-control-wrap mb-3">
+                            <input type="text" id="todayListFilter" class="form-control" placeholder="Lọc nhanh theo tên, mã BN, SĐT hoặc bác sĩ...">
+                            <button type="button" class="filter-clear-btn" aria-label="Xóa lọc">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Bệnh nhân</th>
+                                        <th>SĐT</th>
+                                        <th>Bác sĩ</th>
+                                        <th>Giờ hẹn</th>
+                                        <th>Nguồn</th>
+                                        <th class="text-center">Check-in</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="todayListBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="empty-hint" id="todayListEmpty" style="display:none;">Không có lịch nào phù hợp</div>
+                    </div>
+                </div>
+
+                <!-- ===================== TAB 2: HÀNG ĐỢI ===================== -->
+                <div class="tab-pane fade" id="queuePane" role="tabpanel" aria-labelledby="queue-tab">
+
+                    <div class="table-section">
+                        <div class="table-header">
+                            <h5><i class="fas fa-user-md me-2"></i>Danh sách bác sĩ hôm nay</h5>
+                        </div>
+                        <div class="filter-control-wrap mb-3">
+                            <input type="text" id="doctorFilter" class="form-control" placeholder="Tìm theo tên bác sĩ...">
+                            <button type="button" class="filter-clear-btn" aria-label="Xóa lọc">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Bác sĩ</th>
+                                        <th class="text-center">Đang chờ</th>
+                                        <th class="text-center">Đang khám</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="doctorQueueBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="empty-hint" id="doctorQueueEmpty" style="display:none;">Không có bác sĩ phù hợp</div>
+                    </div>
+
+                    <div class="table-section" id="queueDetailSection" style="display:none;">
+                        <div class="table-header">
+                            <h5 id="queueDetailTitle"><i class="fas fa-list-ol me-2"></i>Hàng đợi</h5>
+                        </div>
+                        <div class="filter-control-wrap mb-3">
+                            <input type="text" id="queuePatientFilter" class="form-control" placeholder="Tìm bệnh nhân trong hàng đợi...">
+                            <button type="button" class="filter-clear-btn" aria-label="Xóa lọc">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Bệnh nhân</th>
+                                        <th>Giờ hẹn</th>
+                                        <th>Nguồn</th>
+                                        <th>Trạng thái</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="queueDetailBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="empty-hint" id="queueDetailEmpty" style="display:none;">Chưa có bệnh nhân nào trong hàng đợi</div>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <!-- Kết quả tìm kiếm / các luồng xử lý -->
-        <div id="resultArea"></div>
-
-        <!-- Hàng đợi hôm nay -->
-        <div class="ci-panel">
-            <h5><i class="fas fa-list-ol me-2"></i>Hàng đợi khám hôm nay</h5>
-            <div id="queueOverview" class="text-muted">Đang tải...</div>
-            <div id="queueDetail" style="margin-top:16px;"></div>
         </div>
     </div>
 
-    <!-- Modal quét QR -->
+    <!-- Modal quét QR bằng camera -->
     <div class="modal fade" id="qrScannerModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fas fa-qrcode me-2"></i>Quét mã QR bệnh nhân</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" id="btnCloseQrModal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body" id="qrScannerModalBody">
+                <div class="modal-body text-center">
                     <div id="qrReader"></div>
                     <p class="text-muted mt-2 small">Đưa mã QR trong trang "Tài khoản cá nhân" của bệnh nhân vào khung hình</p>
                 </div>
@@ -189,6 +347,7 @@
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="assets/js/api-config.js"></script>
     <script src="assets/js/config-nhanvien.js"></script>
+    <script src="assets/js/admin-summary.js"></script>
     <script src="assets/js/sidebar-nhanvien.js"></script>
     <script src="assets/js/check-in.js"></script>
 </body>

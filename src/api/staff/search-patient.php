@@ -6,40 +6,50 @@ require_once '../../config/session.php';
 require_role('nhanvien');
 
 /**
- * Tra cứu bệnh nhân theo mã BN (nhập tay hoặc quét QR) hoặc số điện thoại.
- * Trả kèm lịch khám "Đã đặt" của hôm nay (nếu có) và trạng thái đã check-in hay chưa,
- * để trang check-in quyết định luồng B (chưa có lịch) hay C (đã có lịch).
+ * Tra cứu bệnh nhân theo mã BN / SĐT (khớp chính xác) hoặc theo tên / mã thẻ
+ * BHYT (khớp gần đúng - LIKE). Trả về DANH SÁCH kết quả (có thể nhiều người
+ * trùng tên) kèm lịch khám "Đã đặt" hôm nay của từng người, để trang check-in
+ * cho nhân viên chọn đúng người trước khi xử lý Case A/B/C.
  */
 
 $q = trim($_GET['q'] ?? '');
+$LIMIT = 20;
 
 if ($q === '') {
-    echo json_encode(['success' => false, 'message' => 'Vui lòng nhập mã bệnh nhân hoặc số điện thoại'], JSON_UNESCAPED_UNICODE);
+    echo json_encode(['success' => false, 'message' => 'Vui lòng nhập từ khóa tìm kiếm'], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
 try {
+    $like = '%' . $q . '%';
+
     $stmt = $conn->prepare("
         SELECT bn.maBenhNhan, bn.tenBenhNhan, bn.ngaySinh, bn.gioiTinh, bn.soTheBHYT,
                nd.id AS nguoiDungId, nd.soDienThoai, nd.email, nd.taiKhoanTamThoi, nd.isDeleted
         FROM benhnhan bn
         JOIN nguoidung nd ON bn.nguoiDungId = nd.id
-        WHERE bn.maBenhNhan = ? OR nd.soDienThoai = ?
-        LIMIT 1
+        WHERE nd.isDeleted = 0
+          AND (
+                bn.maBenhNhan = ?
+             OR nd.soDienThoai = ?
+             OR bn.tenBenhNhan LIKE ?
+             OR bn.soTheBHYT LIKE ?
+          )
+        ORDER BY bn.tenBenhNhan ASC
+        LIMIT $LIMIT
     ");
-    $stmt->bind_param('ss', $q, $q);
+    $stmt->bind_param('ssss', $q, $q, $like, $like);
     $stmt->execute();
-    $patient = $stmt->get_result()->fetch_assoc();
+    $patients = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     $stmt->close();
 
-    if (!$patient || (int)$patient['isDeleted'] === 1) {
-        echo json_encode(['success' => true, 'found' => false], JSON_UNESCAPED_UNICODE);
+    if (empty($patients)) {
+        echo json_encode(['success' => true, 'patients' => []], JSON_UNESCAPED_UNICODE);
         exit;
     }
 
     $today = date('Y-m-d');
 
-    // Tìm lịch "Đã đặt" hôm nay của bệnh nhân này (mới nhất trước)
     $apptStmt = $conn->prepare("
         SELECT lk.maLichKham, lk.maBacSi, bs.tenBacSi, lk.maCa, c.tenCa,
                TIME_FORMAT(sk.gioBatDau, '%H:%i') AS gioBatDau,
@@ -54,15 +64,14 @@ try {
         WHERE lk.maBenhNhan = ? AND lk.ngayKham = ? AND lk.trangThai = 'Đã đặt'
         ORDER BY sk.gioBatDau ASC
     ");
-    $apptStmt->bind_param('ss', $patient['maBenhNhan'], $today);
-    $apptStmt->execute();
-    $appointments = $apptStmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    $apptStmt->close();
 
-    echo json_encode([
-        'success' => true,
-        'found' => true,
-        'patient' => [
+    $result = [];
+    foreach ($patients as $patient) {
+        $apptStmt->bind_param('ss', $patient['maBenhNhan'], $today);
+        $apptStmt->execute();
+        $appointments = $apptStmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        $result[] = [
             'maBenhNhan' => $patient['maBenhNhan'],
             'tenBenhNhan' => $patient['tenBenhNhan'],
             'ngaySinh' => $patient['ngaySinh'],
@@ -70,23 +79,26 @@ try {
             'soTheBHYT' => $patient['soTheBHYT'],
             'soDienThoai' => $patient['soDienThoai'],
             'email' => $patient['email'],
-            'taiKhoanTamThoi' => (bool)$patient['taiKhoanTamThoi']
-        ],
-        'appointmentsToday' => array_map(function ($a) {
-            return [
-                'maLichKham' => (int)$a['maLichKham'],
-                'maBacSi' => $a['maBacSi'],
-                'tenBacSi' => $a['tenBacSi'],
-                'maCa' => (int)$a['maCa'],
-                'tenCa' => $a['tenCa'],
-                'gioBatDau' => $a['gioBatDau'],
-                'gioKetThuc' => $a['gioKetThuc'],
-                'daCheckIn' => $a['maHangDoi'] !== null,
-                'soThuTu' => $a['soThuTu'] !== null ? (int)$a['soThuTu'] : null,
-                'trangThaiHangDoi' => $a['trangThaiHangDoi']
-            ];
-        }, $appointments)
-    ], JSON_UNESCAPED_UNICODE);
+            'taiKhoanTamThoi' => (bool)$patient['taiKhoanTamThoi'],
+            'appointmentsToday' => array_map(function ($a) {
+                return [
+                    'maLichKham' => (int)$a['maLichKham'],
+                    'maBacSi' => $a['maBacSi'],
+                    'tenBacSi' => $a['tenBacSi'],
+                    'maCa' => (int)$a['maCa'],
+                    'tenCa' => $a['tenCa'],
+                    'gioBatDau' => $a['gioBatDau'],
+                    'gioKetThuc' => $a['gioKetThuc'],
+                    'daCheckIn' => $a['maHangDoi'] !== null,
+                    'soThuTu' => $a['soThuTu'] !== null ? (int)$a['soThuTu'] : null,
+                    'trangThaiHangDoi' => $a['trangThaiHangDoi']
+                ];
+            }, $appointments)
+        ];
+    }
+    $apptStmt->close();
+
+    echo json_encode(['success' => true, 'patients' => $result], JSON_UNESCAPED_UNICODE);
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()], JSON_UNESCAPED_UNICODE);
 }
