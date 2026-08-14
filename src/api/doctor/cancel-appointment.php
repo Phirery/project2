@@ -18,6 +18,7 @@ if (!isset($input['maLichKham'])) {
 }
 $maLichKham = $input['maLichKham'];
 $lyDo = trim($input['lyDo'] ?? '');
+$fromQueue = !empty($input['fromQueue']);
 
 try {
     // 3. Lấy maBacSi của bác sĩ đang đăng nhập (để bảo mật)
@@ -34,6 +35,24 @@ try {
     $bacsi = $result_bs->fetch_assoc();
     $maBacSi = $bacsi['maBacSi']; // Đây là mã bác sĩ đã được xác thực
     $stmt_bs->close();
+
+    // Nếu lịch này đã check-in (có trong hàng đợi) và không phải hủy từ hàng đợi,
+    // chặn lại để nhân viên/bác sĩ xử lý trong hàng đợi trước.
+    $queueStmt = $conn->prepare("SELECT maHangDoi, trangThai FROM hangdoikham WHERE maLichKham = ? LIMIT 1");
+    $queueStmt->bind_param("i", $maLichKham);
+    $queueStmt->execute();
+    $queueRow = $queueStmt->get_result()->fetch_assoc();
+    $queueStmt->close();
+
+    if ($queueRow && !$fromQueue) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Lịch khám này đã check-in (đang trong hàng đợi khám). Vui lòng hủy từ hàng đợi khám thay vì trang lịch khám.'
+        ]);
+        exit;
+    }
+
+    $conn->begin_transaction();
 
     if ($lyDo !== '') {
         $stmt = $conn->prepare("
@@ -56,6 +75,19 @@ try {
     
     if ($stmt->execute()) {
         if ($stmt->affected_rows > 0) {
+            $stmt->close();
+
+            if ($queueRow && $fromQueue) {
+                $cancelQueueStmt = $conn->prepare("UPDATE hangdoikham SET trangThai = 'Hủy' WHERE maLichKham = ?");
+                $cancelQueueStmt->bind_param("i", $maLichKham);
+                if (!$cancelQueueStmt->execute()) {
+                    throw new Exception('Không thể hủy hàng đợi khám: ' . $cancelQueueStmt->error);
+                }
+                $cancelQueueStmt->close();
+            }
+
+            $conn->commit();
+
             try {
                 sendAppointmentCancelledEmails($conn, (int)$maLichKham, 'bacsi', $lyDo);
             } catch (Throwable $mailError) {
@@ -63,6 +95,8 @@ try {
             }
             echo json_encode(['success' => true, 'message' => 'Đã hủy lịch khám thành công.']);
         } else {
+            $stmt->close();
+            $conn->rollback();
             // Không có dòng nào bị ảnh hưởng
             echo json_encode([
                 'success' => false, 
@@ -70,11 +104,12 @@ try {
             ]);
         }
     } else {
+        $conn->rollback();
         echo json_encode(['success' => false, 'message' => 'Lỗi khi thực thi lệnh hủy.']);
     }
-    $stmt->close();
 
 } catch (Exception $e) {
+    $conn->rollback();
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Lỗi máy chủ: ' . $e->getMessage()]);
 }

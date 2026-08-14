@@ -228,6 +228,11 @@
             color: #721c24;
         }
 
+        .status-missed {
+            background: #ffe5d0;
+            color: #a15c00;
+        }
+
         .btn-action {
             padding: 6px 12px;
             border-radius: 8px;
@@ -373,11 +378,11 @@
 
         <div class="section-card">
             <div class="card-header table-header">
-                <h5><i class="fas fa-calendar-alt me-2"></i>Lịch khám hôm nay <span class="badge bg-primary"
+                <h5><i class="fas fa-list-ol me-2"></i>Hàng đợi khám hôm nay <span class="badge bg-primary"
                         id="totalToday">0</span></h5>
                 <div class="table-header-actions">
-                    <button class="sort-toggle-btn" id="sortToggleBtn" type="button" onclick="toggleSortOrder()" aria-label="Đổi thứ tự thời gian">
-                        <i id="sortToggleIcon" class="fas fa-sort-amount-down"></i>
+                    <button class="sort-toggle-btn" id="sortToggleBtn" type="button" onclick="toggleSortOrder()" aria-label="Đổi thứ tự STT">
+                        <i id="sortToggleIcon" class="fas fa-sort-amount-down-alt"></i>
                     </button>
                 </div>
             </div>
@@ -402,10 +407,11 @@
                     <div class="col-md-2">
                         <select class="form-select" id="statusFilter" onchange="applyFilters()">
                             <option value="">Tất cả trạng thái</option>
-                            <option value="booked">Chờ khám</option>
-                            <option value="draft">Chờ hoàn tất hồ sơ</option>
-                            <option value="completed">Đã khám</option>
-                            <option value="cancelled">Đã hủy</option>
+                            <option value="Đang chờ">Đang chờ</option>
+                            <option value="Đang khám">Đang khám</option>
+                            <option value="Hoàn thành">Hoàn thành</option>
+                            <option value="Bỏ lỡ">Bỏ lỡ</option>
+                            <option value="Hủy">Đã hủy</option>
                         </select>
                     </div>
                 </div>
@@ -420,10 +426,11 @@
                 <table class="custom-table">
                     <thead>
                         <tr>
-                            <th>Giờ</th>
+                            <th>STT</th>
                             <th>Bệnh nhân</th>
                             <th>Giới tính</th>
-                            <th>Gói khám</th>
+                            <th>Giờ hẹn gốc</th>
+                            <th>Nguồn</th>
                             <th>Trạng thái</th>
                             <th class="actions-col"><i class="fas fa-cog"></i></th>
                         </tr>
@@ -468,46 +475,59 @@
         const itemsPerPage = 10;
         let currentAppointments = [];
         let totalAppointments = 0;
-        let sortOrder = 'desc';
+        let sortOrder = 'asc';
+        let autoRefreshTimer = null;
 
-        function getAppointmentUiStatus(appointment) {
-            if (appointment.trangThai === 'Hủy') {
-                return { value: 'cancelled', label: 'Đã hủy', className: 'status-cancelled' };
-            }
-
-            if (appointment.maHoSo && appointment.trangThaiHoSo === 'Chưa hoàn thành') {
-                return { value: 'draft', label: 'Chờ hoàn tất hồ sơ', className: 'status-waiting' };
-            }
-
-            if (appointment.trangThai === 'Hoàn thành' || appointment.trangThaiHoSo === 'Đã hoàn thành') {
-                return { value: 'completed', label: 'Đã khám', className: 'status-completed' };
-            }
-
-            return { value: 'booked', label: 'Chờ khám', className: 'status-booked' };
+        function getQueueUiStatus(appointment) {
+            const map = {
+                'Đang chờ': { label: 'Đang chờ', className: 'status-booked' },
+                'Đang khám': { label: 'Đang khám', className: 'status-waiting' },
+                'Hoàn thành': { label: 'Hoàn thành', className: 'status-completed' },
+                'Bỏ lỡ': { label: 'Bỏ lỡ', className: 'status-missed' },
+                'Hủy': { label: 'Đã hủy', className: 'status-cancelled' }
+            };
+            return map[appointment.trangThaiHangDoi] || { label: appointment.trangThaiHangDoi, className: 'status-booked' };
         }
 
-        function getRecordAction(appointment) {
-            if (appointment.trangThai === 'Hủy') {
-                return null;
+        function getQueueActions(appointment) {
+            const trangThai = appointment.trangThaiHangDoi;
+            const actions = [
+                { label: 'Xem chi tiết', icon: 'fa-eye', onClick: `viewAppointment(${appointment.maLichKham})`, variant: 'view' }
+            ];
+
+            if (trangThai === 'Đang chờ') {
+                actions.push({ label: 'Gọi khám', icon: 'fa-bullhorn', onClick: `callPatient(${appointment.maHangDoi})`, variant: 'complete' });
+                actions.push({ label: 'Bỏ lỡ', icon: 'fa-user-clock', onClick: `markMissed(${appointment.maHangDoi})`, variant: 'cancel' });
+                actions.push({ label: 'Hủy lịch', icon: 'fa-times', onClick: `cancelFromQueue(${appointment.maLichKham})`, variant: 'cancel' });
+            } else if (trangThai === 'Đang khám') {
+                const recordUrl = !appointment.maHoSo
+                    ? `ho-so-benh-an.html?createFor=${encodeURIComponent(String(appointment.maLichKham))}`
+                    : (appointment.trangThaiHoSo === 'Chưa hoàn thành'
+                        ? `ho-so-benh-an.html?edit=${encodeURIComponent(String(appointment.maHoSo))}`
+                        : null);
+                if (recordUrl) {
+                    actions.push({
+                        label: appointment.maHoSo ? 'Hoàn tất hồ sơ' : 'Khởi tạo hồ sơ',
+                        icon: appointment.maHoSo ? 'fa-edit' : 'fa-notes-medical',
+                        onClick: `openRecordWorkflow('${recordUrl}')`,
+                        variant: 'complete'
+                    });
+                }
+                actions.push({ label: 'Bỏ lỡ', icon: 'fa-user-clock', onClick: `markMissed(${appointment.maHangDoi})`, variant: 'cancel' });
+                actions.push({ label: 'Hủy lịch', icon: 'fa-times', onClick: `cancelFromQueue(${appointment.maLichKham})`, variant: 'cancel' });
+            } else if (trangThai === 'Bỏ lỡ') {
+                actions.push({ label: 'Gọi lại', icon: 'fa-redo', onClick: `recallPatient(${appointment.maHangDoi})`, variant: 'complete' });
+                actions.push({ label: 'Hủy lịch', icon: 'fa-times', onClick: `cancelFromQueue(${appointment.maLichKham})`, variant: 'cancel' });
+            } else if (trangThai === 'Hoàn thành' && appointment.maHoSo) {
+                actions.push({
+                    label: 'Xem hồ sơ',
+                    icon: 'fa-file-medical-alt',
+                    onClick: `openRecordWorkflow('ho-so-benh-an.html?view=${encodeURIComponent(String(appointment.maHoSo))}')`,
+                    variant: 'view'
+                });
             }
 
-            if (!appointment.maHoSo) {
-                return {
-                    title: 'Khởi tạo hồ sơ',
-                    icon: 'fa-notes-medical',
-                    url: `ho-so-benh-an.html?createFor=${encodeURIComponent(String(appointment.maLichKham))}`
-                };
-            }
-
-            if (appointment.trangThaiHoSo === 'Chưa hoàn thành') {
-                return {
-                    title: 'Hoàn tất hồ sơ',
-                    icon: 'fa-edit',
-                    url: `ho-so-benh-an.html?edit=${encodeURIComponent(String(appointment.maHoSo))}`
-                };
-            }
-
-            return null;
+            return actions;
         }
 
         function openRecordWorkflow(url) {
@@ -518,8 +538,16 @@
             window.DoctorPageHelper.syncSearchClearButton('searchInput', 'clearSearchBtn');
             syncSortToggle();
             loadStatistics();
-            loadTodayAppointments(1);
+            loadQueue(1);
+            startAutoRefresh();
         });
+
+        function startAutoRefresh() {
+            if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+            autoRefreshTimer = setInterval(() => {
+                loadQueue(currentPage, { silent: true });
+            }, 30000);
+        }
 
         async function loadStatistics() {
             try {
@@ -542,7 +570,7 @@
             }
         }
 
-        function buildAppointmentsQuery(page = 1) {
+        function buildQueueQuery(page = 1) {
             const params = new URLSearchParams();
             params.set('page', String(page));
             params.set('limit', String(itemsPerPage));
@@ -559,11 +587,12 @@
             return params.toString();
         }
 
-        async function loadTodayAppointments(page = 1) {
-            showLoading(true);
+        async function loadQueue(page = 1, options = {}) {
+            const silent = Boolean(options.silent);
+            if (!silent) showLoading(true);
 
             try {
-                const response = await fetch(`${API_BASE}/get-today-appointments.php?${buildAppointmentsQuery(page)}`, {
+                const response = await fetch(`${API_BASE}/get-queue.php?${buildQueueQuery(page)}`, {
                     credentials: 'include'
                 });
                 const data = await response.json();
@@ -573,16 +602,18 @@
                     totalAppointments = Number(data.pagination?.total || 0);
                     currentPage = Number(data.pagination?.page || page || 1);
                     displayAppointments();
-                } else {
+                } else if (!silent) {
                     showError(data.message || 'Không thể tải dữ liệu');
                     handleSessionExpired(data.message);
                 }
             } catch (error) {
-                console.error('Error loading appointments:', error);
-                showError('Lỗi kết nối server');
-                handleSessionExpired("fetch_failed");
+                console.error('Error loading queue:', error);
+                if (!silent) {
+                    showError('Lỗi kết nối server');
+                    handleSessionExpired("fetch_failed");
+                }
             } finally {
-                showLoading(false);
+                if (!silent) showLoading(false);
             }
         }
 
@@ -592,37 +623,25 @@
             document.getElementById('totalToday').textContent = totalAppointments;
 
             if (currentAppointments.length === 0) {
-                container.innerHTML = '<tr><td colspan="6" class="text-center py-5">Không có lịch khám</td></tr>';
+                container.innerHTML = '<tr><td colspan="7" class="text-center py-5">Chưa có bệnh nhân nào trong hàng đợi</td></tr>';
                 updatePagination();
                 return;
             }
 
             container.innerHTML = currentAppointments.map(apt => {
-                const age = calculateAge(apt.ngaySinh);
-                const status = getAppointmentUiStatus(apt);
-                const recordAction = getRecordAction(apt);
-                const actions = [
-                    { label: 'Xem chi tiết', icon: 'fa-eye', onClick: `viewAppointment(${apt.maLichKham})`, variant: 'view' }
-                ];
-
-                if (recordAction) {
-                    actions.push({
-                        label: recordAction.title,
-                        icon: recordAction.icon,
-                        onClick: `openRecordWorkflow('${recordAction.url}')`,
-                        variant: 'complete'
-                    });
-                }
+                const status = getQueueUiStatus(apt);
+                const actions = getQueueActions(apt);
 
                 return `
                     <tr>
-                        <td><span class="time-badge">${apt.tenCa}<br>${apt.gioBatDau.substring(0, 5)}</span></td>
+                        <td><strong>${apt.soThuTu}</strong></td>
                         <td>
                             <div class="patient-name">${apt.tenBenhNhan}</div>
-                            <div class="patient-age">${age} tuổi</div>
+                            <div class="patient-age">${calculateAge(apt.ngaySinh)} tuổi</div>
                         </td>
                         <td>${apt.gioiTinh}</td>
-                        <td>${apt.tenGoi}</td>
+                        <td>${apt.tenCa} ${apt.gioBatDau ? apt.gioBatDau.substring(0, 5) : ''}</td>
+                        <td>${apt.nguon === 'truc_tiep' ? 'Trực tiếp' : 'Online'}</td>
                         <td><span class="status-badge ${status.className}">${status.label}</span></td>
                         <td class="actions-cell">${window.DoctorPageHelper.renderTableActions(actions)}</td>
                     </tr>
@@ -679,7 +698,7 @@
         function changePage(page) {
             const totalPages = totalAppointments > 0 ? Math.ceil(totalAppointments / itemsPerPage) : 0;
             if (page >= 1 && page <= totalPages) {
-                loadTodayAppointments(page);
+                loadQueue(page);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
@@ -687,7 +706,7 @@
         function applyFilters() {
             currentPage = 1;
             window.DoctorPageHelper.syncSearchClearButton('searchInput', 'clearSearchBtn');
-            loadTodayAppointments(1);
+            loadQueue(1);
         }
 
         function clearSearch() {
@@ -697,16 +716,72 @@
         function toggleSortOrder() {
             sortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
             syncSortToggle();
-            loadTodayAppointments(currentPage);
+            loadQueue(currentPage);
         }
 
         function syncSortToggle() {
             const btn = document.getElementById('sortToggleBtn');
             const icon = document.getElementById('sortToggleIcon');
             if (!btn || !icon) return;
-            const isDesc = sortOrder === 'desc';
-            icon.className = `fas ${isDesc ? 'fa-sort-amount-down' : 'fa-sort-amount-up'}`;
-            btn.title = isDesc ? 'Đang sắp xếp: mới nhất trước' : 'Đang sắp xếp: cũ nhất trước';
+            const isAsc = sortOrder === 'asc';
+            icon.className = `fas ${isAsc ? 'fa-sort-amount-down-alt' : 'fa-sort-amount-up-alt'}`;
+            btn.title = isAsc ? 'Đang sắp xếp: STT nhỏ trước' : 'Đang sắp xếp: STT lớn trước';
+        }
+
+        async function callPatient(maHangDoi) {
+            await runQueueAction(maHangDoi, 'goikham');
+        }
+
+        async function markMissed(maHangDoi) {
+            await runQueueAction(maHangDoi, 'bolo');
+        }
+
+        async function recallPatient(maHangDoi) {
+            await runQueueAction(maHangDoi, 'goilai');
+        }
+
+        async function runQueueAction(maHangDoi, action) {
+            try {
+                const response = await fetch(`${API_BASE}/update-queue-status.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ maHangDoi, action })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    loadQueue(currentPage);
+                } else {
+                    showAlert('error', data.message || 'Không thể cập nhật trạng thái');
+                }
+            } catch (error) {
+                console.error('Error updating queue status:', error);
+                showAlert('error', 'Lỗi kết nối server');
+            }
+        }
+
+        async function cancelFromQueue(maLichKham) {
+            const lyDo = prompt('Lý do hủy lịch (không bắt buộc):', '') || '';
+            if (!confirm('Xác nhận hủy lịch khám này?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/cancel-appointment.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ maLichKham, lyDo: lyDo.trim(), fromQueue: true })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showAlert('success', 'Đã hủy lịch khám!');
+                    loadQueue(currentPage);
+                } else {
+                    showAlert('error', data.message || 'Không thể hủy');
+                }
+            } catch (error) {
+                console.error('Error cancelling from queue:', error);
+                showAlert('error', 'Lỗi kết nối server');
+            }
         }
 
         async function viewAppointment(maLichKham) {
@@ -715,7 +790,7 @@
 
             const age = calculateAge(apt.ngaySinh);
             const details = document.getElementById('appointmentDetails');
-            const status = getAppointmentUiStatus(apt);
+            const status = getQueueUiStatus(apt);
             const recordStatusText = !apt.maHoSo
                 ? 'Chưa tạo hồ sơ'
                 : apt.trangThaiHoSo === 'Đã hoàn thành'
@@ -724,6 +799,10 @@
 
             details.innerHTML = `
                 <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <strong style="color:#4A90E2"><i class="fas fa-hashtag me-2"></i>Số thứ tự:</strong>
+                        <p>${apt.soThuTu}</p>
+                    </div>
                     <div class="col-md-6 mb-3">
                         <strong style="color:#4A90E2"><i class="fas fa-user me-2"></i>Bệnh nhân:</strong>
                         <p>${apt.tenBenhNhan}</p>
@@ -737,24 +816,28 @@
                         <p>${apt.gioiTinh}</p>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong style="color:#4A90E2"><i class="fas fa-calendar me-2"></i>Ca khám:</strong>
-                        <p>${apt.tenCa}</p>
+                        <strong style="color:#4A90E2"><i class="fas fa-calendar me-2"></i>Ca hẹn gốc:</strong>
+                        <p>${apt.tenCa} (${apt.gioBatDau} - ${apt.gioKetThuc})</p>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong style="color:#4A90E2"><i class="fas fa-clock me-2"></i>Giờ khám:</strong>
-                        <p>${apt.gioBatDau} - ${apt.gioKetThuc}</p>
+                        <strong style="color:#4A90E2"><i class="fas fa-door-open me-2"></i>Nguồn:</strong>
+                        <p>${apt.nguon === 'truc_tiep' ? 'Đến khám trực tiếp' : 'Đặt lịch online'}</p>
                     </div>
                     <div class="col-md-6 mb-3">
                         <strong style="color:#4A90E2"><i class="fas fa-box-open me-2"></i>Gói khám:</strong>
-                        <p>${apt.tenGoi}</p>
+                        <p>${apt.tenGoi || 'Không chọn gói'}</p>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong style="color:#4A90E2"><i class="fas fa-info-circle me-2"></i>Trạng thái lịch:</strong>
+                        <strong style="color:#4A90E2"><i class="fas fa-info-circle me-2"></i>Trạng thái hàng đợi:</strong>
                         <p><span class="status-badge ${status.className}">${status.label}</span></p>
                     </div>
                     <div class="col-md-6 mb-3">
                         <strong style="color:#4A90E2"><i class="fas fa-file-medical me-2"></i>Hồ sơ bệnh án:</strong>
                         <p>${recordStatusText}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong style="color:#4A90E2"><i class="fas fa-door-open me-2"></i>Giờ check-in:</strong>
+                        <p>${apt.thoiGianCheckIn ? new Date(apt.thoiGianCheckIn).toLocaleTimeString('vi-VN') : '—'}</p>
                     </div>
                     ${apt.ghiChu ? `
                     <div class="col-md-12 mb-3">
@@ -801,7 +884,7 @@
 
         function showError(message) {
             document.getElementById('patientList').innerHTML = `
-                <tr><td colspan="6" class="text-center py-5 text-danger">${message}</td></tr>
+                <tr><td colspan="7" class="text-center py-5 text-danger">${message}</td></tr>
             `;
         }
     </script>

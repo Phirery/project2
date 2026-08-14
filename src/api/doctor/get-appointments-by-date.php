@@ -172,7 +172,8 @@ try {
                 sk.gioBatDau, sk.gioKetThuc,
                 gk.tenGoi,
                 h.maHoSo,
-                h.trangThai AS trangThaiHoSo
+                h.trangThai AS trangThaiHoSo,
+                hd.maHangDoi
             FROM lichkham lk
             LEFT JOIN benhnhan bn ON lk.maBenhNhan = bn.maBenhNhan
             LEFT JOIN calamviec ca ON lk.maCa = ca.maCa
@@ -189,6 +190,7 @@ try {
                 ) latest ON latest.maLichKham = h1.maLichKham AND latest.maxMaHoSo = h1.maHoSo
                 WHERE h1.isDeleted = 0
             ) h ON h.maLichKham = lk.maLichKham
+            LEFT JOIN hangdoikham hd ON hd.maLichKham = lk.maLichKham
             WHERE lk.maLichKham IN ($placeholders)
             ORDER BY lk.maCa $orderDir, sk.gioBatDau $orderDir, lk.maLichKham $orderDir
         ";

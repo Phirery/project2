@@ -1414,28 +1414,18 @@
             return { value: 'booked', label: 'Chờ khám', className: 'status-booked' };
         }
 
-        function getRecordAction(appointment) {
-            if (appointment.trangThai === 'Hủy') {
+        function getViewRecordAction(appointment) {
+            // Trang lịch khám chỉ cho XEM hồ sơ (chỉ đọc) nếu đã tồn tại,
+            // không cho khởi tạo/sửa - việc đó chỉ thực hiện qua hàng đợi khám ở Dashboard.
+            if (!appointment.maHoSo) {
                 return null;
             }
 
-            if (!appointment.maHoSo) {
-                return {
-                    title: 'Khởi tạo hồ sơ',
-                    icon: 'fa-notes-medical',
-                    url: `ho-so-benh-an.html?createFor=${encodeURIComponent(String(appointment.maLichKham))}`
-                };
-            }
-
-            if (appointment.trangThaiHoSo === 'Chưa hoàn thành') {
-                return {
-                    title: 'Hoàn tất hồ sơ',
-                    icon: 'fa-edit',
-                    url: `ho-so-benh-an.html?edit=${encodeURIComponent(String(appointment.maHoSo))}`
-                };
-            }
-
-            return null;
+            return {
+                title: 'Xem hồ sơ',
+                icon: 'fa-file-medical-alt',
+                url: `ho-so-benh-an.html?view=${encodeURIComponent(String(appointment.maHoSo))}`
+            };
         }
 
         function openRecordWorkflow(url) {
@@ -1562,18 +1552,18 @@
             tbody.innerHTML = currentAppointments.map(apt => {
                 const age = calculateAge(apt.ngaySinh);
                 const status = getAppointmentUiStatus(apt);
-                const recordAction = getRecordAction(apt);
-                const canCancel = !apt.maHoSo && (apt.trangThai === 'Chờ' || apt.trangThai === 'Đã đặt');
+                const viewRecordAction = getViewRecordAction(apt);
+                const canCancel = !apt.maHoSo && !apt.maHangDoi && (apt.trangThai === 'Chờ' || apt.trangThai === 'Đã đặt');
                 const actions = [
                     { label: 'Xem chi tiết', icon: 'fa-eye', onClick: `viewAppointment(${apt.maLichKham})`, variant: 'view' }
                 ];
 
-                if (recordAction) {
+                if (viewRecordAction) {
                     actions.push({
-                        label: recordAction.title,
-                        icon: recordAction.icon,
-                        onClick: `openRecordWorkflow('${recordAction.url}')`,
-                        variant: 'complete'
+                        label: viewRecordAction.title,
+                        icon: viewRecordAction.icon,
+                        onClick: `openRecordWorkflow('${viewRecordAction.url}')`,
+                        variant: 'view'
                     });
                 }
 
@@ -1583,6 +1573,13 @@
                         icon: 'fa-times',
                         onClick: `cancelAppointment(${apt.maLichKham})`,
                         variant: 'cancel'
+                    });
+                } else if (apt.maHangDoi && (apt.trangThai === 'Chờ' || apt.trangThai === 'Đã đặt')) {
+                    actions.push({
+                        label: 'Đã check-in - hủy trong hàng đợi',
+                        icon: 'fa-info-circle',
+                        onClick: `showAlert('info', 'Lịch này đã check-in. Vui lòng hủy từ hàng đợi khám ở Dashboard.')`,
+                        variant: 'view'
                     });
                 }
 

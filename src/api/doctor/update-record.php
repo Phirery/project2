@@ -228,6 +228,21 @@ try {
                 throw new Exception('Không thể đồng bộ lịch khám: ' . $stmt->error);
             }
             $stmt->close();
+
+            // Đồng bộ hàng đợi khám (nếu lịch này có check-in) sang Hoàn thành.
+            // Chỉ áp dụng khi hoàn tất thật sự - không đụng tới khi lưu nháp,
+            // để bác sĩ vẫn xử lý được nhiều hồ sơ/bệnh nhân cùng lúc.
+            $stmt = $conn->prepare("
+                UPDATE hangdoikham
+                SET trangThai = 'Hoàn thành', thoiGianHoanThanh = NOW()
+                WHERE maLichKham = ? AND maBacSi = ? AND trangThai <> 'Hủy'
+            ");
+            $stmt->bind_param("is", $record['maLichKham'], $maBacSi);
+
+            if (!$stmt->execute()) {
+                throw new Exception('Không thể đồng bộ hàng đợi khám: ' . $stmt->error);
+            }
+            $stmt->close();
         }
     }
 
