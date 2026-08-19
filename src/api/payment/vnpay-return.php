@@ -42,7 +42,7 @@ if (!empty($result['invoice']['vnp_TransactionNo'])) {
     $params['vnp_TransactionNo'] = (string)$result['invoice']['vnp_TransactionNo'];
 }
 
-$redirectUrl = rtrim(APP_BASE_URL, '/') . '/dat-lich.html?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+$redirectUrl = rtrim(APP_BASE_URL, '/') . '/lich-kham-ca-nhan.html?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
 
 header('Location: ' . $redirectUrl, true, 302);
 exit;

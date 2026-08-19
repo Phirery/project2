@@ -26,7 +26,7 @@ function getAiSuggestModeConfig(): array
             'maxSuggestions' => 3,
             'reasonStyle' => 'rõ ràng',
             'adviceStyle' => 'ngắn gọn',
-            'modeInstruction' => 'Giữ cân bằng giữa độ chính xác và độ súc tích.',
+            'modeInstruction' => 'Suy nghĩ kỹ và trả lời súc tích.',
         ],
         AI_SUGGEST_MODE_DEEP => [
             'workspaceSlug' => ANYTHINGLLM_WORKSPACE_DEEP,
