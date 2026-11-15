@@ -2,29 +2,23 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th8 10, 2026 lúc 11:08 PM
--- Phiên bản máy phục vụ: 10.4.32-MariaDB
--- Phiên bản PHP: 8.2.12
+-- Host: 127.0.0.1
+-- Generation Time: Nov 15, 2026 at 01:52 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+SET time_zone = "+07:00";
 
 --
--- Cơ sở dữ liệu: `datlichkham`
+-- Database: `datlichkham`
 --
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `bacsi`
+-- Table structure for table `bacsi`
 --
 
 CREATE TABLE `bacsi` (
@@ -40,7 +34,7 @@ CREATE TABLE `bacsi` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `benhnhan`
+-- Table structure for table `benhnhan`
 --
 
 CREATE TABLE `benhnhan` (
@@ -53,7 +47,7 @@ CREATE TABLE `benhnhan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Bẫy `benhnhan`
+-- Triggers `benhnhan`
 --
 DELIMITER $$
 CREATE TRIGGER `validate_birthdate_before_insert` BEFORE INSERT ON `benhnhan` FOR EACH ROW BEGIN
@@ -75,7 +69,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `calamviec`
+-- Table structure for table `calamviec`
 --
 
 CREATE TABLE `calamviec` (
@@ -88,7 +82,7 @@ CREATE TABLE `calamviec` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `chitietdonthuoc`
+-- Table structure for table `chitietdonthuoc`
 --
 
 CREATE TABLE `chitietdonthuoc` (
@@ -102,7 +96,7 @@ CREATE TABLE `chitietdonthuoc` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `chuyenkhoa`
+-- Table structure for table `chuyenkhoa`
 --
 
 CREATE TABLE `chuyenkhoa` (
@@ -115,7 +109,7 @@ CREATE TABLE `chuyenkhoa` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `doimatkhau`
+-- Table structure for table `doimatkhau`
 --
 
 CREATE TABLE `doimatkhau` (
@@ -128,7 +122,7 @@ CREATE TABLE `doimatkhau` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Bẫy `doimatkhau`
+-- Triggers `doimatkhau`
 --
 DELIMITER $$
 CREATE TRIGGER `after_doimatkhau_insert` AFTER INSERT ON `doimatkhau` FOR EACH ROW BEGIN
@@ -181,7 +175,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `donthuoc`
+-- Table structure for table `donthuoc`
 --
 
 CREATE TABLE `donthuoc` (
@@ -196,7 +190,7 @@ CREATE TABLE `donthuoc` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `goikham`
+-- Table structure for table `goikham`
 --
 
 CREATE TABLE `goikham` (
@@ -211,7 +205,28 @@ CREATE TABLE `goikham` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `hoadon`
+-- Table structure for table `hangdoikham`
+--
+
+CREATE TABLE `hangdoikham` (
+  `maHangDoi` int(11) NOT NULL,
+  `maLichKham` int(11) NOT NULL,
+  `maBacSi` varchar(20) NOT NULL,
+  `ngay` date NOT NULL,
+  `soThuTu` int(11) NOT NULL,
+  `thoiGianCheckIn` datetime NOT NULL DEFAULT current_timestamp(),
+  `trangThai` enum('Đang chờ','Đang khám','Hoàn thành','Bỏ lỡ','Hủy') NOT NULL DEFAULT 'Đang chờ',
+  `nguon` enum('online','truc_tiep') NOT NULL DEFAULT 'truc_tiep',
+  `maNhanVienCheckIn` varchar(20) DEFAULT NULL,
+  `thoiGianGoiKham` datetime DEFAULT NULL,
+  `thoiGianHoanThanh` datetime DEFAULT NULL,
+  `ghiChu` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hoadon`
 --
 
 CREATE TABLE `hoadon` (
@@ -227,7 +242,7 @@ CREATE TABLE `hoadon` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `hosobenhan`
+-- Table structure for table `hosobenhan`
 --
 
 CREATE TABLE `hosobenhan` (
@@ -251,7 +266,7 @@ CREATE TABLE `hosobenhan` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `khoa`
+-- Table structure for table `khoa`
 --
 
 CREATE TABLE `khoa` (
@@ -263,7 +278,7 @@ CREATE TABLE `khoa` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `lichkham`
+-- Table structure for table `lichkham`
 --
 
 CREATE TABLE `lichkham` (
@@ -278,11 +293,13 @@ CREATE TABLE `lichkham` (
   `ghiChu` text DEFAULT NULL,
   `nguoiHuy` enum('benhnhan','bacsi','quantri','hethong') DEFAULT NULL,
   `soLanDoiLich` tinyint(1) NOT NULL DEFAULT 0,
-  `thoiGianDoiLich` datetime DEFAULT NULL
+  `thoiGianDoiLich` datetime DEFAULT NULL,
+  `nguon` enum('online','truc_tiep') NOT NULL DEFAULT 'online',
+  `maNhanVienTao` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Bẫy `lichkham`
+-- Triggers `lichkham`
 --
 DELIMITER $$
 CREATE TRIGGER `after_lichkham_insert` AFTER INSERT ON `lichkham` FOR EACH ROW BEGIN
@@ -413,7 +430,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `lienhe`
+-- Table structure for table `lienhe`
 --
 
 CREATE TABLE `lienhe` (
@@ -433,7 +450,7 @@ CREATE TABLE `lienhe` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `mail_notification_log`
+-- Table structure for table `mail_notification_log`
 --
 
 CREATE TABLE `mail_notification_log` (
@@ -450,7 +467,7 @@ CREATE TABLE `mail_notification_log` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `medicine_stock_log`
+-- Table structure for table `medicine_stock_log`
 --
 
 CREATE TABLE `medicine_stock_log` (
@@ -468,7 +485,7 @@ CREATE TABLE `medicine_stock_log` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `ngaynghi`
+-- Table structure for table `ngaynghi`
 --
 
 CREATE TABLE `ngaynghi` (
@@ -480,7 +497,7 @@ CREATE TABLE `ngaynghi` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Bẫy `ngaynghi`
+-- Triggers `ngaynghi`
 --
 DELIMITER $$
 CREATE TRIGGER `after_ngaynghi_delete` AFTER DELETE ON `ngaynghi` FOR EACH ROW BEGIN
@@ -581,7 +598,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `nguoidung`
+-- Table structure for table `nguoidung`
 --
 
 CREATE TABLE `nguoidung` (
@@ -592,6 +609,7 @@ CREATE TABLE `nguoidung` (
   `email` varchar(100) DEFAULT NULL,
   `vaiTro` enum('benhnhan','bacsi','quantri','nhanvien') NOT NULL,
   `trangThai` enum('Hoạt Động','Khóa') NOT NULL DEFAULT 'Hoạt Động',
+  `taiKhoanTamThoi` tinyint(1) NOT NULL DEFAULT 0,
   `ngayCapNhatTaiKhoan` datetime DEFAULT NULL,
   `ngayCapNhatMatKhau` datetime DEFAULT NULL,
   `avatar` varchar(255) DEFAULT 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png',
@@ -604,7 +622,7 @@ CREATE TABLE `nguoidung` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `nhanvien`
+-- Table structure for table `nhanvien`
 --
 
 CREATE TABLE `nhanvien` (
@@ -619,7 +637,7 @@ CREATE TABLE `nhanvien` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `quantrivien`
+-- Table structure for table `quantrivien`
 --
 
 CREATE TABLE `quantrivien` (
@@ -630,7 +648,7 @@ CREATE TABLE `quantrivien` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `suatkham`
+-- Table structure for table `suatkham`
 --
 
 CREATE TABLE `suatkham` (
@@ -647,7 +665,7 @@ CREATE TABLE `suatkham` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `thongbaoadmin`
+-- Table structure for table `thongbaoadmin`
 --
 
 CREATE TABLE `thongbaoadmin` (
@@ -669,7 +687,7 @@ CREATE TABLE `thongbaoadmin` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `thongbaobenhnhan`
+-- Table structure for table `thongbaobenhnhan`
 --
 
 CREATE TABLE `thongbaobenhnhan` (
@@ -685,7 +703,7 @@ CREATE TABLE `thongbaobenhnhan` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `thongbaolichkham`
+-- Table structure for table `thongbaolichkham`
 --
 
 CREATE TABLE `thongbaolichkham` (
@@ -702,7 +720,7 @@ CREATE TABLE `thongbaolichkham` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `thuoc`
+-- Table structure for table `thuoc`
 --
 
 CREATE TABLE `thuoc` (
@@ -719,11 +737,11 @@ CREATE TABLE `thuoc` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Chỉ mục cho các bảng đã đổ
+-- Indexes for dumped tables
 --
 
 --
--- Chỉ mục cho bảng `bacsi`
+-- Indexes for table `bacsi`
 --
 ALTER TABLE `bacsi`
   ADD PRIMARY KEY (`maBacSi`),
@@ -733,20 +751,20 @@ ALTER TABLE `bacsi`
   ADD KEY `idx_bacsi_chuyenkhoa_ten_ma` (`maChuyenKhoa`,`tenBacSi`,`maBacSi`);
 
 --
--- Chỉ mục cho bảng `benhnhan`
+-- Indexes for table `benhnhan`
 --
 ALTER TABLE `benhnhan`
   ADD PRIMARY KEY (`maBenhNhan`),
   ADD UNIQUE KEY `nguoiDungId` (`nguoiDungId`);
 
 --
--- Chỉ mục cho bảng `calamviec`
+-- Indexes for table `calamviec`
 --
 ALTER TABLE `calamviec`
   ADD PRIMARY KEY (`maCa`);
 
 --
--- Chỉ mục cho bảng `chitietdonthuoc`
+-- Indexes for table `chitietdonthuoc`
 --
 ALTER TABLE `chitietdonthuoc`
   ADD PRIMARY KEY (`id`),
@@ -754,7 +772,7 @@ ALTER TABLE `chitietdonthuoc`
   ADD KEY `maThuoc` (`maThuoc`);
 
 --
--- Chỉ mục cho bảng `chuyenkhoa`
+-- Indexes for table `chuyenkhoa`
 --
 ALTER TABLE `chuyenkhoa`
   ADD PRIMARY KEY (`maChuyenKhoa`),
@@ -762,7 +780,7 @@ ALTER TABLE `chuyenkhoa`
   ADD KEY `idx_chuyenkhoa_makhoa_mack` (`maKhoa`,`maChuyenKhoa`);
 
 --
--- Chỉ mục cho bảng `doimatkhau`
+-- Indexes for table `doimatkhau`
 --
 ALTER TABLE `doimatkhau`
   ADD PRIMARY KEY (`id`),
@@ -770,27 +788,37 @@ ALTER TABLE `doimatkhau`
   ADD KEY `nguoiXuLy` (`nguoiXuLy`);
 
 --
--- Chỉ mục cho bảng `donthuoc`
+-- Indexes for table `donthuoc`
 --
 ALTER TABLE `donthuoc`
   ADD PRIMARY KEY (`maDonThuoc`),
   ADD KEY `maLichKham` (`maLichKham`);
 
 --
--- Chỉ mục cho bảng `goikham`
+-- Indexes for table `goikham`
 --
 ALTER TABLE `goikham`
   ADD PRIMARY KEY (`maGoi`);
 
 --
--- Chỉ mục cho bảng `hoadon`
+-- Indexes for table `hangdoikham`
+--
+ALTER TABLE `hangdoikham`
+  ADD PRIMARY KEY (`maHangDoi`),
+  ADD UNIQUE KEY `uniq_hangdoi_lichkham` (`maLichKham`),
+  ADD UNIQUE KEY `uniq_hangdoi_bacsi_ngay_stt` (`maBacSi`,`ngay`,`soThuTu`),
+  ADD KEY `maNhanVienCheckIn` (`maNhanVienCheckIn`),
+  ADD KEY `idx_hangdoi_bacsi_ngay_trangthai` (`maBacSi`,`ngay`,`trangThai`);
+
+--
+-- Indexes for table `hoadon`
 --
 ALTER TABLE `hoadon`
   ADD PRIMARY KEY (`maHoaDon`),
   ADD KEY `maLichKham` (`maLichKham`);
 
 --
--- Chỉ mục cho bảng `hosobenhan`
+-- Indexes for table `hosobenhan`
 --
 ALTER TABLE `hosobenhan`
   ADD PRIMARY KEY (`maHoSo`),
@@ -800,13 +828,13 @@ ALTER TABLE `hosobenhan`
   ADD KEY `idx_hosobenhan_isDeleted` (`isDeleted`);
 
 --
--- Chỉ mục cho bảng `khoa`
+-- Indexes for table `khoa`
 --
 ALTER TABLE `khoa`
   ADD PRIMARY KEY (`maKhoa`);
 
 --
--- Chỉ mục cho bảng `lichkham`
+-- Indexes for table `lichkham`
 --
 ALTER TABLE `lichkham`
   ADD PRIMARY KEY (`maLichKham`),
@@ -814,10 +842,11 @@ ALTER TABLE `lichkham`
   ADD KEY `maBenhNhan` (`maBenhNhan`),
   ADD KEY `maCa` (`maCa`),
   ADD KEY `maSuat` (`maSuat`),
-  ADD KEY `maGoi` (`maGoi`);
+  ADD KEY `maGoi` (`maGoi`),
+  ADD KEY `maNhanVienTao` (`maNhanVienTao`);
 
 --
--- Chỉ mục cho bảng `lienhe`
+-- Indexes for table `lienhe`
 --
 ALTER TABLE `lienhe`
   ADD PRIMARY KEY (`maLienHe`),
@@ -826,7 +855,7 @@ ALTER TABLE `lienhe`
   ADD KEY `idx_thoiGianGui` (`thoiGianGui`);
 
 --
--- Chỉ mục cho bảng `mail_notification_log`
+-- Indexes for table `mail_notification_log`
 --
 ALTER TABLE `mail_notification_log`
   ADD PRIMARY KEY (`id`),
@@ -834,7 +863,7 @@ ALTER TABLE `mail_notification_log`
   ADD KEY `idx_mail_sent_at` (`sent_at`);
 
 --
--- Chỉ mục cho bảng `medicine_stock_log`
+-- Indexes for table `medicine_stock_log`
 --
 ALTER TABLE `medicine_stock_log`
   ADD PRIMARY KEY (`id`),
@@ -844,7 +873,7 @@ ALTER TABLE `medicine_stock_log`
   ADD KEY `idx_medicine_stock_log_createdAt` (`createdAt`);
 
 --
--- Chỉ mục cho bảng `ngaynghi`
+-- Indexes for table `ngaynghi`
 --
 ALTER TABLE `ngaynghi`
   ADD PRIMARY KEY (`maNghi`),
@@ -852,7 +881,7 @@ ALTER TABLE `ngaynghi`
   ADD KEY `maCa` (`maCa`);
 
 --
--- Chỉ mục cho bảng `nguoidung`
+-- Indexes for table `nguoidung`
 --
 ALTER TABLE `nguoidung`
   ADD PRIMARY KEY (`id`),
@@ -862,21 +891,21 @@ ALTER TABLE `nguoidung`
   ADD KEY `idx_nguoidung_isDeleted` (`isDeleted`);
 
 --
--- Chỉ mục cho bảng `nhanvien`
+-- Indexes for table `nhanvien`
 --
 ALTER TABLE `nhanvien`
   ADD PRIMARY KEY (`maNhanVien`),
   ADD UNIQUE KEY `nguoiDungId` (`nguoiDungId`);
 
 --
--- Chỉ mục cho bảng `quantrivien`
+-- Indexes for table `quantrivien`
 --
 ALTER TABLE `quantrivien`
   ADD PRIMARY KEY (`maQuanTriVien`),
   ADD UNIQUE KEY `nguoiDungId` (`nguoiDungId`);
 
 --
--- Chỉ mục cho bảng `suatkham`
+-- Indexes for table `suatkham`
 --
 ALTER TABLE `suatkham`
   ADD PRIMARY KEY (`maSuat`),
@@ -884,7 +913,7 @@ ALTER TABLE `suatkham`
   ADD KEY `maCa` (`maCa`);
 
 --
--- Chỉ mục cho bảng `thongbaoadmin`
+-- Indexes for table `thongbaoadmin`
 --
 ALTER TABLE `thongbaoadmin`
   ADD PRIMARY KEY (`maThongBao`),
@@ -893,7 +922,7 @@ ALTER TABLE `thongbaoadmin`
   ADD KEY `fk_tba_yeucau` (`maYeuCau`);
 
 --
--- Chỉ mục cho bảng `thongbaobenhnhan`
+-- Indexes for table `thongbaobenhnhan`
 --
 ALTER TABLE `thongbaobenhnhan`
   ADD PRIMARY KEY (`maThongBao`),
@@ -902,7 +931,7 @@ ALTER TABLE `thongbaobenhnhan`
   ADD KEY `idx_thoigian` (`thoiGian`);
 
 --
--- Chỉ mục cho bảng `thongbaolichkham`
+-- Indexes for table `thongbaolichkham`
 --
 ALTER TABLE `thongbaolichkham`
   ADD PRIMARY KEY (`maThongBao`),
@@ -912,7 +941,7 @@ ALTER TABLE `thongbaolichkham`
   ADD KEY `idx_thoigian` (`thoiGian`);
 
 --
--- Chỉ mục cho bảng `thuoc`
+-- Indexes for table `thuoc`
 --
 ALTER TABLE `thuoc`
   ADD PRIMARY KEY (`maThuoc`),
@@ -920,162 +949,176 @@ ALTER TABLE `thuoc`
   ADD KEY `idx_loaiThuoc` (`loaiThuoc`);
 
 --
--- AUTO_INCREMENT cho các bảng đã đổ
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT cho bảng `calamviec`
+-- AUTO_INCREMENT for table `calamviec`
 --
 ALTER TABLE `calamviec`
   MODIFY `maCa` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `chitietdonthuoc`
+-- AUTO_INCREMENT for table `chitietdonthuoc`
 --
 ALTER TABLE `chitietdonthuoc`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `doimatkhau`
+-- AUTO_INCREMENT for table `doimatkhau`
 --
 ALTER TABLE `doimatkhau`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `donthuoc`
+-- AUTO_INCREMENT for table `donthuoc`
 --
 ALTER TABLE `donthuoc`
   MODIFY `maDonThuoc` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `goikham`
+-- AUTO_INCREMENT for table `goikham`
 --
 ALTER TABLE `goikham`
   MODIFY `maGoi` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `hoadon`
+-- AUTO_INCREMENT for table `hangdoikham`
+--
+ALTER TABLE `hangdoikham`
+  MODIFY `maHangDoi` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hoadon`
 --
 ALTER TABLE `hoadon`
   MODIFY `maHoaDon` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `lichkham`
+-- AUTO_INCREMENT for table `lichkham`
 --
 ALTER TABLE `lichkham`
   MODIFY `maLichKham` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `lienhe`
+-- AUTO_INCREMENT for table `lienhe`
 --
 ALTER TABLE `lienhe`
   MODIFY `maLienHe` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `mail_notification_log`
+-- AUTO_INCREMENT for table `mail_notification_log`
 --
 ALTER TABLE `mail_notification_log`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `medicine_stock_log`
+-- AUTO_INCREMENT for table `medicine_stock_log`
 --
 ALTER TABLE `medicine_stock_log`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `ngaynghi`
+-- AUTO_INCREMENT for table `ngaynghi`
 --
 ALTER TABLE `ngaynghi`
   MODIFY `maNghi` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `nguoidung`
+-- AUTO_INCREMENT for table `nguoidung`
 --
 ALTER TABLE `nguoidung`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `suatkham`
+-- AUTO_INCREMENT for table `suatkham`
 --
 ALTER TABLE `suatkham`
   MODIFY `maSuat` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `thongbaoadmin`
+-- AUTO_INCREMENT for table `thongbaoadmin`
 --
 ALTER TABLE `thongbaoadmin`
   MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `thongbaobenhnhan`
+-- AUTO_INCREMENT for table `thongbaobenhnhan`
 --
 ALTER TABLE `thongbaobenhnhan`
   MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `thongbaolichkham`
+-- AUTO_INCREMENT for table `thongbaolichkham`
 --
 ALTER TABLE `thongbaolichkham`
   MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `thuoc`
+-- AUTO_INCREMENT for table `thuoc`
 --
 ALTER TABLE `thuoc`
   MODIFY `maThuoc` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- Các ràng buộc cho các bảng đã đổ
+-- Constraints for dumped tables
 --
 
 --
--- Các ràng buộc cho bảng `bacsi`
+-- Constraints for table `bacsi`
 --
 ALTER TABLE `bacsi`
   ADD CONSTRAINT `bacsi_ibfk_1` FOREIGN KEY (`nguoiDungId`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `bacsi_ibfk_2` FOREIGN KEY (`maChuyenKhoa`) REFERENCES `chuyenkhoa` (`maChuyenKhoa`) ON DELETE SET NULL;
 
 --
--- Các ràng buộc cho bảng `benhnhan`
+-- Constraints for table `benhnhan`
 --
 ALTER TABLE `benhnhan`
   ADD CONSTRAINT `benhnhan_ibfk_1` FOREIGN KEY (`nguoiDungId`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE;
 
 --
--- Các ràng buộc cho bảng `chitietdonthuoc`
+-- Constraints for table `chitietdonthuoc`
 --
 ALTER TABLE `chitietdonthuoc`
   ADD CONSTRAINT `chitietdonthuoc_ibfk_1` FOREIGN KEY (`maDonThuoc`) REFERENCES `donthuoc` (`maDonThuoc`),
   ADD CONSTRAINT `chitietdonthuoc_ibfk_2` FOREIGN KEY (`maThuoc`) REFERENCES `thuoc` (`maThuoc`);
 
 --
--- Các ràng buộc cho bảng `chuyenkhoa`
+-- Constraints for table `chuyenkhoa`
 --
 ALTER TABLE `chuyenkhoa`
   ADD CONSTRAINT `chuyenkhoa_ibfk_1` FOREIGN KEY (`maKhoa`) REFERENCES `khoa` (`maKhoa`) ON DELETE CASCADE;
 
 --
--- Các ràng buộc cho bảng `doimatkhau`
+-- Constraints for table `doimatkhau`
 --
 ALTER TABLE `doimatkhau`
   ADD CONSTRAINT `doimatkhau_ibfk_1` FOREIGN KEY (`nguoiDungId`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `doimatkhau_ibfk_2` FOREIGN KEY (`nguoiXuLy`) REFERENCES `nguoidung` (`id`) ON DELETE SET NULL;
 
 --
--- Các ràng buộc cho bảng `donthuoc`
+-- Constraints for table `donthuoc`
 --
 ALTER TABLE `donthuoc`
   ADD CONSTRAINT `donthuoc_ibfk_1` FOREIGN KEY (`maLichKham`) REFERENCES `lichkham` (`maLichKham`);
 
 --
--- Các ràng buộc cho bảng `hoadon`
+-- Constraints for table `hangdoikham`
+--
+ALTER TABLE `hangdoikham`
+  ADD CONSTRAINT `hangdoikham_ibfk_1` FOREIGN KEY (`maLichKham`) REFERENCES `lichkham` (`maLichKham`) ON DELETE CASCADE,
+  ADD CONSTRAINT `hangdoikham_ibfk_2` FOREIGN KEY (`maBacSi`) REFERENCES `bacsi` (`maBacSi`) ON DELETE CASCADE,
+  ADD CONSTRAINT `hangdoikham_ibfk_3` FOREIGN KEY (`maNhanVienCheckIn`) REFERENCES `nhanvien` (`maNhanVien`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `hoadon`
 --
 ALTER TABLE `hoadon`
   ADD CONSTRAINT `hoadon_ibfk_1` FOREIGN KEY (`maLichKham`) REFERENCES `lichkham` (`maLichKham`);
 
 --
--- Các ràng buộc cho bảng `hosobenhan`
+-- Constraints for table `hosobenhan`
 --
 ALTER TABLE `hosobenhan`
   ADD CONSTRAINT `hosobenhan_ibfk_1` FOREIGN KEY (`maBenhNhan`) REFERENCES `benhnhan` (`maBenhNhan`) ON DELETE CASCADE,
@@ -1083,48 +1126,49 @@ ALTER TABLE `hosobenhan`
   ADD CONSTRAINT `hosobenhan_ibfk_3` FOREIGN KEY (`maLichKham`) REFERENCES `lichkham` (`maLichKham`) ON DELETE SET NULL;
 
 --
--- Các ràng buộc cho bảng `lichkham`
+-- Constraints for table `lichkham`
 --
 ALTER TABLE `lichkham`
   ADD CONSTRAINT `lichkham_ibfk_1` FOREIGN KEY (`maBacSi`) REFERENCES `bacsi` (`maBacSi`),
   ADD CONSTRAINT `lichkham_ibfk_2` FOREIGN KEY (`maBenhNhan`) REFERENCES `benhnhan` (`maBenhNhan`),
   ADD CONSTRAINT `lichkham_ibfk_3` FOREIGN KEY (`maCa`) REFERENCES `calamviec` (`maCa`),
   ADD CONSTRAINT `lichkham_ibfk_4` FOREIGN KEY (`maSuat`) REFERENCES `suatkham` (`maSuat`),
-  ADD CONSTRAINT `lichkham_ibfk_5` FOREIGN KEY (`maGoi`) REFERENCES `goikham` (`maGoi`);
+  ADD CONSTRAINT `lichkham_ibfk_5` FOREIGN KEY (`maGoi`) REFERENCES `goikham` (`maGoi`),
+  ADD CONSTRAINT `lichkham_ibfk_6` FOREIGN KEY (`maNhanVienTao`) REFERENCES `nhanvien` (`maNhanVien`) ON DELETE SET NULL;
 
 --
--- Các ràng buộc cho bảng `lienhe`
+-- Constraints for table `lienhe`
 --
 ALTER TABLE `lienhe`
   ADD CONSTRAINT `fk_lienhe_nguoixuly` FOREIGN KEY (`nguoiXuLy`) REFERENCES `nguoidung` (`id`) ON DELETE SET NULL;
 
 --
--- Các ràng buộc cho bảng `ngaynghi`
+-- Constraints for table `ngaynghi`
 --
 ALTER TABLE `ngaynghi`
   ADD CONSTRAINT `ngaynghi_ibfk_1` FOREIGN KEY (`maBacSi`) REFERENCES `bacsi` (`maBacSi`),
   ADD CONSTRAINT `ngaynghi_ibfk_2` FOREIGN KEY (`maCa`) REFERENCES `calamviec` (`maCa`);
 
 --
--- Các ràng buộc cho bảng `nhanvien`
+-- Constraints for table `nhanvien`
 --
 ALTER TABLE `nhanvien`
   ADD CONSTRAINT `nhanvien_ibfk_1` FOREIGN KEY (`nguoiDungId`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE;
 
 --
--- Các ràng buộc cho bảng `quantrivien`
+-- Constraints for table `quantrivien`
 --
 ALTER TABLE `quantrivien`
   ADD CONSTRAINT `quantrivien_ibfk_1` FOREIGN KEY (`nguoiDungId`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE;
 
 --
--- Các ràng buộc cho bảng `suatkham`
+-- Constraints for table `suatkham`
 --
 ALTER TABLE `suatkham`
   ADD CONSTRAINT `suatkham_ibfk_1` FOREIGN KEY (`maCa`) REFERENCES `calamviec` (`maCa`);
 
 --
--- Các ràng buộc cho bảng `thongbaoadmin`
+-- Constraints for table `thongbaoadmin`
 --
 ALTER TABLE `thongbaoadmin`
   ADD CONSTRAINT `fk_tba_ngaynghi` FOREIGN KEY (`maNghi`) REFERENCES `ngaynghi` (`maNghi`) ON DELETE SET NULL,
@@ -1132,19 +1176,15 @@ ALTER TABLE `thongbaoadmin`
   ADD CONSTRAINT `fk_tba_yeucau` FOREIGN KEY (`maYeuCau`) REFERENCES `doimatkhau` (`id`) ON DELETE SET NULL;
 
 --
--- Các ràng buộc cho bảng `thongbaobenhnhan`
+-- Constraints for table `thongbaobenhnhan`
 --
 ALTER TABLE `thongbaobenhnhan`
   ADD CONSTRAINT `thongbaobenhnhan_ibfk_1` FOREIGN KEY (`maBenhNhan`) REFERENCES `benhnhan` (`maBenhNhan`) ON DELETE CASCADE;
 
 --
--- Các ràng buộc cho bảng `thongbaolichkham`
+-- Constraints for table `thongbaolichkham`
 --
 ALTER TABLE `thongbaolichkham`
   ADD CONSTRAINT `thongbao_ibfk_1` FOREIGN KEY (`maBacSi`) REFERENCES `bacsi` (`maBacSi`) ON DELETE CASCADE,
   ADD CONSTRAINT `thongbao_ibfk_2` FOREIGN KEY (`maLichKham`) REFERENCES `lichkham` (`maLichKham`) ON DELETE SET NULL;
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

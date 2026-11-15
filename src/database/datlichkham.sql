@@ -1,31 +1,6 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th8 10, 2026 lúc 11:07 PM
--- Phiên bản máy phục vụ: 10.4.32-MariaDB
--- Phiên bản PHP: 8.2.12
-
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Cơ sở dữ liệu: `datlichkham`
---
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `bacsi`
---
+SET time_zone = "+07:00";
 
 CREATE TABLE `bacsi` (
   `nguoiDungId` int(11) NOT NULL,
@@ -36,10 +11,6 @@ CREATE TABLE `bacsi` (
   `gioiTinh` enum('nam','nu') DEFAULT NULL,
   `namLamViec` smallint(5) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `bacsi`
---
 
 INSERT INTO `bacsi` (`nguoiDungId`, `maBacSi`, `tenBacSi`, `maChuyenKhoa`, `moTa`, `gioiTinh`, `namLamViec`) VALUES
 (2, 'bs1', 'Trần Văn Bảo', 'EYE102501', '', 'nam', 2021),
@@ -86,12 +57,6 @@ INSERT INTO `bacsi` (`nguoiDungId`, `maBacSi`, `tenBacSi`, `maChuyenKhoa`, `moTa
 (56, 'BS20251121049', 'Trịnh Quốc Thái', 'DEN102501', 'Bác sĩ trẻ nhiệt huyết, tốt nghiệp Thủ khoa Răng Hàm Mặt. Ứng dụng công nghệ kỹ thuật số trong hàn răng và điều trị tủy.', 'nam', 2024),
 (57, 'BS20251121050', 'Bùi Thị Xuân', 'DEN102501', 'Hơn 20 năm kinh nghiệm trong nha khoa gia đình. Nhẹ nhàng, tâm lý, chuyên điều trị sâu răng cho trẻ em không gây đau.', 'nu', 2010);
 
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `benhnhan`
---
-
 CREATE TABLE `benhnhan` (
   `nguoiDungId` int(11) NOT NULL,
   `maBenhNhan` varchar(20) NOT NULL,
@@ -101,10 +66,6 @@ CREATE TABLE `benhnhan` (
   `soTheBHYT` varchar(15) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `benhnhan`
---
-
 INSERT INTO `benhnhan` (`nguoiDungId`, `maBenhNhan`, `tenBenhNhan`, `ngaySinh`, `gioiTinh`, `soTheBHYT`) VALUES
 (1, 'bn1', 'Nguyễn Văn Anh', '2000-01-01', 'nam', ''),
 (8, 'BN202511082304701', 'Dương Thanh Hóa', '2005-10-09', 'nam', ''),
@@ -112,11 +73,10 @@ INSERT INTO `benhnhan` (`nguoiDungId`, `maBenhNhan`, `tenBenhNhan`, `ngaySinh`, 
 (15, 'BN2025111712142915', 'Trần Văn Hoàng', '2000-12-31', 'nam', NULL),
 (58, 'BN2025112200000058', 'Võ Quốc Thái', '2000-11-21', 'nam', NULL),
 (59, 'BN2025112200000059', 'Lê Minh Tuyền', '2005-11-21', 'nam', NULL),
-(61, 'BN2026030400000061', 'Nguyễn Đạt', '2005-10-09', 'nam', NULL);
-
---
--- Bẫy `benhnhan`
---
+(61, 'BN2026030400000061', 'Nguyễn Đạt', '2005-10-09', 'nam', NULL),
+(64, 'BN202608192317018', 'Nguyễn Văn B', '2001-01-01', 'nam', NULL),
+(65, 'BN202608200944099', 'Nguyễn Van D', '2001-01-01', 'nam', NULL),
+(66, 'BN202609301835137', 'nguyễn', '2026-09-13', 'nam', NULL);
 DELIMITER $$
 CREATE TRIGGER `validate_birthdate_before_insert` BEFORE INSERT ON `benhnhan` FOR EACH ROW BEGIN
     IF NEW.ngaySinh > CURDATE() THEN
@@ -134,12 +94,6 @@ END
 $$
 DELIMITER ;
 
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `calamviec`
---
-
 CREATE TABLE `calamviec` (
   `maCa` int(11) NOT NULL,
   `tenCa` varchar(30) NOT NULL,
@@ -147,19 +101,9 @@ CREATE TABLE `calamviec` (
   `gioKetThuc` time NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `calamviec`
---
-
 INSERT INTO `calamviec` (`maCa`, `tenCa`, `gioBatDau`, `gioKetThuc`) VALUES
 (1, 'Ca sáng', '07:00:00', '11:00:00'),
 (2, 'Ca chiều', '13:00:00', '17:00:00');
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `chitietdonthuoc`
---
 
 CREATE TABLE `chitietdonthuoc` (
   `id` int(11) NOT NULL,
@@ -169,21 +113,19 @@ CREATE TABLE `chitietdonthuoc` (
   `lieuDung` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `chitietdonthuoc`
---
-
 INSERT INTO `chitietdonthuoc` (`id`, `maDonThuoc`, `maThuoc`, `soLuong`, `lieuDung`) VALUES
 (1, 1, 2, 5, 'Uống 1 viên/lần, 4-6 giờ/lần. Uống ngay sau ăn'),
 (2, 1, 17, 5, 'Uống 1-2 viên/ngày sau bữa ăn'),
 (5, 3, 61, 5, 'Uống theo chỉ định bác sĩ. Không vượt quá 1.2mg/lần'),
-(6, 3, 16, 5, 'Hòa tan 1 viên trong 200ml nước, uống 1 lần/ngày sau ăn');
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `chuyenkhoa`
---
+(6, 3, 16, 5, 'Hòa tan 1 viên trong 200ml nước, uống 1 lần/ngày sau ăn'),
+(7, 4, 42, 1, 'Uống 1 viên x 3 lần/ngày sau bữa ăn'),
+(8, 5, 48, 1, 'Thoa 1-2 lần/ngày lên vùng da. Không thoa mặt, vùng kín'),
+(9, 6, 39, 1, 'Uống 1 viên/ngày vào buổi sáng'),
+(10, 7, 45, 1, 'Thoa một lớp mỏng lên vùng da tổn thương 2-3 lần/ngày'),
+(11, 8, 16, 1, 'Hòa tan 1 viên trong 200ml nước, uống 1 lần/ngày sau ăn'),
+(13, 10, 77, 1, 'Uống sau ăn 30 phút'),
+(18, 13, 103, 3, 'Uống 1 viên/ngày trước bữa ăn sáng 30-60 phút'),
+(19, 13, 34, 1, 'Uống 1 viên/ngày vào buổi sáng');
 
 CREATE TABLE `chuyenkhoa` (
   `maChuyenKhoa` varchar(10) NOT NULL,
@@ -191,10 +133,6 @@ CREATE TABLE `chuyenkhoa` (
   `maKhoa` varchar(10) DEFAULT NULL,
   `moTa` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `chuyenkhoa`
---
 
 INSERT INTO `chuyenkhoa` (`maChuyenKhoa`, `tenChuyenKhoa`, `maKhoa`, `moTa`) VALUES
 ('CAR102501', 'Tim Mạch Nội Khoa', 'CAR1025', 'Chẩn đoán và điều trị các bệnh tim bằng thuốc, như tăng huyết áp, rối loạn nhịp tim, suy tim. Khoa chú trọng điều trị lâu dài và phòng ngừa tái phát.'),
@@ -227,12 +165,6 @@ INSERT INTO `chuyenkhoa` (`maChuyenKhoa`, `tenChuyenKhoa`, `maKhoa`, `moTa`) VAL
 ('SUR102504', 'Ngoại Tiết Niệu', 'SUR1025', 'Điều trị bằng phẫu thuật cho các bệnh lý thận, bàng quang và tuyến tiền liệt. Khoa ứng dụng công nghệ nội soi và laser trong điều trị.'),
 ('SUR102505', 'Ngoại Lồng Ngực – Tim Mạch', 'SUR1025', 'Chuyên về phẫu thuật tim, phổi và mạch máu lớn. Các ca mổ đòi hỏi kỹ thuật cao được thực hiện tại đây.');
 
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `doimatkhau`
---
-
 CREATE TABLE `doimatkhau` (
   `id` int(11) NOT NULL,
   `nguoiDungId` int(11) NOT NULL,
@@ -242,20 +174,12 @@ CREATE TABLE `doimatkhau` (
   `nguoiXuLy` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `doimatkhau`
---
-
 INSERT INTO `doimatkhau` (`id`, `nguoiDungId`, `trangThai`, `thoiGianYeuCau`, `thoiGianXuLy`, `nguoiXuLy`) VALUES
 (6, 58, 'Đã xử lý', '2025-11-24 22:12:44', '2025-11-24 22:13:00', 3),
 (7, 2, 'Đã xử lý', '2025-11-24 22:14:15', '2025-11-24 22:14:26', 3),
 (8, 58, 'Từ chối', '2025-11-24 22:17:16', '2025-11-24 22:18:00', 3),
 (9, 58, 'Từ chối', '2025-11-24 22:20:20', '2025-11-24 22:20:35', 3),
 (12, 29, 'Đã xử lý', '2026-03-04 23:25:19', '2026-03-04 23:25:55', 3);
-
---
--- Bẫy `doimatkhau`
---
 DELIMITER $$
 CREATE TRIGGER `after_doimatkhau_insert` AFTER INSERT ON `doimatkhau` FOR EACH ROW BEGIN
     DECLARE userName VARCHAR(100);
@@ -304,12 +228,6 @@ END
 $$
 DELIMITER ;
 
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `donthuoc`
---
-
 CREATE TABLE `donthuoc` (
   `maDonThuoc` int(11) NOT NULL,
   `maLichKham` int(11) DEFAULT NULL,
@@ -319,19 +237,16 @@ CREATE TABLE `donthuoc` (
   `tongTienThuoc` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `donthuoc`
---
-
 INSERT INTO `donthuoc` (`maDonThuoc`, `maLichKham`, `chuanDoan`, `loiDanBacSi`, `ngayKeDon`, `tongTienThuoc`) VALUES
 (1, 79, 'Đau đầu, thiếu vitamin', 'Uống sau khi ăn', '2026-04-18 20:34:45', 31500.00),
-(3, 82, 'Vẫn ổn', '', '2026-04-19 02:06:12', 77500.00);
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `goikham`
---
+(3, 82, 'Vẫn ổn', '', '2026-04-19 02:06:12', 77500.00),
+(4, 69, '1', '1', '2026-08-19 15:55:44', 1800.00),
+(5, 67, '2', '2', '2026-08-19 15:55:58', 35000.00),
+(6, 66, '3', '3', '2026-08-19 15:56:12', 2200.00),
+(7, 81, '4', '4', '2026-08-19 15:56:26', 25000.00),
+(8, 94, 'nháp', 'Uống thoải mái', '2026-08-19 23:20:17', 3500.00),
+(10, 91, 'nháp', 'uống sau khi ăn', '2026-08-20 09:46:35', 2500.00),
+(13, 93, '1', 'Tái khám sau khi hết thuốc', '2026-09-30 17:48:49', 24700.00);
 
 CREATE TABLE `goikham` (
   `maGoi` int(11) NOT NULL,
@@ -342,19 +257,35 @@ CREATE TABLE `goikham` (
   `isActive` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `goikham`
---
-
 INSERT INTO `goikham` (`maGoi`, `tenGoi`, `moTa`, `thoiLuong`, `gia`, `isActive`) VALUES
 (1, 'Gói khám thường', 'Khám với bác sĩ tổng quát', 60, 150000.00, 1),
 (2, 'Gói khám cao cấp', 'Khám với bác sĩ chuyên gia', 60, 250000.00, 1);
 
--- --------------------------------------------------------
+CREATE TABLE `hangdoikham` (
+  `maHangDoi` int(11) NOT NULL,
+  `maLichKham` int(11) NOT NULL,
+  `maBacSi` varchar(20) NOT NULL,
+  `ngay` date NOT NULL,
+  `soThuTu` int(11) NOT NULL,
+  `thoiGianCheckIn` datetime NOT NULL DEFAULT current_timestamp(),
+  `trangThai` enum('Đang chờ','Đang khám','Hoàn thành','Bỏ lỡ','Hủy') NOT NULL DEFAULT 'Đang chờ',
+  `nguon` enum('online','truc_tiep') NOT NULL DEFAULT 'truc_tiep',
+  `maNhanVienCheckIn` varchar(20) DEFAULT NULL,
+  `thoiGianGoiKham` datetime DEFAULT NULL,
+  `thoiGianHoanThanh` datetime DEFAULT NULL,
+  `ghiChu` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Cấu trúc bảng cho bảng `hoadon`
---
+INSERT INTO `hangdoikham` (`maHangDoi`, `maLichKham`, `maBacSi`, `ngay`, `soThuTu`, `thoiGianCheckIn`, `trangThai`, `nguon`, `maNhanVienCheckIn`, `thoiGianGoiKham`, `thoiGianHoanThanh`, `ghiChu`) VALUES
+(1, 90, 'bs1', '2026-08-12', 1, '2026-08-12 13:35:00', 'Đang chờ', 'online', 'NV2026001', NULL, NULL, ''),
+(2, 94, 'bs1', '2026-08-19', 1, '2026-08-19 23:17:43', 'Hoàn thành', 'truc_tiep', 'NV2026001', '2026-08-19 23:18:58', '2026-08-19 23:20:17', ''),
+(3, 95, 'bs1', '2026-08-19', 2, '2026-08-19 23:22:50', 'Hủy', 'truc_tiep', 'NV2026001', '2026-08-19 23:23:28', NULL, ''),
+(4, 91, 'bs1', '2026-08-20', 1, '2026-08-20 00:38:36', 'Hoàn thành', 'online', 'NV2026001', '2026-08-20 09:45:51', '2026-08-20 09:46:35', ''),
+(5, 98, 'BS20251121028', '2026-08-20', 1, '2026-08-20 09:43:48', 'Đang chờ', 'truc_tiep', 'NV2026001', NULL, NULL, ''),
+(6, 99, 'BS20251121028', '2026-08-20', 2, '2026-08-20 09:44:44', 'Đang chờ', 'truc_tiep', 'NV2026001', NULL, NULL, ''),
+(7, 106, 'bs1', '2026-09-30', 1, '2026-09-30 17:16:46', 'Đang chờ', 'online', 'NV2026001', NULL, NULL, ''),
+(8, 108, 'bs1', '2026-09-30', 2, '2026-09-30 18:34:22', 'Đang chờ', 'online', 'NV2026001', NULL, NULL, ''),
+(9, 109, 'bs1', '2026-09-30', 3, '2026-09-30 18:35:28', 'Đang chờ', 'truc_tiep', 'NV2026001', NULL, NULL, '');
 
 CREATE TABLE `hoadon` (
   `maHoaDon` int(11) NOT NULL,
@@ -365,10 +296,6 @@ CREATE TABLE `hoadon` (
   `phuongThuc` enum('TienMat','VNPAY') DEFAULT NULL,
   `vnp_TransactionNo` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `hoadon`
---
 
 INSERT INTO `hoadon` (`maHoaDon`, `maLichKham`, `soTien`, `ngayTao`, `trangThai`, `phuongThuc`, `vnp_TransactionNo`) VALUES
 (1, 77, 150000.00, '2026-02-23 22:55:04', 'Chưa thanh toán', NULL, NULL),
@@ -382,13 +309,23 @@ INSERT INTO `hoadon` (`maHoaDon`, `maLichKham`, `soTien`, `ngayTao`, `trangThai`
 (9, 85, 250000.00, '2026-07-22 23:57:37', 'Chưa thanh toán', NULL, NULL),
 (10, 86, 250000.00, '2026-07-23 00:12:10', 'Đã thanh toán', 'VNPAY', '15631936'),
 (11, 87, 150000.00, '2026-07-23 00:34:55', 'Đã thanh toán', 'VNPAY', '15631958'),
-(12, 88, 250000.00, '2026-07-24 19:54:05', 'Đã thanh toán', 'VNPAY', '15634368');
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `hosobenhan`
---
+(12, 88, 250000.00, '2026-07-24 19:54:05', 'Đã thanh toán', 'VNPAY', '15634368'),
+(13, 89, 250000.00, '2026-08-12 13:28:05', 'Đã thanh toán', 'VNPAY', '15654038'),
+(14, 90, 250000.00, '2026-08-12 13:33:49', 'Đã thanh toán', 'VNPAY', '15654044'),
+(15, 91, 150000.00, '2026-08-19 15:46:39', 'Đã thanh toán', 'VNPAY', '15661512'),
+(16, 92, 250000.00, '2026-08-19 17:49:37', 'Đã thanh toán', 'VNPAY', '15661727'),
+(17, 93, 250000.00, '2026-08-19 18:02:20', 'Đã thanh toán', 'VNPAY', '15661743'),
+(18, 96, 250000.00, '2026-08-20 09:39:46', 'Đã thanh toán', 'VNPAY', '15662270'),
+(19, 97, 250000.00, '2026-08-20 09:41:03', 'Đã thanh toán', 'VNPAY', '15662271'),
+(20, 100, 250000.00, '2026-09-30 14:39:48', 'Chưa thanh toán', NULL, NULL),
+(21, 101, 250000.00, '2026-09-30 14:40:50', 'Chưa thanh toán', NULL, NULL),
+(22, 102, 250000.00, '2026-09-30 14:44:00', 'Chưa thanh toán', NULL, NULL),
+(23, 103, 250000.00, '2026-09-30 14:44:56', 'Chưa thanh toán', NULL, NULL),
+(24, 104, 250000.00, '2026-09-30 14:52:35', 'Chưa thanh toán', NULL, NULL),
+(25, 105, 250000.00, '2026-09-30 15:11:14', 'Chưa thanh toán', NULL, NULL),
+(26, 106, 250000.00, '2026-09-30 16:36:26', 'Đã thanh toán', 'VNPAY', '15691494'),
+(27, 107, 250000.00, '2026-09-30 17:43:39', 'Đã thanh toán', 'VNPAY', '15691576'),
+(28, 108, 250000.00, '2026-09-30 18:23:03', 'Đã thanh toán', 'VNPAY', '15691602');
 
 CREATE TABLE `hosobenhan` (
   `maHoSo` varchar(20) NOT NULL,
@@ -408,10 +345,6 @@ CREATE TABLE `hosobenhan` (
   `deleteReason` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `hosobenhan`
---
-
 INSERT INTO `hosobenhan` (`maHoSo`, `maBenhNhan`, `maBacSi`, `maLichKham`, `chanDoan`, `dieuTri`, `trangThai`, `ngayTao`, `ngayHoanThanh`, `ghiChu`, `ngayKham`, `isDeleted`, `deletedAt`, `deletedBy`, `deleteReason`) VALUES
 ('HS20251118184754834', 'BN2025111712142915', 'bs1', 26, 'Xong', 'Xong', 'Đã hoàn thành', '2025-11-18 18:47:54', '2025-11-18 19:33:24', '', NULL, 0, NULL, NULL, NULL),
 ('HS20251119083129501', 'BN2025111712142915', 'bs1', 30, '1', '1', 'Đã hoàn thành', '2025-11-19 08:31:29', '2025-11-19 08:31:52', '1', '2025-11-19 00:00:00', 0, NULL, NULL, NULL),
@@ -429,27 +362,20 @@ INSERT INTO `hosobenhan` (`maHoSo`, `maBenhNhan`, `maBacSi`, `maLichKham`, `chan
 ('HS20251202131128242', 'BN202511101515250', 'bs1', 72, '3', '3', 'Đã hoàn thành', '2025-12-02 13:11:28', '2025-12-04 20:14:38', '', '2025-12-04 00:00:00', 0, NULL, NULL, NULL),
 ('HS20251204200920792', 'bn1', 'bs1', 70, '1', '1', 'Đã hoàn thành', '2025-12-04 20:09:20', '2025-12-04 20:15:02', '', '2025-12-04 00:00:00', 0, NULL, NULL, NULL),
 ('HS20260418203208441', 'bn1', 'bs1', 79, 'Đau đầu, thiếu vitamin', 'Nghỉ ngơi, uống thuốc đúng giờ', 'Đã hoàn thành', '2026-04-18 20:32:08', '2026-04-18 20:34:45', 'tái khám nếu sau 5 ngày nếu chưa khỏi', '2026-04-11 00:00:00', 0, NULL, NULL, NULL),
-('HS20260418203513404', 'BN202511082304701', 'bs1', 69, '', '', 'Chưa hoàn thành', '2026-04-18 20:35:13', NULL, '', '2025-12-03 00:00:00', 0, NULL, NULL, NULL),
-('HS20260418203519154', 'BN2025112200000058', 'bs1', 67, '', '', 'Chưa hoàn thành', '2026-04-18 20:35:19', NULL, '', '2025-12-03 00:00:00', 0, NULL, NULL, NULL),
-('HS20260418203525789', 'bn1', 'bs1', 66, '', '', 'Chưa hoàn thành', '2026-04-18 20:35:25', NULL, '', '2025-12-03 00:00:00', 0, NULL, NULL, NULL),
+('HS20260418203513404', 'BN202511082304701', 'bs1', 69, '1', '1', 'Đã hoàn thành', '2026-04-18 20:35:13', '2026-08-19 15:55:44', '1', '2025-12-03 00:00:00', 0, NULL, NULL, NULL),
+('HS20260418203519154', 'BN2025112200000058', 'bs1', 67, '2', '2', 'Đã hoàn thành', '2026-04-18 20:35:19', '2026-08-19 15:55:58', '2', '2025-12-03 00:00:00', 0, NULL, NULL, NULL),
+('HS20260418203525789', 'bn1', 'bs1', 66, '3', '3', 'Đã hoàn thành', '2026-04-18 20:35:25', '2026-08-19 15:56:12', '3', '2025-12-03 00:00:00', 0, NULL, NULL, NULL),
 ('HS20260419020444496', 'bn1', 'bs1', 82, 'Vẫn ổn', 'Ổn', 'Đã hoàn thành', '2026-04-19 02:04:44', '2026-04-19 02:06:12', '', '2026-04-18 00:00:00', 0, NULL, NULL, NULL),
-('HS20260708000430988', 'bn1', 'bs1', 81, '', '', 'Chưa hoàn thành', '2026-07-08 00:04:30', NULL, '', '2026-04-20 00:00:00', 0, NULL, NULL, NULL);
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `khoa`
---
+('HS20260708000430988', 'bn1', 'bs1', 81, '4', '4', 'Đã hoàn thành', '2026-07-08 00:04:30', '2026-08-19 15:56:26', '4', '2026-04-20 00:00:00', 0, NULL, NULL, NULL),
+('HS20260819231941328', 'BN202608192317018', 'bs1', 94, 'nháp', 'nháp', 'Đã hoàn thành', '2026-08-19 23:19:41', '2026-08-19 23:20:17', '', '2026-08-19 00:00:00', 0, NULL, NULL, NULL),
+('HS20260820094558383', 'bn1', 'bs1', 91, 'nháp', 'nháp', 'Đã hoàn thành', '2026-08-20 09:45:58', '2026-08-20 09:46:35', '', '2026-08-20 00:00:00', 0, NULL, NULL, NULL),
+('HS20260820094746998', 'bn1', 'bs1', 93, '1', '1', 'Đã hoàn thành', '2026-08-20 09:47:46', '2026-09-30 17:48:49', '1', '2026-08-20 00:00:00', 0, NULL, NULL, NULL);
 
 CREATE TABLE `khoa` (
   `maKhoa` varchar(10) NOT NULL,
   `tenKhoa` varchar(100) NOT NULL,
   `moTa` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `khoa`
---
 
 INSERT INTO `khoa` (`maKhoa`, `tenKhoa`, `moTa`) VALUES
 ('CAR1025', 'Khoa Tim mạch', 'Khoa Tim mạch tập trung khám và điều trị các bệnh về tim và mạch máu. Đây là khoa chuyên sâu trong chẩn đoán, theo dõi và phục hồi chức năng tim mạch.'),
@@ -461,12 +387,6 @@ INSERT INTO `khoa` (`maKhoa`, `tenKhoa`, `moTa`) VALUES
 ('OBG1025', 'Khoa Sản', 'Khoa Sản theo dõi, chăm sóc và điều trị cho phụ nữ trong thời kỳ mang thai và sau sinh. Ngoài ra, khoa còn hỗ trợ điều trị các bệnh lý phụ khoa thường gặp.'),
 ('PED1025', 'Khoa Nhi', 'Khoa Nhi chịu trách nhiệm chăm sóc sức khỏe cho trẻ sơ sinh và trẻ em. Khoa chuyên điều trị các bệnh thường gặp ở trẻ nhỏ, từ hô hấp đến tim mạch bẩm sinh.'),
 ('SUR1025', 'Khoa Ngoại', 'Khoa Ngoại đảm nhiệm các ca phẫu thuật và điều trị bằng can thiệp ngoại khoa. Tại đây tiếp nhận các trường hợp cần mổ từ đơn giản đến phức tạp.');
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `lichkham`
---
 
 CREATE TABLE `lichkham` (
   `maLichKham` int(11) NOT NULL,
@@ -480,77 +400,92 @@ CREATE TABLE `lichkham` (
   `ghiChu` text DEFAULT NULL,
   `nguoiHuy` enum('benhnhan','bacsi','quantri','hethong') DEFAULT NULL,
   `soLanDoiLich` tinyint(1) NOT NULL DEFAULT 0,
-  `thoiGianDoiLich` datetime DEFAULT NULL
+  `thoiGianDoiLich` datetime DEFAULT NULL,
+  `nguon` enum('online','truc_tiep') NOT NULL DEFAULT 'online',
+  `maNhanVienTao` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `lichkham`
---
-
-INSERT INTO `lichkham` (`maLichKham`, `maBacSi`, `maBenhNhan`, `ngayKham`, `maCa`, `maSuat`, `maGoi`, `trangThai`, `ghiChu`, `nguoiHuy`, `soLanDoiLich`, `thoiGianDoiLich`) VALUES
-(8, 'bs1', 'bn1', '2025-11-12', 1, 1, 1, 'Hủy', NULL, NULL, 0, NULL),
-(26, 'bs1', 'BN2025111712142915', '2025-11-18', 1, 2, 2, 'Hoàn thành', NULL, NULL, 0, NULL),
-(27, 'bs1', 'BN202511101515250', '2025-11-19', 1, 1, 1, 'Hoàn thành', NULL, NULL, 0, NULL),
-(28, 'bs1', 'BN202511082304701', '2025-11-19', 1, 6, 1, 'Hoàn thành', NULL, NULL, 0, NULL),
-(29, 'bs1', 'bn1', '2025-11-19', 2, 7, 2, 'Hoàn thành', NULL, NULL, 0, NULL),
-(30, 'bs1', 'BN2025111712142915', '2025-11-19', 2, 12, 2, 'Hoàn thành', NULL, NULL, 0, NULL),
-(35, 'BS20251121022', 'bn1', '2025-11-22', 1, 1, 1, 'Hủy', '1\n[Lý do hủy]: 1', NULL, 0, NULL),
-(36, 'BS20251121022', 'bn1', '2025-11-22', 1, 2, 1, 'Hủy', '1\n[Lý do hủy]: a', NULL, 0, NULL),
-(38, 'BS20251121027', 'bn1', '2025-11-24', 1, 1, 1, 'Hủy', 'Không\n[Lý do hủy]: x', NULL, 0, NULL),
-(39, 'BS20251121027', 'BN2025112200000058', '2025-11-24', 1, 2, 2, 'Hủy', '1\n[Lý do hủy]: Thử', NULL, 0, NULL),
-(40, 'BS20251121028', 'BN2025112200000058', '2025-11-29', 1, 1, 2, 'Hủy', '\n[Lý do hủy]: Hủy', NULL, 0, NULL),
-(41, 'BS20251121027', 'BN2025112200000058', '2025-11-24', 1, 2, 2, 'Hủy', '1\n[Lý do hủy]: 1', NULL, 0, NULL),
-(42, 'BS20251121027', 'BN2025112200000058', '2025-11-24', 1, 2, 2, 'Hủy', '2\n[Lý do hủy]: 2', NULL, 0, NULL),
-(43, 'BS20251121027', 'BN2025112200000058', '2025-11-23', 1, 4, 2, 'Hủy', '\n[Lý do hủy]: a', NULL, 0, NULL),
-(44, 'BS20251121028', 'BN2025112200000058', '2025-11-23', 2, 12, 2, 'Hủy', '\n[Lý do hủy]: a', NULL, 0, NULL),
-(45, 'bs1', 'BN2025112200000058', '2025-11-23', 1, 6, 2, 'Hoàn thành', '', NULL, 0, NULL),
-(46, 'bs1', 'BN2025112200000058', '2025-11-23', 2, 12, 2, 'Hoàn thành', '', NULL, 0, NULL),
-(47, 'bs1', 'bn1', '2025-12-01', 1, 3, 2, 'Hủy', '22121\n[Lý do hủy]: 2', NULL, 0, NULL),
-(48, 'BS20251121022', 'bn1', '2025-12-01', 1, 2, 1, 'Hủy', '1\n[Lý do hủy]: 2', NULL, 0, NULL),
-(49, 'BS20251121022', 'bn1', '2025-12-01', 1, 2, 1, 'Hủy', 'ds\n[Lý do hủy]: ds', NULL, 0, NULL),
-(50, 'BS20251121022', 'bn1', '2025-12-02', 1, 2, 2, 'Hủy', 'f\n[Lý do hủy]: f1', NULL, 0, NULL),
-(51, 'BS20251121022', 'bn1', '2025-12-01', 2, 11, 1, 'Hủy', '1\n[Lý do hủy]: 1', NULL, 0, NULL),
-(52, 'BS20251121022', 'bn1', '2025-12-03', 1, 3, 2, 'Hủy', '', NULL, 0, NULL),
-(53, 'BS20251121022', 'bn1', '2025-12-01', 1, 4, 2, 'Hủy', '', NULL, 0, NULL),
-(54, 'BS20251121022', 'bn1', '2025-11-30', 1, 3, 2, 'Hoàn thành', '', NULL, 0, NULL),
-(55, 'BS20251121022', 'bn1', '2025-12-06', 1, 3, 2, 'Hủy', '', NULL, 0, NULL),
-(56, 'BS20251121022', 'bn1', '2025-12-01', 1, 6, 1, 'Hủy', '\n[Lý do hủy]: a', NULL, 0, NULL),
-(57, 'BS20251121022', 'bn1', '2025-12-01', 1, 3, 2, 'Hủy', '', NULL, 0, NULL),
-(58, 'BS20251121022', 'bn1', '2025-12-01', 1, 6, 2, 'Hủy', '\n[Lý do hủy]: a', 'benhnhan', 0, NULL),
-(59, 'BS20251121022', 'bn1', '2025-12-01', 1, 4, 1, 'Hủy', '1', 'bacsi', 0, NULL),
-(60, 'BS20251121022', 'bn1', '2025-12-03', 1, 3, 1, 'Hủy', '12121\n[Lý do hủy]: adsdada', 'benhnhan', 0, NULL),
-(61, 'BS20251121022', 'bn1', '2025-12-02', 1, 6, 2, 'Hủy', 'test\n[Lý do hủy]: bận việc', 'benhnhan', 0, NULL),
-(62, 'bs1', 'bn1', '2025-12-01', 1, 4, 1, 'Hủy', '\n[Lý do hủy]: 1', 'benhnhan', 0, NULL),
-(63, 'BS20251121028', 'bn1', '2025-12-05', 1, 4, 2, 'Hủy', '\n[Lý do hủy]: 1', 'benhnhan', 0, NULL),
-(64, 'bs1', 'bn1', '2025-11-30', 1, 1, 2, 'Hoàn thành', '', NULL, 0, NULL),
-(65, 'bs1', 'BN2025112200000058', '2025-11-30', 2, 8, 2, 'Hoàn thành', '', NULL, 0, NULL),
-(66, 'bs1', 'bn1', '2025-12-03', 1, 1, 1, 'Hoàn thành', 'Bệnh nhân tái khám, sức khỏe tốt.', NULL, 0, NULL),
-(67, 'bs1', 'BN2025112200000058', '2025-12-03', 1, 2, 2, 'Đã đặt', 'Đau đầu nhẹ, cần kiểm tra huyết áp.', NULL, 0, NULL),
-(68, 'bs1', 'BN2025111712142915', '2025-12-03', 1, 3, 1, 'Hủy', 'Bận việc đột xuất\n[Lý do hủy]: Bệnh nhân yêu cầu hủy', NULL, 0, NULL),
-(69, 'bs1', 'BN202511082304701', '2025-12-03', 2, 7, 2, 'Đã đặt', NULL, NULL, 0, NULL),
-(70, 'bs1', 'bn1', '2025-12-04', 1, 1, 1, 'Hủy', 'Khám tổng quát\n[Lý do hủy]: 1', 'benhnhan', 0, NULL),
-(71, 'bs1', 'BN2025112200000059', '2025-12-04', 1, 2, 1, 'Đã đặt', NULL, NULL, 0, NULL),
-(72, 'bs1', 'BN202511101515250', '2025-12-04', 1, 3, 2, 'Đã đặt', 'Có triệu chứng sốt nhẹ', NULL, 0, NULL),
-(73, 'bs1', 'BN2025111712142915', '2025-12-05', 2, 10, 2, 'Đã đặt', 'Tái khám theo hẹn', NULL, 0, NULL),
-(74, 'bs1', 'bn1', '2025-12-02', 2, 11, 2, 'Hủy', 'không\n[Lý do hủy]: 1', 'benhnhan', 0, NULL),
-(75, 'BS20251121022', 'bn1', '2025-12-05', 1, 1, 1, 'Hủy', '\n[Lý do hủy]: 1', 'benhnhan', 0, NULL),
-(76, 'BS20251121027', 'BN2025112200000058', '2025-12-05', 1, 1, 1, 'Đã đặt', '', NULL, 0, NULL),
-(77, 'BS20251121022', 'bn1', '2026-02-24', 1, 3, 1, 'Hủy', 'Không!', 'bacsi', 0, NULL),
-(78, 'BS20251121022', 'bn1', '2026-02-24', 1, 4, 2, 'Hủy', '', 'bacsi', 0, NULL),
-(79, 'bs1', 'bn1', '2026-04-11', 2, 8, 1, 'Hoàn thành', '', NULL, 0, NULL),
-(80, 'bs1', 'bn1', '2026-04-04', 1, 4, 2, 'Hủy', '\n[Lý do hủy]: Không có lí do', 'benhnhan', 0, NULL),
-(81, 'bs1', 'bn1', '2026-04-20', 1, 5, 2, 'Hủy', 'Không\n[Lý do hủy]: Bận', 'benhnhan', 0, NULL),
-(82, 'bs1', 'bn1', '2026-04-18', 2, 12, 1, 'Hoàn thành', '', NULL, 0, NULL),
-(83, 'BS20251121030', 'bn1', '2026-04-20', 2, 10, 2, 'Hủy', '\n[Lý do hủy]: Bận', 'benhnhan', 0, NULL),
-(84, 'BS20251121027', 'bn1', '2026-04-22', 1, 68, 2, 'Hủy', '\n[Lý do hủy]: Bận', 'benhnhan', 0, NULL),
-(85, 'bs1', 'bn1', '2026-07-23', 1, 68, 2, 'Chờ', '', NULL, 0, NULL),
-(86, 'bs1', 'bn1', '2026-07-23', 1, 67, 2, 'Hủy', '\n[Lý do hủy]: Bận', 'benhnhan', 0, NULL),
-(87, 'bs1', 'bn1', '2026-07-24', 1, 68, 1, 'Hủy', '\n[Lý do hủy]: Bận', 'benhnhan', 0, NULL),
-(88, 'bs1', 'bn1', '2026-07-26', 1, 68, 2, 'Đã đặt', '', NULL, 1, '2026-07-24 19:55:42');
-
---
--- Bẫy `lichkham`
---
+INSERT INTO `lichkham` (`maLichKham`, `maBacSi`, `maBenhNhan`, `ngayKham`, `maCa`, `maSuat`, `maGoi`, `trangThai`, `ghiChu`, `nguoiHuy`, `soLanDoiLich`, `thoiGianDoiLich`, `nguon`, `maNhanVienTao`) VALUES
+(8, 'bs1', 'bn1', '2025-11-12', 1, 1, 1, 'Hủy', NULL, NULL, 0, NULL, 'online', NULL),
+(26, 'bs1', 'BN2025111712142915', '2025-11-18', 1, 2, 2, 'Hoàn thành', NULL, NULL, 0, NULL, 'online', NULL),
+(27, 'bs1', 'BN202511101515250', '2025-11-19', 1, 1, 1, 'Hoàn thành', NULL, NULL, 0, NULL, 'online', NULL),
+(28, 'bs1', 'BN202511082304701', '2025-11-19', 1, 6, 1, 'Hoàn thành', NULL, NULL, 0, NULL, 'online', NULL),
+(29, 'bs1', 'bn1', '2025-11-19', 2, 7, 2, 'Hoàn thành', NULL, NULL, 0, NULL, 'online', NULL),
+(30, 'bs1', 'BN2025111712142915', '2025-11-19', 2, 12, 2, 'Hoàn thành', NULL, NULL, 0, NULL, 'online', NULL),
+(35, 'BS20251121022', 'bn1', '2025-11-22', 1, 1, 1, 'Hủy', '1\n[Lý do hủy]: 1', NULL, 0, NULL, 'online', NULL),
+(36, 'BS20251121022', 'bn1', '2025-11-22', 1, 2, 1, 'Hủy', '1\n[Lý do hủy]: a', NULL, 0, NULL, 'online', NULL),
+(38, 'BS20251121027', 'bn1', '2025-11-24', 1, 1, 1, 'Hủy', 'Không\n[Lý do hủy]: x', NULL, 0, NULL, 'online', NULL),
+(39, 'BS20251121027', 'BN2025112200000058', '2025-11-24', 1, 2, 2, 'Hủy', '1\n[Lý do hủy]: Thử', NULL, 0, NULL, 'online', NULL),
+(40, 'BS20251121028', 'BN2025112200000058', '2025-11-29', 1, 1, 2, 'Hủy', '\n[Lý do hủy]: Hủy', NULL, 0, NULL, 'online', NULL),
+(41, 'BS20251121027', 'BN2025112200000058', '2025-11-24', 1, 2, 2, 'Hủy', '1\n[Lý do hủy]: 1', NULL, 0, NULL, 'online', NULL),
+(42, 'BS20251121027', 'BN2025112200000058', '2025-11-24', 1, 2, 2, 'Hủy', '2\n[Lý do hủy]: 2', NULL, 0, NULL, 'online', NULL),
+(43, 'BS20251121027', 'BN2025112200000058', '2025-11-23', 1, 4, 2, 'Hủy', '\n[Lý do hủy]: a', NULL, 0, NULL, 'online', NULL),
+(44, 'BS20251121028', 'BN2025112200000058', '2025-11-23', 2, 12, 2, 'Hủy', '\n[Lý do hủy]: a', NULL, 0, NULL, 'online', NULL),
+(45, 'bs1', 'BN2025112200000058', '2025-11-23', 1, 6, 2, 'Hoàn thành', '', NULL, 0, NULL, 'online', NULL),
+(46, 'bs1', 'BN2025112200000058', '2025-11-23', 2, 12, 2, 'Hoàn thành', '', NULL, 0, NULL, 'online', NULL),
+(47, 'bs1', 'bn1', '2025-12-01', 1, 3, 2, 'Hủy', '22121\n[Lý do hủy]: 2', NULL, 0, NULL, 'online', NULL),
+(48, 'BS20251121022', 'bn1', '2025-12-01', 1, 2, 1, 'Hủy', '1\n[Lý do hủy]: 2', NULL, 0, NULL, 'online', NULL),
+(49, 'BS20251121022', 'bn1', '2025-12-01', 1, 2, 1, 'Hủy', 'ds\n[Lý do hủy]: ds', NULL, 0, NULL, 'online', NULL),
+(50, 'BS20251121022', 'bn1', '2025-12-02', 1, 2, 2, 'Hủy', 'f\n[Lý do hủy]: f1', NULL, 0, NULL, 'online', NULL),
+(51, 'BS20251121022', 'bn1', '2025-12-01', 2, 11, 1, 'Hủy', '1\n[Lý do hủy]: 1', NULL, 0, NULL, 'online', NULL),
+(52, 'BS20251121022', 'bn1', '2025-12-03', 1, 3, 2, 'Hủy', '', NULL, 0, NULL, 'online', NULL),
+(53, 'BS20251121022', 'bn1', '2025-12-01', 1, 4, 2, 'Hủy', '', NULL, 0, NULL, 'online', NULL),
+(54, 'BS20251121022', 'bn1', '2025-11-30', 1, 3, 2, 'Hoàn thành', '', NULL, 0, NULL, 'online', NULL),
+(55, 'BS20251121022', 'bn1', '2025-12-06', 1, 3, 2, 'Hủy', '', NULL, 0, NULL, 'online', NULL),
+(56, 'BS20251121022', 'bn1', '2025-12-01', 1, 6, 1, 'Hủy', '\n[Lý do hủy]: a', NULL, 0, NULL, 'online', NULL),
+(57, 'BS20251121022', 'bn1', '2025-12-01', 1, 3, 2, 'Hủy', '', NULL, 0, NULL, 'online', NULL),
+(58, 'BS20251121022', 'bn1', '2025-12-01', 1, 6, 2, 'Hủy', '\n[Lý do hủy]: a', 'benhnhan', 0, NULL, 'online', NULL),
+(59, 'BS20251121022', 'bn1', '2025-12-01', 1, 4, 1, 'Hủy', '1', 'bacsi', 0, NULL, 'online', NULL),
+(60, 'BS20251121022', 'bn1', '2025-12-03', 1, 3, 1, 'Hủy', '12121\n[Lý do hủy]: adsdada', 'benhnhan', 0, NULL, 'online', NULL),
+(61, 'BS20251121022', 'bn1', '2025-12-02', 1, 6, 2, 'Hủy', 'test\n[Lý do hủy]: bận việc', 'benhnhan', 0, NULL, 'online', NULL),
+(62, 'bs1', 'bn1', '2025-12-01', 1, 4, 1, 'Hủy', '\n[Lý do hủy]: 1', 'benhnhan', 0, NULL, 'online', NULL),
+(63, 'BS20251121028', 'bn1', '2025-12-05', 1, 4, 2, 'Hủy', '\n[Lý do hủy]: 1', 'benhnhan', 0, NULL, 'online', NULL),
+(64, 'bs1', 'bn1', '2025-11-30', 1, 1, 2, 'Hoàn thành', '', NULL, 0, NULL, 'online', NULL),
+(65, 'bs1', 'BN2025112200000058', '2025-11-30', 2, 8, 2, 'Hoàn thành', '', NULL, 0, NULL, 'online', NULL),
+(66, 'bs1', 'bn1', '2025-12-03', 1, 1, 1, 'Hoàn thành', 'Bệnh nhân tái khám, sức khỏe tốt.', NULL, 0, NULL, 'online', NULL),
+(67, 'bs1', 'BN2025112200000058', '2025-12-03', 1, 2, 2, 'Hoàn thành', 'Đau đầu nhẹ, cần kiểm tra huyết áp.', NULL, 0, NULL, 'online', NULL),
+(68, 'bs1', 'BN2025111712142915', '2025-12-03', 1, 3, 1, 'Hủy', 'Bận việc đột xuất\n[Lý do hủy]: Bệnh nhân yêu cầu hủy', NULL, 0, NULL, 'online', NULL),
+(69, 'bs1', 'BN202511082304701', '2025-12-03', 2, 7, 2, 'Hoàn thành', NULL, NULL, 0, NULL, 'online', NULL),
+(70, 'bs1', 'bn1', '2025-12-04', 1, 1, 1, 'Hủy', 'Khám tổng quát\n[Lý do hủy]: 1', 'benhnhan', 0, NULL, 'online', NULL),
+(71, 'bs1', 'BN2025112200000059', '2025-12-04', 1, 2, 1, 'Đã đặt', NULL, NULL, 0, NULL, 'online', NULL),
+(72, 'bs1', 'BN202511101515250', '2025-12-04', 1, 3, 2, 'Đã đặt', 'Có triệu chứng sốt nhẹ', NULL, 0, NULL, 'online', NULL),
+(73, 'bs1', 'BN2025111712142915', '2025-12-05', 2, 10, 2, 'Đã đặt', 'Tái khám theo hẹn', NULL, 0, NULL, 'online', NULL),
+(74, 'bs1', 'bn1', '2025-12-02', 2, 11, 2, 'Hủy', 'không\n[Lý do hủy]: 1', 'benhnhan', 0, NULL, 'online', NULL),
+(75, 'BS20251121022', 'bn1', '2025-12-05', 1, 1, 1, 'Hủy', '\n[Lý do hủy]: 1', 'benhnhan', 0, NULL, 'online', NULL),
+(76, 'BS20251121027', 'BN2025112200000058', '2025-12-05', 1, 1, 1, 'Đã đặt', '', NULL, 0, NULL, 'online', NULL),
+(77, 'BS20251121022', 'bn1', '2026-02-24', 1, 3, 1, 'Hủy', 'Không!', 'bacsi', 0, NULL, 'online', NULL),
+(78, 'BS20251121022', 'bn1', '2026-02-24', 1, 4, 2, 'Hủy', '', 'bacsi', 0, NULL, 'online', NULL),
+(79, 'bs1', 'bn1', '2026-04-11', 2, 8, 1, 'Hoàn thành', '', NULL, 0, NULL, 'online', NULL),
+(80, 'bs1', 'bn1', '2026-04-04', 1, 4, 2, 'Hủy', '\n[Lý do hủy]: Không có lí do', 'benhnhan', 0, NULL, 'online', NULL),
+(81, 'bs1', 'bn1', '2026-04-20', 1, 5, 2, 'Hủy', 'Không\n[Lý do hủy]: Bận', 'benhnhan', 0, NULL, 'online', NULL),
+(82, 'bs1', 'bn1', '2026-04-18', 2, 12, 1, 'Hoàn thành', '', NULL, 0, NULL, 'online', NULL),
+(83, 'BS20251121030', 'bn1', '2026-04-20', 2, 10, 2, 'Hủy', '\n[Lý do hủy]: Bận', 'benhnhan', 0, NULL, 'online', NULL),
+(84, 'BS20251121027', 'bn1', '2026-04-22', 1, 68, 2, 'Hủy', '\n[Lý do hủy]: Bận', 'benhnhan', 0, NULL, 'online', NULL),
+(85, 'bs1', 'bn1', '2026-07-23', 1, 68, 2, 'Chờ', '', NULL, 0, NULL, 'online', NULL),
+(86, 'bs1', 'bn1', '2026-07-23', 1, 67, 2, 'Hủy', '\n[Lý do hủy]: Bận', 'benhnhan', 0, NULL, 'online', NULL),
+(87, 'bs1', 'bn1', '2026-07-24', 1, 68, 1, 'Hủy', '\n[Lý do hủy]: Bận', 'benhnhan', 0, NULL, 'online', NULL),
+(88, 'bs1', 'bn1', '2026-07-26', 1, 68, 2, 'Hủy', '\n[Lý do hủy]: không', 'benhnhan', 1, '2026-07-24 19:55:42', 'online', NULL),
+(89, 'bs1', 'bn1', '2026-08-12', 2, 72, 2, 'Hủy', '\n[Lý do hủy]: không cho biết', 'benhnhan', 0, NULL, 'online', NULL),
+(90, 'bs1', 'bn1', '2026-08-12', 2, 71, 2, 'Hủy', '\n[Lý do hủy]: khong', 'benhnhan', 0, NULL, 'online', NULL),
+(91, 'bs1', 'bn1', '2026-08-20', 1, 68, 1, 'Hoàn thành', '', NULL, 0, NULL, 'online', NULL),
+(92, 'bs1', 'BN2026030400000061', '2026-08-20', 1, 67, 2, 'Đã đặt', '', NULL, 0, NULL, 'online', NULL),
+(93, 'bs1', 'bn1', '2026-08-20', 2, 72, 2, 'Hủy', '\n[Lý do hủy]: 1', 'benhnhan', 1, '2026-08-19 23:08:55', 'online', NULL),
+(94, 'bs1', 'BN202608192317018', '2026-08-19', 2, 70, NULL, 'Hoàn thành', '', NULL, 0, NULL, 'truc_tiep', 'NV2026001'),
+(95, 'bs1', 'bn1', '2026-08-19', 1, 68, NULL, 'Hủy', '\n[Lý do hủy]: Không đến', 'bacsi', 0, NULL, 'truc_tiep', 'NV2026001'),
+(96, 'bs1', 'bn1', '2026-08-20', 2, 69, 2, 'Hủy', '\n[Lý do hủy]: 1', 'benhnhan', 0, NULL, 'online', NULL),
+(97, 'bs1', 'bn1', '2026-08-21', 2, 72, 2, 'Hủy', '\n[Lý do hủy]: 1', 'benhnhan', 1, '2026-08-20 09:41:52', 'online', NULL),
+(98, 'BS20251121028', 'bn1', '2026-09-30', 1, 65, 2, 'Hủy', NULL, 'quantri', 0, NULL, 'truc_tiep', 'NV2026001'),
+(99, 'BS20251121028', 'BN202608200944099', '2026-08-20', 2, 71, NULL, 'Đã đặt', '', NULL, 0, NULL, 'truc_tiep', 'NV2026001'),
+(100, 'bs1', 'bn1', '2026-09-30', 2, 72, 2, 'Chờ', '', NULL, 0, NULL, 'online', NULL),
+(101, 'bs1', 'bn1', '2026-09-30', 2, 71, 2, 'Chờ', '', NULL, 0, NULL, 'online', NULL),
+(102, 'bs1', 'bn1', '2026-09-30', 1, 65, 2, 'Hủy', '\n[Lý do hủy]: Bác sĩ xếp lại lịch làm việc trong tháng', 'bacsi', 0, NULL, 'online', NULL),
+(103, 'bs1', 'bn1', '2026-10-01', 1, 65, 2, 'Chờ', '', NULL, 0, NULL, 'online', NULL),
+(104, 'bs1', 'bn1', '2026-09-30', 1, 66, 2, 'Hủy', '\n[Lý do hủy]: Bác sĩ xếp lại lịch làm việc trong tháng', 'bacsi', 0, NULL, 'online', NULL),
+(105, 'BS20251121017', 'bn1', '2026-10-01', 2, 72, 2, 'Chờ', '', NULL, 0, NULL, 'online', NULL),
+(106, 'bs1', 'bn1', '2026-09-30', 2, 72, 2, 'Đã đặt', '', NULL, 0, NULL, 'online', NULL),
+(107, 'bs1', 'bn1', '2026-09-30', 2, 71, 2, 'Đã đặt', '', NULL, 0, NULL, 'online', NULL),
+(108, 'bs1', 'bn1', '2026-09-30', 2, 70, 2, 'Đã đặt', '', NULL, 0, NULL, 'online', NULL),
+(109, 'bs1', 'BN202609301835137', '2026-09-30', 2, 69, NULL, 'Đã đặt', '', NULL, 0, NULL, 'truc_tiep', 'NV2026001');
 DELIMITER $$
 CREATE TRIGGER `after_lichkham_insert` AFTER INSERT ON `lichkham` FOR EACH ROW BEGIN
     DECLARE patientName VARCHAR(100);
@@ -677,12 +612,6 @@ END
 $$
 DELIMITER ;
 
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `lienhe`
---
-
 CREATE TABLE `lienhe` (
   `maLienHe` int(11) NOT NULL,
   `hoTen` varchar(100) NOT NULL,
@@ -697,22 +626,15 @@ CREATE TABLE `lienhe` (
   `ghiChu` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `lienhe`
---
-
 INSERT INTO `lienhe` (`maLienHe`, `hoTen`, `email`, `soDienThoai`, `chuDe`, `noiDung`, `trangThai`, `thoiGianGui`, `nguoiXuLy`, `thoiGianXuLy`, `ghiChu`) VALUES
 (1, 'Test', 'test@gmail.com', '0123456789', 'Khác', 'test', 'Đã xử lý', '2025-11-23 19:21:51', 3, '2025-11-26 09:50:39', NULL),
 (2, 'testtwo', 'two@gmail.vn', '0987654321', 'Khác', 'a', 'Đã xử lý', '2025-11-23 19:42:29', 3, '2025-11-26 09:50:35', NULL),
 (3, 'hovaten', 'example@gamil.com', '0123456789', 'Khác', 'test n', 'Đã xử lý', '2025-11-24 17:10:15', 3, '2025-11-26 09:50:31', NULL),
 (4, 'Nguyễn Đạt', 'dat123456789fa+lienhe1@gmail.com', '0123123123', 'Khác', 'Hi', 'Đã xử lý', '2026-03-04 23:58:56', 3, '2026-03-05 00:01:02', 'Gửi lại lời chào cho khách hàng'),
-(5, 'dat', 'ntdatcntt2311055@student.ctuet.edu.vn', '0987987987', 'Tư vấn dịch vụ', 'Xin tư vấn ạ', 'Đã xử lý', '2026-04-19 02:02:33', 3, '2026-08-10 21:36:05', NULL);
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `mail_notification_log`
---
+(5, 'dat', 'ntdatcntt2311055@student.ctuet.edu.vn', '0987987987', 'Tư vấn dịch vụ', 'Xin tư vấn ạ', 'Đã xử lý', '2026-04-19 02:02:33', 3, '2026-08-10 21:36:05', NULL),
+(6, 'dat', 'dat123456789fa@gmail.com', '0987654321', 'Tư vấn dịch vụ', 'test', 'Đã xử lý', '2026-09-30 16:59:46', 3, '2026-09-30 17:13:44', NULL),
+(7, 'nguyen', 'dat123456789fa@gmail.com', '0987654321', 'Khác', 'Khong co', 'Đã xử lý', '2026-09-30 17:27:53', 3, '2026-09-30 18:32:56', NULL),
+(8, 'nguyen', 'dat123456789fa@gmail.com', '0987654321', 'Tư vấn dịch vụ', 'mẫu', 'Đã xử lý', '2026-09-30 17:46:16', 3, '2026-09-30 17:53:55', NULL);
 
 CREATE TABLE `mail_notification_log` (
   `id` int(11) NOT NULL,
@@ -724,10 +646,6 @@ CREATE TABLE `mail_notification_log` (
   `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`payload`)),
   `sent_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `mail_notification_log`
---
 
 INSERT INTO `mail_notification_log` (`id`, `event_code`, `event_key`, `recipient_email`, `status`, `error_message`, `payload`, `sent_at`) VALUES
 (1, 'appointment_cancelled_patient', '61:cancel:2025-12-02:4caa2073cbd316a4c37de3eacd5ddb36', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thong bao huy lich kham #61\"}', '2026-02-23 22:47:46'),
@@ -787,13 +705,94 @@ INSERT INTO `mail_notification_log` (`id`, `event_code`, `event_key`, `recipient
 (55, 'admin_custom_broadcast', '2f9d87eedb1c5262ab2d0354ab615161', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Kiểm tra tính năng\"}', '2026-08-09 18:59:32'),
 (56, 'admin_custom_broadcast', 'b767d20047604b38c2284936029e1df6', 'dat123456789fa+web2@gmail.com', 'sent', NULL, '{\"subject\":\"Kiểm tra tính năng\"}', '2026-08-09 18:59:33'),
 (57, 'admin_custom_broadcast', '4dffcff70bed69dc49e2d4e887ca0b24', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Kiểm tra tính năng\"}', '2026-08-09 18:59:34'),
-(58, 'admin_custom_broadcast', 'cd0c6ff7537e7d549a8e2b9c358c2430', 'dat123456789fa+benhnhan4@gmail.com', 'sent', NULL, '{\"subject\":\"Kiểm tra tính năng\"}', '2026-08-09 18:59:35');
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `medicine_stock_log`
---
+(58, 'admin_custom_broadcast', 'cd0c6ff7537e7d549a8e2b9c358c2430', 'dat123456789fa+benhnhan4@gmail.com', 'sent', NULL, '{\"subject\":\"Kiểm tra tính năng\"}', '2026-08-09 18:59:35'),
+(59, 'payment_success', '13:payment:success:15654038:Đã thanh toán', 'dat123456789fa@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.62. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Thanh toán thành công hóa đơn #13\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.62. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-08-12 13:29:19'),
+(60, 'appointment_cancelled_patient', '89:cancel:2026-08-12:c32f906a302d638adab9b6aab8d8b0f5', 'dat123456789fa@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.62. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Thông báo hủy lịch khám #89\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.62. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-08-12 13:30:07'),
+(61, 'appointment_cancelled_doctor', '89:cancel:2026-08-12:c32f906a302d638adab9b6aab8d8b0f5', 'dat123456789fa+nguoidung2@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.62. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Thông báo hủy lịch khám bệnh nhân #89\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.62. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-08-12 13:30:07'),
+(62, 'appointment_cancelled_patient', '88:cancel:2026-07-26:ba5c5dd10964af7adf651889b1254c15', 'dat123456789fa@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.62. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Thông báo hủy lịch khám #88\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.62. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-08-12 13:33:20'),
+(63, 'appointment_cancelled_doctor', '88:cancel:2026-07-26:ba5c5dd10964af7adf651889b1254c15', 'dat123456789fa+nguoidung2@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.62. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Thông báo hủy lịch khám bệnh nhân #88\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.62. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-08-12 13:33:20'),
+(64, 'payment_success', '14:payment:success:15654044:Đã thanh toán', 'dat123456789fa@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.62. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Thanh toán thành công hóa đơn #14\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.62. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-08-12 13:34:20'),
+(65, 'payment_success', '15:payment:success:15661512:Đã thanh toán', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thanh toán thành công hóa đơn #15\"}', '2026-08-19 15:47:47'),
+(66, 'appointment_cancelled_patient', '90:cancel:2026-08-12:904894c4929e634a98029447354f6e1d', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám #90\"}', '2026-08-19 15:48:25'),
+(67, 'appointment_cancelled_doctor', '90:cancel:2026-08-12:904894c4929e634a98029447354f6e1d', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám bệnh nhân #90\"}', '2026-08-19 15:48:26'),
+(68, 'medical_record_ready', 'HS20260418203513404:record_ready', 'abcd@gmail.com', 'sent', NULL, '{\"subject\":\"Hồ sơ khám bệnh đã cập nhật #HS20260418203513404\"}', '2026-08-19 15:55:45'),
+(69, 'medical_record_ready', 'HS20260418203519154:record_ready', 'dat123456789fa+benhnhan4@gmail.com', 'sent', NULL, '{\"subject\":\"Hồ sơ khám bệnh đã cập nhật #HS20260418203519154\"}', '2026-08-19 15:55:59'),
+(70, 'medical_record_ready', 'HS20260418203525789:record_ready', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Hồ sơ khám bệnh đã cập nhật #HS20260418203525789\"}', '2026-08-19 15:56:12'),
+(71, 'medical_record_ready', 'HS20260708000430988:record_ready', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Hồ sơ khám bệnh đã cập nhật #HS20260708000430988\"}', '2026-08-19 15:56:27'),
+(72, 'admin_custom_broadcast', '926d957ad22d87fb3e88923da4e87c25', 'abcd@gmail.com', 'sent', NULL, '{\"subject\":\"test 2\"}', '2026-08-19 15:58:40'),
+(73, 'admin_custom_broadcast', '2e509c55980c5617b2a6f76a912815f5', 'dat123456789fa+benhnhan5@gmail.com', 'sent', NULL, '{\"subject\":\"test 2\"}', '2026-08-19 15:58:40'),
+(74, 'admin_custom_broadcast', '1670bf8704244aaa317da70206add0f6', 'dat123456789+bacsi1@gmail.com', 'sent', NULL, '{\"subject\":\"test 2\"}', '2026-08-19 15:58:41'),
+(75, 'admin_custom_broadcast', '548f0792c73111b29e73b57b694a61a5', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"test 2\"}', '2026-08-19 15:58:42'),
+(76, 'admin_custom_broadcast', 'bb672d7e5ac16d772ecfb9c1b6d54fa5', 'dat123456789fa+web2@gmail.com', 'sent', NULL, '{\"subject\":\"test 2\"}', '2026-08-19 15:58:42'),
+(77, 'admin_custom_broadcast', 'ce5c7fc24c05d8ad7abd9a6b42231e0b', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"test 2\"}', '2026-08-19 15:58:43'),
+(78, 'admin_custom_broadcast', 'b81bf5c268484faae941eb144d4060fa', 'dat123456789fa+benhnhan4@gmail.com', 'sent', NULL, '{\"subject\":\"test 2\"}', '2026-08-19 15:58:44'),
+(79, 'payment_success', '16:payment:success:15661727:Đã thanh toán', 'dat123456789fa+web2@gmail.com', 'sent', NULL, '{\"subject\":\"Thanh toán thành công hóa đơn #16\"}', '2026-08-19 17:50:08'),
+(80, 'payment_success', '17:payment:success:15661743:Đã thanh toán', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thanh toán thành công hóa đơn #17\"}', '2026-08-19 18:02:51'),
+(81, 'appointment_rescheduled_patient', '93:reschedule:d63fc30438c01a05395c223107528c14', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo cập nhật lịch khám #93\"}', '2026-08-19 23:08:56'),
+(82, 'appointment_rescheduled_doctor', '93:reschedule:d63fc30438c01a05395c223107528c14', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo cập nhật lịch khám bác sĩ #93\"}', '2026-08-19 23:08:57'),
+(83, 'appointment_booked_doctor', '94:booked:2026-08-19:70', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo có lịch khám mới #94\"}', '2026-08-19 23:17:43'),
+(84, 'appointment_booked_patient', '95:booked:2026-08-19:68', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Xác nhận đặt lịch khám #95\"}', '2026-08-19 23:22:49'),
+(85, 'appointment_booked_doctor', '95:booked:2026-08-19:68', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo có lịch khám mới #95\"}', '2026-08-19 23:22:50'),
+(86, 'appointment_cancelled_patient', '95:cancel:2026-08-19:4ffc0d9f09523677428fe4073e83ef08', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám #95\"}', '2026-08-19 23:24:07'),
+(87, 'appointment_cancelled_doctor', '95:cancel:2026-08-19:4ffc0d9f09523677428fe4073e83ef08', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo hủy lịch khám bệnh nhân #95\"}', '2026-08-19 23:24:08'),
+(88, 'payment_success', '18:payment:success:15662270:Đã thanh toán', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thanh toán thành công hóa đơn #18\"}', '2026-08-20 09:40:19'),
+(89, 'payment_success', '19:payment:success:15662271:Đã thanh toán', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thanh toán thành công hóa đơn #19\"}', '2026-08-20 09:41:27'),
+(90, 'appointment_rescheduled_patient', '97:reschedule:2573b20aa4f7cea2b1e2025bb23e170e', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo cập nhật lịch khám #97\"}', '2026-08-20 09:41:53'),
+(91, 'appointment_rescheduled_doctor', '97:reschedule:2573b20aa4f7cea2b1e2025bb23e170e', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo cập nhật lịch khám bác sĩ #97\"}', '2026-08-20 09:41:54'),
+(92, 'appointment_booked_patient', '98:booked:2026-08-20:70', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Xác nhận đặt lịch khám #98\"}', '2026-08-20 09:43:48'),
+(93, 'medical_record_ready', 'HS20260820094558383:record_ready', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Hồ sơ khám bệnh đã cập nhật #HS20260820094558383\"}', '2026-08-20 09:46:36'),
+(94, 'admin_custom_broadcast', '543abc668c943f80ca1de087b3b9fe70', 'abcd@gmail.com', 'sent', NULL, '{\"subject\":\"Test 3\"}', '2026-08-20 09:48:42'),
+(95, 'admin_custom_broadcast', 'fae7ec5e502c2d1d5dd2e3d8ac7a129b', 'dat123456789fa+benhnhan5@gmail.com', 'sent', NULL, '{\"subject\":\"Test 3\"}', '2026-08-20 09:48:42'),
+(96, 'admin_custom_broadcast', 'e5715592a3bd8bd0ad7cd6fb9f8e1b83', 'dat123456789+bacsi1@gmail.com', 'sent', NULL, '{\"subject\":\"Test 3\"}', '2026-08-20 09:48:43'),
+(97, 'admin_custom_broadcast', '6f5574393298a3823ec7f251f8f0e29b', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Test 3\"}', '2026-08-20 09:48:44'),
+(98, 'admin_custom_broadcast', '609fc81e1140ac4fd3d301a1206f8f26', 'dat123456789fa+web2@gmail.com', 'sent', NULL, '{\"subject\":\"Test 3\"}', '2026-08-20 09:48:44'),
+(99, 'admin_custom_broadcast', 'c0410bfcb05a0054a1aa308d7b121c12', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Test 3\"}', '2026-08-20 09:48:45'),
+(100, 'admin_custom_broadcast', 'bb9e0ee3fd508da63d07e60b236b168a', 'dat123456789fa+benhnhan4@gmail.com', 'sent', NULL, '{\"subject\":\"Test 3\"}', '2026-08-20 09:48:45'),
+(101, 'appointment_cancelled_patient', '96:cancel:2026-08-20:67a00db4b3fa1c075abba10fd1f0c708', 'dat123456789fa@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.139. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Thông báo hủy lịch khám #96\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.139. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-09-30 14:22:35'),
+(102, 'appointment_cancelled_doctor', '96:cancel:2026-08-20:67a00db4b3fa1c075abba10fd1f0c708', 'dat123456789fa+nguoidung2@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.139. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Thông báo hủy lịch khám bệnh nhân #96\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.139. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-09-30 14:22:36'),
+(103, 'appointment_cancelled_patient', '93:cancel:2026-08-20:67a00db4b3fa1c075abba10fd1f0c708', 'dat123456789fa@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.139. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Thông báo hủy lịch khám #93\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.139. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-09-30 14:22:41'),
+(104, 'appointment_cancelled_doctor', '93:cancel:2026-08-20:67a00db4b3fa1c075abba10fd1f0c708', 'dat123456789fa+nguoidung2@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.139. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Thông báo hủy lịch khám bệnh nhân #93\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.139. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-09-30 14:22:42'),
+(105, 'appointment_cancelled_patient', '97:cancel:2026-08-21:67a00db4b3fa1c075abba10fd1f0c708', 'dat123456789fa@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.139. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Thông báo hủy lịch khám #97\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.139. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-09-30 14:22:50'),
+(106, 'appointment_cancelled_doctor', '97:cancel:2026-08-21:67a00db4b3fa1c075abba10fd1f0c708', 'dat123456789fa+nguoidung2@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.139. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Thông báo hủy lịch khám bệnh nhân #97\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.139. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-09-30 14:22:51'),
+(107, 'payment_success', '26:payment:success:15691494:Đã thanh toán', 'dat123456789fa@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Thanh toán thành công hóa đơn #26\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-09-30 16:37:42'),
+(108, 'appointment_cancelled_patient', '98:cancel:2026-09-30:7ab929b17157fef56fed498473c6a577', 'dat123456789fa@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Thông báo hủy lịch khám #98\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-09-30 16:40:06'),
+(109, 'contact_received', '6:contact:received', 'dat123456789fa@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Đã tiếp nhận liên hệ #6\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-09-30 16:59:47'),
+(110, 'auth_profile_otp', 'profile_otp:1:727274:1790762452', 'dat123456789fa@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Mã OTP đổi mật khẩu - Eden Health\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-09-30 17:00:53'),
+(111, 'appointment_cancelled_patient', '102:cancel:2026-09-30:9a8dfd2a1a768d829388453805514240', 'dat123456789fa@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Thông báo hủy lịch khám #102\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-09-30 17:03:56'),
+(112, 'appointment_cancelled_doctor', '102:cancel:2026-09-30:9a8dfd2a1a768d829388453805514240', 'dat123456789fa+nguoidung2@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Thông báo hủy lịch khám bệnh nhân #102\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-09-30 17:03:57'),
+(113, 'appointment_cancelled_patient', '104:cancel:2026-09-30:9a8dfd2a1a768d829388453805514240', 'dat123456789fa@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Thông báo hủy lịch khám #104\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-09-30 17:03:58'),
+(114, 'appointment_cancelled_doctor', '104:cancel:2026-09-30:9a8dfd2a1a768d829388453805514240', 'dat123456789fa+nguoidung2@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Thông báo hủy lịch khám bệnh nhân #104\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-09-30 17:03:59'),
+(115, 'admin_custom_broadcast', '78bb04dfb14d141062ba2543a98d426e', 'abcd@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Test 4\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-09-30 17:09:40'),
+(116, 'admin_custom_broadcast', '7b4761fc022234844685564e772abdad', 'dat123456789fa+benhnhan5@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Test 4\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-09-30 17:09:41'),
+(117, 'admin_custom_broadcast', 'f16a65648822285b02ca2b458b42c5f7', 'dat123456789+bacsi1@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Test 4\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-09-30 17:09:42'),
+(118, 'admin_custom_broadcast', 'd8cc66f36aa923e3c3ca099ec8900268', 'dat123456789fa@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Test 4\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-09-30 17:09:43'),
+(119, 'admin_custom_broadcast', 'e62e75b1b9fd08fcdd64dea4333828ae', 'dat123456789fa+web2@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Test 4\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-09-30 17:09:43'),
+(120, 'admin_custom_broadcast', 'e61a2ce9e6b9c3be1969829e3d197787', 'dat123456789fa+nguoidung2@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Test 4\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-09-30 17:09:44'),
+(121, 'admin_custom_broadcast', 'c087b5f7633452b214e54053e4941ef4', 'dat123456789fa+benhnhan4@gmail.com', 'failed', 'Brevo API error (HTTP 401): {\"message\":\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https://app.brevo.com/security/authorised_ips\",\"code\":\"unauthorized\"}', '{\"subject\":\"Test 4\",\"mail_error\":\"Brevo API error (HTTP 401): {\\\"message\\\":\\\"We have detected you are using an unrecognised IP address 14.191.76.59. If you performed this action make sure to add the new IP address in this link: https:\\/\\/app.brevo.com\\/security\\/authorised_ips\\\",\\\"code\\\":\\\"unauthorized\\\"}\"}', '2026-09-30 17:09:45'),
+(122, 'contact_processed', '6:contact:processed:2026-09-30 17:13:44', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Liên hệ #6 đã được xử lý\"}', '2026-09-30 17:13:45'),
+(123, 'contact_received', '7:contact:received', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Đã tiếp nhận liên hệ #7\"}', '2026-09-30 17:27:55'),
+(124, 'admin_custom_broadcast', '3d3c8183b182e469684e9af6f7f7d8ca', 'dat123456789fa+benhnhan5@gmail.com', 'sent', NULL, '{\"subject\":\"test\"}', '2026-09-30 17:38:24'),
+(125, 'payment_success', '27:payment:success:15691576:Đã thanh toán', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thanh toán thành công hóa đơn #27\"}', '2026-09-30 17:44:21'),
+(126, 'contact_received', '8:contact:received', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Đã tiếp nhận liên hệ #8\"}', '2026-09-30 17:46:17'),
+(127, 'medical_record_ready', 'HS20260820094746998:record_ready', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Hồ sơ khám bệnh đã cập nhật #HS20260820094746998\"}', '2026-09-30 17:48:50'),
+(128, 'admin_custom_broadcast', '9de189ab286e10b6e92a90587243deeb', 'abcd@gmail.com', 'sent', NULL, '{\"subject\":\"test 5\"}', '2026-09-30 17:52:47'),
+(129, 'admin_custom_broadcast', 'c9855f299481a65b0964cf9a1196eca0', 'dat123456789fa+benhnhan5@gmail.com', 'sent', NULL, '{\"subject\":\"test 5\"}', '2026-09-30 17:52:48'),
+(130, 'admin_custom_broadcast', '2bff94666c248537d4e3005d96d247c6', 'dat123456789+bacsi1@gmail.com', 'sent', NULL, '{\"subject\":\"test 5\"}', '2026-09-30 17:52:49'),
+(131, 'admin_custom_broadcast', 'e62aa0ab9b0859b860f9b3213d9053c3', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"test 5\"}', '2026-09-30 17:52:50'),
+(132, 'admin_custom_broadcast', '8a3060cb8973d13bce73ba0b3d4916fe', 'dat123456789fa+web2@gmail.com', 'sent', NULL, '{\"subject\":\"test 5\"}', '2026-09-30 17:52:51'),
+(133, 'admin_custom_broadcast', '31f6dde714bf864c30ff9e947abbeaeb', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"test 5\"}', '2026-09-30 17:52:52'),
+(134, 'admin_custom_broadcast', 'd870b20def955b4e77ca9e53406bd7fb', 'dat123456789fa+benhnhan4@gmail.com', 'sent', NULL, '{\"subject\":\"test 5\"}', '2026-09-30 17:52:53'),
+(135, 'contact_processed', '8:contact:processed:2026-09-30 17:53:55', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Liên hệ #8 đã được xử lý\"}', '2026-09-30 17:53:56'),
+(136, 'payment_success', '28:payment:success:15691602:Đã thanh toán', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Thanh toán thành công hóa đơn #28\"}', '2026-09-30 18:23:35'),
+(137, 'admin_custom_broadcast', '64da7ee5798845850f23f7414e1b51f3', 'abcd@gmail.com', 'sent', NULL, '{\"subject\":\"test 6\"}', '2026-09-30 18:31:16'),
+(138, 'admin_custom_broadcast', 'fa33c831bc4e49a462ae67498d96ff30', 'dat123456789fa+benhnhan5@gmail.com', 'sent', NULL, '{\"subject\":\"test 6\"}', '2026-09-30 18:31:17'),
+(139, 'admin_custom_broadcast', '75996b82435cda5b5e5475148ecb1db5', 'dat123456789+bacsi1@gmail.com', 'sent', NULL, '{\"subject\":\"test 6\"}', '2026-09-30 18:31:19'),
+(140, 'admin_custom_broadcast', 'b40be04d03bcdc62e2e7dc5d1c09fe9a', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"test 6\"}', '2026-09-30 18:31:20'),
+(141, 'admin_custom_broadcast', '759b33309f5233d71b667a7bf7636ec0', 'dat123456789fa+web2@gmail.com', 'sent', NULL, '{\"subject\":\"test 6\"}', '2026-09-30 18:31:21'),
+(142, 'admin_custom_broadcast', '684ee3cea4529678c6297d6060962b50', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"test 6\"}', '2026-09-30 18:31:22'),
+(143, 'admin_custom_broadcast', '3bf1abe962060ddbb2ffddd344df2474', 'dat123456789fa+benhnhan4@gmail.com', 'sent', NULL, '{\"subject\":\"test 6\"}', '2026-09-30 18:31:23'),
+(144, 'contact_processed', '7:contact:processed:2026-09-30 18:32:56', 'dat123456789fa@gmail.com', 'sent', NULL, '{\"subject\":\"Liên hệ #7 đã được xử lý\"}', '2026-09-30 18:32:57'),
+(145, 'appointment_booked_doctor', '109:booked:2026-09-30:69', 'dat123456789fa+nguoidung2@gmail.com', 'sent', NULL, '{\"subject\":\"Thông báo có lịch khám mới #109\"}', '2026-09-30 18:35:28');
 
 CREATE TABLE `medicine_stock_log` (
   `id` int(11) NOT NULL,
@@ -807,21 +806,19 @@ CREATE TABLE `medicine_stock_log` (
   `createdAt` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `medicine_stock_log`
---
-
 INSERT INTO `medicine_stock_log` (`id`, `maThuoc`, `maLichKham`, `maHoSo`, `changeQty`, `balanceAfter`, `actionType`, `note`, `createdAt`) VALUES
 (1, 2, 79, 'HS20260418203208441', -5, 195, 'deduct', 'Dong bo toa thuoc cho ho so HS20260418203208441', '2026-04-18 20:34:45'),
 (2, 17, 79, 'HS20260418203208441', -5, 395, 'deduct', 'Dong bo toa thuoc cho ho so HS20260418203208441', '2026-04-18 20:34:45'),
 (3, 16, 82, 'HS20260419020444496', -5, 295, 'deduct', 'Dong bo toa thuoc cho ho so HS20260419020444496', '2026-04-19 02:06:12'),
-(4, 61, 82, 'HS20260419020444496', -5, 75, 'deduct', 'Dong bo toa thuoc cho ho so HS20260419020444496', '2026-04-19 02:06:12');
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `ngaynghi`
---
+(4, 61, 82, 'HS20260419020444496', -5, 75, 'deduct', 'Dong bo toa thuoc cho ho so HS20260419020444496', '2026-04-19 02:06:12'),
+(5, 42, 69, 'HS20260418203513404', -1, 199, 'deduct', 'Dong bo toa thuoc cho ho so HS20260418203513404', '2026-08-19 15:55:44'),
+(6, 48, 67, 'HS20260418203519154', -1, 79, 'deduct', 'Dong bo toa thuoc cho ho so HS20260418203519154', '2026-08-19 15:55:58'),
+(7, 39, 66, 'HS20260418203525789', -1, 299, 'deduct', 'Dong bo toa thuoc cho ho so HS20260418203525789', '2026-08-19 15:56:12'),
+(8, 45, 81, 'HS20260708000430988', -1, 99, 'deduct', 'Dong bo toa thuoc cho ho so HS20260708000430988', '2026-08-19 15:56:26'),
+(9, 16, 94, 'HS20260819231941328', -1, 294, 'deduct', 'Dong bo toa thuoc cho ho so HS20260819231941328', '2026-08-19 23:20:17'),
+(10, 77, 91, 'HS20260820094558383', -1, 99, 'deduct', 'Dong bo toa thuoc cho ho so HS20260820094558383', '2026-08-20 09:46:35'),
+(11, 103, 93, 'HS20260820094746998', -3, 197, 'deduct', 'Dong bo toa thuoc cho ho so HS20260820094746998', '2026-09-30 17:48:49'),
+(12, 34, 93, 'HS20260820094746998', -1, 149, 'deduct', 'Dong bo toa thuoc cho ho so HS20260820094746998', '2026-09-30 17:48:49');
 
 CREATE TABLE `ngaynghi` (
   `maNghi` int(11) NOT NULL,
@@ -831,20 +828,23 @@ CREATE TABLE `ngaynghi` (
   `lyDo` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `ngaynghi`
---
-
 INSERT INTO `ngaynghi` (`maNghi`, `maBacSi`, `ngayNghi`, `maCa`, `lyDo`) VALUES
 (7, 'bs1', '2025-11-27', 1, '0'),
 (8, 'bs1', '2025-11-27', 2, 'Thử'),
 (9, 'bs1', '2025-12-03', 1, 'Thích'),
 (10, 'bs1', '2026-04-19', 1, 'Bận'),
-(11, 'bs1', '2026-04-19', 2, 'Bận');
-
---
--- Bẫy `ngaynghi`
---
+(11, 'bs1', '2026-04-19', 2, 'Bận'),
+(12, 'bs1', '2026-08-28', 2, 'Bác sĩ xếp lại lịch làm việc'),
+(13, 'bs1', '2026-08-29', 2, 'Bác sĩ xếp lại lịch làm việc'),
+(14, 'bs1', '2026-09-02', 2, 'Bác sĩ xếp lại lịch làm việc'),
+(15, 'bs1', '2026-09-03', 2, 'Bác sĩ xếp lại lịch làm việc'),
+(16, 'bs1', '2026-09-04', 2, 'Bác sĩ xếp lại lịch làm việc'),
+(17, 'bs1', '2026-09-05', 2, 'Bác sĩ xếp lại lịch làm việc'),
+(18, 'bs1', '2026-09-09', 2, 'Bác sĩ xếp lại lịch làm việc'),
+(19, 'bs1', '2026-09-10', 2, 'Bác sĩ xếp lại lịch làm việc'),
+(20, 'bs1', '2026-09-17', 2, 'Bác sĩ xếp lại lịch làm việc'),
+(21, 'bs1', '2026-09-18', 2, 'Bác sĩ xếp lại lịch làm việc'),
+(22, 'bs1', '2026-09-30', 1, 'Bác sĩ xếp lại lịch làm việc');
 DELIMITER $$
 CREATE TRIGGER `after_ngaynghi_delete` AFTER DELETE ON `ngaynghi` FOR EACH ROW BEGIN
     DECLARE doctorName VARCHAR(100);
@@ -941,12 +941,6 @@ END
 $$
 DELIMITER ;
 
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `nguoidung`
---
-
 CREATE TABLE `nguoidung` (
   `id` int(11) NOT NULL,
   `tenDangNhap` varchar(50) NOT NULL,
@@ -955,6 +949,7 @@ CREATE TABLE `nguoidung` (
   `email` varchar(100) DEFAULT NULL,
   `vaiTro` enum('benhnhan','bacsi','quantri','nhanvien') NOT NULL,
   `trangThai` enum('Hoạt Động','Khóa') NOT NULL DEFAULT 'Hoạt Động',
+  `taiKhoanTamThoi` tinyint(1) NOT NULL DEFAULT 0,
   `ngayCapNhatTaiKhoan` datetime DEFAULT NULL,
   `ngayCapNhatMatKhau` datetime DEFAULT NULL,
   `avatar` varchar(255) DEFAULT 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png',
@@ -964,70 +959,63 @@ CREATE TABLE `nguoidung` (
   `deleteReason` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `nguoidung`
---
-
-INSERT INTO `nguoidung` (`id`, `tenDangNhap`, `matKhau`, `soDienThoai`, `email`, `vaiTro`, `trangThai`, `ngayCapNhatTaiKhoan`, `ngayCapNhatMatKhau`, `avatar`, `isDeleted`, `deletedAt`, `deletedBy`, `deleteReason`) VALUES
-(1, 'nguoidung1', '$2y$10$Y8HGcx2vQmfKgEb3Kp.Xfu41/ZmWMs9y78oKa5OhnSfuOjk/yC3hy', '0987654322', 'dat123456789fa@gmail.com', 'benhnhan', 'Hoạt Động', '2026-03-25 00:14:08', '2026-03-02 21:35:49', 'https://res.cloudinary.com/dlnevod7e/image/upload/v1776517111/Images/bacsi_1.gif', 0, NULL, NULL, NULL),
-(2, 'nguoidung2', '$2y$10$7G5Z78wzljUpOrRM0rS3zeDIGO3PNEao6/RbvbqvbYwRdqQtZ1kYq', '0987654323', 'dat123456789fa+nguoidung2@gmail.com', 'bacsi', 'Hoạt Động', '2026-02-24 00:46:34', '2025-12-02 12:15:59', 'https://res.cloudinary.com/dlnevod7e/image/upload/v1775243680/Images/bacsi_2.gif', 0, NULL, NULL, NULL),
-(3, 'nguoidung3', '$2y$10$/0FrHldUcP41w29..ISGO.rhD3NHA.YBmYWzOoxe9jnZBnpm97v1G', '0987654321', 'nguoidung3@gmail.com', 'quantri', 'Hoạt Động', NULL, '2025-12-02 12:16:42', 'https://res.cloudinary.com/dlnevod7e/image/upload/v1776535076/Images/bacsi_3.gif', 0, NULL, NULL, NULL),
-(8, 'ABCD', 'passwork', '0936846244', 'abcd@gmail.com', 'benhnhan', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(11, '0000000000', 'passwork', '0000000000', NULL, 'benhnhan', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(15, 'tranvanh2000', '$2y$10$7867Ekei9uerWlzDqGdIfef6p2glRKnjxuBwLV4rD8ZdtBCyvnPYO', '0345678921', NULL, 'benhnhan', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(16, 'lethanhbinh', '$2y$10$63zjkIUyLfKGw1XzgYGhFOfIYD4gFpmYr6qLSX88UvXLrpeY1iFoy', '0912001001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(17, 'nguyenthikimanh', 'nguyenthikimanh1999', '0912001002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(18, 'tranquocdat', 'tranquocdat1990', '0912002001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(19, 'phamthithanhthuy', 'phamthithanhthuy2001', '0912002002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(20, 'hoangvanson', 'hoangvanson1996', '0912003001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(21, 'vuongthimai', 'vuongthimai2002', '0912003002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(22, 'dangminhhieu', 'dangminhhieu1994', '0912004001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(23, 'buithilan', 'buithilan2000', '0912004002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(24, 'phanthanhlong', 'phanthanhlong1991', '0912005001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(25, 'lythibichngoc', 'lythibichngoc2003', '0912005002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(26, 'nguyenquangdung', 'nguyenquangdung1988', '0912006001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(27, 'tranthihuonggiang', 'tranthihuonggiang1998', '0912006002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(28, 'vuminhduc', 'vuminhduc1992', '0912007001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(29, 'nguyenhoanganh', '$2y$10$QtY6Ya/D64sH0XWBYPypFOsyax8PeHsxFPxZvNW5D1skGpEA.3Mvq', '0912007002', 'dat123456789+bacsi1@gmail.com', 'bacsi', 'Hoạt Động', '2026-03-06 10:10:17', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1772766617/Images/bacsi_29.png', 0, NULL, NULL, NULL),
-(30, 'letrungkien', 'letrungkien1995', '0912008001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(31, 'tranthikimhue', 'tranthikimhue1997', '0912008002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(32, 'phamthanhhai', 'phamthanhhai1990', '0912009001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(33, 'nguyenthithuphuong', 'nguyenthithuphuong2000', '0912009002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(34, 'trantrungnghia', 'trantrungnghia1994', '0922001001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(35, 'dothibich', 'dothibich2001', '0922001002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(36, 'nguyenhoangson', 'nguyenhoangson1990', '0922002001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(37, 'lethimaihuong', 'lethimaihuong1999', '0922002002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(38, 'phamvanquang', 'phamvanquang1992', '0922003001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(39, 'nguyenthilanphuong', 'nguyenthilanphuong2000', '0922003002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(40, 'hoangvankhai', 'hoangvankhai1995', '0922004001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(41, 'vuthituoanh', 'vuthituoanh1998', '0922004002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(42, 'dangvanhung', 'dangvanhung1991', '0922005001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(43, 'lythiminh', 'lythiminh2003', '0922005002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(44, 'nguyenvanphuc', 'nguyenvanphuc1989', '0922006001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(45, 'tranthiyen', 'tranthiyen2002', '0922006002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(46, 'buivantoan', 'buivantoan1996', '0922007001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(47, 'phamthihuong', 'phamthihuong2000', '0922007002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(48, 'leminhvuong', 'leminhvuong1987', '0922008001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(49, 'nguyenthikieutrinh', 'nguyenthikieutrinh1999', '0922008002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(50, 'dovuhoang', 'dovuhoang2011', '0933001001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(51, 'luuthiminh', 'luuthiminh1993', '0933001002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(52, 'macvankhoa', 'macvankhoa2022', '0933002001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(53, 'tongthikim', 'tongthikim2008', '0933002002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(54, 'nguyenbaduy', 'nguyenbaduy2019', '0933003001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(55, 'hotien', 'hotien1991', '0933003002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(56, 'trinhquocthai', 'trinhquocthai2024', '0933004001', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(57, 'buithixuan', 'buithixuan2004', '0933004002', NULL, 'bacsi', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(58, 'test1', '$2y$10$QRCJtDF7COPA8NViycczmOk.0srx9hql/gbe97mzpr5CQxI2q9/Di', '0111111111', 'dat123456789fa+benhnhan4@gmail.com', 'benhnhan', 'Hoạt Động', '2025-11-22 23:31:28', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(59, 'test2', 'Eden24112025', '0222222222', 'dat123456789fa+benhnhan5@gmail.com', 'benhnhan', 'Hoạt Động', '2025-11-22 23:33:27', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(61, 'benhnhan3', '$2y$10$OCV02D1gSyYuyT1ufFWgdOaDEOOUEFGhHrXPNcjOabtdykjrTibpm', '0123123123', 'dat123456789fa+web2@gmail.com', 'benhnhan', 'Hoạt Động', '2026-03-04 15:50:05', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(62, 'nhanvien1', '$2y$10$X/FiT1cE/0pNiSX4jxq1zuLNCtacn53jy1Efkv6U6bA9p6DX8HT5m', '0367367367', 'dat123456789fa+nhanvien1@gmail.com', 'nhanvien', 'Hoạt Động', '2026-08-11 02:59:47', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
-(63, 'nhanvien2', '$2y$10$yISWwzA9BUI3MctX26NCC.r2PFFvyXaDOGKgOoc/cJGGhXgRZUkm.', '0363636367', 'dat123456789fa+nhanvien2@gmail.com', 'nhanvien', 'Hoạt Động', NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL);
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `nhanvien`
---
+INSERT INTO `nguoidung` (`id`, `tenDangNhap`, `matKhau`, `soDienThoai`, `email`, `vaiTro`, `trangThai`, `taiKhoanTamThoi`, `ngayCapNhatTaiKhoan`, `ngayCapNhatMatKhau`, `avatar`, `isDeleted`, `deletedAt`, `deletedBy`, `deleteReason`) VALUES
+(1, 'nguoidung1', '$2y$10$Y8HGcx2vQmfKgEb3Kp.Xfu41/ZmWMs9y78oKa5OhnSfuOjk/yC3hy', '0987654322', 'dat123456789fa@gmail.com', 'benhnhan', 'Hoạt Động', 0, '2026-03-25 00:14:08', '2026-03-02 21:35:49', 'https://res.cloudinary.com/dlnevod7e/image/upload/v1776517111/Images/bacsi_1.gif', 0, NULL, NULL, NULL),
+(2, 'nguoidung2', '$2y$10$7G5Z78wzljUpOrRM0rS3zeDIGO3PNEao6/RbvbqvbYwRdqQtZ1kYq', '0987654323', 'dat123456789fa+nguoidung2@gmail.com', 'bacsi', 'Hoạt Động', 0, '2026-02-24 00:46:34', '2025-12-02 12:15:59', 'https://res.cloudinary.com/dlnevod7e/image/upload/v1775243680/Images/bacsi_2.gif', 0, NULL, NULL, NULL),
+(3, 'nguoidung3', '$2y$10$/0FrHldUcP41w29..ISGO.rhD3NHA.YBmYWzOoxe9jnZBnpm97v1G', '0987654321', 'nguoidung3@gmail.com', 'quantri', 'Hoạt Động', 0, NULL, '2025-12-02 12:16:42', 'https://res.cloudinary.com/dlnevod7e/image/upload/v1776535076/Images/bacsi_3.gif', 0, NULL, NULL, NULL),
+(8, 'ABCD', 'passwork', '0936846244', 'abcd@gmail.com', 'benhnhan', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(11, '0000000000', 'passwork', '0000000000', NULL, 'benhnhan', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(15, 'tranvanh2000', '$2y$10$7867Ekei9uerWlzDqGdIfef6p2glRKnjxuBwLV4rD8ZdtBCyvnPYO', '0345678921', NULL, 'benhnhan', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(16, 'lethanhbinh', '$2y$10$63zjkIUyLfKGw1XzgYGhFOfIYD4gFpmYr6qLSX88UvXLrpeY1iFoy', '0912001001', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(17, 'nguyenthikimanh', 'nguyenthikimanh1999', '0912001002', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(18, 'tranquocdat', 'tranquocdat1990', '0912002001', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(19, 'phamthithanhthuy', 'phamthithanhthuy2001', '0912002002', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(20, 'hoangvanson', 'hoangvanson1996', '0912003001', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(21, 'vuongthimai', 'vuongthimai2002', '0912003002', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(22, 'dangminhhieu', 'dangminhhieu1994', '0912004001', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(23, 'buithilan', 'buithilan2000', '0912004002', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(24, 'phanthanhlong', 'phanthanhlong1991', '0912005001', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(25, 'lythibichngoc', 'lythibichngoc2003', '0912005002', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(26, 'nguyenquangdung', 'nguyenquangdung1988', '0912006001', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(27, 'tranthihuonggiang', 'tranthihuonggiang1998', '0912006002', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(28, 'vuminhduc', 'vuminhduc1992', '0912007001', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(29, 'nguyenhoanganh', '$2y$10$QtY6Ya/D64sH0XWBYPypFOsyax8PeHsxFPxZvNW5D1skGpEA.3Mvq', '0912007002', 'dat123456789+bacsi1@gmail.com', 'bacsi', 'Hoạt Động', 0, '2026-03-06 10:10:17', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1772766617/Images/bacsi_29.png', 0, NULL, NULL, NULL),
+(30, 'letrungkien', 'letrungkien1995', '0912008001', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(31, 'tranthikimhue', 'tranthikimhue1997', '0912008002', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(32, 'phamthanhhai', 'phamthanhhai1990', '0912009001', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(33, 'nguyenthithuphuong', 'nguyenthithuphuong2000', '0912009002', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(34, 'trantrungnghia', 'trantrungnghia1994', '0922001001', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(35, 'dothibich', 'dothibich2001', '0922001002', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(36, 'nguyenhoangson', 'nguyenhoangson1990', '0922002001', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(37, 'lethimaihuong', 'lethimaihuong1999', '0922002002', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(38, 'phamvanquang', 'phamvanquang1992', '0922003001', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(39, 'nguyenthilanphuong', 'nguyenthilanphuong2000', '0922003002', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(40, 'hoangvankhai', 'hoangvankhai1995', '0922004001', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(41, 'vuthituoanh', 'vuthituoanh1998', '0922004002', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(42, 'dangvanhung', 'dangvanhung1991', '0922005001', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(43, 'lythiminh', 'lythiminh2003', '0922005002', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(44, 'nguyenvanphuc', 'nguyenvanphuc1989', '0922006001', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(45, 'tranthiyen', 'tranthiyen2002', '0922006002', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(46, 'buivantoan', 'buivantoan1996', '0922007001', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(47, 'phamthihuong', 'phamthihuong2000', '0922007002', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(48, 'leminhvuong', 'leminhvuong1987', '0922008001', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(49, 'nguyenthikieutrinh', 'nguyenthikieutrinh1999', '0922008002', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(50, 'dovuhoang', 'dovuhoang2011', '0933001001', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(51, 'luuthiminh', 'luuthiminh1993', '0933001002', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(52, 'macvankhoa', 'macvankhoa2022', '0933002001', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(53, 'tongthikim', 'tongthikim2008', '0933002002', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(54, 'nguyenbaduy', 'nguyenbaduy2019', '0933003001', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(55, 'hotien', 'hotien1991', '0933003002', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(56, 'trinhquocthai', 'trinhquocthai2024', '0933004001', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(57, 'buithixuan', 'buithixuan2004', '0933004002', NULL, 'bacsi', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(58, 'test1', '$2y$10$QRCJtDF7COPA8NViycczmOk.0srx9hql/gbe97mzpr5CQxI2q9/Di', '0111111111', 'dat123456789fa+benhnhan4@gmail.com', 'benhnhan', 'Hoạt Động', 0, '2025-11-22 23:31:28', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(59, 'test2', 'Eden24112025', '0222222222', 'dat123456789fa+benhnhan5@gmail.com', 'benhnhan', 'Hoạt Động', 0, '2025-11-22 23:33:27', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(61, 'benhnhan3', '$2y$10$OCV02D1gSyYuyT1ufFWgdOaDEOOUEFGhHrXPNcjOabtdykjrTibpm', '0123123123', 'dat123456789fa+web2@gmail.com', 'benhnhan', 'Hoạt Động', 0, '2026-03-04 15:50:05', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(62, 'nhanvien1', '$2y$10$X/FiT1cE/0pNiSX4jxq1zuLNCtacn53jy1Efkv6U6bA9p6DX8HT5m', '0367367367', 'dat123456789fa+nhanvien1@gmail.com', 'nhanvien', 'Hoạt Động', 0, '2026-08-11 02:59:47', NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(63, 'nhanvien2', '$2y$10$yISWwzA9BUI3MctX26NCC.r2PFFvyXaDOGKgOoc/cJGGhXgRZUkm.', '0363636367', 'dat123456789fa+nhanvien2@gmail.com', 'nhanvien', 'Hoạt Động', 0, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(64, 'kh260819231710328', '$2y$10$DjQvZ4xwgiy5ScawJ88Oee0goygDwldDJX4odXDJqlTtJ4kcbU4Iq', '0333444422', NULL, 'benhnhan', 'Hoạt Động', 1, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(65, 'kh260820094430774', '$2y$10$Db42xW3ydWSO7/Uyx6lYgetPyMEbriVOVKVlZRtFocAQQORzAk7He', '0333444411', NULL, 'benhnhan', 'Hoạt Động', 1, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL),
+(66, 'kh260930183508277', '$2y$10$ueGWwhW9a.RbmwEoSHssjOV4ZGXtT5DRl0O1kUIg43CznxZqTvt7m', '0987654444', NULL, 'benhnhan', 'Hoạt Động', 1, NULL, NULL, 'https://res.cloudinary.com/dlnevod7e/image/upload/v1769960987/samples/paper.png', 0, NULL, NULL, NULL);
 
 CREATE TABLE `nhanvien` (
   `nguoiDungId` int(11) NOT NULL,
@@ -1038,37 +1026,17 @@ CREATE TABLE `nhanvien` (
   `ngayVaoLam` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `nhanvien`
---
-
 INSERT INTO `nhanvien` (`nguoiDungId`, `maNhanVien`, `tenNhanVien`, `loaiNhanVien`, `gioiTinh`, `ngayVaoLam`) VALUES
 (62, 'NV2026001', 'Nguyễn Văn Z', 'tiepnhan', 'nam', '2026-08-11'),
 (63, 'NV202608110353204', 'Nguyễn Thị Y', 'tiepnhan', 'nu', '2026-08-11');
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `quantrivien`
---
 
 CREATE TABLE `quantrivien` (
   `nguoiDungId` int(11) NOT NULL,
   `maQuanTriVien` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `quantrivien`
---
-
 INSERT INTO `quantrivien` (`nguoiDungId`, `maQuanTriVien`) VALUES
 (3, 'admin1');
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `suatkham`
---
 
 CREATE TABLE `suatkham` (
   `maSuat` int(11) NOT NULL,
@@ -1080,10 +1048,6 @@ CREATE TABLE `suatkham` (
   `effectiveTo` date DEFAULT NULL,
   `presetMinutes` int(11) NOT NULL DEFAULT 40
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `suatkham`
---
 
 INSERT INTO `suatkham` (`maSuat`, `maCa`, `gioBatDau`, `gioKetThuc`, `isActive`, `effectiveFrom`, `effectiveTo`, `presetMinutes`) VALUES
 (1, 1, '07:00:00', '07:40:00', 0, '1900-01-01', '2026-04-20', 40),
@@ -1107,12 +1071,6 @@ INSERT INTO `suatkham` (`maSuat`, `maCa`, `gioBatDau`, `gioKetThuc`, `isActive`,
 (71, 2, '15:00:00', '16:00:00', 1, '2026-04-21', NULL, 60),
 (72, 2, '16:00:00', '17:00:00', 1, '2026-04-21', NULL, 60);
 
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `thongbaoadmin`
---
-
 CREATE TABLE `thongbaoadmin` (
   `maThongBao` int(11) NOT NULL,
   `nguoiDungId` int(11) NOT NULL,
@@ -1129,10 +1087,6 @@ CREATE TABLE `thongbaoadmin` (
   `ngayLienQuan` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `thongbaoadmin`
---
-
 INSERT INTO `thongbaoadmin` (`maThongBao`, `nguoiDungId`, `maNghi`, `maYeuCau`, `soDienThoai`, `loai`, `tieuDe`, `noiDung`, `thoiGian`, `daXem`, `trangThai`, `thoiGianXuLy`, `ngayLienQuan`) VALUES
 (1, 58, NULL, 6, '0111111111', 'Cấp lại mật khẩu', 'Yêu cầu cấp lại mật khẩu', 'Người dùng test1 (benhnhan) yêu cầu cấp lại mật khẩu', '2025-11-24 22:12:44', 1, 'Đã xử lý', '2025-11-24 22:13:00', NULL),
 (3, 2, 7, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn BBD xin nghỉ phép vào ngày 27/11/2025 - Cả ngày. Lý do: Thử', '2025-11-24 22:15:13', 1, 'Chờ', NULL, '2025-11-27'),
@@ -1140,13 +1094,18 @@ INSERT INTO `thongbaoadmin` (`maThongBao`, `nguoiDungId`, `maNghi`, `maYeuCau`, 
 (5, 58, NULL, 9, '0111111111', 'Cấp lại mật khẩu', 'Yêu cầu cấp lại mật khẩu', 'Người dùng test1 (benhnhan) yêu cầu cấp lại mật khẩu', '2025-11-24 22:20:20', 1, 'Từ chối', '2025-11-24 22:20:35', NULL),
 (6, 2, 9, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn Bảo xin nghỉ phép vào ngày 03/12/2025 - Ca sáng. Lý do: Thích', '2025-12-02 00:00:58', 1, 'Chờ', NULL, '2025-12-03'),
 (9, 29, NULL, 12, '0912007002', 'Cấp lại mật khẩu', 'Yêu cầu cấp lại mật khẩu', 'Người dùng nguyenhoanganh (bacsi) yêu cầu cấp lại mật khẩu', '2026-03-04 23:25:19', 1, 'Đã xử lý', '2026-03-04 23:25:55', NULL),
-(10, 2, 10, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn Bảo xin nghỉ phép vào ngày 19/04/2026 - Cả ngày. Lý do: Bận', '2026-04-18 20:36:30', 1, 'Chờ', NULL, '2026-04-19');
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `thongbaobenhnhan`
---
+(10, 2, 10, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn Bảo xin nghỉ phép vào ngày 19/04/2026 - Cả ngày. Lý do: Bận', '2026-04-18 20:36:30', 1, 'Chờ', NULL, '2026-04-19'),
+(11, 2, 12, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn Bảo xin nghỉ phép vào ngày 28/08/2026 - Ca chiều. Lý do: Bác sĩ xếp lại lịch làm việc', '2026-08-19 23:10:26', 1, 'Chờ', NULL, '2026-08-28'),
+(12, 2, 13, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn Bảo xin nghỉ phép vào ngày 29/08/2026 - Ca chiều. Lý do: Bác sĩ xếp lại lịch làm việc', '2026-08-19 23:10:26', 1, 'Chờ', NULL, '2026-08-29'),
+(13, 2, 14, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn Bảo xin nghỉ phép vào ngày 02/09/2026 - Ca chiều. Lý do: Bác sĩ xếp lại lịch làm việc', '2026-09-30 17:03:55', 1, 'Chờ', NULL, '2026-09-02'),
+(14, 2, 15, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn Bảo xin nghỉ phép vào ngày 03/09/2026 - Ca chiều. Lý do: Bác sĩ xếp lại lịch làm việc', '2026-09-30 17:03:55', 1, 'Chờ', NULL, '2026-09-03'),
+(15, 2, 16, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn Bảo xin nghỉ phép vào ngày 04/09/2026 - Ca chiều. Lý do: Bác sĩ xếp lại lịch làm việc', '2026-09-30 17:03:55', 1, 'Chờ', NULL, '2026-09-04'),
+(16, 2, 17, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn Bảo xin nghỉ phép vào ngày 05/09/2026 - Ca chiều. Lý do: Bác sĩ xếp lại lịch làm việc', '2026-09-30 17:03:55', 1, 'Chờ', NULL, '2026-09-05'),
+(17, 2, 18, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn Bảo xin nghỉ phép vào ngày 09/09/2026 - Ca chiều. Lý do: Bác sĩ xếp lại lịch làm việc', '2026-09-30 17:03:55', 1, 'Chờ', NULL, '2026-09-09'),
+(18, 2, 19, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn Bảo xin nghỉ phép vào ngày 10/09/2026 - Ca chiều. Lý do: Bác sĩ xếp lại lịch làm việc', '2026-09-30 17:03:55', 1, 'Chờ', NULL, '2026-09-10'),
+(19, 2, 20, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn Bảo xin nghỉ phép vào ngày 17/09/2026 - Ca chiều. Lý do: Bác sĩ xếp lại lịch làm việc', '2026-09-30 17:03:55', 1, 'Chờ', NULL, '2026-09-17'),
+(20, 2, 21, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn Bảo xin nghỉ phép vào ngày 18/09/2026 - Ca chiều. Lý do: Bác sĩ xếp lại lịch làm việc', '2026-09-30 17:03:55', 1, 'Chờ', NULL, '2026-09-18'),
+(21, 2, 22, NULL, NULL, 'Nghỉ phép', 'Đơn xin nghỉ phép', 'Bác sĩ Trần Văn Bảo xin nghỉ phép vào ngày 30/09/2026 - Ca sáng. Lý do: Bác sĩ xếp lại lịch làm việc', '2026-09-30 17:03:55', 1, 'Chờ', NULL, '2026-09-30');
 
 CREATE TABLE `thongbaobenhnhan` (
   `maThongBao` int(11) NOT NULL,
@@ -1157,10 +1116,6 @@ CREATE TABLE `thongbaobenhnhan` (
   `thoiGian` datetime DEFAULT current_timestamp(),
   `daXem` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `thongbaobenhnhan`
---
 
 INSERT INTO `thongbaobenhnhan` (`maThongBao`, `maBenhNhan`, `loai`, `tieuDe`, `noiDung`, `thoiGian`, `daXem`) VALUES
 (1, 'BN2025112200000058', 'Mật khẩu', 'Cấp lại mật khẩu', 'Mật khẩu mới của bạn là: Eden24112025. Vui lòng đổi mật khẩu sau khi đăng nhập.', '2025-11-24 22:13:00', 1),
@@ -1178,16 +1133,64 @@ INSERT INTO `thongbaobenhnhan` (`maThongBao`, `maBenhNhan`, `loai`, `tieuDe`, `n
 (13, 'BN202511082304701', 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:29', 0),
 (14, 'BN2025112200000059', 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:30', 0),
 (15, 'bn1', 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:32', 1),
-(16, 'BN2026030400000061', 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:32', 0),
+(16, 'BN2026030400000061', 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:32', 1),
 (17, 'BN2025111712142915', 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:34', 0),
 (18, 'BN2025112200000058', 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:34', 0),
-(19, 'BN202511101515250', 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:35', 0);
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `thongbaolichkham`
---
+(19, 'BN202511101515250', 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:35', 0),
+(20, 'BN202511082304701', 'Lịch khám', 'Hồ sơ khám bệnh đã hoàn tất', 'Hồ sơ HS20260418203513404 của bạn đã được bác sĩ cập nhật hoàn tất. Lịch khám #69, ngày 03/12/2025, bác sĩ Trần Văn Bảo. Chẩn đoán: 1', '2026-08-19 15:55:44', 0),
+(21, 'BN2025112200000058', 'Lịch khám', 'Hồ sơ khám bệnh đã hoàn tất', 'Hồ sơ HS20260418203519154 của bạn đã được bác sĩ cập nhật hoàn tất. Lịch khám #67, ngày 03/12/2025, bác sĩ Trần Văn Bảo. Chẩn đoán: 2', '2026-08-19 15:55:58', 0),
+(22, 'bn1', 'Lịch khám', 'Hồ sơ khám bệnh đã hoàn tất', 'Hồ sơ HS20260418203525789 của bạn đã được bác sĩ cập nhật hoàn tất. Lịch khám #66, ngày 03/12/2025, bác sĩ Trần Văn Bảo. Chẩn đoán: 3', '2026-08-19 15:56:12', 1),
+(23, 'bn1', 'Lịch khám', 'Hồ sơ khám bệnh đã hoàn tất', 'Hồ sơ HS20260708000430988 của bạn đã được bác sĩ cập nhật hoàn tất. Lịch khám #81, ngày 20/04/2026, bác sĩ Trần Văn Bảo. Chẩn đoán: 4', '2026-08-19 15:56:26', 1),
+(24, 'BN202511082304701', 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:39', 0),
+(25, 'BN2025112200000059', 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:40', 0),
+(26, 'bn1', 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:41', 1),
+(27, 'BN2026030400000061', 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:42', 1),
+(28, 'BN2025111712142915', 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:43', 0),
+(29, 'BN2025112200000058', 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:43', 0),
+(30, 'BN202511101515250', 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:44', 0),
+(31, 'BN202608192317018', 'Lịch khám', 'Hồ sơ khám bệnh đã hoàn tất', 'Hồ sơ HS20260819231941328 của bạn đã được bác sĩ cập nhật hoàn tất. Lịch khám #94, ngày 19/08/2026, bác sĩ Trần Văn Bảo. Chẩn đoán: nháp', '2026-08-19 23:20:17', 0),
+(32, 'bn1', 'Lịch khám', 'Lịch khám bị hủy', 'Lịch khám ngày 19/08/2026 đã bị hủy bởi Bác sĩ. Lý do: Không đến. Vui lòng đặt lịch mới.', '2026-08-19 23:24:06', 1),
+(33, 'bn1', 'Lịch khám', 'Hồ sơ khám bệnh đã hoàn tất', 'Hồ sơ HS20260820094558383 của bạn đã được bác sĩ cập nhật hoàn tất. Lịch khám #91, ngày 20/08/2026, bác sĩ Trần Văn Bảo. Chẩn đoán: nháp', '2026-08-20 09:46:35', 1),
+(34, 'BN202511082304701', 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:41', 0),
+(35, 'BN2025112200000059', 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:42', 0),
+(36, 'BN202608200944099', 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:43', 0),
+(37, 'bn1', 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:43', 1),
+(38, 'BN202608192317018', 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:44', 0),
+(39, 'BN2026030400000061', 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:44', 0),
+(40, 'BN2025111712142915', 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:45', 0),
+(41, 'BN2025112200000058', 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:45', 0),
+(42, 'BN202511101515250', 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:45', 0),
+(43, 'bn1', 'Lịch khám', 'Lịch khám bị hủy', 'Lịch khám ngày 30/09/2026 đã bị hủy bởi Quản trị viên. Lý do: Không có lý do cụ thể. Vui lòng đặt lịch mới.', '2026-09-30 16:40:05', 1),
+(44, 'bn1', 'Lịch khám', 'Lịch khám bị hủy', 'Lịch khám ngày 30/09/2026 đã bị hủy bởi Bác sĩ. Lý do: Bác sĩ xếp lại lịch làm việc trong tháng. Vui lòng đặt lịch mới.', '2026-09-30 17:03:55', 1),
+(45, 'BN202511082304701', 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:39', 0),
+(46, 'BN2025112200000059', 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:40', 0),
+(47, 'BN202608200944099', 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:42', 0),
+(48, 'bn1', 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:42', 1),
+(49, 'BN202608192317018', 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:43', 0),
+(50, 'BN2026030400000061', 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:43', 0),
+(51, 'BN2025111712142915', 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:44', 0),
+(52, 'BN2025112200000058', 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:44', 0),
+(53, 'BN202511101515250', 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:45', 0),
+(54, 'BN2025112200000059', 'Hệ thống', 'test', 'test', '2026-09-30 17:38:23', 0),
+(55, 'bn1', 'Lịch khám', 'Hồ sơ khám bệnh đã hoàn tất', 'Hồ sơ HS20260820094746998 của bạn đã được bác sĩ cập nhật hoàn tất. Lịch khám #93, ngày 20/08/2026, bác sĩ Trần Văn Bảo. Chẩn đoán: 1', '2026-09-30 17:48:49', 1),
+(56, 'BN202511082304701', 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:46', 0),
+(57, 'BN2025112200000059', 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:47', 0),
+(58, 'BN202608200944099', 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:49', 0),
+(59, 'bn1', 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:49', 1),
+(60, 'BN202608192317018', 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:50', 0),
+(61, 'BN2026030400000061', 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:50', 0),
+(62, 'BN2025111712142915', 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:52', 0),
+(63, 'BN2025112200000058', 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:52', 0),
+(64, 'BN202511101515250', 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:53', 0),
+(65, 'BN202511082304701', 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:15', 0),
+(66, 'BN2025112200000059', 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:16', 0),
+(67, 'BN202608200944099', 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:19', 0),
+(68, 'bn1', 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:19', 0),
+(69, 'BN202608192317018', 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:20', 0),
+(70, 'BN2026030400000061', 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:20', 0),
+(71, 'BN2025111712142915', 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:22', 0),
+(72, 'BN2025112200000058', 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:22', 0),
+(73, 'BN202511101515250', 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:23', 0);
 
 CREATE TABLE `thongbaolichkham` (
   `maThongBao` int(11) NOT NULL,
@@ -1199,10 +1202,6 @@ CREATE TABLE `thongbaolichkham` (
   `thoiGian` datetime DEFAULT current_timestamp(),
   `daXem` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `thongbaolichkham`
---
 
 INSERT INTO `thongbaolichkham` (`maThongBao`, `maBacSi`, `maLichKham`, `loai`, `tieuDe`, `noiDung`, `thoiGian`, `daXem`) VALUES
 (1, 'bs1', 26, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Trần Văn H đã đặt lịch khám vào ngày 18/11/2025 - Ca sáng', '2025-11-18 03:44:15', 1),
@@ -1515,13 +1514,249 @@ INSERT INTO `thongbaolichkham` (`maThongBao`, `maBacSi`, `maLichKham`, `loai`, `
 (327, 'BS20251121015', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:35', 0),
 (328, 'BS20251121035', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:35', 0),
 (329, 'BS20251121028', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:35', 0),
-(330, 'BS20251121043', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:35', 0);
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `thuoc`
---
+(330, 'BS20251121043', NULL, 'Hệ thống', 'Kiểm tra tính năng', '19:00 08/09/2026 GPT+7', '2026-08-09 18:59:35', 0),
+(331, 'bs1', 89, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 12/08/2026 - Ca chiều', '2026-08-12 13:28:05', 1),
+(332, 'bs1', 89, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 12/08/2026 - Ca chiều. Lý do: không cho biết', '2026-08-12 13:30:06', 1),
+(333, 'bs1', 88, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 26/07/2026 - Ca sáng. Lý do: không', '2026-08-12 13:33:19', 1),
+(334, 'bs1', 90, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 12/08/2026 - Ca chiều', '2026-08-12 13:33:49', 1),
+(335, 'bs1', 91, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 20/08/2026 - Ca sáng', '2026-08-19 15:46:39', 1),
+(336, 'bs1', 90, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 12/08/2026 - Ca chiều. Lý do: khong', '2026-08-19 15:48:25', 1),
+(337, 'BS20251121016', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:39', 0),
+(338, 'BS20251121050', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:39', 0),
+(339, 'BS20251121039', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:39', 0),
+(340, 'BS20251121033', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:40', 0),
+(341, 'BS20251121013', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:40', 0),
+(342, 'BS20251121048', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:40', 0),
+(343, 'BS20251121041', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:40', 0),
+(344, 'BS20251121009', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:40', 0),
+(345, 'BS20251121030', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:40', 0),
+(346, 'BS20251121023', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:40', 0),
+(347, 'BS20251121018', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:40', 0),
+(348, 'BS20251121036', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:40', 0),
+(349, 'BS20251121044', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:40', 0),
+(350, 'BS20251121045', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:40', 0),
+(351, 'BS20251121047', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:40', 0),
+(352, 'BS20251121022', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:40', 0),
+(353, 'BS20251121029', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:41', 0),
+(354, 'BS20251121019', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:41', 0),
+(355, 'BS20251121010', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:41', 0),
+(356, 'BS20251121042', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:41', 0),
+(357, 'BS20251121032', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:41', 0),
+(358, 'BS20251121026', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:41', 0),
+(359, 'BS20251121037', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:42', 0),
+(360, 'BS20251121017', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:42', 0),
+(361, 'BS20251121025', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:42', 0),
+(362, 'BS20251121040', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:42', 0),
+(363, 'BS20251121012', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:42', 0),
+(364, 'BS20251121031', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:42', 0),
+(365, 'BS20251121011', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:42', 0),
+(366, 'BS20251121020', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:42', 0),
+(367, 'BS20251121024', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:42', 0),
+(368, 'BS20251121038', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:42', 0),
+(369, 'BS20251121027', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:42', 0),
+(370, 'bs1', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:42', 1),
+(371, 'BS20251121049', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:43', 0),
+(372, 'BS20251121046', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:43', 0),
+(373, 'BS20251121021', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:44', 0),
+(374, 'BS20251121034', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:44', 0),
+(375, 'BS20251121014', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:44', 0),
+(376, 'BS20251121015', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:44', 0),
+(377, 'BS20251121035', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:44', 0),
+(378, 'BS20251121028', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:44', 0),
+(379, 'BS20251121043', NULL, 'Hệ thống', 'test 2', 'test thông báo lần 2', '2026-08-19 15:58:44', 0),
+(380, 'bs1', 92, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Đạt đã đặt lịch khám vào ngày 20/08/2026 - Ca sáng', '2026-08-19 17:49:37', 1),
+(381, 'bs1', 93, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 27/08/2026 - Ca chiều', '2026-08-19 18:02:20', 1),
+(382, 'bs1', 94, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn B đã đặt lịch khám vào ngày 19/08/2026 - Ca chiều', '2026-08-19 23:17:42', 1),
+(383, 'bs1', 95, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 19/08/2026 - Ca sáng', '2026-08-19 23:22:49', 1),
+(384, 'bs1', 96, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 20/08/2026 - Ca chiều', '2026-08-20 09:39:46', 1),
+(385, 'bs1', 97, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 29/08/2026 - Ca sáng', '2026-08-20 09:41:03', 1),
+(386, 'BS20251121028', 98, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 20/08/2026 - Ca chiều', '2026-08-20 09:43:47', 0),
+(387, 'BS20251121028', 99, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Van D đã đặt lịch khám vào ngày 20/08/2026 - Ca chiều', '2026-08-20 09:44:44', 0),
+(388, 'BS20251121016', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:41', 0),
+(389, 'BS20251121050', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:41', 0),
+(390, 'BS20251121039', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:41', 0),
+(391, 'BS20251121033', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:42', 0),
+(392, 'BS20251121013', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:42', 0),
+(393, 'BS20251121048', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:42', 0),
+(394, 'BS20251121041', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:42', 0),
+(395, 'BS20251121009', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:42', 0),
+(396, 'BS20251121030', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:42', 0),
+(397, 'BS20251121023', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:42', 0),
+(398, 'BS20251121018', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:42', 0),
+(399, 'BS20251121036', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:42', 0),
+(400, 'BS20251121044', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:42', 0),
+(401, 'BS20251121045', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:42', 0),
+(402, 'BS20251121047', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:42', 0),
+(403, 'BS20251121022', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:42', 0),
+(404, 'BS20251121029', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:43', 0),
+(405, 'BS20251121019', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:43', 0),
+(406, 'BS20251121010', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:43', 0),
+(407, 'BS20251121042', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:43', 0),
+(408, 'BS20251121032', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:43', 0),
+(409, 'BS20251121026', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:43', 0),
+(410, 'BS20251121037', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:44', 0),
+(411, 'BS20251121017', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:44', 0),
+(412, 'BS20251121025', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:44', 0),
+(413, 'BS20251121040', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:44', 0),
+(414, 'BS20251121012', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:44', 0),
+(415, 'BS20251121031', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:44', 0),
+(416, 'BS20251121011', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:44', 0),
+(417, 'BS20251121020', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:44', 0),
+(418, 'BS20251121024', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:44', 0),
+(419, 'BS20251121038', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:44', 0),
+(420, 'BS20251121027', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:44', 0),
+(421, 'bs1', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:44', 1),
+(422, 'BS20251121049', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:45', 0),
+(423, 'BS20251121046', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:45', 0),
+(424, 'BS20251121021', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:45', 0),
+(425, 'BS20251121034', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:45', 0),
+(426, 'BS20251121014', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:45', 0),
+(427, 'BS20251121015', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:45', 0),
+(428, 'BS20251121035', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:45', 0),
+(429, 'BS20251121028', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:45', 0),
+(430, 'BS20251121043', NULL, 'Hệ thống', 'Test 3', 'test 3', '2026-08-20 09:48:45', 0),
+(431, 'bs1', 96, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 20/08/2026 - Ca chiều. Lý do: 1', '2026-09-30 14:22:33', 1),
+(432, 'bs1', 93, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 20/08/2026 - Ca chiều. Lý do: 1', '2026-09-30 14:22:40', 1),
+(433, 'bs1', 97, 'Hủy lịch', 'Lịch khám đã hủy', 'Bệnh nhân Nguyễn Văn Anh đã hủy lịch khám ngày 21/08/2026 - Ca chiều. Lý do: 1', '2026-09-30 14:22:49', 1),
+(434, 'bs1', 100, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 30/09/2026 - Ca chiều', '2026-09-30 14:39:48', 1),
+(435, 'bs1', 101, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 30/09/2026 - Ca chiều', '2026-09-30 14:40:50', 1),
+(436, 'bs1', 102, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 30/09/2026 - Ca sáng', '2026-09-30 14:44:00', 1),
+(437, 'bs1', 103, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 01/10/2026 - Ca sáng', '2026-09-30 14:44:56', 1),
+(438, 'bs1', 104, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 30/09/2026 - Ca sáng', '2026-09-30 14:52:35', 1),
+(439, 'BS20251121017', 105, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 01/10/2026 - Ca chiều', '2026-09-30 15:11:14', 0),
+(440, 'bs1', 106, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 30/09/2026 - Ca chiều', '2026-09-30 16:36:26', 1),
+(441, 'BS20251121016', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:39', 0),
+(442, 'BS20251121050', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:39', 0),
+(443, 'BS20251121039', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:39', 0),
+(444, 'BS20251121033', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:40', 0),
+(445, 'BS20251121013', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:40', 0),
+(446, 'BS20251121048', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:40', 0),
+(447, 'BS20251121041', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:41', 0),
+(448, 'BS20251121009', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:41', 0),
+(449, 'BS20251121030', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:41', 0),
+(450, 'BS20251121023', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:41', 0),
+(451, 'BS20251121018', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:41', 0),
+(452, 'BS20251121036', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:41', 0),
+(453, 'BS20251121044', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:41', 0),
+(454, 'BS20251121045', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:41', 0),
+(455, 'BS20251121047', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:41', 0),
+(456, 'BS20251121022', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:41', 0),
+(457, 'BS20251121029', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:42', 0),
+(458, 'BS20251121019', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:42', 0),
+(459, 'BS20251121010', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:42', 0),
+(460, 'BS20251121042', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:42', 0),
+(461, 'BS20251121032', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:42', 0),
+(462, 'BS20251121026', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:42', 0),
+(463, 'BS20251121037', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:43', 0),
+(464, 'BS20251121017', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:43', 0),
+(465, 'BS20251121025', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:43', 0),
+(466, 'BS20251121040', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:43', 0),
+(467, 'BS20251121012', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:43', 0),
+(468, 'BS20251121031', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:43', 0),
+(469, 'BS20251121011', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:43', 0),
+(470, 'BS20251121020', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:43', 0),
+(471, 'BS20251121024', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:43', 0),
+(472, 'BS20251121038', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:43', 0),
+(473, 'BS20251121027', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:43', 0),
+(474, 'bs1', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:43', 1),
+(475, 'BS20251121049', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:44', 0),
+(476, 'BS20251121046', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:44', 0),
+(477, 'BS20251121021', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:45', 0),
+(478, 'BS20251121034', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:45', 0),
+(479, 'BS20251121014', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:45', 0),
+(480, 'BS20251121015', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:45', 0),
+(481, 'BS20251121035', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:45', 0),
+(482, 'BS20251121028', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:45', 0),
+(483, 'BS20251121043', NULL, 'Hệ thống', 'Test 4', 'Test 4', '2026-09-30 17:09:45', 0),
+(484, 'bs1', 107, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 30/09/2026 - Ca chiều', '2026-09-30 17:43:39', 1),
+(485, 'BS20251121016', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:46', 0),
+(486, 'BS20251121050', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:46', 0),
+(487, 'BS20251121039', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:46', 0),
+(488, 'BS20251121033', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:47', 0),
+(489, 'BS20251121013', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:47', 0),
+(490, 'BS20251121048', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:47', 0),
+(491, 'BS20251121041', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:48', 0),
+(492, 'BS20251121009', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:48', 0),
+(493, 'BS20251121030', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:48', 0),
+(494, 'BS20251121023', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:48', 0),
+(495, 'BS20251121018', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:48', 0),
+(496, 'BS20251121036', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:48', 0),
+(497, 'BS20251121044', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:48', 0),
+(498, 'BS20251121045', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:48', 0),
+(499, 'BS20251121047', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:48', 0),
+(500, 'BS20251121022', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:48', 0),
+(501, 'BS20251121029', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:49', 0),
+(502, 'BS20251121019', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:49', 0),
+(503, 'BS20251121010', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:49', 0),
+(504, 'BS20251121042', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:49', 0),
+(505, 'BS20251121032', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:49', 0),
+(506, 'BS20251121026', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:49', 0),
+(507, 'BS20251121037', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:50', 0),
+(508, 'BS20251121017', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:51', 0),
+(509, 'BS20251121025', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:51', 0),
+(510, 'BS20251121040', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:51', 0),
+(511, 'BS20251121012', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:51', 0),
+(512, 'BS20251121031', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:51', 0),
+(513, 'BS20251121011', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:51', 0),
+(514, 'BS20251121020', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:51', 0),
+(515, 'BS20251121024', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:51', 0),
+(516, 'BS20251121038', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:51', 0),
+(517, 'BS20251121027', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:51', 0),
+(518, 'bs1', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:51', 1),
+(519, 'BS20251121049', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:52', 0),
+(520, 'BS20251121046', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:52', 0),
+(521, 'BS20251121021', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:53', 0),
+(522, 'BS20251121034', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:53', 0),
+(523, 'BS20251121014', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:53', 0),
+(524, 'BS20251121015', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:53', 0),
+(525, 'BS20251121035', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:53', 0),
+(526, 'BS20251121028', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:53', 0),
+(527, 'BS20251121043', NULL, 'Hệ thống', 'test 5', 'test 5', '2026-09-30 17:52:53', 0),
+(528, 'bs1', 108, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân Nguyễn Văn Anh đã đặt lịch khám vào ngày 30/09/2026 - Ca chiều', '2026-09-30 18:23:03', 1),
+(529, 'BS20251121016', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:15', 0),
+(530, 'BS20251121050', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:15', 0),
+(531, 'BS20251121039', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:15', 0),
+(532, 'BS20251121033', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:16', 0),
+(533, 'BS20251121013', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:16', 0),
+(534, 'BS20251121048', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:16', 0),
+(535, 'BS20251121041', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:17', 0),
+(536, 'BS20251121009', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:17', 0),
+(537, 'BS20251121030', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:17', 0),
+(538, 'BS20251121023', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:17', 0),
+(539, 'BS20251121018', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:17', 0),
+(540, 'BS20251121036', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:17', 0),
+(541, 'BS20251121044', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:17', 0),
+(542, 'BS20251121045', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:17', 0),
+(543, 'BS20251121047', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:17', 0),
+(544, 'BS20251121022', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:17', 0),
+(545, 'BS20251121029', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:19', 0),
+(546, 'BS20251121019', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:19', 0),
+(547, 'BS20251121010', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:19', 0),
+(548, 'BS20251121042', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:19', 0),
+(549, 'BS20251121032', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:19', 0),
+(550, 'BS20251121026', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:19', 0),
+(551, 'BS20251121037', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:20', 0),
+(552, 'BS20251121017', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:21', 0),
+(553, 'BS20251121025', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:21', 0),
+(554, 'BS20251121040', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:21', 0),
+(555, 'BS20251121012', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:21', 0),
+(556, 'BS20251121031', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:21', 0),
+(557, 'BS20251121011', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:21', 0),
+(558, 'BS20251121020', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:21', 0),
+(559, 'BS20251121024', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:21', 0),
+(560, 'BS20251121038', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:21', 0),
+(561, 'BS20251121027', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:21', 0),
+(562, 'bs1', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:21', 0),
+(563, 'BS20251121049', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:22', 0),
+(564, 'BS20251121046', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:22', 0),
+(565, 'BS20251121021', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:23', 0),
+(566, 'BS20251121034', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:23', 0),
+(567, 'BS20251121014', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:23', 0),
+(568, 'BS20251121015', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:23', 0),
+(569, 'BS20251121035', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:23', 0),
+(570, 'BS20251121028', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:23', 0),
+(571, 'BS20251121043', NULL, 'Hệ thống', 'test 6', 'test 6', '2026-09-30 18:31:23', 0),
+(572, 'bs1', 109, 'Đặt lịch', 'Lịch khám mới', 'Bệnh nhân nguyễn đã đặt lịch khám vào ngày 30/09/2026 - Ca chiều', '2026-09-30 18:35:27', 0);
 
 CREATE TABLE `thuoc` (
   `maThuoc` int(11) NOT NULL,
@@ -1535,10 +1770,6 @@ CREATE TABLE `thuoc` (
   `hanSuDung` date DEFAULT NULL COMMENT 'Hạn sử dụng mặc định',
   `nguongCanhBao` int(11) NOT NULL DEFAULT 10 COMMENT 'Ngưỡng cảnh báo tồn kho thấp'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `thuoc`
---
 
 INSERT INTO `thuoc` (`maThuoc`, `tenThuoc`, `donViTinh`, `soLuongTon`, `giaTien`, `cachDungMacDinh`, `loaiThuoc`, `nhaSanXuat`, `hanSuDung`, `nguongCanhBao`) VALUES
 (1, 'Paracetamol 500mg', 'Viên', 500, 1500.00, 'Uống 1-2 viên/lần, 4-6 giờ/lần, tối đa 8 viên/ngày', 'Giảm đau / Hạ sốt', 'Hậu Giang Pharma', '2027-06-30', 50),
@@ -1556,7 +1787,7 @@ INSERT INTO `thuoc` (`maThuoc`, `tenThuoc`, `donViTinh`, `soLuongTon`, `giaTien`
 (13, 'Metronidazole 500mg', 'Viên', 250, 2500.00, 'Uống 1 viên x 3 lần/ngày trong bữa ăn. Không uống rượu', 'Kháng sinh', 'Hậu Giang Pharma', '2027-04-30', 25),
 (14, 'Clarithromycin 250mg', 'Viên', 100, 12500.00, 'Uống 1 viên x 2 lần/ngày, cách đều 12 giờ', 'Kháng sinh', 'Abbott', '2026-11-30', 10),
 (15, 'Trimethoprim + SMX 480mg', 'Viên', 200, 3500.00, 'Uống 2 viên x 2 lần/ngày. Uống nhiều nước', 'Kháng sinh', 'DHG Pharma', '2026-08-31', 20),
-(16, 'Vitamin C 1000mg (Sủi)', 'Viên', 295, 3500.00, 'Hòa tan 1 viên trong 200ml nước, uống 1 lần/ngày sau ăn', 'Vitamin & Khoáng chất', 'Meyer-BPC', '2027-06-30', 30),
+(16, 'Vitamin C 1000mg (Sủi)', 'Viên', 294, 3500.00, 'Hòa tan 1 viên trong 200ml nước, uống 1 lần/ngày sau ăn', 'Vitamin & Khoáng chất', 'Meyer-BPC', '2027-06-30', 30),
 (17, 'Vitamin B Complex', 'Viên', 395, 1800.00, 'Uống 1-2 viên/ngày sau bữa ăn', 'Vitamin & Khoáng chất', 'DHG Pharma', '2027-05-31', 40),
 (18, 'Vitamin D3 2000IU', 'Viên', 200, 5500.00, 'Uống 1 viên/ngày trong bữa ăn có chất béo', 'Vitamin & Khoáng chất', 'Ostelin', '2027-08-31', 20),
 (19, 'Canxi + D3 (Calcium Sandoz)', 'Viên', 250, 4200.00, 'Nhai hoặc ngậm 1-2 viên/ngày. Không uống cùng sắt', 'Vitamin & Khoáng chất', 'Novartis', '2027-07-31', 25),
@@ -1574,21 +1805,21 @@ INSERT INTO `thuoc` (`maThuoc`, `tenThuoc`, `donViTinh`, `soLuongTon`, `giaTien`
 (31, 'Simethicone 40mg', 'Viên', 300, 2500.00, 'Nhai 2-4 viên sau bữa ăn và trước khi ngủ', 'Tiêu hóa', 'Pymepharco', '2027-02-28', 30),
 (32, 'Amlodipine 5mg', 'Viên', 200, 2800.00, 'Uống 1 viên/ngày, cùng giờ mỗi ngày, có thể cùng bữa ăn', 'Tim mạch', 'Pfizer', '2027-04-30', 20),
 (33, 'Losartan 50mg', 'Viên', 180, 4500.00, 'Uống 1 viên/ngày, cùng giờ', 'Tim mạch', 'MSD', '2027-03-31', 15),
-(34, 'Atenolol 50mg', 'Viên', 150, 2200.00, 'Uống 1 viên/ngày vào buổi sáng', 'Tim mạch', 'AstraZeneca', '2026-10-31', 15),
+(34, 'Atenolol 50mg', 'Viên', 149, 2200.00, 'Uống 1 viên/ngày vào buổi sáng', 'Tim mạch', 'AstraZeneca', '2026-10-31', 15),
 (35, 'Bisoprolol 5mg', 'Viên', 150, 5500.00, 'Uống 1 viên/ngày trong bữa sáng', 'Tim mạch', 'Merck', '2026-11-30', 15),
 (36, 'Aspirin 81mg (Cardio)', 'Viên', 300, 3200.00, 'Uống 1 viên/ngày sau ăn tối', 'Tim mạch', 'Bayer', '2027-06-30', 30),
 (37, 'Atorvastatin 10mg', 'Viên', 200, 8500.00, 'Uống 1 viên/ngày, có thể bất kỳ lúc nào', 'Tim mạch', 'Pfizer', '2027-05-31', 20),
 (38, 'Cetirizine 10mg', 'Viên', 300, 2800.00, 'Uống 1 viên/ngày vào buổi tối', 'Hô hấp', 'UCB', '2027-04-30', 30),
-(39, 'Loratadine 10mg', 'Viên', 300, 2200.00, 'Uống 1 viên/ngày vào buổi sáng', 'Hô hấp', 'Pymepharco', '2027-03-31', 30),
+(39, 'Loratadine 10mg', 'Viên', 299, 2200.00, 'Uống 1 viên/ngày vào buổi sáng', 'Hô hấp', 'Pymepharco', '2027-03-31', 30),
 (40, 'Ambroxol 30mg', 'Viên', 250, 2500.00, 'Uống 1 viên x 3 lần/ngày sau bữa ăn', 'Hô hấp', 'Boehringer Ingelheim', '2026-11-30', 25),
 (41, 'Acetylcysteine 600mg (Sủi)', 'Viên', 180, 9500.00, 'Hòa tan 1 viên trong 200ml nước, uống 1 lần/ngày', 'Hô hấp', 'Zambon', '2026-12-31', 15),
-(42, 'Bromhexine 8mg', 'Viên', 200, 1800.00, 'Uống 1 viên x 3 lần/ngày sau bữa ăn', 'Hô hấp', 'Hậu Giang Pharma', '2026-10-31', 20),
+(42, 'Bromhexine 8mg', 'Viên', 199, 1800.00, 'Uống 1 viên x 3 lần/ngày sau bữa ăn', 'Hô hấp', 'Hậu Giang Pharma', '2026-10-31', 20),
 (43, 'Montelukast 10mg', 'Viên', 120, 12000.00, 'Uống 1 viên/ngày vào buổi tối', 'Hô hấp', 'MSD', '2027-02-28', 10),
 (44, 'Fexofenadine 120mg', 'Viên', 150, 8500.00, 'Uống 1 viên x 2 lần/ngày trước bữa ăn 1 giờ', 'Hô hấp', 'Sanofi', '2027-01-31', 15),
-(45, 'Clotrimazole cream 1%', 'Tuýp', 100, 25000.00, 'Thoa một lớp mỏng lên vùng da tổn thương 2-3 lần/ngày', 'Da liễu', 'Bayer', '2026-08-31', 10),
+(45, 'Clotrimazole cream 1%', 'Tuýp', 99, 25000.00, 'Thoa một lớp mỏng lên vùng da tổn thương 2-3 lần/ngày', 'Da liễu', 'Bayer', '2026-08-31', 10),
 (46, 'Hydrocortisone cream 1%', 'Tuýp', 80, 28000.00, 'Thoa nhẹ lên vùng da viêm 1-2 lần/ngày. Không dùng quá 7 ngày', 'Da liễu', 'DHG Pharma', '2026-12-31', 8),
 (47, 'Acyclovir 400mg', 'Viên', 100, 8500.00, 'Uống 1 viên x 3-5 lần/ngày theo chỉ định bác sĩ', 'Da liễu', 'GlaxoSmithKline', '2026-11-30', 10),
-(48, 'Betamethasone 0.1% cream', 'Tuýp', 80, 35000.00, 'Thoa 1-2 lần/ngày lên vùng da. Không thoa mặt, vùng kín', 'Da liễu', 'GlaxoSmithKline', '2027-03-31', 8),
+(48, 'Betamethasone 0.1% cream', 'Tuýp', 79, 35000.00, 'Thoa 1-2 lần/ngày lên vùng da. Không thoa mặt, vùng kín', 'Da liễu', 'GlaxoSmithKline', '2027-03-31', 8),
 (49, 'Piracetam 800mg', 'Viên', 200, 5500.00, 'Uống 2-4 viên x 3 lần/ngày sau bữa ăn', 'Thần kinh', 'UCB', '2026-10-31', 20),
 (50, 'Cinnarizine 25mg', 'Viên', 300, 2200.00, 'Uống 1 viên x 3 lần/ngày sau bữa ăn', 'Thần kinh', 'Janssen', '2026-12-31', 30),
 (51, 'Betahistine 16mg', 'Viên', 200, 6500.00, 'Uống 1 viên x 3 lần/ngày trong bữa ăn', 'Thần kinh', 'Abbott', '2027-01-31', 20),
@@ -1617,16 +1848,238 @@ INSERT INTO `thuoc` (`maThuoc`, `tenThuoc`, `donViTinh`, `soLuongTon`, `giaTien`
 (74, 'Warfarin 2mg', 'Viên', 80, 8500.00, 'Uống theo chỉ định bác sĩ, cùng giờ mỗi ngày', 'Chống đông', 'Orion', '2026-12-31', 10),
 (75, 'Epinephrine 1mg/mL (tiêm)', 'Ống', 30, 45000.00, 'Chỉ dùng trong cấp cứu phản vệ, theo chỉ định bác sĩ', 'Cấp cứu', 'Aguettant', '2026-08-31', 3),
 (76, 'Atropine 0.5mg (tiêm)', 'Ống', 30, 38000.00, 'Dùng theo chỉ định bác sĩ, tiêm tĩnh mạch hoặc bắp', 'Cấp cứu', 'DHG Pharma', '2026-07-31', 3),
-(77, 'Paracetamol 500mg', 'Viên', 100, 2500.00, 'Uống sau ăn 30 phút', 'Giảm đau / Hạ sốt', 'Hậu Giang', '2026-12-31', 10),
-(78, 'Amoxicillin 500mg', 'Viên', 50, 8000.00, 'Uống 3 lần/ngày', 'Kháng sinh', 'Stada', '2026-09-01', 5);
+(77, 'Paracetamol 500mg', 'Viên', 99, 2500.00, 'Uống sau ăn 30 phút', 'Giảm đau / Hạ sốt', 'Hậu Giang', '2026-12-31', 10),
+(78, 'Amoxicillin 500mg', 'Viên', 50, 8000.00, 'Uống 3 lần/ngày', 'Kháng sinh', 'Stada', '2026-09-01', 5),
+(79, 'Paracetamol 500mg', 'Viên', 500, 1500.00, 'Uống 1-2 viên/lần, 4-6 giờ/lần, tối đa 8 viên/ngày', 'Giảm đau / Hạ sốt', 'Hậu Giang Pharma', '2027-06-30', 50),
+(80, 'Paracetamol 650mg (Efferalgan)', 'Viên', 200, 4500.00, 'Uống 1 viên/lần, 4-6 giờ/lần. Uống ngay sau ăn', 'Giảm đau / Hạ sốt', 'UPSA - Pháp', '2026-12-31', 20),
+(81, 'Ibuprofen 400mg', 'Viên', 300, 3200.00, 'Uống 1 viên/lần sau ăn, 3 lần/ngày. Không dùng khi đói', 'Giảm đau / Hạ sốt', 'DHG Pharma', '2027-03-31', 30),
+(82, 'Diclofenac 50mg', 'Viên', 150, 2800.00, 'Uống 1 viên/lần, 2-3 lần/ngày sau bữa ăn', 'Giảm đau / Hạ sốt', 'Pymepharco', '2026-09-30', 20),
+(83, 'Meloxicam 7.5mg', 'Viên', 120, 4200.00, 'Uống 1 viên/ngày trong bữa ăn. Không dùng quá 15mg/ngày', 'Giảm đau / Hạ sốt', 'Boehringer Ingelheim', '2027-01-31', 15),
+(84, 'Celecoxib 200mg', 'Viên', 100, 8500.00, 'Uống 1-2 viên/ngày. Uống cùng bữa ăn', 'Giảm đau / Hạ sốt', 'Pfizer', '2026-11-30', 10),
+(85, 'Amoxicillin 500mg', 'Viên', 400, 4500.00, 'Uống 1 viên x 3 lần/ngày, cách đều 8 giờ. Uống hết liều', 'Kháng sinh', 'Stada', '2026-08-31', 40),
+(86, 'Amoxicillin + Clavulanic 625mg', 'Viên', 200, 12000.00, 'Uống 1 viên x 2 lần/ngày trong bữa ăn', 'Kháng sinh', 'GlaxoSmithKline', '2026-10-31', 20),
+(87, 'Azithromycin 500mg', 'Viên', 180, 9500.00, 'Uống 1 viên/ngày x 3 ngày liên tục, xa bữa ăn 1 giờ', 'Kháng sinh', 'Pfizer', '2027-02-28', 15),
+(88, 'Ciprofloxacin 500mg', 'Viên', 200, 5500.00, 'Uống 1 viên x 2 lần/ngày. Uống nhiều nước, xa antacid', 'Kháng sinh', 'Bayer', '2026-07-31', 20),
+(89, 'Doxycycline 100mg', 'Viên', 150, 4800.00, 'Uống 1 viên x 2 lần/ngày sau bữa ăn. Uống đủ nước', 'Kháng sinh', 'Pymepharco', '2026-12-31', 15),
+(90, 'Cefuroxime 500mg', 'Viên', 120, 18000.00, 'Uống 1 viên x 2 lần/ngày sau bữa ăn', 'Kháng sinh', 'GlaxoSmithKline', '2026-09-30', 10),
+(91, 'Metronidazole 500mg', 'Viên', 250, 2500.00, 'Uống 1 viên x 3 lần/ngày trong bữa ăn. Không uống rượu', 'Kháng sinh', 'Hậu Giang Pharma', '2027-04-30', 25),
+(92, 'Clarithromycin 250mg', 'Viên', 100, 12500.00, 'Uống 1 viên x 2 lần/ngày, cách đều 12 giờ', 'Kháng sinh', 'Abbott', '2026-11-30', 10),
+(93, 'Trimethoprim + SMX 480mg', 'Viên', 200, 3500.00, 'Uống 2 viên x 2 lần/ngày. Uống nhiều nước', 'Kháng sinh', 'DHG Pharma', '2026-08-31', 20),
+(94, 'Vitamin C 1000mg (Sủi)', 'Viên', 300, 3500.00, 'Hòa tan 1 viên trong 200ml nước, uống 1 lần/ngày sau ăn', 'Vitamin & Khoáng chất', 'Meyer-BPC', '2027-06-30', 30),
+(95, 'Vitamin B Complex', 'Viên', 400, 1800.00, 'Uống 1-2 viên/ngày sau bữa ăn', 'Vitamin & Khoáng chất', 'DHG Pharma', '2027-05-31', 40),
+(96, 'Vitamin D3 2000IU', 'Viên', 200, 5500.00, 'Uống 1 viên/ngày trong bữa ăn có chất béo', 'Vitamin & Khoáng chất', 'Ostelin', '2027-08-31', 20),
+(97, 'Canxi + D3 (Calcium Sandoz)', 'Viên', 250, 4200.00, 'Nhai hoặc ngậm 1-2 viên/ngày. Không uống cùng sắt', 'Vitamin & Khoáng chất', 'Novartis', '2027-07-31', 25),
+(98, 'Sắt Fumarate 200mg', 'Viên', 200, 3800.00, 'Uống 1 viên/ngày xa bữa ăn. Có thể uống cùng Vitamin C', 'Vitamin & Khoáng chất', 'Pymepharco', '2026-12-31', 20),
+(99, 'Magie B6', 'Viên', 300, 4500.00, 'Uống 2-6 viên/ngày chia nhiều lần trong bữa ăn', 'Vitamin & Khoáng chất', 'Sanofi', '2027-03-31', 30),
+(100, 'Kẽm Gluconate 70mg', 'Viên', 150, 3200.00, 'Uống 1 viên/ngày sau bữa ăn', 'Vitamin & Khoáng chất', 'DHG Pharma', '2027-02-28', 15),
+(101, 'Omega-3 1000mg', 'Viên', 200, 8500.00, 'Uống 1-2 viên/ngày trong bữa ăn', 'Vitamin & Khoáng chất', 'Nature Made', '2027-09-30', 20),
+(102, 'Omeprazole 20mg', 'Viên', 300, 3500.00, 'Uống 1 viên trước bữa ăn sáng 30 phút', 'Tiêu hóa', 'Stada', '2026-10-31', 30),
+(103, 'Pantoprazole 40mg', 'Viên', 197, 7500.00, 'Uống 1 viên/ngày trước bữa ăn sáng 30-60 phút', 'Tiêu hóa', 'Pymepharco', '2026-12-31', 20),
+(104, 'Domperidone 10mg', 'Viên', 300, 2200.00, 'Uống 1 viên x 3 lần/ngày trước bữa ăn 15-30 phút', 'Tiêu hóa', 'Janssen', '2026-09-30', 30),
+(105, 'Metoclopramide 10mg', 'Viên', 200, 1800.00, 'Uống 1 viên x 3 lần/ngày trước bữa ăn 30 phút', 'Tiêu hóa', 'DHG Pharma', '2026-08-31', 20),
+(106, 'Smecta 3g', 'Gói', 200, 8500.00, 'Pha 1 gói với 50ml nước, uống 3 lần/ngày xa bữa ăn', 'Tiêu hóa', 'Ipsen', '2027-01-31', 20),
+(107, 'Loperamide 2mg', 'Viên', 200, 3200.00, 'Uống 2 viên lần đầu, sau đó 1 viên sau mỗi lần tiêu chảy', 'Tiêu hóa', 'Janssen', '2026-11-30', 20),
+(108, 'Men vi sinh Enterogermina', 'Ống', 150, 15000.00, 'Uống 1-2 ống/ngày trong hoặc sau bữa ăn', 'Tiêu hóa', 'Sanofi', '2026-07-31', 8),
+(109, 'Simethicone 40mg', 'Viên', 300, 2500.00, 'Nhai 2-4 viên sau bữa ăn và trước khi ngủ', 'Tiêu hóa', 'Pymepharco', '2027-02-28', 30),
+(110, 'Amlodipine 5mg', 'Viên', 200, 2800.00, 'Uống 1 viên/ngày, cùng giờ mỗi ngày, có thể cùng bữa ăn', 'Tim mạch', 'Pfizer', '2027-04-30', 20),
+(111, 'Losartan 50mg', 'Viên', 180, 4500.00, 'Uống 1 viên/ngày, cùng giờ', 'Tim mạch', 'MSD', '2027-03-31', 15),
+(112, 'Atenolol 50mg', 'Viên', 150, 2200.00, 'Uống 1 viên/ngày vào buổi sáng', 'Tim mạch', 'AstraZeneca', '2026-10-31', 15),
+(113, 'Bisoprolol 5mg', 'Viên', 150, 5500.00, 'Uống 1 viên/ngày trong bữa sáng', 'Tim mạch', 'Merck', '2026-11-30', 15),
+(114, 'Aspirin 81mg (Cardio)', 'Viên', 300, 3200.00, 'Uống 1 viên/ngày sau ăn tối', 'Tim mạch', 'Bayer', '2027-06-30', 30),
+(115, 'Atorvastatin 10mg', 'Viên', 200, 8500.00, 'Uống 1 viên/ngày, có thể bất kỳ lúc nào', 'Tim mạch', 'Pfizer', '2027-05-31', 20),
+(116, 'Cetirizine 10mg', 'Viên', 300, 2800.00, 'Uống 1 viên/ngày vào buổi tối', 'Hô hấp', 'UCB', '2027-04-30', 30),
+(117, 'Loratadine 10mg', 'Viên', 300, 2200.00, 'Uống 1 viên/ngày vào buổi sáng', 'Hô hấp', 'Pymepharco', '2027-03-31', 30),
+(118, 'Ambroxol 30mg', 'Viên', 250, 2500.00, 'Uống 1 viên x 3 lần/ngày sau bữa ăn', 'Hô hấp', 'Boehringer Ingelheim', '2026-11-30', 25),
+(119, 'Acetylcysteine 600mg (Sủi)', 'Viên', 180, 9500.00, 'Hòa tan 1 viên trong 200ml nước, uống 1 lần/ngày', 'Hô hấp', 'Zambon', '2026-12-31', 15),
+(120, 'Bromhexine 8mg', 'Viên', 200, 1800.00, 'Uống 1 viên x 3 lần/ngày sau bữa ăn', 'Hô hấp', 'Hậu Giang Pharma', '2026-10-31', 20),
+(121, 'Montelukast 10mg', 'Viên', 120, 12000.00, 'Uống 1 viên/ngày vào buổi tối', 'Hô hấp', 'MSD', '2027-02-28', 10),
+(122, 'Fexofenadine 120mg', 'Viên', 150, 8500.00, 'Uống 1 viên x 2 lần/ngày trước bữa ăn 1 giờ', 'Hô hấp', 'Sanofi', '2027-01-31', 15),
+(123, 'Clotrimazole cream 1%', 'Tuýp', 100, 25000.00, 'Thoa một lớp mỏng lên vùng da tổn thương 2-3 lần/ngày', 'Da liễu', 'Bayer', '2026-08-31', 10),
+(124, 'Hydrocortisone cream 1%', 'Tuýp', 80, 28000.00, 'Thoa nhẹ lên vùng da viêm 1-2 lần/ngày. Không dùng quá 7 ngày', 'Da liễu', 'DHG Pharma', '2026-12-31', 8),
+(125, 'Acyclovir 400mg', 'Viên', 100, 8500.00, 'Uống 1 viên x 3-5 lần/ngày theo chỉ định bác sĩ', 'Da liễu', 'GlaxoSmithKline', '2026-11-30', 10),
+(126, 'Betamethasone 0.1% cream', 'Tuýp', 80, 35000.00, 'Thoa 1-2 lần/ngày lên vùng da. Không thoa mặt, vùng kín', 'Da liễu', 'GlaxoSmithKline', '2027-03-31', 8),
+(127, 'Piracetam 800mg', 'Viên', 200, 5500.00, 'Uống 2-4 viên x 3 lần/ngày sau bữa ăn', 'Thần kinh', 'UCB', '2026-10-31', 20),
+(128, 'Cinnarizine 25mg', 'Viên', 300, 2200.00, 'Uống 1 viên x 3 lần/ngày sau bữa ăn', 'Thần kinh', 'Janssen', '2026-12-31', 30),
+(129, 'Betahistine 16mg', 'Viên', 200, 6500.00, 'Uống 1 viên x 3 lần/ngày trong bữa ăn', 'Thần kinh', 'Abbott', '2027-01-31', 20),
+(130, 'Flunarizine 5mg', 'Viên', 150, 4500.00, 'Uống 1-2 viên/ngày vào buổi tối', 'Thần kinh', 'Janssen', '2026-11-30', 15),
+(131, 'Metformin 500mg', 'Viên', 400, 1800.00, 'Uống 1-2 viên x 2-3 lần/ngày trong bữa ăn', 'Nội tiết', 'Merck', '2027-06-30', 40),
+(132, 'Metformin 1000mg', 'Viên', 250, 3200.00, 'Uống 1 viên x 2 lần/ngày trong bữa ăn', 'Nội tiết', 'Merck', '2027-05-31', 25),
+(133, 'Glipizide 5mg', 'Viên', 200, 3500.00, 'Uống 1 viên x 1-2 lần/ngày trước bữa ăn 30 phút', 'Nội tiết', 'Pfizer', '2026-10-31', 20),
+(134, 'Levothyroxine 50mcg', 'Viên', 150, 8500.00, 'Uống 1 viên/ngày lúc đói, trước ăn sáng 30 phút', 'Nội tiết', 'Merck', '2026-12-31', 15),
+(135, 'Glibenclamide 5mg', 'Viên', 200, 2800.00, 'Uống 1-3 viên/ngày trước bữa ăn sáng', 'Nội tiết', 'Hậu Giang Pharma', '2026-09-30', 20),
+(136, 'Prednisolone 5mg', 'Viên', 300, 1500.00, 'Uống theo chỉ định bác sĩ. Uống sau ăn sáng', 'Kháng viêm', 'DHG Pharma', '2026-12-31', 30),
+(137, 'Methylprednisolone 16mg', 'Viên', 150, 9500.00, 'Uống theo chỉ định bác sĩ sau bữa ăn sáng', 'Kháng viêm', 'Pfizer', '2026-10-31', 15),
+(138, 'Dexamethasone 0.5mg', 'Viên', 200, 1200.00, 'Uống theo chỉ định bác sĩ', 'Kháng viêm', 'Pymepharco', '2026-08-31', 20),
+(139, 'Colchicine 0.6mg', 'Viên', 80, 12000.00, 'Uống theo chỉ định bác sĩ. Không vượt quá 1.2mg/lần', 'Kháng viêm', 'Takeda', '2026-11-30', 8),
+(140, 'Tobramycin nhỏ mắt 0.3%', 'Lọ', 100, 35000.00, 'Nhỏ 1-2 giọt vào mắt x 4 lần/ngày', 'Mắt', 'Alcon', '2026-07-31', 10),
+(141, 'Nước muối sinh lý 0.9%', 'Lọ', 500, 5000.00, 'Rửa mắt, mũi hoặc vệ sinh vết thương theo nhu cầu', 'Mắt', 'Hậu Giang Pharma', '2027-12-31', 50),
+(142, 'Xylometazoline xịt mũi 0.1%', 'Lọ', 150, 28000.00, 'Xịt 2-3 lần vào mỗi bên mũi x 2-3 lần/ngày. Không dùng >7 ngày', 'Tai mũi họng', 'GlaxoSmithKline', '2026-09-30', 15),
+(143, 'Strepsils (Viêm họng)', 'Viên', 200, 8500.00, 'Ngậm 1 viên mỗi 2-3 giờ, tối đa 8 viên/ngày', 'Tai mũi họng', 'Reckitt', '2027-02-28', 20),
+(144, 'Oresol (ORS)', 'Gói', 300, 3500.00, 'Pha 1 gói với 200ml nước sôi để nguội, uống sau mỗi lần tiêu chảy', 'Điện giải', 'DHG Pharma', '2027-08-31', 30),
+(145, 'Hydrite (Bù điện giải)', 'Gói', 200, 4500.00, 'Pha 1 gói với 200ml nước sôi để nguội, uống từng ngụm nhỏ', 'Điện giải', 'Stada', '2027-06-30', 20),
+(146, 'Povidone Iodine 10% (Betadine)', 'Chai', 200, 45000.00, 'Bôi trực tiếp lên vết thương đã rửa sạch, 1-2 lần/ngày', 'Sát khuẩn', 'Mundipharma', '2027-06-30', 20),
+(147, 'Cồn Ethanol 70°', 'Chai', 300, 18000.00, 'Sát trùng da, dụng cụ trước và sau thủ thuật', 'Sát khuẩn', 'DHG Pharma', '2027-12-31', 30),
+(148, 'Hydrogen Peroxide 3%', 'Chai', 150, 12000.00, 'Sử dụng để rửa vết thương, pha loãng 1:1 với nước', 'Sát khuẩn', 'Hậu Giang Pharma', '2027-10-31', 15),
+(149, 'Furosemide 40mg', 'Viên', 150, 2200.00, 'Uống 1 viên/ngày vào buổi sáng. Uống sau ăn', 'Lợi tiểu', 'Sanofi', '2026-10-31', 15),
+(150, 'Allopurinol 300mg', 'Viên', 150, 3200.00, 'Uống 1 viên/ngày sau bữa ăn. Uống nhiều nước', 'Gout', 'Pymepharco', '2027-03-31', 15),
+(151, 'Clopidogrel 75mg', 'Viên', 120, 15000.00, 'Uống 1 viên/ngày sau bữa ăn', 'Chống đông', 'Sanofi', '2027-01-31', 10),
+(152, 'Warfarin 2mg', 'Viên', 80, 8500.00, 'Uống theo chỉ định bác sĩ, cùng giờ mỗi ngày', 'Chống đông', 'Orion', '2026-12-31', 10),
+(153, 'Epinephrine 1mg/mL (tiêm)', 'Ống', 30, 45000.00, 'Chỉ dùng trong cấp cứu phản vệ, theo chỉ định bác sĩ', 'Cấp cứu', 'Aguettant', '2026-08-31', 3),
+(154, 'Atropine 0.5mg (tiêm)', 'Ống', 30, 38000.00, 'Dùng theo chỉ định bác sĩ, tiêm tĩnh mạch hoặc bắp', 'Cấp cứu', 'DHG Pharma', '2026-07-31', 3),
+(155, 'Paracetamol 500mg', 'Viên', 500, 1500.00, 'Uống 1-2 viên/lần, 4-6 giờ/lần, tối đa 8 viên/ngày', 'Giảm đau / Hạ sốt', 'Hậu Giang Pharma', '2027-06-30', 50),
+(156, 'Paracetamol 650mg (Efferalgan)', 'Viên', 200, 4500.00, 'Uống 1 viên/lần, 4-6 giờ/lần. Uống ngay sau ăn', 'Giảm đau / Hạ sốt', 'UPSA - Pháp', '2026-12-31', 20),
+(157, 'Ibuprofen 400mg', 'Viên', 300, 3200.00, 'Uống 1 viên/lần sau ăn, 3 lần/ngày. Không dùng khi đói', 'Giảm đau / Hạ sốt', 'DHG Pharma', '2027-03-31', 30),
+(158, 'Diclofenac 50mg', 'Viên', 150, 2800.00, 'Uống 1 viên/lần, 2-3 lần/ngày sau bữa ăn', 'Giảm đau / Hạ sốt', 'Pymepharco', '2026-09-30', 20),
+(159, 'Meloxicam 7.5mg', 'Viên', 120, 4200.00, 'Uống 1 viên/ngày trong bữa ăn. Không dùng quá 15mg/ngày', 'Giảm đau / Hạ sốt', 'Boehringer Ingelheim', '2027-01-31', 15),
+(160, 'Celecoxib 200mg', 'Viên', 100, 8500.00, 'Uống 1-2 viên/ngày. Uống cùng bữa ăn', 'Giảm đau / Hạ sốt', 'Pfizer', '2026-11-30', 10),
+(161, 'Amoxicillin 500mg', 'Viên', 400, 4500.00, 'Uống 1 viên x 3 lần/ngày, cách đều 8 giờ. Uống hết liều', 'Kháng sinh', 'Stada', '2026-08-31', 40),
+(162, 'Amoxicillin + Clavulanic 625mg', 'Viên', 200, 12000.00, 'Uống 1 viên x 2 lần/ngày trong bữa ăn', 'Kháng sinh', 'GlaxoSmithKline', '2026-10-31', 20),
+(163, 'Azithromycin 500mg', 'Viên', 180, 9500.00, 'Uống 1 viên/ngày x 3 ngày liên tục, xa bữa ăn 1 giờ', 'Kháng sinh', 'Pfizer', '2027-02-28', 15),
+(164, 'Ciprofloxacin 500mg', 'Viên', 200, 5500.00, 'Uống 1 viên x 2 lần/ngày. Uống nhiều nước, xa antacid', 'Kháng sinh', 'Bayer', '2026-07-31', 20),
+(165, 'Doxycycline 100mg', 'Viên', 150, 4800.00, 'Uống 1 viên x 2 lần/ngày sau bữa ăn. Uống đủ nước', 'Kháng sinh', 'Pymepharco', '2026-12-31', 15),
+(166, 'Cefuroxime 500mg', 'Viên', 120, 18000.00, 'Uống 1 viên x 2 lần/ngày sau bữa ăn', 'Kháng sinh', 'GlaxoSmithKline', '2026-09-30', 10),
+(167, 'Metronidazole 500mg', 'Viên', 250, 2500.00, 'Uống 1 viên x 3 lần/ngày trong bữa ăn. Không uống rượu', 'Kháng sinh', 'Hậu Giang Pharma', '2027-04-30', 25),
+(168, 'Clarithromycin 250mg', 'Viên', 100, 12500.00, 'Uống 1 viên x 2 lần/ngày, cách đều 12 giờ', 'Kháng sinh', 'Abbott', '2026-11-30', 10),
+(169, 'Trimethoprim + SMX 480mg', 'Viên', 200, 3500.00, 'Uống 2 viên x 2 lần/ngày. Uống nhiều nước', 'Kháng sinh', 'DHG Pharma', '2026-08-31', 20),
+(170, 'Vitamin C 1000mg (Sủi)', 'Viên', 300, 3500.00, 'Hòa tan 1 viên trong 200ml nước, uống 1 lần/ngày sau ăn', 'Vitamin & Khoáng chất', 'Meyer-BPC', '2027-06-30', 30),
+(171, 'Vitamin B Complex', 'Viên', 400, 1800.00, 'Uống 1-2 viên/ngày sau bữa ăn', 'Vitamin & Khoáng chất', 'DHG Pharma', '2027-05-31', 40),
+(172, 'Vitamin D3 2000IU', 'Viên', 200, 5500.00, 'Uống 1 viên/ngày trong bữa ăn có chất béo', 'Vitamin & Khoáng chất', 'Ostelin', '2027-08-31', 20),
+(173, 'Canxi + D3 (Calcium Sandoz)', 'Viên', 250, 4200.00, 'Nhai hoặc ngậm 1-2 viên/ngày. Không uống cùng sắt', 'Vitamin & Khoáng chất', 'Novartis', '2027-07-31', 25),
+(174, 'Sắt Fumarate 200mg', 'Viên', 200, 3800.00, 'Uống 1 viên/ngày xa bữa ăn. Có thể uống cùng Vitamin C', 'Vitamin & Khoáng chất', 'Pymepharco', '2026-12-31', 20),
+(175, 'Magie B6', 'Viên', 300, 4500.00, 'Uống 2-6 viên/ngày chia nhiều lần trong bữa ăn', 'Vitamin & Khoáng chất', 'Sanofi', '2027-03-31', 30),
+(176, 'Kẽm Gluconate 70mg', 'Viên', 150, 3200.00, 'Uống 1 viên/ngày sau bữa ăn', 'Vitamin & Khoáng chất', 'DHG Pharma', '2027-02-28', 15),
+(177, 'Omega-3 1000mg', 'Viên', 200, 8500.00, 'Uống 1-2 viên/ngày trong bữa ăn', 'Vitamin & Khoáng chất', 'Nature Made', '2027-09-30', 20),
+(178, 'Omeprazole 20mg', 'Viên', 300, 3500.00, 'Uống 1 viên trước bữa ăn sáng 30 phút', 'Tiêu hóa', 'Stada', '2026-10-31', 30),
+(179, 'Pantoprazole 40mg', 'Viên', 200, 7500.00, 'Uống 1 viên/ngày trước bữa ăn sáng 30-60 phút', 'Tiêu hóa', 'Pymepharco', '2026-12-31', 20),
+(180, 'Domperidone 10mg', 'Viên', 300, 2200.00, 'Uống 1 viên x 3 lần/ngày trước bữa ăn 15-30 phút', 'Tiêu hóa', 'Janssen', '2026-09-30', 30),
+(181, 'Metoclopramide 10mg', 'Viên', 200, 1800.00, 'Uống 1 viên x 3 lần/ngày trước bữa ăn 30 phút', 'Tiêu hóa', 'DHG Pharma', '2026-08-31', 20),
+(182, 'Smecta 3g', 'Gói', 200, 8500.00, 'Pha 1 gói với 50ml nước, uống 3 lần/ngày xa bữa ăn', 'Tiêu hóa', 'Ipsen', '2027-01-31', 20),
+(183, 'Loperamide 2mg', 'Viên', 200, 3200.00, 'Uống 2 viên lần đầu, sau đó 1 viên sau mỗi lần tiêu chảy', 'Tiêu hóa', 'Janssen', '2026-11-30', 20),
+(184, 'Men vi sinh Enterogermina', 'Ống', 150, 15000.00, 'Uống 1-2 ống/ngày trong hoặc sau bữa ăn', 'Tiêu hóa', 'Sanofi', '2026-07-31', 8),
+(185, 'Simethicone 40mg', 'Viên', 300, 2500.00, 'Nhai 2-4 viên sau bữa ăn và trước khi ngủ', 'Tiêu hóa', 'Pymepharco', '2027-02-28', 30),
+(186, 'Amlodipine 5mg', 'Viên', 200, 2800.00, 'Uống 1 viên/ngày, cùng giờ mỗi ngày, có thể cùng bữa ăn', 'Tim mạch', 'Pfizer', '2027-04-30', 20),
+(187, 'Losartan 50mg', 'Viên', 180, 4500.00, 'Uống 1 viên/ngày, cùng giờ', 'Tim mạch', 'MSD', '2027-03-31', 15),
+(188, 'Atenolol 50mg', 'Viên', 150, 2200.00, 'Uống 1 viên/ngày vào buổi sáng', 'Tim mạch', 'AstraZeneca', '2026-10-31', 15),
+(189, 'Bisoprolol 5mg', 'Viên', 150, 5500.00, 'Uống 1 viên/ngày trong bữa sáng', 'Tim mạch', 'Merck', '2026-11-30', 15),
+(190, 'Aspirin 81mg (Cardio)', 'Viên', 300, 3200.00, 'Uống 1 viên/ngày sau ăn tối', 'Tim mạch', 'Bayer', '2027-06-30', 30),
+(191, 'Atorvastatin 10mg', 'Viên', 200, 8500.00, 'Uống 1 viên/ngày, có thể bất kỳ lúc nào', 'Tim mạch', 'Pfizer', '2027-05-31', 20),
+(192, 'Cetirizine 10mg', 'Viên', 300, 2800.00, 'Uống 1 viên/ngày vào buổi tối', 'Hô hấp', 'UCB', '2027-04-30', 30),
+(193, 'Loratadine 10mg', 'Viên', 300, 2200.00, 'Uống 1 viên/ngày vào buổi sáng', 'Hô hấp', 'Pymepharco', '2027-03-31', 30),
+(194, 'Ambroxol 30mg', 'Viên', 250, 2500.00, 'Uống 1 viên x 3 lần/ngày sau bữa ăn', 'Hô hấp', 'Boehringer Ingelheim', '2026-11-30', 25),
+(195, 'Acetylcysteine 600mg (Sủi)', 'Viên', 180, 9500.00, 'Hòa tan 1 viên trong 200ml nước, uống 1 lần/ngày', 'Hô hấp', 'Zambon', '2026-12-31', 15),
+(196, 'Bromhexine 8mg', 'Viên', 200, 1800.00, 'Uống 1 viên x 3 lần/ngày sau bữa ăn', 'Hô hấp', 'Hậu Giang Pharma', '2026-10-31', 20),
+(197, 'Montelukast 10mg', 'Viên', 120, 12000.00, 'Uống 1 viên/ngày vào buổi tối', 'Hô hấp', 'MSD', '2027-02-28', 10),
+(198, 'Fexofenadine 120mg', 'Viên', 150, 8500.00, 'Uống 1 viên x 2 lần/ngày trước bữa ăn 1 giờ', 'Hô hấp', 'Sanofi', '2027-01-31', 15),
+(199, 'Clotrimazole cream 1%', 'Tuýp', 100, 25000.00, 'Thoa một lớp mỏng lên vùng da tổn thương 2-3 lần/ngày', 'Da liễu', 'Bayer', '2026-08-31', 10),
+(200, 'Hydrocortisone cream 1%', 'Tuýp', 80, 28000.00, 'Thoa nhẹ lên vùng da viêm 1-2 lần/ngày. Không dùng quá 7 ngày', 'Da liễu', 'DHG Pharma', '2026-12-31', 8),
+(201, 'Acyclovir 400mg', 'Viên', 100, 8500.00, 'Uống 1 viên x 3-5 lần/ngày theo chỉ định bác sĩ', 'Da liễu', 'GlaxoSmithKline', '2026-11-30', 10),
+(202, 'Betamethasone 0.1% cream', 'Tuýp', 80, 35000.00, 'Thoa 1-2 lần/ngày lên vùng da. Không thoa mặt, vùng kín', 'Da liễu', 'GlaxoSmithKline', '2027-03-31', 8),
+(203, 'Piracetam 800mg', 'Viên', 200, 5500.00, 'Uống 2-4 viên x 3 lần/ngày sau bữa ăn', 'Thần kinh', 'UCB', '2026-10-31', 20),
+(204, 'Cinnarizine 25mg', 'Viên', 300, 2200.00, 'Uống 1 viên x 3 lần/ngày sau bữa ăn', 'Thần kinh', 'Janssen', '2026-12-31', 30),
+(205, 'Betahistine 16mg', 'Viên', 200, 6500.00, 'Uống 1 viên x 3 lần/ngày trong bữa ăn', 'Thần kinh', 'Abbott', '2027-01-31', 20),
+(206, 'Flunarizine 5mg', 'Viên', 150, 4500.00, 'Uống 1-2 viên/ngày vào buổi tối', 'Thần kinh', 'Janssen', '2026-11-30', 15),
+(207, 'Metformin 500mg', 'Viên', 400, 1800.00, 'Uống 1-2 viên x 2-3 lần/ngày trong bữa ăn', 'Nội tiết', 'Merck', '2027-06-30', 40),
+(208, 'Metformin 1000mg', 'Viên', 250, 3200.00, 'Uống 1 viên x 2 lần/ngày trong bữa ăn', 'Nội tiết', 'Merck', '2027-05-31', 25),
+(209, 'Glipizide 5mg', 'Viên', 200, 3500.00, 'Uống 1 viên x 1-2 lần/ngày trước bữa ăn 30 phút', 'Nội tiết', 'Pfizer', '2026-10-31', 20),
+(210, 'Levothyroxine 50mcg', 'Viên', 150, 8500.00, 'Uống 1 viên/ngày lúc đói, trước ăn sáng 30 phút', 'Nội tiết', 'Merck', '2026-12-31', 15),
+(211, 'Glibenclamide 5mg', 'Viên', 200, 2800.00, 'Uống 1-3 viên/ngày trước bữa ăn sáng', 'Nội tiết', 'Hậu Giang Pharma', '2026-09-30', 20),
+(212, 'Prednisolone 5mg', 'Viên', 300, 1500.00, 'Uống theo chỉ định bác sĩ. Uống sau ăn sáng', 'Kháng viêm', 'DHG Pharma', '2026-12-31', 30),
+(213, 'Methylprednisolone 16mg', 'Viên', 150, 9500.00, 'Uống theo chỉ định bác sĩ sau bữa ăn sáng', 'Kháng viêm', 'Pfizer', '2026-10-31', 15),
+(214, 'Dexamethasone 0.5mg', 'Viên', 200, 1200.00, 'Uống theo chỉ định bác sĩ', 'Kháng viêm', 'Pymepharco', '2026-08-31', 20),
+(215, 'Colchicine 0.6mg', 'Viên', 80, 12000.00, 'Uống theo chỉ định bác sĩ. Không vượt quá 1.2mg/lần', 'Kháng viêm', 'Takeda', '2026-11-30', 8),
+(216, 'Tobramycin nhỏ mắt 0.3%', 'Lọ', 100, 35000.00, 'Nhỏ 1-2 giọt vào mắt x 4 lần/ngày', 'Mắt', 'Alcon', '2026-07-31', 10),
+(217, 'Nước muối sinh lý 0.9%', 'Lọ', 500, 5000.00, 'Rửa mắt, mũi hoặc vệ sinh vết thương theo nhu cầu', 'Mắt', 'Hậu Giang Pharma', '2027-12-31', 50),
+(218, 'Xylometazoline xịt mũi 0.1%', 'Lọ', 150, 28000.00, 'Xịt 2-3 lần vào mỗi bên mũi x 2-3 lần/ngày. Không dùng >7 ngày', 'Tai mũi họng', 'GlaxoSmithKline', '2026-09-30', 15),
+(219, 'Strepsils (Viêm họng)', 'Viên', 200, 8500.00, 'Ngậm 1 viên mỗi 2-3 giờ, tối đa 8 viên/ngày', 'Tai mũi họng', 'Reckitt', '2027-02-28', 20),
+(220, 'Oresol (ORS)', 'Gói', 300, 3500.00, 'Pha 1 gói với 200ml nước sôi để nguội, uống sau mỗi lần tiêu chảy', 'Điện giải', 'DHG Pharma', '2027-08-31', 30),
+(221, 'Hydrite (Bù điện giải)', 'Gói', 200, 4500.00, 'Pha 1 gói với 200ml nước sôi để nguội, uống từng ngụm nhỏ', 'Điện giải', 'Stada', '2027-06-30', 20),
+(222, 'Povidone Iodine 10% (Betadine)', 'Chai', 200, 45000.00, 'Bôi trực tiếp lên vết thương đã rửa sạch, 1-2 lần/ngày', 'Sát khuẩn', 'Mundipharma', '2027-06-30', 20),
+(223, 'Cồn Ethanol 70°', 'Chai', 300, 18000.00, 'Sát trùng da, dụng cụ trước và sau thủ thuật', 'Sát khuẩn', 'DHG Pharma', '2027-12-31', 30),
+(224, 'Hydrogen Peroxide 3%', 'Chai', 150, 12000.00, 'Sử dụng để rửa vết thương, pha loãng 1:1 với nước', 'Sát khuẩn', 'Hậu Giang Pharma', '2027-10-31', 15),
+(225, 'Furosemide 40mg', 'Viên', 150, 2200.00, 'Uống 1 viên/ngày vào buổi sáng. Uống sau ăn', 'Lợi tiểu', 'Sanofi', '2026-10-31', 15),
+(226, 'Allopurinol 300mg', 'Viên', 150, 3200.00, 'Uống 1 viên/ngày sau bữa ăn. Uống nhiều nước', 'Gout', 'Pymepharco', '2027-03-31', 15),
+(227, 'Clopidogrel 75mg', 'Viên', 120, 15000.00, 'Uống 1 viên/ngày sau bữa ăn', 'Chống đông', 'Sanofi', '2027-01-31', 10),
+(228, 'Warfarin 2mg', 'Viên', 80, 8500.00, 'Uống theo chỉ định bác sĩ, cùng giờ mỗi ngày', 'Chống đông', 'Orion', '2026-12-31', 10),
+(229, 'Epinephrine 1mg/mL (tiêm)', 'Ống', 30, 45000.00, 'Chỉ dùng trong cấp cứu phản vệ, theo chỉ định bác sĩ', 'Cấp cứu', 'Aguettant', '2026-08-31', 3),
+(230, 'Atropine 0.5mg (tiêm)', 'Ống', 30, 38000.00, 'Dùng theo chỉ định bác sĩ, tiêm tĩnh mạch hoặc bắp', 'Cấp cứu', 'DHG Pharma', '2026-07-31', 3),
+(231, 'Paracetamol 500mg', 'Viên', 500, 1500.00, 'Uống 1-2 viên/lần, 4-6 giờ/lần, tối đa 8 viên/ngày', 'Giảm đau / Hạ sốt', 'Hậu Giang Pharma', '2027-06-30', 50),
+(232, 'Paracetamol 650mg (Efferalgan)', 'Viên', 200, 4500.00, 'Uống 1 viên/lần, 4-6 giờ/lần. Uống ngay sau ăn', 'Giảm đau / Hạ sốt', 'UPSA - Pháp', '2026-12-31', 20),
+(233, 'Ibuprofen 400mg', 'Viên', 300, 3200.00, 'Uống 1 viên/lần sau ăn, 3 lần/ngày. Không dùng khi đói', 'Giảm đau / Hạ sốt', 'DHG Pharma', '2027-03-31', 30),
+(234, 'Diclofenac 50mg', 'Viên', 150, 2800.00, 'Uống 1 viên/lần, 2-3 lần/ngày sau bữa ăn', 'Giảm đau / Hạ sốt', 'Pymepharco', '2026-09-30', 20),
+(235, 'Meloxicam 7.5mg', 'Viên', 120, 4200.00, 'Uống 1 viên/ngày trong bữa ăn. Không dùng quá 15mg/ngày', 'Giảm đau / Hạ sốt', 'Boehringer Ingelheim', '2027-01-31', 15),
+(236, 'Celecoxib 200mg', 'Viên', 100, 8500.00, 'Uống 1-2 viên/ngày. Uống cùng bữa ăn', 'Giảm đau / Hạ sốt', 'Pfizer', '2026-11-30', 10),
+(237, 'Amoxicillin 500mg', 'Viên', 400, 4500.00, 'Uống 1 viên x 3 lần/ngày, cách đều 8 giờ. Uống hết liều', 'Kháng sinh', 'Stada', '2026-08-31', 40),
+(238, 'Amoxicillin + Clavulanic 625mg', 'Viên', 200, 12000.00, 'Uống 1 viên x 2 lần/ngày trong bữa ăn', 'Kháng sinh', 'GlaxoSmithKline', '2026-10-31', 20),
+(239, 'Azithromycin 500mg', 'Viên', 180, 9500.00, 'Uống 1 viên/ngày x 3 ngày liên tục, xa bữa ăn 1 giờ', 'Kháng sinh', 'Pfizer', '2027-02-28', 15),
+(240, 'Ciprofloxacin 500mg', 'Viên', 200, 5500.00, 'Uống 1 viên x 2 lần/ngày. Uống nhiều nước, xa antacid', 'Kháng sinh', 'Bayer', '2026-07-31', 20),
+(241, 'Doxycycline 100mg', 'Viên', 150, 4800.00, 'Uống 1 viên x 2 lần/ngày sau bữa ăn. Uống đủ nước', 'Kháng sinh', 'Pymepharco', '2026-12-31', 15),
+(242, 'Cefuroxime 500mg', 'Viên', 120, 18000.00, 'Uống 1 viên x 2 lần/ngày sau bữa ăn', 'Kháng sinh', 'GlaxoSmithKline', '2026-09-30', 10),
+(243, 'Metronidazole 500mg', 'Viên', 250, 2500.00, 'Uống 1 viên x 3 lần/ngày trong bữa ăn. Không uống rượu', 'Kháng sinh', 'Hậu Giang Pharma', '2027-04-30', 25),
+(244, 'Clarithromycin 250mg', 'Viên', 100, 12500.00, 'Uống 1 viên x 2 lần/ngày, cách đều 12 giờ', 'Kháng sinh', 'Abbott', '2026-11-30', 10),
+(245, 'Trimethoprim + SMX 480mg', 'Viên', 200, 3500.00, 'Uống 2 viên x 2 lần/ngày. Uống nhiều nước', 'Kháng sinh', 'DHG Pharma', '2026-08-31', 20),
+(246, 'Vitamin C 1000mg (Sủi)', 'Viên', 300, 3500.00, 'Hòa tan 1 viên trong 200ml nước, uống 1 lần/ngày sau ăn', 'Vitamin & Khoáng chất', 'Meyer-BPC', '2027-06-30', 30),
+(247, 'Vitamin B Complex', 'Viên', 400, 1800.00, 'Uống 1-2 viên/ngày sau bữa ăn', 'Vitamin & Khoáng chất', 'DHG Pharma', '2027-05-31', 40),
+(248, 'Vitamin D3 2000IU', 'Viên', 200, 5500.00, 'Uống 1 viên/ngày trong bữa ăn có chất béo', 'Vitamin & Khoáng chất', 'Ostelin', '2027-08-31', 20),
+(249, 'Canxi + D3 (Calcium Sandoz)', 'Viên', 250, 4200.00, 'Nhai hoặc ngậm 1-2 viên/ngày. Không uống cùng sắt', 'Vitamin & Khoáng chất', 'Novartis', '2027-07-31', 25),
+(250, 'Sắt Fumarate 200mg', 'Viên', 200, 3800.00, 'Uống 1 viên/ngày xa bữa ăn. Có thể uống cùng Vitamin C', 'Vitamin & Khoáng chất', 'Pymepharco', '2026-12-31', 20),
+(251, 'Magie B6', 'Viên', 300, 4500.00, 'Uống 2-6 viên/ngày chia nhiều lần trong bữa ăn', 'Vitamin & Khoáng chất', 'Sanofi', '2027-03-31', 30),
+(252, 'Kẽm Gluconate 70mg', 'Viên', 150, 3200.00, 'Uống 1 viên/ngày sau bữa ăn', 'Vitamin & Khoáng chất', 'DHG Pharma', '2027-02-28', 15),
+(253, 'Omega-3 1000mg', 'Viên', 200, 8500.00, 'Uống 1-2 viên/ngày trong bữa ăn', 'Vitamin & Khoáng chất', 'Nature Made', '2027-09-30', 20),
+(254, 'Omeprazole 20mg', 'Viên', 300, 3500.00, 'Uống 1 viên trước bữa ăn sáng 30 phút', 'Tiêu hóa', 'Stada', '2026-10-31', 30),
+(255, 'Pantoprazole 40mg', 'Viên', 200, 7500.00, 'Uống 1 viên/ngày trước bữa ăn sáng 30-60 phút', 'Tiêu hóa', 'Pymepharco', '2026-12-31', 20),
+(256, 'Domperidone 10mg', 'Viên', 300, 2200.00, 'Uống 1 viên x 3 lần/ngày trước bữa ăn 15-30 phút', 'Tiêu hóa', 'Janssen', '2026-09-30', 30),
+(257, 'Metoclopramide 10mg', 'Viên', 200, 1800.00, 'Uống 1 viên x 3 lần/ngày trước bữa ăn 30 phút', 'Tiêu hóa', 'DHG Pharma', '2026-08-31', 20),
+(258, 'Smecta 3g', 'Gói', 200, 8500.00, 'Pha 1 gói với 50ml nước, uống 3 lần/ngày xa bữa ăn', 'Tiêu hóa', 'Ipsen', '2027-01-31', 20),
+(259, 'Loperamide 2mg', 'Viên', 200, 3200.00, 'Uống 2 viên lần đầu, sau đó 1 viên sau mỗi lần tiêu chảy', 'Tiêu hóa', 'Janssen', '2026-11-30', 20),
+(260, 'Men vi sinh Enterogermina', 'Ống', 150, 15000.00, 'Uống 1-2 ống/ngày trong hoặc sau bữa ăn', 'Tiêu hóa', 'Sanofi', '2026-07-31', 8),
+(261, 'Simethicone 40mg', 'Viên', 300, 2500.00, 'Nhai 2-4 viên sau bữa ăn và trước khi ngủ', 'Tiêu hóa', 'Pymepharco', '2027-02-28', 30),
+(262, 'Amlodipine 5mg', 'Viên', 200, 2800.00, 'Uống 1 viên/ngày, cùng giờ mỗi ngày, có thể cùng bữa ăn', 'Tim mạch', 'Pfizer', '2027-04-30', 20),
+(263, 'Losartan 50mg', 'Viên', 180, 4500.00, 'Uống 1 viên/ngày, cùng giờ', 'Tim mạch', 'MSD', '2027-03-31', 15),
+(264, 'Atenolol 50mg', 'Viên', 150, 2200.00, 'Uống 1 viên/ngày vào buổi sáng', 'Tim mạch', 'AstraZeneca', '2026-10-31', 15),
+(265, 'Bisoprolol 5mg', 'Viên', 150, 5500.00, 'Uống 1 viên/ngày trong bữa sáng', 'Tim mạch', 'Merck', '2026-11-30', 15),
+(266, 'Aspirin 81mg (Cardio)', 'Viên', 300, 3200.00, 'Uống 1 viên/ngày sau ăn tối', 'Tim mạch', 'Bayer', '2027-06-30', 30),
+(267, 'Atorvastatin 10mg', 'Viên', 200, 8500.00, 'Uống 1 viên/ngày, có thể bất kỳ lúc nào', 'Tim mạch', 'Pfizer', '2027-05-31', 20),
+(268, 'Cetirizine 10mg', 'Viên', 300, 2800.00, 'Uống 1 viên/ngày vào buổi tối', 'Hô hấp', 'UCB', '2027-04-30', 30),
+(269, 'Loratadine 10mg', 'Viên', 300, 2200.00, 'Uống 1 viên/ngày vào buổi sáng', 'Hô hấp', 'Pymepharco', '2027-03-31', 30),
+(270, 'Ambroxol 30mg', 'Viên', 250, 2500.00, 'Uống 1 viên x 3 lần/ngày sau bữa ăn', 'Hô hấp', 'Boehringer Ingelheim', '2026-11-30', 25),
+(271, 'Acetylcysteine 600mg (Sủi)', 'Viên', 180, 9500.00, 'Hòa tan 1 viên trong 200ml nước, uống 1 lần/ngày', 'Hô hấp', 'Zambon', '2026-12-31', 15),
+(272, 'Bromhexine 8mg', 'Viên', 200, 1800.00, 'Uống 1 viên x 3 lần/ngày sau bữa ăn', 'Hô hấp', 'Hậu Giang Pharma', '2026-10-31', 20),
+(273, 'Montelukast 10mg', 'Viên', 120, 12000.00, 'Uống 1 viên/ngày vào buổi tối', 'Hô hấp', 'MSD', '2027-02-28', 10),
+(274, 'Fexofenadine 120mg', 'Viên', 150, 8500.00, 'Uống 1 viên x 2 lần/ngày trước bữa ăn 1 giờ', 'Hô hấp', 'Sanofi', '2027-01-31', 15),
+(275, 'Clotrimazole cream 1%', 'Tuýp', 100, 25000.00, 'Thoa một lớp mỏng lên vùng da tổn thương 2-3 lần/ngày', 'Da liễu', 'Bayer', '2026-08-31', 10),
+(276, 'Hydrocortisone cream 1%', 'Tuýp', 80, 28000.00, 'Thoa nhẹ lên vùng da viêm 1-2 lần/ngày. Không dùng quá 7 ngày', 'Da liễu', 'DHG Pharma', '2026-12-31', 8),
+(277, 'Acyclovir 400mg', 'Viên', 100, 8500.00, 'Uống 1 viên x 3-5 lần/ngày theo chỉ định bác sĩ', 'Da liễu', 'GlaxoSmithKline', '2026-11-30', 10),
+(278, 'Betamethasone 0.1% cream', 'Tuýp', 80, 35000.00, 'Thoa 1-2 lần/ngày lên vùng da. Không thoa mặt, vùng kín', 'Da liễu', 'GlaxoSmithKline', '2027-03-31', 8),
+(279, 'Piracetam 800mg', 'Viên', 200, 5500.00, 'Uống 2-4 viên x 3 lần/ngày sau bữa ăn', 'Thần kinh', 'UCB', '2026-10-31', 20),
+(280, 'Cinnarizine 25mg', 'Viên', 300, 2200.00, 'Uống 1 viên x 3 lần/ngày sau bữa ăn', 'Thần kinh', 'Janssen', '2026-12-31', 30),
+(281, 'Betahistine 16mg', 'Viên', 200, 6500.00, 'Uống 1 viên x 3 lần/ngày trong bữa ăn', 'Thần kinh', 'Abbott', '2027-01-31', 20),
+(282, 'Flunarizine 5mg', 'Viên', 150, 4500.00, 'Uống 1-2 viên/ngày vào buổi tối', 'Thần kinh', 'Janssen', '2026-11-30', 15),
+(283, 'Metformin 500mg', 'Viên', 400, 1800.00, 'Uống 1-2 viên x 2-3 lần/ngày trong bữa ăn', 'Nội tiết', 'Merck', '2027-06-30', 40),
+(284, 'Metformin 1000mg', 'Viên', 250, 3200.00, 'Uống 1 viên x 2 lần/ngày trong bữa ăn', 'Nội tiết', 'Merck', '2027-05-31', 25),
+(285, 'Glipizide 5mg', 'Viên', 200, 3500.00, 'Uống 1 viên x 1-2 lần/ngày trước bữa ăn 30 phút', 'Nội tiết', 'Pfizer', '2026-10-31', 20),
+(286, 'Levothyroxine 50mcg', 'Viên', 150, 8500.00, 'Uống 1 viên/ngày lúc đói, trước ăn sáng 30 phút', 'Nội tiết', 'Merck', '2026-12-31', 15),
+(287, 'Glibenclamide 5mg', 'Viên', 200, 2800.00, 'Uống 1-3 viên/ngày trước bữa ăn sáng', 'Nội tiết', 'Hậu Giang Pharma', '2026-09-30', 20),
+(288, 'Prednisolone 5mg', 'Viên', 300, 1500.00, 'Uống theo chỉ định bác sĩ. Uống sau ăn sáng', 'Kháng viêm', 'DHG Pharma', '2026-12-31', 30),
+(289, 'Methylprednisolone 16mg', 'Viên', 150, 9500.00, 'Uống theo chỉ định bác sĩ sau bữa ăn sáng', 'Kháng viêm', 'Pfizer', '2026-10-31', 15),
+(290, 'Dexamethasone 0.5mg', 'Viên', 200, 1200.00, 'Uống theo chỉ định bác sĩ', 'Kháng viêm', 'Pymepharco', '2026-08-31', 20),
+(291, 'Colchicine 0.6mg', 'Viên', 80, 12000.00, 'Uống theo chỉ định bác sĩ. Không vượt quá 1.2mg/lần', 'Kháng viêm', 'Takeda', '2026-11-30', 8),
+(292, 'Tobramycin nhỏ mắt 0.3%', 'Lọ', 100, 35000.00, 'Nhỏ 1-2 giọt vào mắt x 4 lần/ngày', 'Mắt', 'Alcon', '2026-07-31', 10),
+(293, 'Nước muối sinh lý 0.9%', 'Lọ', 500, 5000.00, 'Rửa mắt, mũi hoặc vệ sinh vết thương theo nhu cầu', 'Mắt', 'Hậu Giang Pharma', '2027-12-31', 50),
+(294, 'Xylometazoline xịt mũi 0.1%', 'Lọ', 150, 28000.00, 'Xịt 2-3 lần vào mỗi bên mũi x 2-3 lần/ngày. Không dùng >7 ngày', 'Tai mũi họng', 'GlaxoSmithKline', '2026-09-30', 15),
+(295, 'Strepsils (Viêm họng)', 'Viên', 200, 8500.00, 'Ngậm 1 viên mỗi 2-3 giờ, tối đa 8 viên/ngày', 'Tai mũi họng', 'Reckitt', '2027-02-28', 20),
+(296, 'Oresol (ORS)', 'Gói', 300, 3500.00, 'Pha 1 gói với 200ml nước sôi để nguội, uống sau mỗi lần tiêu chảy', 'Điện giải', 'DHG Pharma', '2027-08-31', 30),
+(297, 'Hydrite (Bù điện giải)', 'Gói', 200, 4500.00, 'Pha 1 gói với 200ml nước sôi để nguội, uống từng ngụm nhỏ', 'Điện giải', 'Stada', '2027-06-30', 20),
+(298, 'Povidone Iodine 10% (Betadine)', 'Chai', 200, 45000.00, 'Bôi trực tiếp lên vết thương đã rửa sạch, 1-2 lần/ngày', 'Sát khuẩn', 'Mundipharma', '2027-06-30', 20),
+(299, 'Cồn Ethanol 70°', 'Chai', 300, 18000.00, 'Sát trùng da, dụng cụ trước và sau thủ thuật', 'Sát khuẩn', 'DHG Pharma', '2027-12-31', 30),
+(300, 'Hydrogen Peroxide 3%', 'Chai', 150, 12000.00, 'Sử dụng để rửa vết thương, pha loãng 1:1 với nước', 'Sát khuẩn', 'Hậu Giang Pharma', '2027-10-31', 15),
+(301, 'Furosemide 40mg', 'Viên', 150, 2200.00, 'Uống 1 viên/ngày vào buổi sáng. Uống sau ăn', 'Lợi tiểu', 'Sanofi', '2026-10-31', 15),
+(302, 'Allopurinol 300mg', 'Viên', 150, 3200.00, 'Uống 1 viên/ngày sau bữa ăn. Uống nhiều nước', 'Gout', 'Pymepharco', '2027-03-31', 15),
+(303, 'Clopidogrel 75mg', 'Viên', 120, 15000.00, 'Uống 1 viên/ngày sau bữa ăn', 'Chống đông', 'Sanofi', '2027-01-31', 10),
+(304, 'Warfarin 2mg', 'Viên', 80, 8500.00, 'Uống theo chỉ định bác sĩ, cùng giờ mỗi ngày', 'Chống đông', 'Orion', '2026-12-31', 10),
+(305, 'Epinephrine 1mg/mL (tiêm)', 'Ống', 30, 45000.00, 'Chỉ dùng trong cấp cứu phản vệ, theo chỉ định bác sĩ', 'Cấp cứu', 'Aguettant', '2026-08-31', 3),
+(306, 'Atropine 0.5mg (tiêm)', 'Ống', 30, 38000.00, 'Dùng theo chỉ định bác sĩ, tiêm tĩnh mạch hoặc bắp', 'Cấp cứu', 'DHG Pharma', '2026-07-31', 3);
 
---
--- Chỉ mục cho các bảng đã đổ
---
 
---
--- Chỉ mục cho bảng `bacsi`
---
 ALTER TABLE `bacsi`
   ADD PRIMARY KEY (`maBacSi`),
   ADD UNIQUE KEY `nguoiDungId` (`nguoiDungId`),
@@ -1634,66 +2087,46 @@ ALTER TABLE `bacsi`
   ADD KEY `idx_bacsi_ten_ma` (`tenBacSi`,`maBacSi`),
   ADD KEY `idx_bacsi_chuyenkhoa_ten_ma` (`maChuyenKhoa`,`tenBacSi`,`maBacSi`);
 
---
--- Chỉ mục cho bảng `benhnhan`
---
 ALTER TABLE `benhnhan`
   ADD PRIMARY KEY (`maBenhNhan`),
   ADD UNIQUE KEY `nguoiDungId` (`nguoiDungId`);
 
---
--- Chỉ mục cho bảng `calamviec`
---
 ALTER TABLE `calamviec`
   ADD PRIMARY KEY (`maCa`);
 
---
--- Chỉ mục cho bảng `chitietdonthuoc`
---
 ALTER TABLE `chitietdonthuoc`
   ADD PRIMARY KEY (`id`),
   ADD KEY `maDonThuoc` (`maDonThuoc`),
   ADD KEY `maThuoc` (`maThuoc`);
 
---
--- Chỉ mục cho bảng `chuyenkhoa`
---
 ALTER TABLE `chuyenkhoa`
   ADD PRIMARY KEY (`maChuyenKhoa`),
   ADD KEY `maKhoa` (`maKhoa`),
   ADD KEY `idx_chuyenkhoa_makhoa_mack` (`maKhoa`,`maChuyenKhoa`);
 
---
--- Chỉ mục cho bảng `doimatkhau`
---
 ALTER TABLE `doimatkhau`
   ADD PRIMARY KEY (`id`),
   ADD KEY `nguoiDungId` (`nguoiDungId`),
   ADD KEY `nguoiXuLy` (`nguoiXuLy`);
 
---
--- Chỉ mục cho bảng `donthuoc`
---
 ALTER TABLE `donthuoc`
   ADD PRIMARY KEY (`maDonThuoc`),
   ADD KEY `maLichKham` (`maLichKham`);
 
---
--- Chỉ mục cho bảng `goikham`
---
 ALTER TABLE `goikham`
   ADD PRIMARY KEY (`maGoi`);
 
---
--- Chỉ mục cho bảng `hoadon`
---
+ALTER TABLE `hangdoikham`
+  ADD PRIMARY KEY (`maHangDoi`),
+  ADD UNIQUE KEY `uniq_hangdoi_lichkham` (`maLichKham`),
+  ADD UNIQUE KEY `uniq_hangdoi_bacsi_ngay_stt` (`maBacSi`,`ngay`,`soThuTu`),
+  ADD KEY `maNhanVienCheckIn` (`maNhanVienCheckIn`),
+  ADD KEY `idx_hangdoi_bacsi_ngay_trangthai` (`maBacSi`,`ngay`,`trangThai`);
+
 ALTER TABLE `hoadon`
   ADD PRIMARY KEY (`maHoaDon`),
   ADD KEY `maLichKham` (`maLichKham`);
 
---
--- Chỉ mục cho bảng `hosobenhan`
---
 ALTER TABLE `hosobenhan`
   ADD PRIMARY KEY (`maHoSo`),
   ADD KEY `maBenhNhan` (`maBenhNhan`),
@@ -1701,43 +2134,29 @@ ALTER TABLE `hosobenhan`
   ADD KEY `maLichKham` (`maLichKham`),
   ADD KEY `idx_hosobenhan_isDeleted` (`isDeleted`);
 
---
--- Chỉ mục cho bảng `khoa`
---
 ALTER TABLE `khoa`
   ADD PRIMARY KEY (`maKhoa`);
 
---
--- Chỉ mục cho bảng `lichkham`
---
 ALTER TABLE `lichkham`
   ADD PRIMARY KEY (`maLichKham`),
   ADD KEY `maBacSi` (`maBacSi`),
   ADD KEY `maBenhNhan` (`maBenhNhan`),
   ADD KEY `maCa` (`maCa`),
   ADD KEY `maSuat` (`maSuat`),
-  ADD KEY `maGoi` (`maGoi`);
+  ADD KEY `maGoi` (`maGoi`),
+  ADD KEY `maNhanVienTao` (`maNhanVienTao`);
 
---
--- Chỉ mục cho bảng `lienhe`
---
 ALTER TABLE `lienhe`
   ADD PRIMARY KEY (`maLienHe`),
   ADD KEY `fk_lienhe_nguoixuly` (`nguoiXuLy`),
   ADD KEY `idx_trangThai` (`trangThai`),
   ADD KEY `idx_thoiGianGui` (`thoiGianGui`);
 
---
--- Chỉ mục cho bảng `mail_notification_log`
---
 ALTER TABLE `mail_notification_log`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uq_mail_event_recipient` (`event_code`,`event_key`,`recipient_email`),
   ADD KEY `idx_mail_sent_at` (`sent_at`);
 
---
--- Chỉ mục cho bảng `medicine_stock_log`
---
 ALTER TABLE `medicine_stock_log`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_medicine_stock_log_maThuoc` (`maThuoc`),
@@ -1745,17 +2164,11 @@ ALTER TABLE `medicine_stock_log`
   ADD KEY `idx_medicine_stock_log_maHoSo` (`maHoSo`),
   ADD KEY `idx_medicine_stock_log_createdAt` (`createdAt`);
 
---
--- Chỉ mục cho bảng `ngaynghi`
---
 ALTER TABLE `ngaynghi`
   ADD PRIMARY KEY (`maNghi`),
   ADD KEY `maBacSi` (`maBacSi`),
   ADD KEY `maCa` (`maCa`);
 
---
--- Chỉ mục cho bảng `nguoidung`
---
 ALTER TABLE `nguoidung`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `tenDangNhap` (`tenDangNhap`),
@@ -1763,49 +2176,31 @@ ALTER TABLE `nguoidung`
   ADD UNIQUE KEY `email` (`email`),
   ADD KEY `idx_nguoidung_isDeleted` (`isDeleted`);
 
---
--- Chỉ mục cho bảng `nhanvien`
---
 ALTER TABLE `nhanvien`
   ADD PRIMARY KEY (`maNhanVien`),
   ADD UNIQUE KEY `nguoiDungId` (`nguoiDungId`);
 
---
--- Chỉ mục cho bảng `quantrivien`
---
 ALTER TABLE `quantrivien`
   ADD PRIMARY KEY (`maQuanTriVien`),
   ADD UNIQUE KEY `nguoiDungId` (`nguoiDungId`);
 
---
--- Chỉ mục cho bảng `suatkham`
---
 ALTER TABLE `suatkham`
   ADD PRIMARY KEY (`maSuat`),
   ADD UNIQUE KEY `uniq_suatkham_slot_version` (`maCa`,`gioBatDau`,`gioKetThuc`,`effectiveFrom`),
   ADD KEY `maCa` (`maCa`);
 
---
--- Chỉ mục cho bảng `thongbaoadmin`
---
 ALTER TABLE `thongbaoadmin`
   ADD PRIMARY KEY (`maThongBao`),
   ADD KEY `fk_tba_nguoidung` (`nguoiDungId`),
   ADD KEY `fk_tba_ngaynghi` (`maNghi`),
   ADD KEY `fk_tba_yeucau` (`maYeuCau`);
 
---
--- Chỉ mục cho bảng `thongbaobenhnhan`
---
 ALTER TABLE `thongbaobenhnhan`
   ADD PRIMARY KEY (`maThongBao`),
   ADD KEY `maBenhNhan` (`maBenhNhan`),
   ADD KEY `idx_daxem` (`daXem`),
   ADD KEY `idx_thoigian` (`thoiGian`);
 
---
--- Chỉ mục cho bảng `thongbaolichkham`
---
 ALTER TABLE `thongbaolichkham`
   ADD PRIMARY KEY (`maThongBao`),
   ADD KEY `maBacSi` (`maBacSi`),
@@ -1813,240 +2208,134 @@ ALTER TABLE `thongbaolichkham`
   ADD KEY `idx_daxem` (`daXem`),
   ADD KEY `idx_thoigian` (`thoiGian`);
 
---
--- Chỉ mục cho bảng `thuoc`
---
 ALTER TABLE `thuoc`
   ADD PRIMARY KEY (`maThuoc`),
   ADD KEY `idx_tenThuoc` (`tenThuoc`),
   ADD KEY `idx_loaiThuoc` (`loaiThuoc`);
 
---
--- AUTO_INCREMENT cho các bảng đã đổ
---
 
---
--- AUTO_INCREMENT cho bảng `calamviec`
---
 ALTER TABLE `calamviec`
   MODIFY `maCa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
---
--- AUTO_INCREMENT cho bảng `chitietdonthuoc`
---
 ALTER TABLE `chitietdonthuoc`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
---
--- AUTO_INCREMENT cho bảng `doimatkhau`
---
 ALTER TABLE `doimatkhau`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
---
--- AUTO_INCREMENT cho bảng `donthuoc`
---
 ALTER TABLE `donthuoc`
-  MODIFY `maDonThuoc` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `maDonThuoc` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
---
--- AUTO_INCREMENT cho bảng `goikham`
---
 ALTER TABLE `goikham`
   MODIFY `maGoi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
---
--- AUTO_INCREMENT cho bảng `hoadon`
---
+ALTER TABLE `hangdoikham`
+  MODIFY `maHangDoi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
 ALTER TABLE `hoadon`
-  MODIFY `maHoaDon` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `maHoaDon` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
---
--- AUTO_INCREMENT cho bảng `lichkham`
---
 ALTER TABLE `lichkham`
-  MODIFY `maLichKham` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
+  MODIFY `maLichKham` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=110;
 
---
--- AUTO_INCREMENT cho bảng `lienhe`
---
 ALTER TABLE `lienhe`
-  MODIFY `maLienHe` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `maLienHe` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
---
--- AUTO_INCREMENT cho bảng `mail_notification_log`
---
 ALTER TABLE `mail_notification_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=146;
 
---
--- AUTO_INCREMENT cho bảng `medicine_stock_log`
---
 ALTER TABLE `medicine_stock_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
---
--- AUTO_INCREMENT cho bảng `ngaynghi`
---
 ALTER TABLE `ngaynghi`
-  MODIFY `maNghi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `maNghi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
---
--- AUTO_INCREMENT cho bảng `nguoidung`
---
 ALTER TABLE `nguoidung`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
 
---
--- AUTO_INCREMENT cho bảng `suatkham`
---
 ALTER TABLE `suatkham`
   MODIFY `maSuat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 
---
--- AUTO_INCREMENT cho bảng `thongbaoadmin`
---
 ALTER TABLE `thongbaoadmin`
-  MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
---
--- AUTO_INCREMENT cho bảng `thongbaobenhnhan`
---
 ALTER TABLE `thongbaobenhnhan`
-  MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
 
---
--- AUTO_INCREMENT cho bảng `thongbaolichkham`
---
 ALTER TABLE `thongbaolichkham`
-  MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=331;
+  MODIFY `maThongBao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=573;
 
---
--- AUTO_INCREMENT cho bảng `thuoc`
---
 ALTER TABLE `thuoc`
-  MODIFY `maThuoc` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
+  MODIFY `maThuoc` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=307;
 
---
--- Các ràng buộc cho các bảng đã đổ
---
 
---
--- Các ràng buộc cho bảng `bacsi`
---
 ALTER TABLE `bacsi`
   ADD CONSTRAINT `bacsi_ibfk_1` FOREIGN KEY (`nguoiDungId`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `bacsi_ibfk_2` FOREIGN KEY (`maChuyenKhoa`) REFERENCES `chuyenkhoa` (`maChuyenKhoa`) ON DELETE SET NULL;
 
---
--- Các ràng buộc cho bảng `benhnhan`
---
 ALTER TABLE `benhnhan`
   ADD CONSTRAINT `benhnhan_ibfk_1` FOREIGN KEY (`nguoiDungId`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE;
 
---
--- Các ràng buộc cho bảng `chitietdonthuoc`
---
 ALTER TABLE `chitietdonthuoc`
   ADD CONSTRAINT `chitietdonthuoc_ibfk_1` FOREIGN KEY (`maDonThuoc`) REFERENCES `donthuoc` (`maDonThuoc`),
   ADD CONSTRAINT `chitietdonthuoc_ibfk_2` FOREIGN KEY (`maThuoc`) REFERENCES `thuoc` (`maThuoc`);
 
---
--- Các ràng buộc cho bảng `chuyenkhoa`
---
 ALTER TABLE `chuyenkhoa`
   ADD CONSTRAINT `chuyenkhoa_ibfk_1` FOREIGN KEY (`maKhoa`) REFERENCES `khoa` (`maKhoa`) ON DELETE CASCADE;
 
---
--- Các ràng buộc cho bảng `doimatkhau`
---
 ALTER TABLE `doimatkhau`
   ADD CONSTRAINT `doimatkhau_ibfk_1` FOREIGN KEY (`nguoiDungId`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `doimatkhau_ibfk_2` FOREIGN KEY (`nguoiXuLy`) REFERENCES `nguoidung` (`id`) ON DELETE SET NULL;
 
---
--- Các ràng buộc cho bảng `donthuoc`
---
 ALTER TABLE `donthuoc`
   ADD CONSTRAINT `donthuoc_ibfk_1` FOREIGN KEY (`maLichKham`) REFERENCES `lichkham` (`maLichKham`);
 
---
--- Các ràng buộc cho bảng `hoadon`
---
+ALTER TABLE `hangdoikham`
+  ADD CONSTRAINT `hangdoikham_ibfk_1` FOREIGN KEY (`maLichKham`) REFERENCES `lichkham` (`maLichKham`) ON DELETE CASCADE,
+  ADD CONSTRAINT `hangdoikham_ibfk_2` FOREIGN KEY (`maBacSi`) REFERENCES `bacsi` (`maBacSi`) ON DELETE CASCADE,
+  ADD CONSTRAINT `hangdoikham_ibfk_3` FOREIGN KEY (`maNhanVienCheckIn`) REFERENCES `nhanvien` (`maNhanVien`) ON DELETE SET NULL;
+
 ALTER TABLE `hoadon`
   ADD CONSTRAINT `hoadon_ibfk_1` FOREIGN KEY (`maLichKham`) REFERENCES `lichkham` (`maLichKham`);
 
---
--- Các ràng buộc cho bảng `hosobenhan`
---
 ALTER TABLE `hosobenhan`
   ADD CONSTRAINT `hosobenhan_ibfk_1` FOREIGN KEY (`maBenhNhan`) REFERENCES `benhnhan` (`maBenhNhan`) ON DELETE CASCADE,
   ADD CONSTRAINT `hosobenhan_ibfk_2` FOREIGN KEY (`maBacSi`) REFERENCES `bacsi` (`maBacSi`) ON DELETE SET NULL,
   ADD CONSTRAINT `hosobenhan_ibfk_3` FOREIGN KEY (`maLichKham`) REFERENCES `lichkham` (`maLichKham`) ON DELETE SET NULL;
 
---
--- Các ràng buộc cho bảng `lichkham`
---
 ALTER TABLE `lichkham`
   ADD CONSTRAINT `lichkham_ibfk_1` FOREIGN KEY (`maBacSi`) REFERENCES `bacsi` (`maBacSi`),
   ADD CONSTRAINT `lichkham_ibfk_2` FOREIGN KEY (`maBenhNhan`) REFERENCES `benhnhan` (`maBenhNhan`),
   ADD CONSTRAINT `lichkham_ibfk_3` FOREIGN KEY (`maCa`) REFERENCES `calamviec` (`maCa`),
   ADD CONSTRAINT `lichkham_ibfk_4` FOREIGN KEY (`maSuat`) REFERENCES `suatkham` (`maSuat`),
-  ADD CONSTRAINT `lichkham_ibfk_5` FOREIGN KEY (`maGoi`) REFERENCES `goikham` (`maGoi`);
+  ADD CONSTRAINT `lichkham_ibfk_5` FOREIGN KEY (`maGoi`) REFERENCES `goikham` (`maGoi`),
+  ADD CONSTRAINT `lichkham_ibfk_6` FOREIGN KEY (`maNhanVienTao`) REFERENCES `nhanvien` (`maNhanVien`) ON DELETE SET NULL;
 
---
--- Các ràng buộc cho bảng `lienhe`
---
 ALTER TABLE `lienhe`
   ADD CONSTRAINT `fk_lienhe_nguoixuly` FOREIGN KEY (`nguoiXuLy`) REFERENCES `nguoidung` (`id`) ON DELETE SET NULL;
 
---
--- Các ràng buộc cho bảng `ngaynghi`
---
 ALTER TABLE `ngaynghi`
   ADD CONSTRAINT `ngaynghi_ibfk_1` FOREIGN KEY (`maBacSi`) REFERENCES `bacsi` (`maBacSi`),
   ADD CONSTRAINT `ngaynghi_ibfk_2` FOREIGN KEY (`maCa`) REFERENCES `calamviec` (`maCa`);
 
---
--- Các ràng buộc cho bảng `nhanvien`
---
 ALTER TABLE `nhanvien`
   ADD CONSTRAINT `nhanvien_ibfk_1` FOREIGN KEY (`nguoiDungId`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE;
 
---
--- Các ràng buộc cho bảng `quantrivien`
---
 ALTER TABLE `quantrivien`
   ADD CONSTRAINT `quantrivien_ibfk_1` FOREIGN KEY (`nguoiDungId`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE;
 
---
--- Các ràng buộc cho bảng `suatkham`
---
 ALTER TABLE `suatkham`
   ADD CONSTRAINT `suatkham_ibfk_1` FOREIGN KEY (`maCa`) REFERENCES `calamviec` (`maCa`);
 
---
--- Các ràng buộc cho bảng `thongbaoadmin`
---
 ALTER TABLE `thongbaoadmin`
   ADD CONSTRAINT `fk_tba_ngaynghi` FOREIGN KEY (`maNghi`) REFERENCES `ngaynghi` (`maNghi`) ON DELETE SET NULL,
   ADD CONSTRAINT `fk_tba_nguoidung` FOREIGN KEY (`nguoiDungId`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_tba_yeucau` FOREIGN KEY (`maYeuCau`) REFERENCES `doimatkhau` (`id`) ON DELETE SET NULL;
 
---
--- Các ràng buộc cho bảng `thongbaobenhnhan`
---
 ALTER TABLE `thongbaobenhnhan`
   ADD CONSTRAINT `thongbaobenhnhan_ibfk_1` FOREIGN KEY (`maBenhNhan`) REFERENCES `benhnhan` (`maBenhNhan`) ON DELETE CASCADE;
 
---
--- Các ràng buộc cho bảng `thongbaolichkham`
---
 ALTER TABLE `thongbaolichkham`
   ADD CONSTRAINT `thongbao_ibfk_1` FOREIGN KEY (`maBacSi`) REFERENCES `bacsi` (`maBacSi`) ON DELETE CASCADE,
   ADD CONSTRAINT `thongbao_ibfk_2` FOREIGN KEY (`maLichKham`) REFERENCES `lichkham` (`maLichKham`) ON DELETE SET NULL;
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

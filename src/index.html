@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -1847,6 +1847,8 @@
                     });
 
                     html += '</div>';
+                } else if (data.loiKhuyen) {
+                    html += 'Mình cần thêm một chút thông tin để gợi ý chuyên khoa phù hợp hơn:';
                 }
 
                 if (data.loiKhuyen) {
@@ -1905,7 +1907,7 @@
                         return;
                     }
 
-                    if (data.type === 'suggestions' && data.suggestions?.length > 0) {
+                    if (data.type === 'suggestions' && (data.suggestions?.length > 0 || data.loiKhuyen)) {
                         renderSuggestions(data);
                     } else if (data.type === 'text' && data.message) {
                         addBotMessage(escapeHtml(data.message));

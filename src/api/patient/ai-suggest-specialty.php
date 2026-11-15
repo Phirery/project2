@@ -16,25 +16,25 @@ function getAiSuggestModeConfig(): array
             'workspaceSlug' => ANYTHINGLLM_WORKSPACE_FAST,
             'label' => 'Nhanh',
             'maxSuggestions' => 2,
-            'reasonStyle' => 'ngắn gọn',
-            'adviceStyle' => 'cực ngắn',
-            'modeInstruction' => 'Ưu tiên phản hồi thật nhanh. Chỉ nêu kết luận ngắn gọn, tránh giải thích dài.',
+            'reasonStyle' => 'ngắn gọn (1 câu)',
+            'adviceStyle' => 'cực ngắn (1 câu)',
+            'modeInstruction' => 'Chế độ Nhanh: ưu tiên phản hồi súc tích, đi thẳng vào kết luận.',
         ],
         AI_SUGGEST_MODE_EXPERT => [
             'workspaceSlug' => ANYTHINGLLM_WORKSPACE_REASON,
             'label' => 'Chuyên gia',
             'maxSuggestions' => 3,
-            'reasonStyle' => 'rõ ràng',
-            'adviceStyle' => 'ngắn gọn',
-            'modeInstruction' => 'Suy nghĩ kỹ và trả lời súc tích.',
+            'reasonStyle' => 'rõ ràng (1-2 câu)',
+            'adviceStyle' => 'ngắn gọn (1-2 câu)',
+            'modeInstruction' => 'Chế độ Chuyên gia: cân bằng giữa độ chính xác lâm sàng và sự súc tích.',
         ],
         AI_SUGGEST_MODE_DEEP => [
             'workspaceSlug' => ANYTHINGLLM_WORKSPACE_DEEP,
             'label' => 'Chẩn đoán sâu',
             'maxSuggestions' => 3,
-            'reasonStyle' => 'phân tích kỹ hơn',
-            'adviceStyle' => 'chi tiết hơn',
-            'modeInstruction' => 'Suy nghĩ kỹ hơn, tận dụng ngữ cảnh kiến thức trong workspace khi hữu ích.',
+            'reasonStyle' => 'phân tích kỹ mối liên hệ triệu chứng với chuyên khoa (2-3 câu)',
+            'adviceStyle' => 'cụ thể, hữu ích (2-3 câu)',
+            'modeInstruction' => 'Chế độ Chẩn đoán sâu: đối chiếu kỹ ngữ cảnh tài liệu RAG (nếu có) và phân tích các khả năng liên quan.',
         ],
     ];
 }
@@ -87,8 +87,7 @@ function getSpecialtiesFromDB(mysqli $conn): array
     $sql = "
         SELECT
             ck.maChuyenKhoa,
-            ck.tenChuyenKhoa,
-            ck.moTa
+            ck.tenChuyenKhoa
         FROM chuyenkhoa ck
         ORDER BY ck.tenChuyenKhoa ASC
     ";
@@ -97,8 +96,7 @@ function getSpecialtiesFromDB(mysqli $conn): array
     while ($row = $result->fetch_assoc()) {
         $specialties[] = [
             'maChuyenKhoa' => $row['maChuyenKhoa'],
-            'tenChuyenKhoa' => $row['tenChuyenKhoa'],
-            'moTa' => $row['moTa'] ?? ''
+            'tenChuyenKhoa' => $row['tenChuyenKhoa']
         ];
     }
     return $specialties;
@@ -109,37 +107,35 @@ function buildPrompt(string $symptoms, array $specialties, array $modeConfig): s
 {
     $specialtyList = '';
     foreach ($specialties as $s) {
-        $desc = $s['moTa'] !== '' ? " - {$s['moTa']}" : '';
-        $specialtyList .= "- {$s['maChuyenKhoa']}: {$s['tenChuyenKhoa']}{$desc}\n";
+        $specialtyList .= "{$s['maChuyenKhoa']}: {$s['tenChuyenKhoa']}\n";
     }
+    $specialtyList = rtrim($specialtyList);
 
     $maxSuggestions = (int)($modeConfig['maxSuggestions'] ?? 3);
-    $reasonStyle = $modeConfig['reasonStyle'] ?? 'rõ ràng';
-    $adviceStyle = $modeConfig['adviceStyle'] ?? 'ngắn gọn';
+    $reasonStyle = $modeConfig['reasonStyle'] ?? 'rõ ràng (1-2 câu)';
+    $adviceStyle = $modeConfig['adviceStyle'] ?? 'ngắn gọn (1-2 câu)';
     $modeInstruction = $modeConfig['modeInstruction'] ?? '';
 
     return <<<PROMPT
-Bạn là trợ lý y tế AI của hệ thống Eden Health. Nhiệm vụ của bạn là dựa trên triệu chứng bệnh nhân mô tả, gợi ý chuyên khoa phù hợp nhất từ danh sách chuyên khoa bên dưới.
-
-{$modeInstruction}
-
-DANH SÁCH CHUYÊN KHOA CÓ SẴN:
-{$specialtyList}
-
-QUY TẮC:
-1. Chỉ gợi ý từ danh sách chuyên khoa trên, KHÔNG tạo chuyên khoa mới.
-2. Gợi ý tối đa {$maxSuggestions} chuyên khoa, sắp xếp theo độ phù hợp giảm dần.
-3. Mỗi gợi ý phải có lý do {$reasonStyle} bằng tiếng Việt.
-4. Đánh giá độ tin cậy từ 0-100 cho mỗi gợi ý.
-5. Đưa ra lời khuyên chung {$adviceStyle} bằng tiếng Việt.
-6. LUÔN trả lời bằng JSON hợp lệ, KHÔNG thêm text ngoài JSON.
-7. Đây chỉ là gợi ý tham khảo, không phải chẩn đoán y khoa.
+Bạn là trợ lý phân luồng chuyên khoa y tế của Eden Health. {$modeInstruction}
 
 TRIỆU CHỨNG BỆNH NHÂN:
-"{$symptoms}"
+"""
+{$symptoms}
+"""
 
-Trả lời CHÍNH XÁC theo format JSON sau (không thêm markdown, không thêm text):
-{"suggestions":[{"maChuyenKhoa":"...","tenChuyenKhoa":"...","lyDo":"...","doTinCay":0}],"loiKhuyen":"..."}
+DANH SÁCH CHUYÊN KHOA HỢP LỆ (mã: tên):
+{$specialtyList}
+
+HƯỚNG DẪN:
+1. Nếu có ngữ cảnh RAG liên quan đến triệu chứng, tham khảo chuyên khoa theo thứ tự ưu tiên (priority_1 -> priority_4) và đối chiếu đúng `maChuyenKhoa` có trong danh sách trên.
+2. Chỉ chọn `maChuyenKhoa` có trong danh sách trên; KHÔNG tự tạo chuyên khoa mới (các nhóm không có khoa riêng như truyền nhiễm, cơ xương khớp, tâm thần... phải quy về chuyên khoa hiện có phù hợp như Nội Tổng Hợp, Ngoại Chấn Thương Chỉnh Hình, Nội Thần Kinh).
+3. Không tự suy đoán bệnh nhân là trẻ em (Nhi) nếu mô tả không nêu độ tuổi hoặc đối tượng trẻ nhỏ.
+4. Nếu mô tả đã đủ dữ kiện định hướng, hãy chọn tối đa {$maxSuggestions} chuyên khoa theo độ phù hợp giảm dần và chấm `doTinCay` (0-100). Chỉ khi mô tả quá mơ hồ, thiếu dữ kiện phân biệt khoa (vd chỉ ghi "mệt", "sốt", "đau") hoặc không phải triệu chứng bệnh, trả về `"suggestions":[]` và đặt 1-2 câu hỏi làm rõ ngắn gọn (vị trí, triệu chứng kèm theo, thời gian, độ tuổi) trong `loiKhuyen` để người bệnh nhập lại mô tả đầy đủ hơn.
+5. Viết `lyDo` {$reasonStyle} và `loiKhuyen` {$adviceStyle} bằng tiếng Việt tự nhiên cho bệnh nhân (không sao chép tên bệnh tiếng Anh hay ghi chú nội bộ từ tài liệu; nhắc đi cấp cứu ngay nếu có dấu hiệu nguy hiểm; nêu rõ chỉ mang tính tham khảo).
+
+Chỉ trả về đúng 1 JSON hợp lệ (không markdown, không thêm chữ):
+{"suggestions":[{"maChuyenKhoa":"...","lyDo":"...","doTinCay":0}],"loiKhuyen":"..."}
 PROMPT;
 }
 
@@ -193,18 +189,29 @@ try {
 
     // Validate & sanitize suggestions
     $validSuggestions = [];
+    $seenCodes = [];
     $specialtyMap = array_column($specialties, 'tenChuyenKhoa', 'maChuyenKhoa');
+    $maxSuggestions = (int)($modeConfig['maxSuggestions'] ?? 3);
 
-    foreach ($parsed['suggestions'] as $suggestion) {
-        $maChuyenKhoa = $suggestion['maChuyenKhoa'] ?? '';
-        // Verify the specialty actually exists in our database
-        if (isset($specialtyMap[$maChuyenKhoa])) {
-            $validSuggestions[] = [
-                'maChuyenKhoa' => $maChuyenKhoa,
-                'tenChuyenKhoa' => $specialtyMap[$maChuyenKhoa],
-                'lyDo' => $suggestion['lyDo'] ?? '',
-                'doTinCay' => max(0, min(100, (int)($suggestion['doTinCay'] ?? 0)))
-            ];
+    if (is_array($parsed['suggestions'])) {
+        foreach ($parsed['suggestions'] as $suggestion) {
+            if (!is_array($suggestion)) {
+                continue;
+            }
+            $maChuyenKhoa = trim((string)($suggestion['maChuyenKhoa'] ?? ''));
+            // Verify the specialty exists in our database and deduplicate
+            if ($maChuyenKhoa !== '' && isset($specialtyMap[$maChuyenKhoa]) && !isset($seenCodes[$maChuyenKhoa])) {
+                $seenCodes[$maChuyenKhoa] = true;
+                $validSuggestions[] = [
+                    'maChuyenKhoa' => $maChuyenKhoa,
+                    'tenChuyenKhoa' => $specialtyMap[$maChuyenKhoa],
+                    'lyDo' => trim((string)($suggestion['lyDo'] ?? '')),
+                    'doTinCay' => max(0, min(100, (int)($suggestion['doTinCay'] ?? 0)))
+                ];
+                if (count($validSuggestions) >= $maxSuggestions) {
+                    break;
+                }
+            }
         }
     }
 
@@ -213,7 +220,7 @@ try {
         'type' => 'suggestions',
         'mode' => $mode,
         'suggestions' => $validSuggestions,
-        'loiKhuyen' => $parsed['loiKhuyen'] ?? ''
+        'loiKhuyen' => trim((string)($parsed['loiKhuyen'] ?? ''))
     ], JSON_UNESCAPED_UNICODE);
 
 } catch (Exception $e) {
