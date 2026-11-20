@@ -8,7 +8,7 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="favicon.ico">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     
     <link rel="stylesheet" href="assets/css/common.css">
 
@@ -35,7 +35,7 @@
         
         /* Header Section */
         .header-section {
-            background: linear-gradient(135deg, #667eea 0%, #4cac87 100%);
+            background: var(--primary-blue-dark);
             padding: 40px 0 60px;
             position: relative;
             overflow: hidden;
@@ -271,22 +271,22 @@
 
         .search-box { position: relative; }
         .search-box input { padding-left: 40px; border-radius: 8px; border: 1px solid #e9ecef; height: 42px; }
-        .search-box input:focus { border-color: #667eea; box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25); }
+        .search-box input:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25); }
         .search-box i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #8898aa; pointer-events: none; }
 
         .form-select, .form-control { border-radius: 8px; border: 1px solid #e9ecef; height: 42px; }
-        .form-select:focus, .form-control:focus { border-color: #667eea; box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25); }
+        .form-select:focus, .form-control:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25); }
 
         /* Table */
         .table-responsive { padding: 25px; }
         .record-table { margin-bottom: 0; }
-        .record-table thead { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+        .record-table thead { background: var(--primary-blue); color: white; }
         .record-table thead th { border: none; padding: 15px 12px; font-weight: 600; font-size: 0.9rem; white-space: nowrap; }
         .record-table tbody td { padding: 15px 12px; vertical-align: middle; border-bottom: 1px solid #e8eef5; }
         .record-table tbody tr:hover { background: #f8f9fa; }
 
         .btn-view {
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            background: var(--primary-blue);
             color: white;
             border: none;
             padding: 6px 14px;
@@ -299,14 +299,14 @@
             align-items: center;
             gap: 5px;
         }
-        .btn-view:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); color: white; }
+        .btn-view:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3); color: white; }
 
         /* Pagination */
         .pagination-container { display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; border-top: 2px solid #e8eef5; }
         .pagination { margin: 0; gap: 5px; }
         .page-link { color: var(--primary-blue); border: 2px solid #e8eef5; border-radius: 8px; padding: 6px 14px; font-weight: 600; transition: all 0.3s; font-size: 0.9rem; }
         .page-link:hover { background: var(--primary-blue); color: white; border-color: var(--primary-blue); }
-        .page-item.active .page-link { background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue)); border-color: var(--primary-blue); }
+        .page-item.active .page-link { background: var(--primary-blue); border-color: var(--primary-blue); }
         .page-item.disabled .page-link { background: #f8f9fa; border-color: #e8eef5; }
 
         /* Modal Styles */

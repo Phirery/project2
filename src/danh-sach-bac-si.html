@@ -8,7 +8,7 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="favicon.ico">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     
     <link rel="stylesheet" href="assets/css/common.css">
 
@@ -26,7 +26,7 @@
 
         /* Header Section */
         .header-section {
-            background: linear-gradient(135deg, #667eea 0%, #4cac87 100%);
+            background: var(--primary-blue-dark);
             padding: 40px 0 60px;
             position: relative;
             overflow: hidden;
@@ -98,7 +98,7 @@
         }
 
         .filter-box h5 {
-            color: var(--primary-purple);
+            color: var(--primary-blue);
             font-weight: 700;
             margin-bottom: 20px;
             font-size: 1.1rem;
@@ -113,8 +113,8 @@
         }
 
         .form-control:focus, .form-select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.14);
         }
 
         .form-label {
@@ -173,15 +173,15 @@
 
         .doctor-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
-            border-color: var(--primary-purple);
+            box-shadow: 0 15px 35px rgba(74, 144, 226, 0.16);
+            border-color: var(--primary-blue);
         }
 
         .doctor-image-wrapper {
             position: relative;
             height: 200px;
             overflow: hidden;
-            background: linear-gradient(135deg, #f5f7fa, #e8eef5);
+            background: var(--light-bg);
         }
 
         .doctor-image {
@@ -215,13 +215,13 @@
 
         .doctor-specialty {
             display: inline-block;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-            color: var(--primary-purple);
+            background: var(--primary-blue-light);
+            color: var(--primary-blue-dark);
             padding: 4px 12px;
             border-radius: 15px;
             font-size: 0.8rem;
             font-weight: 600;
-            border: 1px solid rgba(102, 126, 234, 0.3);
+            border: 1px solid rgba(74, 144, 226, 0.28);
             margin-bottom: 12px;
             display: -webkit-box;
             -webkit-line-clamp: 1;
@@ -240,7 +240,7 @@
         }
 
         .doctor-experience i {
-            color: var(--primary-purple);
+            color: var(--primary-blue);
         }
 
         .doctor-footer {
@@ -266,7 +266,7 @@
         }
 
         .btn-view-detail {
-            background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+            background: var(--primary-blue);
             color: white;
             border: none;
             padding: 6px 14px;
@@ -282,14 +282,15 @@
         }
 
         .btn-view-detail:hover {
+            background: var(--primary-blue-dark);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.28);
             color: white;
         }
 
         /* UI States */
         .loading { text-align: center; padding: 60px 20px; }
-        .spinner-border { width: 2.5rem; height: 2.5rem; border-width: 0.3rem; color: var(--primary-purple); }
+        .spinner-border { width: 2.5rem; height: 2.5rem; border-width: 0.3rem; color: var(--primary-blue); }
         .empty-state { text-align: center; padding: 60px 20px; color: #999; }
         .empty-state i { font-size: 3.5rem; margin-bottom: 15px; color: #ddd; }
         .empty-state h4 { color: #64748b; margin-bottom: 8px; }
@@ -306,7 +307,7 @@
         }
         .pagination { margin: 0; gap: 5px; }
         .page-link {
-            color: var(--primary-purple);
+            color: var(--primary-blue);
             border: 2px solid #e8eef5;
             border-radius: 8px;
             padding: 6px 14px;
@@ -315,13 +316,13 @@
             font-size: 0.9rem;
         }
         .page-link:hover {
-            background: var(--primary-purple);
+            background: var(--primary-blue);
             color: white;
-            border-color: var(--primary-purple);
+            border-color: var(--primary-blue);
         }
         .page-item.active .page-link {
-            background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
-            border-color: var(--primary-purple);
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
         }
         .page-item.disabled .page-link {
             background: #f8f9fa;

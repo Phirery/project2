@@ -8,11 +8,11 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="favicon.ico">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link id="sidebar-admin-css" rel="stylesheet" href="assets/css/sidebar-admin.css">
     <link rel="stylesheet" href="assets/css/admin-summary.css">
     <style>
-        .summary-chip.total { background: rgba(102, 126, 234, 0.12); border-color: rgba(102, 126, 234, 0.3); }
+        .summary-chip.total { background: rgba(74, 144, 226, 0.12); border-color: rgba(74, 144, 226, 0.3); }
         .summary-chip.specialty-1 { background: rgba(32, 201, 151, 0.12); border-color: rgba(32, 201, 151, 0.28); }
         .summary-chip.specialty-2 { background: rgba(255, 152, 0, 0.12); border-color: rgba(255, 152, 0, 0.28); }
         .summary-chip.specialty-3 { background: rgba(23, 162, 184, 0.12); border-color: rgba(23, 162, 184, 0.28); }
@@ -27,7 +27,7 @@
         }
 
         .filter-section h5 {
-            color: var(--primary-purple);
+            color: var(--primary-blue);
             margin-bottom: 20px;
             font-weight: 700;
         }
@@ -53,7 +53,7 @@
         }
 
         .btn-add {
-            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+            background: var(--primary-blue);
             color: white;
             border: none;
             padding: 10px 25px;
@@ -65,7 +65,7 @@
 
         .btn-add:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
         }
 
         .custom-table {
@@ -111,13 +111,13 @@
 
         .specialty-badge {
             display: inline-block;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(0, 174, 239, 0.1));
-            color: var(--primary-purple);
+            background: var(--primary-blue-light);
+            color: var(--primary-blue);
             padding: 6px 15px;
             border-radius: 20px;
             font-size: 0.85rem;
             font-weight: 600;
-            border: 1px solid rgba(102, 126, 234, 0.3);
+            border: 1px solid rgba(74, 144, 226, 0.3);
         }
 
         .btn-action {
@@ -166,7 +166,7 @@
         }
 
         .modal-header {
-            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+            background: var(--primary-blue);
             color: white;
             border-radius: 15px 15px 0 0;
             padding: 20px 25px;
@@ -196,12 +196,12 @@
 
         .form-control:focus,
         .form-select:focus {
-            border-color: var(--primary-purple);
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.15);
         }
 
         .btn-submit {
-            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+            background: var(--primary-blue);
             color: white;
             padding: 12px 30px;
             border: none;
@@ -213,7 +213,7 @@
 
         .btn-submit:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
         }
 
         .doctor-row-main {
@@ -234,7 +234,7 @@
             font-size: 0.8rem;
             font-weight: 700;
             color: #ffffff;
-            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+            background: var(--primary-blue);
         }
 
         .avatar-picker {
@@ -264,7 +264,7 @@
             width: 64px;
             height: 64px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+            background: var(--primary-blue);
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -301,7 +301,7 @@
             color: #ffffff;
             font-size: 1.7rem;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+            background: var(--primary-blue);
         }
 
         .doctor-detail-name {
@@ -371,20 +371,20 @@
         }
 
         .page-link {
-            color: var(--primary-purple);
+            color: var(--primary-blue);
             border: 1px solid #dee2e6;
             margin: 0 3px;
             border-radius: 6px;
         }
 
         .page-link:hover {
-            background: var(--primary-purple);
+            background: var(--primary-blue);
             color: white;
         }
 
         .page-item.active .page-link {
-            background: var(--primary-purple);
-            border-color: var(--primary-purple);
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
         }
 
         @media (max-width: 768px) {

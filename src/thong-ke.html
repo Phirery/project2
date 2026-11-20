@@ -9,7 +9,7 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="favicon.ico">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link id="sidebar-admin-css" rel="stylesheet" href="assets/css/sidebar-admin.css">
     <style>
         .filter-bar {
@@ -53,12 +53,12 @@
         }
 
         .time-btn:hover {
-            border-color: var(--primary-purple);
-            color: var(--primary-purple);
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
         }
 
         .time-btn.active {
-            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+            background: var(--primary-blue);
             color: white;
             border-color: transparent;
         }
@@ -157,12 +157,12 @@
         }
 
         .chart-type-btn:hover {
-            background: rgba(102, 126, 234, 0.1);
-            color: var(--primary-purple);
+            background: rgba(74, 144, 226, 0.1);
+            color: var(--primary-blue);
         }
 
         .chart-type-btn.active {
-            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+            background: var(--primary-blue);
             color: white;
         }
 
@@ -587,8 +587,8 @@
                     datasets: [{
                         label: 'Số lịch khám',
                         data: data.values,
-                        backgroundColor: 'rgba(102, 126, 234, 0.8)',
-                        borderColor: 'rgba(102, 126, 234, 1)',
+                        backgroundColor: 'rgba(74, 144, 226, 0.8)',
+                        borderColor: 'rgba(74, 144, 226, 1)',
                         borderWidth: 2
                     }]
                 },
@@ -636,7 +636,7 @@
                         label: 'Số lịch khám',
                         data: data.values,
                         backgroundColor: [
-                            'rgba(102, 126, 234, 0.8)',
+                            'rgba(74, 144, 226, 0.8)',
                             'rgba(0, 174, 239, 0.8)',
                             'rgba(40, 167, 69, 0.8)',
                             'rgba(255, 193, 7, 0.8)',
@@ -779,7 +779,7 @@
                 return `
                     <tr>
                         <td>
-                            <strong style="font-size: 1.2rem; color: ${index < 3 ? 'var(--primary-purple)' : '#666'};">
+                            <strong style="font-size: 1.2rem; color: ${index < 3 ? 'var(--primary-blue)' : '#666'};">
                                 #${index + 1}
                             </strong>
                         </td>
@@ -789,7 +789,7 @@
                         </td>
                         <td>${doctor.tenChuyenKhoa || 'N/A'}</td>
                         <td class="text-center">
-                            <strong style="color: var(--primary-purple);">${doctor.total}</strong>
+                            <strong style="color: var(--primary-blue);">${doctor.total}</strong>
                         </td>
                         <td class="text-center">
                             <strong style="color: #28a745;">${doctor.completed}</strong>

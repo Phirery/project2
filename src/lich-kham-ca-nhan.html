@@ -8,7 +8,7 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="favicon.ico">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     
     <link rel="stylesheet" href="assets/css/common.css">
 
@@ -26,7 +26,7 @@
         
         /* Header Section */
         .header-section {
-            background: linear-gradient(135deg, #667eea 0%, #4cac87 100%);
+            background: var(--primary-blue-dark);
             padding: 40px 0 60px;
             position: relative;
             overflow: hidden;
@@ -96,7 +96,7 @@
         }
 
         .analytics-card {
-            background: linear-gradient(140deg, #f8fbff 0%, #f6f7ff 100%);
+            background: var(--light-bg);
             border: 1px solid #e8eef5;
             border-radius: 14px;
             padding: 16px;
@@ -112,7 +112,7 @@
             right: -18px;
             top: -18px;
             border-radius: 50%;
-            background: rgba(102, 126, 234, 0.1);
+            background: rgba(74, 144, 226, 0.1);
         }
 
         .analytics-card .metric-label {
@@ -212,11 +212,11 @@
             border-bottom: 3px solid transparent;
         }
 
-        .custom-tabs .nav-link:hover { color: var(--primary-purple); }
+        .custom-tabs .nav-link:hover { color: var(--primary-blue); }
         .custom-tabs .nav-link.active {
-            color: var(--primary-purple);
+            color: var(--primary-blue);
             background: transparent;
-            border-bottom-color: var(--primary-purple);
+            border-bottom-color: var(--primary-blue);
         }
         .custom-tabs .badge { font-size: 0.7rem; padding: 3px 8px; }
 
@@ -226,16 +226,16 @@
         
         .search-box { position: relative; }
         .search-box input { padding-left: 40px; border-radius: 8px; border: 1px solid #e9ecef; height: 42px; }
-        .search-box input:focus { border-color: #667eea; box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25); }
+        .search-box input:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25); }
         .search-box i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #8898aa; pointer-events: none; }
         
         .form-select { border-radius: 8px; border: 1px solid #e9ecef; height: 42px; }
-        .form-select:focus { border-color: #667eea; box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25); }
+        .form-select:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25); }
 
         /* Tables */
         .table-responsive { margin-top: 20px; overflow-y: visible; }
         .appointment-table { margin-bottom: 0; }
-        .appointment-table thead { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+        .appointment-table thead { background: var(--primary-blue); color: white; }
         .appointment-table thead th { border: none; padding: 15px 12px; font-weight: 600; font-size: 0.9rem; white-space: nowrap; }
         .appointment-table tbody td { padding: 15px 12px; vertical-align: middle; border-bottom: 1px solid #e8eef5; }
         .appointment-table tbody tr { transition: all 0.2s; }
@@ -263,13 +263,13 @@
 
         /* Modal */
         .modal-content { border-radius: 15px; border: none; }
-        .modal-header { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px 15px 0 0; padding: 20px 25px; }
+        .modal-header { background: var(--primary-blue); color: white; border-radius: 15px 15px 0 0; padding: 20px 25px; }
         .modal-header .btn-close { filter: brightness(0) invert(1); }
         .modal-body { padding: 25px; }
-        .appointment-info { background: #f8f9fa; padding: 15px; border-radius: 10px; border-left: 4px solid var(--primary-purple); }
+        .appointment-info { background: #f8f9fa; padding: 15px; border-radius: 10px; border-left: 4px solid var(--primary-blue); }
         .appointment-info p { margin-bottom: 8px; }
         .appointment-info p:last-child { margin-bottom: 0; }
-        .reschedule-note { background: linear-gradient(135deg, rgba(102,126,234,0.08), rgba(118,75,162,0.08)); border: 1px solid rgba(102,126,234,0.14); border-radius: 12px; padding: 14px 16px; color: #334155; }
+        .reschedule-note { background: var(--primary-blue-light); border: 1px solid rgba(74, 144, 226,0.14); border-radius: 12px; padding: 14px 16px; color: #334155; }
         .reschedule-summary { background: #f8fafc; border: 1px solid #e6ebf2; border-radius: 12px; padding: 14px 16px; }
         .reschedule-summary .summary-row { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; }
         .reschedule-summary .summary-label { color: #64748b; font-weight: 600; }
@@ -279,8 +279,8 @@
         .reschedule-section h6 { margin-bottom: 12px; color: #1f2937; font-weight: 700; }
         .reschedule-shifts, .reschedule-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
         .reschedule-chip { border: 1.5px solid #d8e2ef; border-radius: 12px; padding: 12px 10px; background: #fff; font-weight: 700; color: #1f2937; transition: all 0.25s ease; text-align: center; cursor: pointer; }
-        .reschedule-chip:hover:not(.disabled) { border-color: var(--primary-purple); box-shadow: 0 8px 20px rgba(102,126,234,0.12); transform: translateY(-2px); }
-        .reschedule-chip.selected { border-color: var(--primary-purple); background: rgba(102,126,234,0.12); color: var(--primary-purple); }
+        .reschedule-chip:hover:not(.disabled) { border-color: var(--primary-blue); box-shadow: 0 8px 20px rgba(74, 144, 226,0.12); transform: translateY(-2px); }
+        .reschedule-chip.selected { border-color: var(--primary-blue); background: rgba(74, 144, 226,0.12); color: var(--primary-blue); }
         .reschedule-chip.disabled { opacity: 0.5; cursor: not-allowed; background: #f8fafc; }
         .reschedule-slot-time { display: block; font-size: 0.98rem; }
         .reschedule-slot-status { display: block; margin-top: 4px; font-size: 0.77rem; color: #64748b; font-weight: 600; }
@@ -289,7 +289,7 @@
 
         /* Loading & Empty States */
         .loading { text-align: center; padding: 60px 20px; }
-        .spinner-border { width: 2.5rem; height: 2.5rem; border-width: 0.3rem; color: var(--primary-purple); }
+        .spinner-border { width: 2.5rem; height: 2.5rem; border-width: 0.3rem; color: var(--primary-blue); }
         .empty-state { text-align: center; padding: 60px 20px; color: #999; }
         .empty-state i { font-size: 3.5rem; margin-bottom: 15px; color: #ddd; }
         .empty-state h4 { color: #64748b; margin-bottom: 8px; }
@@ -297,9 +297,9 @@
         /* Pagination */
         .pagination-container { display: flex; justify-content: space-between; align-items: center; margin-top: 25px; padding-top: 20px; border-top: 2px solid #e8eef5; }
         .pagination { margin: 0; gap: 5px; }
-        .page-link { color: var(--primary-purple); border: 2px solid #e8eef5; border-radius: 8px; padding: 6px 14px; font-weight: 600; transition: all 0.3s; font-size: 0.9rem; }
-        .page-link:hover { background: var(--primary-purple); color: white; border-color: var(--primary-purple); }
-        .page-item.active .page-link { background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple)); border-color: var(--primary-purple); }
+        .page-link { color: var(--primary-blue); border: 2px solid #e8eef5; border-radius: 8px; padding: 6px 14px; font-weight: 600; transition: all 0.3s; font-size: 0.9rem; }
+        .page-link:hover { background: var(--primary-blue); color: white; border-color: var(--primary-blue); }
+        .page-item.active .page-link { background: var(--primary-blue); border-color: var(--primary-blue); }
         .page-item.disabled .page-link { background: #f8f9fa; border-color: #e8eef5; }
 
         /* Responsive */

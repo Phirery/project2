@@ -9,7 +9,7 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="favicon.ico">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link id="sidebar-admin-css" rel="stylesheet" href="assets/css/sidebar-admin.css">
     <link rel="stylesheet" href="assets/css/admin-summary.css">
     <style>
@@ -100,8 +100,8 @@
         }
 
         .form-select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
         }
 
         .notifications-container {
@@ -126,7 +126,7 @@
 
         .notification-item.unread {
             background: #f0f4ff;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid var(--primary-blue);
         }
 
         .notification-item.unread::before {
@@ -136,7 +136,7 @@
             top: 20px;
             width: 10px;
             height: 10px;
-            background: #667eea;
+            background: var(--primary-blue);
             border-radius: 50%;
         }
 
@@ -211,7 +211,7 @@
         }
 
         .notification-detail i {
-            color: #667eea;
+            color: var(--primary-blue);
         }
 
         .notification-actions {
@@ -342,20 +342,20 @@
         }
 
         .page-link {
-            color: var(--primary-purple);
+            color: var(--primary-blue);
             border: 1px solid #dee2e6;
             margin: 0 3px;
             border-radius: 6px;
         }
 
         .page-link:hover {
-            background: var(--primary-purple);
+            background: var(--primary-blue);
             color: white;
         }
 
         .page-item.active .page-link {
-            background: var(--primary-purple);
-            border-color: var(--primary-purple);
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
         }
 
         .custom-tabs {
@@ -384,12 +384,12 @@
         }
 
         .custom-tabs .nav-link:hover {
-            color: var(--primary-purple);
+            color: var(--primary-blue);
         }
 
         .custom-tabs .nav-link.active {
-            color: var(--primary-purple);
-            border-bottom-color: var(--primary-purple);
+            color: var(--primary-blue);
+            border-bottom-color: var(--primary-blue);
             background: transparent;
         }
 
@@ -464,8 +464,8 @@
         .compose-card .form-control:focus,
         .compose-card .form-select:focus,
         .recipient-panel .form-control:focus {
-            border-color: rgba(102, 126, 234, 0.65);
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.12);
+            border-color: rgba(74, 144, 226, 0.65);
+            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.12);
         }
 
         .compose-card textarea.form-control {
@@ -491,17 +491,17 @@
             padding: 0 20px;
             border: 0;
             border-radius: 999px;
-            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+            background: var(--primary-blue);
             color: #fff;
             font-weight: 600;
             line-height: 1;
-            box-shadow: 0 8px 18px rgba(102, 126, 234, 0.22);
+            box-shadow: 0 8px 18px rgba(74, 144, 226, 0.22);
             transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
         }
 
         #sendBroadcastBtn.btn-add:hover {
             transform: translateY(-1px);
-            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.28);
+            box-shadow: 0 12px 24px rgba(74, 144, 226, 0.28);
             filter: brightness(1.02);
             color: #fff;
         }
@@ -509,13 +509,13 @@
         #sendBroadcastBtn.btn-add:focus,
         #sendBroadcastBtn.btn-add:focus-visible {
             outline: none;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.18), 0 12px 24px rgba(102, 126, 234, 0.28);
+            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.18), 0 12px 24px rgba(74, 144, 226, 0.28);
             color: #fff;
         }
 
         #sendBroadcastBtn.btn-add:active {
             transform: translateY(0);
-            box-shadow: 0 6px 14px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 6px 14px rgba(74, 144, 226, 0.2);
         }
 
         #sendBroadcastBtn.btn-add:disabled {
@@ -593,14 +593,14 @@
         }
 
         .recipient-item:hover {
-            border-color: rgba(102, 126, 234, 0.4);
-            box-shadow: 0 4px 14px rgba(102, 126, 234, 0.08);
+            border-color: rgba(74, 144, 226, 0.4);
+            box-shadow: 0 4px 14px rgba(74, 144, 226, 0.08);
             transform: translateY(-1px);
         }
 
         .recipient-item.selected {
             background: #f0f4ff;
-            border-color: rgba(102, 126, 234, 0.55);
+            border-color: rgba(74, 144, 226, 0.55);
         }
 
         .recipient-main {
