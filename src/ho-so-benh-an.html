@@ -929,7 +929,10 @@
             window.DoctorPageHelper.syncSearchClearButton('searchPending', 'clearSearchPendingBtn');
             window.DoctorPageHelper.syncSearchClearButton('searchCompleted', 'clearSearchCompletedBtn');
             setupMedicineAutocomplete();
-            document.getElementById('editModal').addEventListener('hidden.bs.modal', resetPrescriptionEditor);
+            document.getElementById('editModal').addEventListener('hidden.bs.modal', () => {
+                resetPrescriptionEditor();
+                window.DoctorClinicalOrders?.stopPolling?.();
+            });
 
             await Promise.all([
                 loadStatistics(),

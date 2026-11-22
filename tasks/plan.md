@@ -76,12 +76,12 @@ Bệnh nhân xem hồ sơ, đơn và kết quả đã được duyệt
 - [x] Task 4: Thêm sàng lọc điều dưỡng và chuyển hàng đợi bác sĩ.
 - [x] Task 5: Bổ sung tạo/chỉnh/hủy chỉ định vào hồ sơ bệnh án.
 - [x] Task 6: Làm màn hình cận lâm sàng và trả kết quả.
-- [ ] Task 7: Cho bác sĩ xem, duyệt kết quả và hoàn tất hồ sơ theo điều kiện.
+- [x] Task 7: Cho bác sĩ xem, duyệt kết quả và hoàn tất hồ sơ theo điều kiện.
 
 ### Checkpoint: Clinical loop
 
-- [ ] Một bệnh nhân có thể đi từ check-in đến kết quả đã duyệt, rồi quay lại bác sĩ trong một luồng liên tục.
-- [ ] Không thể truy cập chéo dữ liệu hoặc hoàn thành hồ sơ khi còn chỉ định bắt buộc chưa xử lý.
+- [x] Một bệnh nhân có thể đi từ check-in đến kết quả đã duyệt, rồi quay lại bác sĩ trong một luồng liên tục.
+- [x] Không thể truy cập chéo dữ liệu hoặc hoàn thành hồ sơ khi còn chỉ định bắt buộc chưa xử lý.
 
 ### Phase 3: Prescription, dispensing, and payment
 

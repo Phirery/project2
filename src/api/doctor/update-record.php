@@ -204,10 +204,28 @@ try {
         }
     }
 
-    $existingPrescriptionItems = [];
-    $lowStockWarnings = [];
     $recordStatus = (string)($record['trangThai'] ?? '');
     $wasCompleted = $recordStatus === 'Đã hoàn thành';
+
+    if (!$isDraftSave && $wasCompleted) {
+        // Idempotent guard: khi 2 request hoàn tất đua nhau, request đến sau thấy đã hoàn tất
+        // thì không ghi đè trạng thái, tồn kho, đơn thuốc hay gửi thông báo lần hai.
+        $conn->commit();
+        $transactionStarted = false;
+        echo json_encode([
+            'success' => true,
+            'alreadyCompleted' => true,
+            'message' => 'Hồ sơ đã được hoàn tất trước đó',
+            'recordStatus' => 'Đã hoàn thành',
+            'lowStockMedicines' => [],
+            'mailStatus' => ['attempted' => false, 'success' => false, 'reason' => 'already_completed'],
+            'notificationStatus' => ['attempted' => false, 'success' => false, 'reason' => 'already_completed']
+        ]);
+        exit;
+    }
+
+    $existingPrescriptionItems = [];
+    $lowStockWarnings = [];
 
     if (!empty($record['maLichKham'])) {
         $existingPrescriptionItems = getPrescriptionItemsByAppointment($conn, (int)$record['maLichKham']);

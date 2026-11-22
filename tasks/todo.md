@@ -124,13 +124,13 @@
 **Description:** Hiển thị kết quả theo thời gian thực trong hồ sơ, hỗ trợ bác sĩ duyệt/ghi nhận, quay lại khám khi cần và chỉ hoàn tất khi điều kiện state machine đạt.
 
 **Acceptance criteria:**
-- [ ] Kết quả đã trả hiển thị cạnh chỉ định, có tác giả/thời điểm và tệp đính kèm.
-- [ ] Kết quả chỉ xuất hiện ở API bệnh nhân sau khi được duyệt.
-- [ ] Hoàn tất hồ sơ cập nhật trạng thái liên quan một lần, có transaction và không phá luồng đơn thuốc.
+- [x] Kết quả đã trả hiển thị cạnh chỉ định, có tác giả/thời điểm và tệp đính kèm.
+- [x] Kết quả chỉ xuất hiện ở API bệnh nhân sau khi được duyệt.
+- [x] Hoàn tất hồ sơ cập nhật trạng thái liên quan một lần, có transaction và không phá luồng đơn thuốc.
 
 **Verification:**
-- [ ] Kịch bản: chỉ định → trả kết quả → duyệt → hoàn tất.
-- [ ] Kịch bản đua 2 request hoàn tất chỉ tạo một thay đổi trạng thái.
+- [x] Kịch bản: chỉ định → trả kết quả → duyệt → hoàn tất.
+- [x] Kịch bản đua 2 request hoàn tất chỉ tạo một thay đổi trạng thái.
 
 **Dependencies:** Tasks 5-6
 
@@ -140,8 +140,8 @@
 
 ## Checkpoint: Clinical loop
 
-- [ ] Có dữ liệu demo end-to-end và mỗi bước hiển thị đúng ở đúng vai trò.
-- [ ] Dữ liệu bệnh nhân không lộ kết quả chưa duyệt.
+- [x] Có dữ liệu demo end-to-end và mỗi bước hiển thị đúng ở đúng vai trò.
+- [x] Dữ liệu bệnh nhân không lộ kết quả chưa duyệt.
 
 ## Task 8: Tách kê đơn khỏi phát thuốc và làm trang dược sĩ
 

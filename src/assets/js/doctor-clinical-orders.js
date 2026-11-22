@@ -11,6 +11,8 @@
         filterSearch: '',
         editingOrderItemId: null,
         cancellingOrderItemId: null,
+        redoOrderItemId: null,
+        pollTimer: null,
         hooks: {},
     };
 
@@ -86,10 +88,125 @@
         if (res.ok && payload.success && payload.data) {
             state.orders = Array.isArray(payload.data.chiDinhCanLamSang) ? payload.data.chiDinhCanLamSang : [];
             renderEditPanel();
+            startPollingIfNeeded();
             if (typeof state.hooks.onOrdersChanged === 'function') {
                 state.hooks.onOrdersChanged(payload.data);
             }
         }
+    }
+
+    function fmtTime(val) {
+        if (!val) return '—';
+        if (typeof global.formatDateTime === 'function') {
+            return global.formatDateTime(val);
+        }
+        return String(val);
+    }
+
+    function renderStructuredResultDetails(chiSo) {
+        if (!chiSo || typeof chiSo !== 'object') return '';
+        const parts = [];
+
+        if (chiSo.fields && typeof chiSo.fields === 'object') {
+            const entries = Object.entries(chiSo.fields).filter(([, v]) => {
+                const val = typeof v === 'object' ? (v?.value ?? '') : v;
+                return String(val ?? '').trim() !== '';
+            });
+            if (entries.length) {
+                parts.push(`
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                        ${entries.map(([k, v]) => {
+                            const val = typeof v === 'object' ? (v.value ?? '') : v;
+                            const flag = typeof v === 'object' ? (v.flag ?? 'normal') : 'normal';
+                            const isAbnormal = flag && flag !== 'normal';
+                            return `<span class="badge ${isAbnormal ? 'bg-danger-subtle text-danger border border-danger-subtle' : 'bg-light text-dark border'} tabular-nums">
+                                ${esc(k)}: <strong>${esc(val)}</strong>${isAbnormal ? ` (${esc(flag)})` : ''}
+                            </span>`;
+                        }).join('')}
+                    </div>
+                `);
+            }
+        }
+
+        if (chiSo.sections && typeof chiSo.sections === 'object') {
+            const entries = Object.entries(chiSo.sections).filter(([, v]) => String(v ?? '').trim() !== '');
+            if (entries.length) {
+                parts.push(`
+                    <div class="mt-2 small">
+                        ${entries.map(([k, v]) => `<div><strong>${esc(k)}:</strong> ${esc(v)}</div>`).join('')}
+                    </div>
+                `);
+            }
+        }
+
+        return parts.join('');
+    }
+
+    function renderResultBox(item, isEditable) {
+        const kq = item.ketQua;
+        if (!kq) return '';
+
+        const statusCfg = {
+            'Nháp': { bg: '#F1F5F9', color: '#334155' },
+            'Chờ duyệt': { bg: '#E0F2FE', color: '#075985' },
+            'Đã duyệt': { bg: '#D1FAE5', color: '#065F46' },
+            'Yêu cầu làm lại': { bg: '#FEF3C7', color: '#92400E' },
+        }[kq.trangThai] || { bg: '#F1F5F9', color: '#334155' };
+
+        const attachmentsHtml = Array.isArray(kq.tepDinhKem) && kq.tepDinhKem.length > 0
+            ? `<div class="d-flex flex-wrap gap-2 mt-2">
+                ${kq.tepDinhKem.map((att) => `
+                    <a href="${esc(att.url)}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-sm py-0 px-2">
+                        <i class="fas fa-paperclip me-1"></i>${esc(att.title || 'Tệp đính kèm')}
+                    </a>
+                `).join('')}
+               </div>`
+            : '';
+
+        const isPendingReview = kq.trangThai === 'Chờ duyệt';
+        const isRedoPrompt = state.redoOrderItemId === item.maChiTietChiDinh;
+
+        return `
+            <div class="mt-2 p-2 rounded border" style="background:#F8FAFC;">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <div class="small fw-semibold text-dark">
+                        <i class="fas fa-file-medical-alt text-primary me-1"></i>Kết quả cận lâm sàng (v${Number(kq.phienBan || 1)})
+                    </div>
+                    <span class="cls-status-badge" style="background:${statusCfg.bg};color:${statusCfg.color};">${esc(kq.trangThai)}</span>
+                </div>
+                <div class="small text-secondary mt-1" style="font-variant-numeric: tabular-nums;">
+                    Tác giả: <strong>${esc(kq.tenNhanVienThucHien || item.tenNhanVienXuLy || '—')}</strong>
+                    ${kq.thoiGianTraKetQua ? ` · Trả lúc ${esc(fmtTime(kq.thoiGianTraKetQua))}` : ''}
+                    ${kq.thoiGianDuyet ? ` · BS duyệt (${esc(item.tenBacSiDuyet || '—')}) lúc ${esc(fmtTime(kq.thoiGianDuyet))}` : ''}
+                </div>
+                ${kq.ketLuan ? `<div class="small text-dark mt-2"><strong>Kết luận:</strong> ${esc(kq.ketLuan)}</div>` : ''}
+                ${kq.nhanXet ? `<div class="small text-secondary mt-1"><strong>Nhận xét:</strong> ${esc(kq.nhanXet)}</div>` : ''}
+                ${kq.deNghi ? `<div class="small text-secondary mt-1"><strong>Đề nghị:</strong> ${esc(kq.deNghi)}</div>` : ''}
+                ${kq.trangThai === 'Yêu cầu làm lại' && kq.lyDoYeuCauLamLai ? `<div class="small text-warning-emphasis mt-1"><strong>Lý do yêu cầu làm lại:</strong> ${esc(kq.lyDoYeuCauLamLai)}</div>` : ''}
+                ${renderStructuredResultDetails(kq.chiSoKetQua)}
+                ${attachmentsHtml}
+                ${isEditable && isPendingReview ? `
+                    <div class="d-flex flex-wrap gap-2 mt-2 pt-2 border-top">
+                        <button type="button" class="btn btn-success btn-sm" data-cls-approve="${item.maChiTietChiDinh}">
+                            <i class="fas fa-check-circle me-1"></i>Duyệt kết quả
+                        </button>
+                        <button type="button" class="btn btn-outline-warning btn-sm" data-cls-redo="${item.maChiTietChiDinh}">
+                            <i class="fas fa-redo me-1"></i>Yêu cầu làm lại
+                        </button>
+                    </div>
+                    ${isRedoPrompt ? `
+                        <div class="mt-2">
+                            <label class="form-label small text-warning-emphasis fw-semibold mb-1">Lý do yêu cầu KTV làm lại <span class="text-danger">*</span></label>
+                            <div class="d-flex flex-wrap gap-2">
+                                <input type="text" class="form-control form-control-sm flex-grow-1" id="clsRedoReason_${item.maChiTietChiDinh}" placeholder="Ví dụ: Mẫu huyết tán, cần chụp lại tư thế thẳng...">
+                                <button type="button" class="btn btn-warning btn-sm" data-cls-confirm-redo="${item.maChiTietChiDinh}">Gửi yêu cầu</button>
+                                <button type="button" class="btn btn-light btn-sm border" data-cls-close-inline>Đóng</button>
+                            </div>
+                        </div>
+                    ` : ''}
+                ` : ''}
+            </div>
+        `;
     }
 
     function renderReadOnlyOrders(orders) {
@@ -113,6 +230,7 @@
                         <div class="small text-secondary">${groupBadgeHtml(item.nhomDichVu, item.tenNhom)} · ${esc(item.maPhieuChiDinh)}</div>
                         ${item.ghiChu ? `<div class="small text-muted mt-1">Ghi chú: ${esc(item.ghiChu)}</div>` : ''}
                         ${item.trangThai === 'Hủy' && item.lyDoHuy ? `<div class="small text-danger mt-1">Lý do hủy: ${esc(item.lyDoHuy)}</div>` : ''}
+                        ${renderResultBox(item, false)}
                     </td>
                     <td class="tabular-nums">${sttText}</td>
                     <td>${priorityBadgeHtml(item.doUuTien)}</td>
@@ -154,6 +272,14 @@
         }
 
         const blockingCount = list.filter((o) => o.trangThai !== 'Hủy' && o.trangThai !== 'Đã duyệt').length;
+        const toolbarHtml = `
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                <span class="small text-secondary">Tự động cập nhật kết quả CLS mỗi 10 giây khi có chỉ định đang chờ.</span>
+                <button type="button" class="btn btn-outline-primary btn-sm" id="btnRefreshClinicalOrders">
+                    <i class="fas fa-sync-alt me-1"></i>Làm mới kết quả CLS
+                </button>
+            </div>
+        `;
         const warningBanner = blockingCount > 0
             ? `<div class="alert alert-warning py-2 px-3 small mb-3">
                     <i class="fas fa-exclamation-triangle me-1"></i>
@@ -198,6 +324,8 @@
                         </div>
                     </div>
 
+                    ${renderResultBox(item, true)}
+
                     ${isEditing ? `
                         <div class="cls-inline-box mt-3">
                             <div class="row g-2 align-items-end">
@@ -241,7 +369,7 @@
             `;
         }).join('');
 
-        return `${warningBanner}<div class="cls-orders-list mb-3">${itemsHtml}</div>`;
+        return `${toolbarHtml}${warningBanner}<div class="cls-orders-list mb-3">${itemsHtml}</div>`;
     }
 
     function renderCatalogPickerHtml() {
@@ -393,7 +521,83 @@
             btn.addEventListener('click', () => {
                 state.editingOrderItemId = null;
                 state.cancellingOrderItemId = null;
+                state.redoOrderItemId = null;
                 renderEditPanel();
+            });
+        });
+
+        container.querySelector('#btnRefreshClinicalOrders')?.addEventListener('click', () => {
+            refreshRecordOrders();
+        });
+
+        container.querySelectorAll('[data-cls-approve]').forEach((btn) => {
+            btn.addEventListener('click', async () => {
+                const id = Number(btn.getAttribute('data-cls-approve'));
+                btn.disabled = true;
+                try {
+                    const res = await fetch(`${global.API_ENDPOINTS.doctor}/review-paraclinical-result.php`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ maChiTietChiDinh: id, action: 'approve' }),
+                    });
+                    const data = await res.json();
+                    if (!res.ok || !data.success) {
+                        global.showAlert?.('error', data.message || 'Không thể duyệt kết quả');
+                        return;
+                    }
+                    state.redoOrderItemId = null;
+                    global.showAlert?.('success', data.message || 'Đã duyệt kết quả');
+                    await refreshRecordOrders();
+                } catch (err) {
+                    console.error(err);
+                    global.showAlert?.('error', 'Lỗi kết nối máy chủ');
+                } finally {
+                    btn.disabled = false;
+                }
+            });
+        });
+
+        container.querySelectorAll('[data-cls-redo]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                state.redoOrderItemId = Number(btn.getAttribute('data-cls-redo'));
+                state.editingOrderItemId = null;
+                state.cancellingOrderItemId = null;
+                renderEditPanel();
+            });
+        });
+
+        container.querySelectorAll('[data-cls-confirm-redo]').forEach((btn) => {
+            btn.addEventListener('click', async () => {
+                const id = Number(btn.getAttribute('data-cls-confirm-redo'));
+                const lyDoYeuCauLamLai = document.getElementById(`clsRedoReason_${id}`)?.value.trim() || '';
+                if (!lyDoYeuCauLamLai) {
+                    global.showAlert?.('error', 'Vui lòng nhập lý do yêu cầu làm lại.');
+                    document.getElementById(`clsRedoReason_${id}`)?.focus();
+                    return;
+                }
+                btn.disabled = true;
+                try {
+                    const res = await fetch(`${global.API_ENDPOINTS.doctor}/review-paraclinical-result.php`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ maChiTietChiDinh: id, action: 'redo', lyDoYeuCauLamLai }),
+                    });
+                    const data = await res.json();
+                    if (!res.ok || !data.success) {
+                        global.showAlert?.('error', data.message || 'Không thể gửi yêu cầu làm lại');
+                        return;
+                    }
+                    state.redoOrderItemId = null;
+                    global.showAlert?.('success', data.message || 'Đã gửi yêu cầu làm lại');
+                    await refreshRecordOrders();
+                } catch (err) {
+                    console.error(err);
+                    global.showAlert?.('error', 'Lỗi kết nối máy chủ');
+                } finally {
+                    btn.disabled = false;
+                }
             });
         });
 
@@ -506,7 +710,28 @@
         }
     }
 
+    function stopPolling() {
+        if (state.pollTimer) {
+            clearInterval(state.pollTimer);
+            state.pollTimer = null;
+        }
+    }
+
+    function startPollingIfNeeded() {
+        stopPolling();
+        const hasPending = (state.orders || []).some((o) => o.trangThai !== 'Hủy' && o.trangThai !== 'Đã duyệt');
+        if (!hasPending || !state.maHoSo) return;
+
+        state.pollTimer = setInterval(() => {
+            if (!state.maHoSo || state.editingOrderItemId || state.cancellingOrderItemId || state.redoOrderItemId) {
+                return;
+            }
+            refreshRecordOrders();
+        }, 10000);
+    }
+
     async function initForEditModal(detail, hooks = {}) {
+        stopPolling();
         state.maHoSo = detail.maHoSo;
         state.orders = Array.isArray(detail.chiDinhCanLamSang) ? detail.chiDinhCanLamSang : [];
         state.selectedServiceIds.clear();
@@ -514,6 +739,7 @@
         state.filterSearch = '';
         state.editingOrderItemId = null;
         state.cancellingOrderItemId = null;
+        state.redoOrderItemId = null;
         state.hooks = hooks || {};
 
         const box = document.getElementById('editClinicalOrdersBox');
@@ -524,6 +750,7 @@
         try {
             await ensureCatalogLoaded();
             renderEditPanel();
+            startPollingIfNeeded();
         } catch (err) {
             console.error(err);
             if (box) {
@@ -535,5 +762,6 @@
     global.DoctorClinicalOrders = {
         initForEditModal,
         renderReadOnlyOrders,
+        stopPolling,
     };
 })(window);

@@ -265,20 +265,107 @@ function fetchPrescriptionMap($conn, $appointmentIds)
     return $map;
 }
 
+function fetchApprovedParaclinicalMap($conn, $recordIds)
+{
+    if (empty($recordIds)) return [];
+
+    $placeholders = implode(',', array_fill(0, count($recordIds), '?'));
+    $types = str_repeat('s', count($recordIds));
+
+    // CHỈ trả kết quả cận lâm sàng đã được bác sĩ duyệt (tránh lộ kết quả Nháp / Chờ duyệt / Yêu cầu làm lại)
+    $sql = "
+        SELECT
+            ct.maHoSo,
+            ct.maChiTietChiDinh,
+            dv.tenDichVu,
+            dv.nhomDichVu,
+            dv.tenNhom,
+            kq.maKetQua,
+            kq.chiSoKetQua,
+            kq.ketLuan,
+            kq.nhanXet,
+            kq.deNghi,
+            kq.tepDinhKem,
+            kq.thoiGianTraKetQua,
+            kq.thoiGianDuyet,
+            nv.tenNhanVien AS tenNhanVienThucHien,
+            bs.tenBacSi AS tenBacSiDuyet
+        FROM chi_dinh_chi_tiet ct
+        JOIN dichvu_can_lam_sang dv ON ct.maDichVu = dv.maDichVu
+        JOIN ket_qua_can_lam_sang kq ON kq.maChiTietChiDinh = ct.maChiTietChiDinh
+        LEFT JOIN nhanvien nv ON kq.maNhanVienThucHien = nv.maNhanVien
+        LEFT JOIN bacsi bs ON kq.maBacSiDuyet = bs.maBacSi
+        WHERE ct.maHoSo IN ($placeholders)
+          AND ct.trangThai = 'Đã duyệt'
+          AND kq.trangThai = 'Đã duyệt'
+        ORDER BY ct.maHoSo ASC, ct.maChiTietChiDinh ASC
+    ";
+
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        throw new Exception('Không thể chuẩn bị truy vấn kết quả cận lâm sàng đã duyệt');
+    }
+    $stmt->bind_param($types, ...$recordIds);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $map = [];
+    while ($row = $result->fetch_assoc()) {
+        $maHoSo = $row['maHoSo'];
+        $chiSo = null;
+        if (!empty($row['chiSoKetQua'])) {
+            $decoded = json_decode((string)$row['chiSoKetQua'], true);
+            $chiSo = is_array($decoded) ? $decoded : null;
+        }
+        $attachments = [];
+        if (!empty($row['tepDinhKem'])) {
+            $decoded = json_decode((string)$row['tepDinhKem'], true);
+            $attachments = is_array($decoded) ? $decoded : [];
+        }
+
+        $map[$maHoSo][] = [
+            'maChiTietChiDinh' => (int)$row['maChiTietChiDinh'],
+            'maKetQua' => (int)$row['maKetQua'],
+            'tenDichVu' => $row['tenDichVu'],
+            'nhomDichVu' => $row['nhomDichVu'],
+            'tenNhom' => $row['tenNhom'],
+            'chiSoKetQua' => $chiSo,
+            'ketLuan' => $row['ketLuan'] ?? '',
+            'nhanXet' => $row['nhanXet'] ?? '',
+            'deNghi' => $row['deNghi'] ?? '',
+            'tepDinhKem' => $attachments,
+            'tenNhanVienThucHien' => $row['tenNhanVienThucHien'] ?? '',
+            'tenBacSiDuyet' => $row['tenBacSiDuyet'] ?? '',
+            'thoiGianTraKetQua' => $row['thoiGianTraKetQua'] ? date('d/m/Y H:i', strtotime($row['thoiGianTraKetQua'])) : null,
+            'thoiGianDuyet' => $row['thoiGianDuyet'] ? date('d/m/Y H:i', strtotime($row['thoiGianDuyet'])) : null,
+        ];
+    }
+    $stmt->close();
+
+    return $map;
+}
+
 function attachPrescriptionData($conn, $records, $latest)
 {
     $appointmentIds = [];
+    $recordIds = [];
     foreach ($records as $record) {
         $appointmentIds[] = (int)$record['maLichKham'];
+        $recordIds[] = (string)$record['maHoSo'];
     }
     if ($latest) {
         $appointmentIds[] = (int)$latest['maLichKham'];
+        $recordIds[] = (string)$latest['maHoSo'];
     }
     $appointmentIds = array_values(array_unique(array_filter($appointmentIds, function ($id) {
         return $id > 0;
     })));
+    $recordIds = array_values(array_unique(array_filter($recordIds, function ($id) {
+        return $id !== '';
+    })));
 
     $prescriptionMap = fetchPrescriptionMap($conn, $appointmentIds);
+    $paraclinicalMap = fetchApprovedParaclinicalMap($conn, $recordIds);
 
     foreach ($records as &$record) {
         $record['donThuoc'] = $prescriptionMap[(int)$record['maLichKham']] ?? [
@@ -288,6 +375,7 @@ function attachPrescriptionData($conn, $records, $latest)
             'tongTienThuoc' => 0,
             'thuoc' => []
         ];
+        $record['canLamSang'] = $paraclinicalMap[(string)$record['maHoSo']] ?? [];
     }
     unset($record);
 
@@ -299,6 +387,7 @@ function attachPrescriptionData($conn, $records, $latest)
             'tongTienThuoc' => 0,
             'thuoc' => []
         ];
+        $latest['canLamSang'] = $paraclinicalMap[(string)$latest['maHoSo']] ?? [];
     }
 
     return [$records, $latest];

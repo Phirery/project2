@@ -285,9 +285,12 @@ function clinical_fetch_orders_for_record(mysqli $conn, string $maHoSo): array
             kq.deNghi AS deNghiKetQua,
             kq.chiSoKetQua,
             kq.tepDinhKem,
+            kq.maNhanVienThucHien AS maNhanVienThucHienKetQua,
+            nvKq.tenNhanVien AS tenNhanVienThucHienKetQua,
             kq.thoiGianTraKetQua,
             kq.thoiGianDuyet AS thoiGianDuyetKetQua,
-            kq.lyDoYeuCauLamLai
+            kq.lyDoYeuCauLamLai,
+            kq.phienBan AS phienBanKetQua
         FROM chi_dinh_chi_tiet ct
         JOIN chi_dinh_can_lam_sang cd ON ct.maChiDinh = cd.maChiDinh
         JOIN dichvu_can_lam_sang dv ON ct.maDichVu = dv.maDichVu
@@ -296,6 +299,7 @@ function clinical_fetch_orders_for_record(mysqli $conn, string $maHoSo): array
         LEFT JOIN nhanvien nvXl ON ct.maNhanVienXuLy = nvXl.maNhanVien
         LEFT JOIN hangdoi_dichvu hq ON hq.maChiTietChiDinh = ct.maChiTietChiDinh
         LEFT JOIN ket_qua_can_lam_sang kq ON kq.maChiTietChiDinh = ct.maChiTietChiDinh
+        LEFT JOIN nhanvien nvKq ON kq.maNhanVienThucHien = nvKq.maNhanVien
         WHERE ct.maHoSo = ?
         ORDER BY cd.createdAt DESC, ct.maChiTietChiDinh ASC
     ";
@@ -361,9 +365,12 @@ function clinical_fetch_orders_for_record(mysqli $conn, string $maHoSo): array
                 'nhanXet' => $r['nhanXetKetQua'] ?? '',
                 'deNghi' => $r['deNghiKetQua'] ?? '',
                 'tepDinhKem' => $attachments,
+                'maNhanVienThucHien' => $r['maNhanVienThucHienKetQua'] ?? '',
+                'tenNhanVienThucHien' => $r['tenNhanVienThucHienKetQua'] ?: ($r['maNhanVienThucHienKetQua'] ?? ''),
                 'thoiGianTraKetQua' => $r['thoiGianTraKetQua'],
                 'thoiGianDuyet' => $r['thoiGianDuyetKetQua'],
                 'lyDoYeuCauLamLai' => $r['lyDoYeuCauLamLai'] ?? '',
+                'phienBan' => (int)($r['phienBanKetQua'] ?? 1),
             ] : null,
         ];
     }, $rows);
