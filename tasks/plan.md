@@ -75,7 +75,7 @@ Bệnh nhân xem hồ sơ, đơn và kết quả đã được duyệt
 
 - [x] Task 4: Thêm sàng lọc điều dưỡng và chuyển hàng đợi bác sĩ.
 - [x] Task 5: Bổ sung tạo/chỉnh/hủy chỉ định vào hồ sơ bệnh án.
-- [ ] Task 6: Làm màn hình cận lâm sàng và trả kết quả.
+- [x] Task 6: Làm màn hình cận lâm sàng và trả kết quả.
 - [ ] Task 7: Cho bác sĩ xem, duyệt kết quả và hoàn tất hồ sơ theo điều kiện.
 
 ### Checkpoint: Clinical loop

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cận lâm sàng - Eden Health</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link id="sidebar-nhanvien-css" rel="stylesheet" href="assets/css/sidebar-nhanvien.css">
+    <link rel="stylesheet" href="assets/css/admin-summary.css">
+    <style>
+        .section-title {
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--primary-blue);
+            display: inline-block;
+        }
+
+        .section-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .custom-tabs {
+            border-bottom: 2px solid #E8EEF5;
+            padding: 0 24px;
+            margin-bottom: 0;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        .custom-tabs .nav-item {
+            flex: 0 0 auto;
+        }
+
+        .custom-tabs .nav-link {
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 14px 18px;
+            border-bottom: 3px solid transparent;
+            background: transparent;
+            white-space: nowrap;
+        }
+
+        .custom-tabs .nav-link:hover {
+            color: var(--primary-blue);
+        }
+
+        .custom-tabs .nav-link.active {
+            color: var(--primary-blue);
+            border-bottom-color: var(--primary-blue);
+            background: transparent;
+        }
+
+        .tab-panel-body {
+            padding: 24px;
+        }
+
+        .filter-section {
+            background: var(--light-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-section .form-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .custom-table thead th {
+            background: #F1F5F9;
+            color: #475569;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding: 13px 14px;
+            border-bottom: 2px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .custom-table tbody td {
+            padding: 14px;
+            vertical-align: middle;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #EDF2F7;
+        }
+
+        .custom-table tbody tr:hover {
+            background: #F8FAFC;
+        }
+
+        .stt-badge {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--primary-blue-light);
+            color: var(--primary-blue-dark);
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-pill.is-waiting { background: #FFF3CD; color: #856404; }
+        .status-pill.is-progress { background: #CFE2FF; color: #084298; }
+        .status-pill.is-pending-review { background: #E0F2FE; color: #075985; }
+        .status-pill.is-approved { background: #D1FAE5; color: #065F46; }
+        .status-pill.is-redo { background: #FEF3C7; color: #92400E; }
+        .status-pill.is-cancelled { background: #F8D7DA; color: #721C24; }
+        .status-pill.is-urgent { background: #F8D7DA; color: #721C24; }
+        .status-pill.is-priority { background: #FEF3C7; color: #92400E; }
+
+        .btn-clinical-primary {
+            background: var(--primary-blue);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-clinical-primary:hover {
+            background: var(--primary-blue-dark);
+            color: #FFFFFF;
+        }
+
+        .btn-clinical-success {
+            background: var(--secondary-green);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-clinical-success:hover {
+            background: var(--secondary-green-dark);
+            color: #FFFFFF;
+        }
+
+        .state-box {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: #FFFFFF;
+            padding: 36px 20px;
+            text-align: center;
+        }
+
+        .state-box-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.45rem;
+            background: #F1F5F9;
+            color: #94A3B8;
+        }
+
+        .state-box.is-error .state-box-icon {
+            background: #F8D7DA;
+            color: #721C24;
+        }
+
+        .modal-content {
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .modal-header.clinical-header {
+            background: var(--primary-blue-dark);
+            color: #FFFFFF;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cls-context-card {
+            background: var(--light-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+        }
+
+        .cls-section-block {
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+        }
+
+        .cls-history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .cls-history-item {
+            background: var(--light-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.84rem;
+        }
+
+        .cls-attachment-row {
+            background: var(--light-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 576px) {
+            .tab-panel-body {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-placeholder"></div>
+
+    <div id="page-content" style="display:none;">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-3">
+            <div>
+                <h3 class="section-title" id="clsPageHeading">Cận lâm sàng</h3>
+                <p class="text-secondary mb-0 mt-1" id="clsPageSubtitle">Tiếp nhận hàng đợi chỉ định, nhập kết quả có cấu trúc và trả kết quả chờ bác sĩ duyệt.</p>
+            </div>
+            <button type="button" class="btn btn-outline-primary btn-sm" id="btnRefreshCls">
+                <i class="fas fa-sync-alt me-1"></i>Làm mới hàng đợi
+            </button>
+        </div>
+
+        <!-- Summary Chips -->
+        <div class="summary-bar" id="clsSummaryBar">
+            <div class="summary-chip is-clickable" data-cls-status="Đang chờ" tabindex="0" role="button">
+                <i class="fas fa-clock text-warning" aria-hidden="true"></i>
+                <span class="summary-label">Chờ thực hiện:</span>
+                <span class="summary-value tabular-nums" id="clsStatWaiting">0</span>
+            </div>
+            <div class="summary-chip is-clickable" data-cls-status="Đang thực hiện" tabindex="0" role="button">
+                <i class="fas fa-spinner text-primary" aria-hidden="true"></i>
+                <span class="summary-label">Đang thực hiện:</span>
+                <span class="summary-value tabular-nums" id="clsStatProgress">0</span>
+            </div>
+            <div class="summary-chip is-clickable" data-cls-status="completed" tabindex="0" role="button">
+                <i class="fas fa-hourglass-half text-info" aria-hidden="true"></i>
+                <span class="summary-label">Chờ bác sĩ duyệt:</span>
+                <span class="summary-value tabular-nums" id="clsStatPendingReview">0</span>
+            </div>
+            <div class="summary-chip is-clickable" data-cls-status="completed" tabindex="0" role="button">
+                <i class="fas fa-check-circle text-success" aria-hidden="true"></i>
+                <span class="summary-label">Đã duyệt:</span>
+                <span class="summary-value tabular-nums" id="clsStatApproved">0</span>
+            </div>
+            <div class="summary-chip is-clickable" data-cls-status="Bỏ lỡ" tabindex="0" role="button">
+                <i class="fas fa-user-times text-secondary" aria-hidden="true"></i>
+                <span class="summary-label">Bỏ lỡ:</span>
+                <span class="summary-value tabular-nums" id="clsStatMissed">0</span>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <ul class="nav nav-tabs custom-tabs" id="clsTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" data-cls-tab="active" type="button" role="tab">
+                        <i class="fas fa-list-ol me-2"></i>Hàng đợi đang xử lý
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-cls-tab="completed" type="button" role="tab">
+                        <i class="fas fa-file-medical-alt me-2"></i>Đã trả kết quả
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-cls-tab="cancelled" type="button" role="tab">
+                        <i class="fas fa-ban me-2"></i>Đã hủy
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-panel-body">
+                <div class="filter-section">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-5">
+                            <label class="form-label" for="clsSearchInput">Tìm kiếm chỉ định / bệnh nhân</label>
+                            <div class="filter-control-wrap">
+                                <input type="text" id="clsSearchInput" class="form-control" placeholder="Tên BN, mã BN, mã phiếu CĐ hoặc tên dịch vụ...">
+                                <button type="button" class="filter-clear-btn" aria-label="Xóa từ khóa tìm kiếm">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="clsStatusSelect">Trạng thái hàng đợi</label>
+                            <select id="clsStatusSelect" class="form-select">
+                                <option value="active">Đang xử lý (Chờ / Đang làm / Bỏ lỡ)</option>
+                                <option value="Đang chờ">Chỉ Đang chờ</option>
+                                <option value="Đang thực hiện">Chỉ Đang thực hiện</option>
+                                <option value="Bỏ lỡ">Chỉ Bỏ lỡ</option>
+                                <option value="completed">Đã trả kết quả</option>
+                                <option value="cancelled">Đã hủy</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" for="clsDateInput">Ngày thực hiện</label>
+                            <input type="date" id="clsDateInput" class="form-control tabular-nums">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div class="state-box d-none" id="clsLoadingState">
+                    <div class="spinner-border text-primary mb-2" role="status" aria-hidden="true"></div>
+                    <div class="fw-semibold text-primary">Đang tải hàng đợi dịch vụ cận lâm sàng...</div>
+                </div>
+
+                <!-- Error State -->
+                <div class="state-box is-error d-none" id="clsErrorState" role="alert">
+                    <div class="state-box-icon"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></div>
+                    <h6 class="fw-bold mb-1">Không thể tải hàng đợi cận lâm sàng</h6>
+                    <p class="text-secondary small mb-3" id="clsErrorMessage">Vui lòng thử lại.</p>
+                    <button type="button" class="btn btn-clinical-primary btn-sm" id="btnRetryCls">
+                        <i class="fas fa-redo me-1"></i>Thử lại
+                    </button>
+                </div>
+
+                <!-- Empty State -->
+                <div class="state-box d-none" id="clsEmptyState">
+                    <div class="state-box-icon"><i class="fas fa-clipboard-check" aria-hidden="true"></i></div>
+                    <h6 class="fw-bold mb-1">Không có chỉ định phù hợp</h6>
+                    <p class="text-secondary small mb-0" id="clsEmptyDesc">Hiện chưa có ca chỉ định nào trong bộ lọc này.</p>
+                </div>
+
+                <!-- Data Table -->
+                <div class="table-responsive d-none" id="clsTableWrapper">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Bệnh nhân</th>
+                                <th>Dịch vụ chỉ định</th>
+                                <th>Bác sĩ & Ghi chú</th>
+                                <th>Trạng thái</th>
+                                <th class="text-end">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nhập / Xem Kết Quả Cận Lâm Sàng -->
+    <div class="modal fade" id="clsResultModal" tabindex="-1" aria-labelledby="clsResultModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header clinical-header">
+                    <h5 class="modal-title" id="clsResultModalTitle">
+                        <i class="fas fa-file-medical me-2"></i>Nhập kết quả cận lâm sàng
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="cls-context-card" id="clsModalContext"></div>
+
+                    <div class="alert alert-warning d-none" id="clsRedoWarning" role="alert"></div>
+                    <div class="alert alert-danger d-none" id="clsModalError" role="alert"></div>
+
+                    <!-- Dynamic Structured Fields / Checklist / Sections -->
+                    <div id="clsStructuredContainer"></div>
+
+                    <div class="cls-section-block">
+                        <h6 class="fw-bold mb-3"><i class="fas fa-pen-nib text-primary me-2"></i>Kết luận & Nhận xét chuyên môn</h6>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" for="clsKetLuan">Kết luận <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="clsKetLuan" rows="2" placeholder="Nhập kết luận tóm tắt kết quả cận lâm sàng..."></textarea>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold" for="clsNhanXet">Nhận xét kỹ thuật / ghi chú thêm</label>
+                                <textarea class="form-control" id="clsNhanXet" rows="2" placeholder="Nhận xét chi tiết..."></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold" for="clsDeNghi">Đề nghị (nếu có)</label>
+                                <textarea class="form-control" id="clsDeNghi" rows="2" placeholder="Đề nghị theo dõi / xét nghiệm bổ sung..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cls-section-block">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                            <h6 class="fw-bold mb-0"><i class="fas fa-paperclip text-primary me-2"></i>Tệp / Liên kết ảnh kết quả (tối đa 5)</h6>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="btnAddAttachmentRow">
+                                <i class="fas fa-plus me-1"></i>Thêm liên kết ảnh/PDF
+                            </button>
+                        </div>
+                        <p class="small text-secondary mb-2">Chấp nhận URL hợp lệ (`https://...` hoặc `http://...`), định dạng JPG/PNG/WEBP/PDF, dung lượng metadata tối đa 10 MB/tệp.</p>
+                        <div id="clsAttachmentsContainer"></div>
+                    </div>
+
+                    <div class="cls-section-block mb-0">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="fw-bold mb-0"><i class="fas fa-history text-primary me-2"></i>Lịch sử tạo / sửa kết quả</h6>
+                            <span class="small text-secondary tabular-nums" id="clsHistoryCountLabel"></span>
+                        </div>
+                        <div class="cls-history-list" id="clsHistoryList">
+                            <div class="text-secondary small">Đang tải lịch sử...</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between flex-wrap gap-2">
+                    <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Đóng</button>
+                    <div class="d-flex flex-wrap gap-2" id="clsResultModalActions">
+                        <button type="button" class="btn btn-outline-primary" id="btnSaveClsDraft">
+                            <i class="fas fa-save me-1"></i>Lưu nháp
+                        </button>
+                        <button type="button" class="btn btn-clinical-success" id="btnSubmitClsResult">
+                            <i class="fas fa-paper-plane me-1"></i>Trả kết quả để duyệt
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/api-config.js"></script>
+    <script src="assets/js/config-nhanvien.js"></script>
+    <script src="assets/js/admin-summary.js"></script>
+    <script src="assets/js/sidebar-nhanvien.js"></script>
+    <script src="assets/js/can-lam-sang.js"></script>
+</body>
+
+</html>

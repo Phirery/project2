@@ -105,13 +105,13 @@
 **Description:** Xây `can-lam-sang.html` dùng query/module theo nhóm dịch vụ; KTV nhận bệnh nhân, chuyển đang thực hiện, nhập kết quả có cấu trúc/nhận xét, đính kèm ảnh/link khi phù hợp và trả kết quả để duyệt.
 
 **Acceptance criteria:**
-- [ ] KTV chỉ thấy chỉ định thuộc nhóm được cấp quyền.
-- [ ] Không thể trả kết quả cho chỉ định hủy hoặc của nhóm khác.
-- [ ] Kết quả có lịch sử tạo/sửa và trạng thái chờ duyệt.
+- [x] KTV chỉ thấy chỉ định thuộc nhóm được cấp quyền.
+- [x] Không thể trả kết quả cho chỉ định hủy hoặc của nhóm khác.
+- [x] Kết quả có lịch sử tạo/sửa và trạng thái chờ duyệt.
 
 **Verification:**
-- [ ] Test các ca xét nghiệm, X-quang và nội soi bằng cùng contract API.
-- [ ] Kiểm tra upload URL/metadata bị validate và không vượt giới hạn.
+- [x] Test các ca xét nghiệm, X-quang và nội soi bằng cùng contract API.
+- [x] Kiểm tra upload URL/metadata bị validate và không vượt giới hạn.
 
 **Dependencies:** Tasks 2-3, Task 5
 
