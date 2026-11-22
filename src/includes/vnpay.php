@@ -297,7 +297,10 @@ function vnpay_process_callback(mysqli $conn, array $request): array
         }
 
         $isPaymentSuccess = ($responseCode === '00' && $transactionStatus === '00');
-        $alreadyConfirmed = ($invoice['hoaDonTrangThai'] === 'Đã thanh toán' && $invoice['lichTrangThai'] === 'Đã đặt');
+        $alreadyConfirmed = (
+            $invoice['hoaDonTrangThai'] === 'Đã thanh toán'
+            && in_array($invoice['lichTrangThai'], ['Đã đặt', 'Hoàn thành'], true)
+        );
 
         if ($alreadyConfirmed) {
             $conn->commit();
@@ -318,12 +321,46 @@ function vnpay_process_callback(mysqli $conn, array $request): array
                 "UPDATE hoadon
                  SET trangThai = 'Đã thanh toán',
                      phuongThuc = 'VNPAY',
-                     vnp_TransactionNo = ?
+                     vnp_TransactionNo = ?,
+                     thoiGianThanhToan = COALESCE(thoiGianThanhToan, NOW())
                  WHERE maHoaDon = ?"
             );
             $updateInvoice->bind_param('si', $transactionNo, $maHoaDon);
             $updateInvoice->execute();
             $updateInvoice->close();
+
+            $hdctCheck = $conn->query("SHOW TABLES LIKE 'hoadon_chitiet'");
+            if ($hdctCheck && $hdctCheck->num_rows > 0) {
+                $itemLock = $conn->prepare("
+                    SELECT id, itemKey
+                    FROM hoadon_chitiet
+                    WHERE maHoaDon = ? AND trangThai = 'Chờ thanh toán'
+                    FOR UPDATE
+                ");
+                $itemLock->bind_param('i', $maHoaDon);
+                $itemLock->execute();
+                $pendingLines = $itemLock->get_result()->fetch_all(MYSQLI_ASSOC);
+                $itemLock->close();
+
+                foreach ($pendingLines as $pLine) {
+                    $lineId = (int)$pLine['id'];
+                    $itemKey = (string)$pLine['itemKey'];
+                    $dupCheck = $conn->prepare("SELECT id FROM hoadon_chitiet WHERE paidKey = ? LIMIT 1 FOR UPDATE");
+                    $dupCheck->bind_param('s', $itemKey);
+                    $dupCheck->execute();
+                    $alreadyPaid = $dupCheck->get_result()->fetch_assoc();
+                    $dupCheck->close();
+
+                    if ($alreadyPaid) {
+                        throw new RuntimeException('Khoản mục "' . $itemKey . '" đã được thanh toán trên hóa đơn khác.');
+                    }
+
+                    $markLine = $conn->prepare("UPDATE hoadon_chitiet SET trangThai = 'Đã thanh toán', paidKey = ? WHERE id = ?");
+                    $markLine->bind_param('si', $itemKey, $lineId);
+                    $markLine->execute();
+                    $markLine->close();
+                }
+            }
 
             $updateAppointment = $conn->prepare(
                 "UPDATE lichkham

@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thu ngân & Hóa đơn tổng hợp - Eden Health</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link id="sidebar-nhanvien-css" rel="stylesheet" href="assets/css/sidebar-nhanvien.css">
+    <link rel="stylesheet" href="assets/css/admin-summary.css">
+    <style>
+        .section-title {
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--primary-blue);
+            display: inline-block;
+        }
+
+        .section-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .custom-tabs {
+            border-bottom: 2px solid #E8EEF5;
+            padding: 0 24px;
+            margin-bottom: 0;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        .custom-tabs .nav-item {
+            flex: 0 0 auto;
+        }
+
+        .custom-tabs .nav-link {
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 14px 18px;
+            border-bottom: 3px solid transparent;
+            background: transparent;
+            white-space: nowrap;
+        }
+
+        .custom-tabs .nav-link:hover {
+            color: var(--primary-blue);
+        }
+
+        .custom-tabs .nav-link.active {
+            color: var(--primary-blue);
+            border-bottom-color: var(--primary-blue);
+            background: transparent;
+        }
+
+        .tab-panel-body {
+            padding: 24px;
+        }
+
+        .filter-section {
+            background: var(--light-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-section .form-label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .custom-table thead th {
+            background: #F1F5F9;
+            color: #475569;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding: 13px 14px;
+            border-bottom: 2px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .custom-table tbody td {
+            padding: 14px;
+            vertical-align: middle;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #EDF2F7;
+        }
+
+        .custom-table tbody tr:hover {
+            background: #F8FAFC;
+        }
+
+        .encounter-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px 10px;
+            border-radius: 8px;
+            background: var(--primary-blue-light);
+            color: var(--primary-blue-dark);
+            font-weight: 700;
+            font-size: 0.85rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 11px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-pill.is-unpaid {
+            background: #FFF3CD;
+            color: #856404;
+        }
+
+        .status-pill.is-partial {
+            background: #CFE2FF;
+            color: #084298;
+        }
+
+        .status-pill.is-paid {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .status-pill.is-neutral {
+            background: #F1F5F9;
+            color: #475569;
+        }
+
+        .group-mini-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            background: #F1F5F9;
+            color: var(--text-primary);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .group-kpi-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 14px;
+            height: 100%;
+        }
+
+        .group-kpi-title {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.35px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .btn-cashier-primary {
+            background: var(--primary-blue);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-cashier-primary:hover {
+            background: var(--primary-blue-dark);
+            color: #FFFFFF;
+        }
+
+        .btn-cashier-success {
+            background: var(--secondary-green);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-cashier-success:hover {
+            background: var(--secondary-green-dark);
+            color: #FFFFFF;
+        }
+
+        .btn-cashier-primary:focus-visible,
+        .btn-cashier-success:focus-visible,
+        .summary-chip.is-clickable:focus-visible,
+        .nav-link:focus-visible,
+        button:focus-visible,
+        input:focus-visible,
+        textarea:focus-visible {
+            outline: 2px solid var(--primary-blue-dark);
+            outline-offset: 2px;
+        }
+
+        .state-box {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: #FFFFFF;
+            padding: 36px 20px;
+            text-align: center;
+        }
+
+        .state-box-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.45rem;
+            background: #F1F5F9;
+            color: #94A3B8;
+        }
+
+        .state-box.is-error .state-box-icon {
+            background: #F8D7DA;
+            color: #721C24;
+        }
+
+        .modal-content {
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .modal-header.cashier-header {
+            background: var(--primary-blue-dark);
+            color: #FFFFFF;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .patient-summary-box {
+            background: var(--light-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+        }
+
+        .receipt-card {
+            background: #F8FAFC;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+        }
+
+        .print-invoice-paper {
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 24px;
+            color: #1E293B;
+        }
+
+        @media (max-width: 576px) {
+            .tab-panel-body {
+                padding: 16px;
+            }
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+
+            #printInvoiceModal,
+            #printInvoiceModal * {
+                visibility: visible !important;
+            }
+
+            #printInvoiceModal {
+                position: fixed !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: visible !important;
+            }
+
+            #printInvoiceModal .modal-dialog {
+                max-width: 100% !important;
+                margin: 0 !important;
+            }
+
+            #printInvoiceModal .modal-header,
+            #printInvoiceModal .modal-footer,
+            .no-print {
+                display: none !important;
+            }
+
+            #printInvoiceModal .modal-content,
+            #printInvoiceModal .print-invoice-paper {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-placeholder"></div>
+
+    <div id="page-content" style="display:none;">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-3">
+            <div>
+                <h3 class="section-title">Thu ngân & Hóa đơn tổng hợp</h3>
+                <p class="text-secondary mb-0 mt-1">Tổng hợp phí khám, dịch vụ cận lâm sàng không hủy và thuốc đã phát thực tế; ghi nhận thu tiền mặt, VNPAY và in biên lai.</p>
+            </div>
+            <button type="button" class="btn btn-outline-primary btn-sm" id="btnRefreshBilling">
+                <i class="fas fa-sync-alt me-1" aria-hidden="true"></i>Làm mới danh sách
+            </button>
+        </div>
+
+        <!-- Summary Chips -->
+        <div class="summary-bar" id="billingSummaryBar">
+            <div class="summary-chip is-clickable is-active" data-tab-target="unpaid" tabindex="0" role="button">
+                <i class="fas fa-file-invoice text-warning" aria-hidden="true"></i>
+                <span class="summary-label">Chờ thu:</span>
+                <span class="summary-value tabular-nums" id="statUnpaidCount">0</span>
+            </div>
+            <div class="summary-chip is-clickable" data-tab-target="unpaid" tabindex="0" role="button">
+                <i class="fas fa-adjust text-primary" aria-hidden="true"></i>
+                <span class="summary-label">Thanh toán một phần:</span>
+                <span class="summary-value tabular-nums" id="statPartialPayCount">0</span>
+            </div>
+            <div class="summary-chip is-clickable" data-tab-target="paid" tabindex="0" role="button">
+                <i class="fas fa-check-circle text-success" aria-hidden="true"></i>
+                <span class="summary-label">Đã thu đủ:</span>
+                <span class="summary-value tabular-nums" id="statPaidFullCount">0</span>
+            </div>
+            <div class="summary-chip">
+                <i class="fas fa-wallet text-danger" aria-hidden="true"></i>
+                <span class="summary-label">Còn phải thu:</span>
+                <span class="summary-value tabular-nums" id="statTotalOutstanding">0 đ</span>
+            </div>
+            <div class="summary-chip">
+                <i class="fas fa-coins text-success" aria-hidden="true"></i>
+                <span class="summary-label">Đã thu hôm nay:</span>
+                <span class="summary-value tabular-nums" id="statTodayRevenue">0 đ</span>
+            </div>
+        </div>
+
+        <!-- Main Card -->
+        <div class="section-card">
+            <ul class="nav nav-tabs custom-tabs" id="billingTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="tabUnpaidBillingBtn" type="button" role="tab" aria-selected="true">
+                        <i class="fas fa-cash-register me-2" aria-hidden="true"></i>Lượt khám còn công nợ
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tabPaidBillingBtn" type="button" role="tab" aria-selected="false">
+                        <i class="fas fa-check-double me-2" aria-hidden="true"></i>Đã thanh toán đủ
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tabAllBillingBtn" type="button" role="tab" aria-selected="false">
+                        <i class="fas fa-list-alt me-2" aria-hidden="true"></i>Tất cả lượt khám
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-panel-body">
+                <!-- Filters -->
+                <div class="filter-section">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-7">
+                            <label class="form-label" for="billingSearchInput">Tìm lượt khám / bệnh nhân</label>
+                            <div class="filter-control-wrap">
+                                <input type="text" id="billingSearchInput" class="form-control" placeholder="Mã lịch khám, tên bệnh nhân, mã BN, SĐT hoặc bác sĩ...">
+                                <button type="button" class="filter-clear-btn" aria-label="Xóa từ khóa tìm kiếm">
+                                    <i class="fas fa-times" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label" for="billingDateInput">Lọc theo ngày khám</label>
+                            <div class="filter-control-wrap">
+                                <input type="date" id="billingDateInput" class="form-control tabular-nums">
+                                <button type="button" class="filter-clear-btn" aria-label="Xóa lọc ngày">
+                                    <i class="fas fa-times" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div class="state-box d-none" id="billingLoadingState">
+                    <div class="spinner-border text-primary mb-2" role="status" aria-hidden="true"></div>
+                    <div class="fw-semibold text-primary">Đang tổng hợp bảng kê chi phí lượt khám...</div>
+                </div>
+
+                <!-- Error State -->
+                <div class="state-box is-error d-none" id="billingErrorState" role="alert">
+                    <div class="state-box-icon"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></div>
+                    <h6 class="fw-bold mb-1">Không thể tải dữ liệu thu ngân</h6>
+                    <p class="text-secondary small mb-3" id="billingErrorMessage">Đã xảy ra lỗi khi kết nối máy chủ.</p>
+                    <button type="button" class="btn btn-cashier-primary btn-sm" id="btnRetryBilling">
+                        <i class="fas fa-redo me-1" aria-hidden="true"></i>Thử lại
+                    </button>
+                </div>
+
+                <!-- Empty State -->
+                <div class="state-box d-none" id="billingEmptyState">
+                    <div class="state-box-icon"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i></div>
+                    <h6 class="fw-bold mb-1" id="billingEmptyTitle">Không có lượt khám phù hợp</h6>
+                    <p class="text-secondary small mb-0" id="billingEmptyDesc">Không tìm thấy hóa đơn hoặc lượt khám ở bộ lọc hiện tại.</p>
+                </div>
+
+                <!-- Data Table -->
+                <div class="table-responsive d-none" id="billingTableWrapper">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Lượt khám</th>
+                                <th>Bệnh nhân</th>
+                                <th>Chi phí theo nhóm</th>
+                                <th class="text-end">Tổng / Đã thu / Còn lại</th>
+                                <th>Trạng thái</th>
+                                <th class="text-end">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="billingTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Chi Tiết & Thanh Toán Tổng Hợp -->
+    <div class="modal fade" id="billingModal" tabindex="-1" aria-labelledby="billingModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header cashier-header">
+                    <h5 class="modal-title" id="billingModalTitle">
+                        <i class="fas fa-file-invoice-dollar me-2" aria-hidden="true"></i>Hóa đơn tổng hợp lượt khám
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="patient-summary-box" id="billingPatientSummary"></div>
+
+                    <div class="row g-3 mb-3" id="billingGroupSummaryCards"></div>
+
+                    <div class="alert alert-danger d-none" id="billingGeneralError" role="alert"></div>
+                    <div class="alert alert-info d-none" id="billingVnpayResultBanner" role="status"></div>
+
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                        <h6 class="fw-bold mb-0">
+                            <i class="fas fa-list-check text-primary me-2" aria-hidden="true"></i>Chi tiết các khoản chi phí
+                        </h6>
+                        <div class="d-flex gap-2" id="billingSelectionActions">
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="btnSelectAllUnpaid">
+                                <i class="fas fa-check-square me-1" aria-hidden="true"></i>Chọn tất cả chưa thu
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" id="btnUnselectAll">
+                                <i class="fas fa-square me-1" aria-hidden="true"></i>Bỏ chọn
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive border rounded mb-3">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width:44px;" class="text-center">Thu</th>
+                                    <th>Nhóm</th>
+                                    <th>Khoản mục</th>
+                                    <th class="text-center">SL</th>
+                                    <th class="text-end">Đơn giá</th>
+                                    <th class="text-end">Thành tiền</th>
+                                    <th>Trạng thái thanh toán</th>
+                                </tr>
+                            </thead>
+                            <tbody id="billingItemsBody"></tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <td colspan="5" class="text-end fw-semibold">Tổng tiền chọn thanh toán đợt này:</td>
+                                    <td class="text-end fw-bold text-primary tabular-nums fs-6" id="billingSelectedTotal">0 đ</td>
+                                    <td class="small text-secondary tabular-nums" id="billingSelectedCountText">0 khoản</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <div class="alert alert-secondary d-none mb-3" id="billingExcludedSection">
+                        <div class="fw-semibold mb-1">
+                            <i class="fas fa-filter me-1" aria-hidden="true"></i>Các khoản không tính vào hóa đơn:
+                        </div>
+                        <ul class="small mb-0 ps-3" id="billingExcludedList"></ul>
+                    </div>
+
+                    <div id="billingCheckoutFormSection" class="p-3 border rounded bg-light mb-3">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-5">
+                                <label class="form-label fw-semibold" for="selectPaymentMethod">Phương thức thanh toán</label>
+                                <select class="form-select" id="selectPaymentMethod">
+                                    <option value="TienMat">Tiền mặt tại quầy thu ngân</option>
+                                    <option value="VNPAY">Cổng VNPAY (tạo liên kết thanh toán)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-7">
+                                <label class="form-label fw-semibold" for="inputBillingNote">Ghi chú thu ngân</label>
+                                <input type="text" class="form-control" id="inputBillingNote" placeholder="Ví dụ: Thu đủ phí khám + CLS, hoặc thu bổ sung đơn thuốc...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="billingReceiptsSection" class="pt-3 border-top d-none">
+                        <h6 class="fw-bold mb-2">
+                            <i class="fas fa-receipt text-secondary me-2" aria-hidden="true"></i>Lịch sử hóa đơn / biên lai đã phát sinh
+                        </h6>
+                        <div id="billingReceiptsList"></div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between flex-wrap gap-2">
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Đóng</button>
+                        <button type="button" class="btn btn-outline-secondary" id="btnOpenPrintInvoice">
+                            <i class="fas fa-print me-1" aria-hidden="true"></i>In hóa đơn tổng hợp
+                        </button>
+                    </div>
+                    <button type="button" class="btn btn-cashier-success" id="btnRequestCollectPayment">
+                        <i class="fas fa-check-circle me-1" aria-hidden="true"></i>Xác nhận thanh toán
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Xác Nhận Thu Tiền -->
+    <div class="modal fade" id="confirmPayModal" tabindex="-1" aria-labelledby="confirmPayTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header cashier-header">
+                    <h5 class="modal-title" id="confirmPayTitle">
+                        <i class="fas fa-shield-alt me-2" aria-hidden="true"></i>Xác nhận thanh toán hóa đơn
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body" id="confirmPayBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Kiểm tra lại</button>
+                    <button type="button" class="btn btn-cashier-success" id="btnConfirmPayExecute">
+                        <i class="fas fa-check me-1" aria-hidden="true"></i>Xác nhận thanh toán
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal In Hóa Đơn Tổng Hợp -->
+    <div class="modal fade" id="printInvoiceModal" tabindex="-1" aria-labelledby="printInvoiceTitle" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header cashier-header no-print">
+                    <h5 class="modal-title" id="printInvoiceTitle">
+                        <i class="fas fa-print me-2" aria-hidden="true"></i>Bản in hóa đơn tổng hợp
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="print-invoice-paper" id="printInvoiceContent"></div>
+                </div>
+                <div class="modal-footer no-print">
+                    <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-cashier-primary" id="btnExecutePrintInvoice">
+                        <i class="fas fa-print me-1" aria-hidden="true"></i>In hóa đơn (Ctrl+P)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/api-config.js"></script>
+    <script src="assets/js/config-nhanvien.js"></script>
+    <script src="assets/js/admin-summary.js"></script>
+    <script src="assets/js/sidebar-nhanvien.js"></script>
+    <script src="assets/js/thu-ngan.js"></script>
+</body>
+
+</html>

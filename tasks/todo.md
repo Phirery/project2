@@ -167,13 +167,13 @@
 **Description:** Bổ sung `thu-ngan.html` để tìm lượt khám, tổng hợp phí khám, dịch vụ cận lâm sàng và thuốc đã phát, sau đó ghi nhận thanh toán/in hóa đơn. Tái sử dụng VNPAY/hoá đơn hiện hữu nếu contract đáp ứng.
 
 **Acceptance criteria:**
-- [ ] Không tính thuốc chưa phát hoặc chỉ định đã hủy.
-- [ ] Không thể thanh toán trùng một khoản mục.
-- [ ] Hóa đơn thể hiện rõ từng nhóm chi phí và trạng thái thanh toán.
+- [x] Không tính thuốc chưa phát hoặc chỉ định đã hủy.
+- [x] Không thể thanh toán trùng một khoản mục.
+- [x] Hóa đơn thể hiện rõ từng nhóm chi phí và trạng thái thanh toán.
 
 **Verification:**
-- [ ] Test tiền mặt và dữ liệu VNPAY hiện có nếu áp dụng.
-- [ ] Đối chiếu tổng hóa đơn với chi tiết dịch vụ/thuốc.
+- [x] Test tiền mặt và dữ liệu VNPAY hiện có nếu áp dụng.
+- [x] Đối chiếu tổng hóa đơn với chi tiết dịch vụ/thuốc.
 
 **Dependencies:** Tasks 2, 6, 8
 
