@@ -60,10 +60,11 @@ try {
     $stmt->close();
 
     $maHoSo = 'HS' . date('YmdHis') . rand(100, 999);
+    $createdBy = (int)$_SESSION['id'];
     
     // Create a draft medical record first; the doctor will complete it later.
-    $stmt = $conn->prepare("INSERT INTO hosobenhan (maHoSo, maBenhNhan, maBacSi, maLichKham, chanDoan, dieuTri, ghiChu, trangThai, ngayTao, ngayKham) VALUES (?, ?, ?, ?, ?, ?, ?, 'Chưa hoàn thành', NOW(), ?)");
-    $stmt->bind_param("sssissss", $maHoSo, $maBenhNhan, $maBacSi, $maLichKham, $chanDoan, $dieuTri, $ghiChu, $ngayKham);
+    $stmt = $conn->prepare("INSERT INTO hosobenhan (maHoSo, maBenhNhan, maBacSi, maLichKham, chanDoan, dieuTri, ghiChu, trangThai, trangThaiQuyTrinh, ngayTao, ngayKham, updatedBy) VALUES (?, ?, ?, ?, ?, ?, ?, 'Chưa hoàn thành', 'Đang khám', NOW(), ?, ?)");
+    $stmt->bind_param("sssissssi", $maHoSo, $maBenhNhan, $maBacSi, $maLichKham, $chanDoan, $dieuTri, $ghiChu, $ngayKham, $createdBy);
     
     if ($stmt->execute()) {
         echo json_encode(['success' => true, 'message' => 'Khởi tạo hồ sơ thành công', 'maHoSo' => $maHoSo]);

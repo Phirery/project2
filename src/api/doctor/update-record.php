@@ -5,6 +5,7 @@ require_once '../../config/session.php';
 require_once '../../includes/mail-events.php';
 require_once '../../includes/medical-record-events.php';
 require_once '../../includes/medicine-stock.php';
+require_once '../../includes/clinical-orders.php';
 
 require_role('bacsi');
 
@@ -153,10 +154,11 @@ try {
     $transactionStarted = true;
 
     $stmt = $conn->prepare("
-        SELECT maLichKham, trangThai
+        SELECT maLichKham, trangThai, trangThaiQuyTrinh
         FROM hosobenhan
         WHERE maHoSo = ? AND maBacSi = ? AND isDeleted = 0
         LIMIT 1
+        FOR UPDATE
     ");
     $stmt->bind_param("ss", $maHoSo, $maBacSi);
     $stmt->execute();
@@ -176,6 +178,32 @@ try {
         exit;
     }
 
+    $orderStmt = $conn->prepare("
+        SELECT maChiTietChiDinh, trangThai, batBuoc
+        FROM chi_dinh_chi_tiet
+        WHERE maHoSo = ?
+        FOR UPDATE
+    ");
+    $orderStmt->bind_param("s", $maHoSo);
+    $orderStmt->execute();
+    $orderRows = $orderStmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $orderStmt->close();
+
+    if (!$isDraftSave) {
+        $completionCheck = clinical_validate_record_completion($orderRows, $chanDoan, $dieuTri);
+        if (!$completionCheck['ok']) {
+            $conn->rollback();
+            $transactionStarted = false;
+            http_response_code(422);
+            echo json_encode([
+                'success' => false,
+                'code' => 'CLINICAL_ORDERS_INCOMPLETE',
+                'message' => $completionCheck['reason']
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+    }
+
     $existingPrescriptionItems = [];
     $lowStockWarnings = [];
     $recordStatus = (string)($record['trangThai'] ?? '');
@@ -186,26 +214,31 @@ try {
     }
 
     $normalizedMedicines = normalizePrescriptionItems($medicines);
+    $updatedBy = (int)$_SESSION['id'];
 
     if ($isDraftSave) {
         $stmt = $conn->prepare("
             UPDATE hosobenhan
-            SET chanDoan = ?, dieuTri = ?, ghiChu = ?, trangThai = 'Chưa hoàn thành', ngayHoanThanh = NULL
+            SET chanDoan = ?, dieuTri = ?, ghiChu = ?, trangThai = 'Chưa hoàn thành', ngayHoanThanh = NULL, updatedBy = ?
             WHERE maHoSo = ? AND maBacSi = ? AND isDeleted = 0
         ");
     } else {
         $stmt = $conn->prepare("
             UPDATE hosobenhan
-            SET chanDoan = ?, dieuTri = ?, ghiChu = ?, trangThai = 'Đã hoàn thành', ngayHoanThanh = NOW()
+            SET chanDoan = ?, dieuTri = ?, ghiChu = ?, trangThai = 'Đã hoàn thành', trangThaiQuyTrinh = 'Hoàn tất', ngayHoanThanh = NOW(), updatedBy = ?
             WHERE maHoSo = ? AND maBacSi = ? AND isDeleted = 0
         ");
     }
-    $stmt->bind_param("sssss", $chanDoan, $dieuTri, $ghiChu, $maHoSo, $maBacSi);
+    $stmt->bind_param("sssiss", $chanDoan, $dieuTri, $ghiChu, $updatedBy, $maHoSo, $maBacSi);
 
     if (!$stmt->execute()) {
         throw new Exception('Không thể cập nhật hồ sơ: ' . $stmt->error);
     }
     $stmt->close();
+
+    if ($isDraftSave) {
+        clinical_recompute_record_workflow_status($conn, $maHoSo);
+    }
 
     if (!empty($record['maLichKham'])) {
         $lowStockWarnings = applyPrescriptionStockDelta(

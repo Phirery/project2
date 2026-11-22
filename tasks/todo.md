@@ -86,13 +86,13 @@
 **Description:** Mở rộng modal/screen chỉnh hồ sơ bệnh án để chọn nhiều dịch vụ, nhập ghi chú lâm sàng/độ ưu tiên và tạo hoặc hủy chỉ định; chuyển các chỉ định mới sang hàng đợi đúng bộ phận.
 
 **Acceptance criteria:**
-- [ ] Bác sĩ tạo được nhiều chỉ định trong một hồ sơ và thấy trạng thái từng chỉ định.
-- [ ] Chỉ định bị hủy phải có lý do và không còn trong hàng đợi hoạt động.
-- [ ] Không cho hoàn tất hồ sơ khi còn chỉ định bắt buộc chưa có kết quả duyệt.
+- [x] Bác sĩ tạo được nhiều chỉ định trong một hồ sơ và thấy trạng thái từng chỉ định.
+- [x] Chỉ định bị hủy phải có lý do và không còn trong hàng đợi hoạt động.
+- [x] Không cho hoàn tất hồ sơ khi còn chỉ định bắt buộc chưa có kết quả duyệt.
 
 **Verification:**
-- [ ] Test luồng tạo, chỉnh trước thực hiện, hủy và chặn hoàn tất.
-- [ ] Verify quyền: chỉ bác sĩ chỉ định hoặc permission được giao mới thay đổi được.
+- [x] Test luồng tạo, chỉnh trước thực hiện, hủy và chặn hoàn tất.
+- [x] Verify quyền: chỉ bác sĩ chỉ định hoặc permission được giao mới thay đổi được.
 
 **Dependencies:** Tasks 2-3
 

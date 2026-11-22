@@ -2,6 +2,7 @@
 require_once '../../config/cors.php';
 require_once '../../config/db.php';
 require_once '../../config/session.php';
+require_once '../../includes/clinical-orders.php';
 
 require_role('bacsi');
 
@@ -25,7 +26,7 @@ try {
         exit;
     }
 
-    $sql = "SELECT h.maHoSo, h.maLichKham, h.ngayTao, h.ngayHoanThanh, h.chanDoan, h.dieuTri, h.ghiChu, h.trangThai,
+    $sql = "SELECT h.maHoSo, h.maLichKham, h.ngayTao, h.ngayHoanThanh, h.chanDoan, h.dieuTri, h.ghiChu, h.trangThai, h.trangThaiQuyTrinh,
             bn.tenBenhNhan, bn.ngaySinh, bn.gioiTinh,
             l.ngayKham, c.tenCa
             FROM hosobenhan h
@@ -152,6 +153,8 @@ try {
                 $stmtItems->close();
             }
         }
+
+        $row['chiDinhCanLamSang'] = clinical_fetch_orders_for_record($conn, $maHoSo);
 
         echo json_encode(['success' => true, 'data' => $row]);
     } else {

@@ -100,7 +100,8 @@ try {
     if (!empty($recordIds)) {
         $placeholders = implode(',', array_fill(0, count($recordIds), '?'));
         $dataSql = "
-            SELECT h.maHoSo, h.ngayTao, h.chanDoan, h.dieuTri, h.ghiChu,
+            SELECT h.maHoSo, h.ngayTao, h.chanDoan, h.dieuTri, h.ghiChu, h.trangThaiQuyTrinh,
+                   (SELECT COUNT(*) FROM chi_dinh_chi_tiet ct WHERE ct.maHoSo = h.maHoSo AND ct.trangThai <> 'Hủy') AS soChiDinhActive,
                    bn.tenBenhNhan, bn.ngaySinh, bn.gioiTinh,
                    COALESCE(l.ngayKham, h.ngayKham) AS ngayKham, c.tenCa,
                    s.gioBatDau, s.gioKetThuc
