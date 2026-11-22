@@ -638,6 +638,8 @@
                         <td>
                             <div class="patient-name">${apt.tenBenhNhan}</div>
                             <div class="patient-age">${calculateAge(apt.ngaySinh)} tuổi</div>
+                            ${apt.trangThaiSangLoc === 'Đã chuyển bác sĩ' ? '<span class="badge bg-success-subtle text-success border border-success-subtle mt-1"><i class="fas fa-user-nurse me-1"></i>Đã sàng lọc ĐD</span>' : ''}
+                            ${apt.diUngSangLoc ? '<span class="badge bg-danger-subtle text-danger border border-danger-subtle mt-1 ms-1"><i class="fas fa-allergies me-1"></i>Có dị ứng</span>' : ''}
                         </td>
                         <td>${apt.gioiTinh}</td>
                         <td>${apt.tenCa} ${apt.gioBatDau ? apt.gioBatDau.substring(0, 5) : ''}</td>

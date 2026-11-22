@@ -109,13 +109,18 @@ try {
             ca.tenCa, ca.maCa,
             sk.gioBatDau, sk.gioKetThuc,
             gk.tenGoi,
-            h.maHoSo, h.trangThai AS trangThaiHoSo
+            h.maHoSo, h.trangThai AS trangThaiHoSo,
+            sl.trangThai AS trangThaiSangLoc,
+            sl.diUng AS diUngSangLoc,
+            sl.canhBaoLamSang,
+            sl.thoiGianChuyenBacSi
         FROM hangdoikham hd
         JOIN lichkham lk ON hd.maLichKham = lk.maLichKham
         JOIN benhnhan bn ON lk.maBenhNhan = bn.maBenhNhan
         JOIN calamviec ca ON lk.maCa = ca.maCa
         JOIN suatkham sk ON lk.maSuat = sk.maSuat
         LEFT JOIN goikham gk ON lk.maGoi = gk.maGoi
+        LEFT JOIN sang_loc_dieu_duong sl ON sl.maHangDoi = hd.maHangDoi
         LEFT JOIN (
             SELECT h1.maLichKham, h1.maHoSo, h1.trangThai
             FROM hosobenhan h1

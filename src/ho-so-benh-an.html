@@ -756,6 +756,7 @@
                 </div>
                 <div class="modal-body">
                     <div id="editPatientInfo" class="alert alert-info mb-3"></div>
+                    <div id="editNursingScreeningBox" class="mb-3"></div>
                     <form id="editForm">
                         <input type="hidden" id="editMaHoSo">
                         <div class="mb-3"><label class="form-label">Chẩn đoán <span
@@ -1348,6 +1349,50 @@
             window.DoctorPageHelper.clearSearchInput('searchCompleted', 'clearSearchCompletedBtn', 'applyCompletedFilters');
         }
 
+        function renderNursingScreeningSection(sl) {
+            if (!sl) {
+                return `
+                    <div class="col-12 mt-2">
+                        <div class="p-3 rounded-3 border bg-light text-secondary small">
+                            <i class="fas fa-user-nurse me-2 text-primary"></i>Chưa có dữ liệu sàng lọc điều dưỡng cho lượt khám này.
+                        </div>
+                    </div>
+                `;
+            }
+
+            const vitals = [];
+            if (sl.mach !== null && sl.mach !== undefined) vitals.push(`<span><strong>Mạch:</strong> ${sl.mach} lần/phút</span>`);
+            if (sl.huyetApTamThu !== null && sl.huyetApTamTruong !== null) vitals.push(`<span><strong>Huyết áp:</strong> ${sl.huyetApTamThu}/${sl.huyetApTamTruong} mmHg</span>`);
+            if (sl.nhietDo !== null && sl.nhietDo !== undefined) vitals.push(`<span><strong>Nhiệt độ:</strong> ${sl.nhietDo} °C</span>`);
+            if (sl.spo2 !== null && sl.spo2 !== undefined) vitals.push(`<span><strong>SpO2:</strong> ${sl.spo2}%</span>`);
+            if (sl.nhipTho !== null && sl.nhipTho !== undefined) vitals.push(`<span><strong>Nhịp thở:</strong> ${sl.nhipTho} lần/phút</span>`);
+            if (sl.canNang !== null && sl.canNang !== undefined) vitals.push(`<span><strong>Cân nặng:</strong> ${sl.canNang} kg</span>`);
+            if (sl.chieuCao !== null && sl.chieuCao !== undefined) vitals.push(`<span><strong>Chiều cao:</strong> ${sl.chieuCao} cm</span>`);
+
+            return `
+                <div class="col-12 mt-2">
+                    <div class="p-3 rounded-3 border bg-light">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                            <span class="fw-bold text-dark"><i class="fas fa-user-nurse text-primary me-2"></i>Sàng lọc điều dưỡng (Chỉ đọc)</span>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                ${escapeHtml(sl.trangThai || 'Đã sàng lọc')}
+                            </span>
+                        </div>
+                        <div class="d-flex flex-wrap gap-3 small mb-2" style="font-variant-numeric: tabular-nums;">
+                            ${vitals.length ? vitals.join('') : '<span class="text-muted">Chưa ghi nhận chỉ số sinh tồn.</span>'}
+                        </div>
+                        ${sl.diUng ? `<div class="alert alert-danger py-2 px-3 small mb-2"><strong><i class="fas fa-allergies me-1"></i>Dị ứng:</strong> ${escapeHtml(sl.diUng)}</div>` : ''}
+                        ${sl.canhBaoLamSang ? `<div class="alert alert-warning py-2 px-3 small mb-2"><strong><i class="fas fa-exclamation-triangle me-1"></i>Cảnh báo lâm sàng:</strong> ${escapeHtml(sl.canhBaoLamSang)}</div>` : ''}
+                        ${sl.ghiChu ? `<div class="small text-dark mb-2"><strong>Ghi chú điều dưỡng:</strong> ${escapeHtml(sl.ghiChu)}</div>` : ''}
+                        <div class="small text-muted" style="font-variant-numeric: tabular-nums;">
+                            Điều dưỡng thực hiện: <strong>${escapeHtml(sl.tenNhanVienSangLoc || sl.maNhanVienSangLoc || '—')}</strong>
+                            · Thời điểm: ${formatDateTime(sl.thoiGianChuyenBacSi || sl.thoiGianSangLoc)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         async function viewRecord(maHoSo) {
             try {
                 const response = await fetch(`${API_BASE}/get-record-detail.php?maHoSo=${maHoSo}`, { credentials: 'include' });
@@ -1364,6 +1409,7 @@
                             <div class="col-md-6"><div class="info-group"><label><i class="fas fa-clock me-2"></i>Ngày tạo</label><p>${formatDateTime(r.ngayTao)}</p></div></div>
                             ${r.ngayHoanThanh ? `<div class="col-md-6"><div class="info-group"><label><i class="fas fa-check-circle me-2"></i>Ngày hoàn thành</label><p>${formatDateTime(r.ngayHoanThanh)}</p></div></div>` : ''}
                             <div class="col-md-6"><div class="info-group"><label><i class="fas fa-info-circle me-2"></i>Trạng thái</label><p><span class="status-badge ${r.trangThai === 'Đã hoàn thành' ? 'status-completed' : 'status-pending'}">${r.trangThai}</span></p></div></div>
+                            ${renderNursingScreeningSection(r.sangLocDieuDuong)}
                             <div class="col-12"><div class="info-group"><label><i class="fas fa-stethoscope me-2"></i>Chẩn đoán</label><p>${r.chanDoan || 'Chưa có thông tin'}</p></div></div>
                             <div class="col-12"><div class="info-group"><label><i class="fas fa-pills me-2"></i>Điều trị</label><p>${r.dieuTri || 'Chưa có thông tin'}</p></div></div>
                             ${r.ghiChu ? `<div class="col-12"><div class="info-group"><label><i class="fas fa-comment-medical me-2"></i>Ghi chú</label><p>${r.ghiChu}</p></div></div>` : ''}
@@ -1397,6 +1443,7 @@
                 document.getElementById('editTreatment').value = detail.dieuTri || '';
                 document.getElementById('editNotes').value = detail.ghiChu || '';
                 document.getElementById('editPatientInfo').innerHTML = `<strong><i class="fas fa-info-circle me-2"></i>Thông tin bệnh nhân:</strong><br><strong>Tên:</strong> ${detail.tenBenhNhan}<br><strong>Giới tính:</strong> ${detail.gioiTinh} - <strong>Tuổi:</strong> ${calculateAge(detail.ngaySinh)}<br><strong>Lịch khám:</strong> ${formatDate(detail.ngayKham)} - ${detail.tenCa}<br><strong>Trạng thái hồ sơ:</strong> ${detail.trangThai || 'Chưa hoàn thành'} <span class="text-muted">• Bạn có thể lưu nháp nhiều lần trước khi hoàn tất.</span>`;
+                document.getElementById('editNursingScreeningBox').innerHTML = `<div class="row">${renderNursingScreeningSection(detail.sangLocDieuDuong)}</div>`;
                 hydratePrescriptionEditor(detail.toaThuoc);
                 new bootstrap.Modal(document.getElementById('editModal')).show();
             } catch (error) {

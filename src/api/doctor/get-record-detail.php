@@ -40,6 +40,63 @@ try {
     $result = $stmt->get_result();
     
     if ($row = $result->fetch_assoc()) {
+        $row['sangLocDieuDuong'] = null;
+        if (!empty($row['maLichKham'])) {
+            $stmtScreen = $conn->prepare("
+                SELECT
+                    sl.maSangLoc,
+                    sl.mach,
+                    sl.huyetApTamThu,
+                    sl.huyetApTamTruong,
+                    sl.nhietDo,
+                    sl.spo2,
+                    sl.nhipTho,
+                    sl.canNang,
+                    sl.chieuCao,
+                    sl.diUng,
+                    sl.canhBaoLamSang,
+                    sl.ghiChu,
+                    sl.trangThai,
+                    sl.maNhanVienSangLoc,
+                    nv.tenNhanVien AS tenNhanVienSangLoc,
+                    sl.thoiGianSangLoc,
+                    sl.thoiGianChuyenBacSi
+                FROM sang_loc_dieu_duong sl
+                LEFT JOIN nhanvien nv ON sl.maNhanVienSangLoc = nv.maNhanVien
+                WHERE sl.maLichKham = ?
+                ORDER BY sl.thoiGianSangLoc DESC
+                LIMIT 1
+            ");
+            if ($stmtScreen) {
+                $stmtScreen->bind_param("i", $row['maLichKham']);
+                $stmtScreen->execute();
+                $screen = $stmtScreen->get_result()->fetch_assoc();
+                $stmtScreen->close();
+
+                if ($screen) {
+                    $row['sangLocDieuDuong'] = [
+                        'maSangLoc' => (int)$screen['maSangLoc'],
+                        'mach' => $screen['mach'] !== null ? (int)$screen['mach'] : null,
+                        'huyetApTamThu' => $screen['huyetApTamThu'] !== null ? (int)$screen['huyetApTamThu'] : null,
+                        'huyetApTamTruong' => $screen['huyetApTamTruong'] !== null ? (int)$screen['huyetApTamTruong'] : null,
+                        'nhietDo' => $screen['nhietDo'] !== null ? (float)$screen['nhietDo'] : null,
+                        'spo2' => $screen['spo2'] !== null ? (int)$screen['spo2'] : null,
+                        'nhipTho' => $screen['nhipTho'] !== null ? (int)$screen['nhipTho'] : null,
+                        'canNang' => $screen['canNang'] !== null ? (float)$screen['canNang'] : null,
+                        'chieuCao' => $screen['chieuCao'] !== null ? (float)$screen['chieuCao'] : null,
+                        'diUng' => $screen['diUng'] ?? '',
+                        'canhBaoLamSang' => $screen['canhBaoLamSang'] ?? '',
+                        'ghiChu' => $screen['ghiChu'] ?? '',
+                        'trangThai' => $screen['trangThai'],
+                        'maNhanVienSangLoc' => $screen['maNhanVienSangLoc'],
+                        'tenNhanVienSangLoc' => $screen['tenNhanVienSangLoc'] ?: $screen['maNhanVienSangLoc'],
+                        'thoiGianSangLoc' => $screen['thoiGianSangLoc'],
+                        'thoiGianChuyenBacSi' => $screen['thoiGianChuyenBacSi'],
+                    ];
+                }
+            }
+        }
+
         $row['toaThuoc'] = [
             'loiDanBacSi' => '',
             'tongTienThuoc' => 0,

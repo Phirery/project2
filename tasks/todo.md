@@ -67,12 +67,12 @@
 **Description:** Xây `dieu-duong.html` nhận bệnh nhân đã check-in, ghi dấu hiệu sinh tồn, dị ứng/cảnh báo, ghi chú sàng lọc và chuyển bệnh nhân tới hàng đợi bác sĩ.
 
 **Acceptance criteria:**
-- [ ] Chỉ hiển thị bệnh nhân đã check-in và chưa chuyển/hoàn tất.
-- [ ] Dữ liệu sàng lọc hiển thị read-only cho bác sĩ trong hồ sơ.
-- [ ] Có log người thao tác và thời điểm chuyển hàng đợi.
+- [x] Chỉ hiển thị bệnh nhân đã check-in và chưa chuyển/hoàn tất.
+- [x] Dữ liệu sàng lọc hiển thị read-only cho bác sĩ trong hồ sơ.
+- [x] Có log người thao tác và thời điểm chuyển hàng đợi.
 
 **Verification:**
-- [ ] Kịch bản check-in → điều dưỡng → bác sĩ chạy xuyên suốt.
+- [x] Kịch bản check-in → điều dưỡng → bác sĩ chạy xuyên suốt.
 - [ ] Kiểm tra giao diện desktop/mobile và lỗi validation số đo.
 
 **Dependencies:** Task 3
