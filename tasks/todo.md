@@ -148,13 +148,13 @@
 **Description:** Giữ bác sĩ tạo đơn, nhưng bỏ giảm tồn tại `update-record.php`; xây `phat-thuoc.html` để dược sĩ nhận đơn, kiểm tra tồn/liều, phát đủ hoặc một phần, in/xem hướng dẫn và giảm tồn nguyên tử tại lúc phát.
 
 **Acceptance criteria:**
-- [ ] Hoàn tất hồ sơ chỉ đưa đơn vào hàng đợi dược, không giảm `thuoc.soLuongTon`.
-- [ ] Mỗi lần phát lưu số lượng thực phát và người phát; phát lại cùng request không trừ kho lần hai.
-- [ ] Không phát vượt tồn; phát một phần giữ phần còn lại ở trạng thái chờ.
+- [x] Hoàn tất hồ sơ chỉ đưa đơn vào hàng đợi dược, không giảm `thuoc.soLuongTon`.
+- [x] Mỗi lần phát lưu số lượng thực phát và người phát; phát lại cùng request không trừ kho lần hai.
+- [x] Không phát vượt tồn; phát một phần giữ phần còn lại ở trạng thái chờ.
 
 **Verification:**
-- [ ] Test đơn đủ thuốc, thiếu tồn, phát một phần, hủy và retry request.
-- [ ] Đối chiếu tổng phát với biến động tồn kho trong transaction.
+- [x] Test đơn đủ thuốc, thiếu tồn, phát một phần, hủy và retry request.
+- [x] Đối chiếu tổng phát với biến động tồn kho trong transaction.
 
 **Dependencies:** Tasks 2-3, Task 7
 

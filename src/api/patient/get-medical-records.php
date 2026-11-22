@@ -196,8 +196,10 @@ function fetchPrescriptionMap($conn, $appointmentIds)
             dt.loiDanBacSi,
             dt.ngayKeDon,
             dt.tongTienThuoc,
+            dt.trangThaiPhat,
             ct.id AS chiTietId,
             ct.soLuong,
+            ct.soLuongDaPhat,
             ct.lieuDung,
             t.tenThuoc,
             t.donViTinh,
@@ -224,17 +226,18 @@ function fetchPrescriptionMap($conn, $appointmentIds)
 
         if (!isset($map[$maLichKham])) {
             $map[$maLichKham] = [
-                'selectedDonThuocId' => $maDonThuoc,
+                'maDonThuoc' => $maDonThuoc,
                 'chuanDoan' => $row['chuanDoan'] ?? '',
                 'loiDanBacSi' => $row['loiDanBacSi'] ?? '',
                 'ngayKeDon' => $row['ngayKeDon'] ? date('d/m/Y H:i', strtotime($row['ngayKeDon'])) : null,
                 'tongTienThuoc' => (float)($row['tongTienThuoc'] ?? 0),
+                'trangThaiPhat' => $row['trangThaiPhat'] ?? 'Chờ phát',
                 'thuoc' => []
             ];
         }
 
         // Chỉ lấy đơn mới nhất cho mỗi lịch khám
-        if ($map[$maLichKham]['selectedDonThuocId'] !== $maDonThuoc) {
+        if ($map[$maLichKham]['maDonThuoc'] !== $maDonThuoc) {
             continue;
         }
 
@@ -242,6 +245,7 @@ function fetchPrescriptionMap($conn, $appointmentIds)
             $map[$maLichKham]['thuoc'][] = [
                 'tenThuoc' => $row['tenThuoc'],
                 'soLuong' => (int)($row['soLuong'] ?? 0),
+                'soLuongDaPhat' => (int)($row['soLuongDaPhat'] ?? 0),
                 'donViTinh' => $row['donViTinh'] ?? '',
                 'lieuDung' => $row['lieuDung'] ?? '',
                 'giaTien' => (float)($row['giaTien'] ?? 0)
@@ -258,8 +262,6 @@ function fetchPrescriptionMap($conn, $appointmentIds)
             }
             $map[$maLichKham]['tongTienThuoc'] = $total;
         }
-
-        unset($map[$maLichKham]['selectedDonThuocId']);
     }
 
     return $map;

@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quầy phát thuốc (Dược sĩ) - Eden Health</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link id="sidebar-nhanvien-css" rel="stylesheet" href="assets/css/sidebar-nhanvien.css">
+    <link rel="stylesheet" href="assets/css/admin-summary.css">
+    <style>
+        .section-title {
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--primary-blue);
+            display: inline-block;
+        }
+
+        .section-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .custom-tabs {
+            border-bottom: 2px solid #E8EEF5;
+            padding: 0 24px;
+            margin-bottom: 0;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        .custom-tabs .nav-item {
+            flex: 0 0 auto;
+        }
+
+        .custom-tabs .nav-link {
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 14px 18px;
+            border-bottom: 3px solid transparent;
+            background: transparent;
+            white-space: nowrap;
+        }
+
+        .custom-tabs .nav-link:hover {
+            color: var(--primary-blue);
+        }
+
+        .custom-tabs .nav-link.active {
+            color: var(--primary-blue);
+            border-bottom-color: var(--primary-blue);
+            background: transparent;
+        }
+
+        .tab-panel-body {
+            padding: 24px;
+        }
+
+        .filter-section {
+            background: var(--light-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-section .form-label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .custom-table thead th {
+            background: #F1F5F9;
+            color: #475569;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding: 13px 14px;
+            border-bottom: 2px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .custom-table tbody td {
+            padding: 14px;
+            vertical-align: middle;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #EDF2F7;
+        }
+
+        .custom-table tbody tr:hover {
+            background: #F8FAFC;
+        }
+
+        .rx-code-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px 10px;
+            border-radius: 8px;
+            background: var(--primary-blue-light);
+            color: var(--primary-blue-dark);
+            font-weight: 700;
+            font-size: 0.85rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 11px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-pill.is-waiting {
+            background: #FFF3CD;
+            color: #856404;
+        }
+
+        .status-pill.is-partial {
+            background: #CFE2FF;
+            color: #084298;
+        }
+
+        .status-pill.is-done {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .status-pill.is-cancelled {
+            background: #F8D7DA;
+            color: #721C24;
+        }
+
+        .stock-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stock-badge.is-ok {
+            background: #ECFDF5;
+            color: #047857;
+            border: 1px solid #A7F3D0;
+        }
+
+        .stock-badge.is-low {
+            background: #FFFBEB;
+            color: #B45309;
+            border: 1px solid #FDE68A;
+        }
+
+        .stock-badge.is-out {
+            background: #FEF2F2;
+            color: #B91C1C;
+            border: 1px solid #FECACA;
+        }
+
+        .btn-pharmacy-primary {
+            background: var(--primary-blue);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-pharmacy-primary:hover {
+            background: var(--primary-blue-dark);
+            color: #FFFFFF;
+        }
+
+        .btn-pharmacy-success {
+            background: var(--secondary-green);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-pharmacy-success:hover {
+            background: var(--secondary-green-dark);
+            color: #FFFFFF;
+        }
+
+        .btn-pharmacy-primary:focus-visible,
+        .btn-pharmacy-success:focus-visible,
+        .summary-chip.is-clickable:focus-visible,
+        .nav-link:focus-visible,
+        button:focus-visible,
+        input:focus-visible,
+        textarea:focus-visible {
+            outline: 2px solid var(--primary-blue-dark);
+            outline-offset: 2px;
+        }
+
+        .state-box {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: #FFFFFF;
+            padding: 36px 20px;
+            text-align: center;
+        }
+
+        .state-box-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.45rem;
+            background: #F1F5F9;
+            color: #94A3B8;
+        }
+
+        .state-box.is-error .state-box-icon {
+            background: #F8D7DA;
+            color: #721C24;
+        }
+
+        .modal-content {
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .modal-header.pharmacy-header {
+            background: var(--primary-blue-dark);
+            color: #FFFFFF;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .patient-summary-box {
+            background: var(--light-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+        }
+
+        .dispense-qty-input {
+            width: 96px;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+        }
+
+        .voucher-history-card {
+            background: #F8FAFC;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+        }
+
+        .print-guide-paper {
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 24px;
+            color: #1E293B;
+        }
+
+        @media (max-width: 576px) {
+            .tab-panel-body {
+                padding: 16px;
+            }
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+
+            #printGuideModal,
+            #printGuideModal * {
+                visibility: visible !important;
+            }
+
+            #printGuideModal {
+                position: fixed !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: visible !important;
+            }
+
+            #printGuideModal .modal-dialog {
+                max-width: 100% !important;
+                margin: 0 !important;
+            }
+
+            #printGuideModal .modal-header,
+            #printGuideModal .modal-footer,
+            .no-print {
+                display: none !important;
+            }
+
+            #printGuideModal .modal-content,
+            #printGuideModal .print-guide-paper {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-placeholder"></div>
+
+    <div id="page-content" style="display:none;">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-3">
+            <div>
+                <h3 class="section-title">Quầy phát thuốc & Quản lý tồn kho</h3>
+                <p class="text-secondary mb-0 mt-1">Tiếp nhận đơn thuốc bác sĩ đã kê, kiểm tra tồn kho, phát thuốc đủ hoặc một phần và in hướng dẫn sử dụng.</p>
+            </div>
+            <button type="button" class="btn btn-outline-primary btn-sm" id="btnRefreshPharmacy">
+                <i class="fas fa-sync-alt me-1" aria-hidden="true"></i>Làm mới hàng đợi
+            </button>
+        </div>
+
+        <!-- Summary Chips -->
+        <div class="summary-bar" id="pharmacySummaryBar">
+            <div class="summary-chip is-clickable is-active" data-tab-target="pending" tabindex="0" role="button">
+                <i class="fas fa-clock text-warning" aria-hidden="true"></i>
+                <span class="summary-label">Chờ phát:</span>
+                <span class="summary-value tabular-nums" id="statWaitingCount">0</span>
+            </div>
+            <div class="summary-chip is-clickable" data-tab-target="pending" tabindex="0" role="button">
+                <i class="fas fa-hourglass-half text-primary" aria-hidden="true"></i>
+                <span class="summary-label">Phát một phần:</span>
+                <span class="summary-value tabular-nums" id="statPartialCount">0</span>
+            </div>
+            <div class="summary-chip is-clickable" data-tab-target="completed" tabindex="0" role="button">
+                <i class="fas fa-check-circle text-success" aria-hidden="true"></i>
+                <span class="summary-label">Đã phát đủ hôm nay:</span>
+                <span class="summary-value tabular-nums" id="statCompletedTodayCount">0</span>
+            </div>
+            <div class="summary-chip is-clickable" data-tab-target="cancelled" tabindex="0" role="button">
+                <i class="fas fa-ban text-danger" aria-hidden="true"></i>
+                <span class="summary-label">Đã hủy hôm nay:</span>
+                <span class="summary-value tabular-nums" id="statCancelledTodayCount">0</span>
+            </div>
+            <div class="summary-chip">
+                <i class="fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>
+                <span class="summary-label">Thuốc chạm ngưỡng tồn:</span>
+                <span class="summary-value tabular-nums" id="statLowStockCount">0</span>
+            </div>
+        </div>
+
+        <!-- Main Card -->
+        <div class="section-card">
+            <ul class="nav nav-tabs custom-tabs" id="pharmacyTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="tabPendingRxBtn" type="button" role="tab" aria-selected="true">
+                        <i class="fas fa-prescription-bottle-alt me-2" aria-hidden="true"></i>Đơn chờ / đang phát
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tabCompletedRxBtn" type="button" role="tab" aria-selected="false">
+                        <i class="fas fa-clipboard-check me-2" aria-hidden="true"></i>Đã phát đủ
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tabCancelledRxBtn" type="button" role="tab" aria-selected="false">
+                        <i class="fas fa-times-circle me-2" aria-hidden="true"></i>Đã hủy
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-panel-body">
+                <!-- Filters -->
+                <div class="filter-section">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-7">
+                            <label class="form-label" for="pharmacySearchInput">Tìm kiếm đơn thuốc / bệnh nhân</label>
+                            <div class="filter-control-wrap">
+                                <input type="text" id="pharmacySearchInput" class="form-control" placeholder="Mã đơn, tên bệnh nhân, mã BN, SĐT hoặc bác sĩ...">
+                                <button type="button" class="filter-clear-btn" aria-label="Xóa từ khóa tìm kiếm">
+                                    <i class="fas fa-times" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label" for="pharmacyDateInput">Lọc theo ngày kê / xử lý</label>
+                            <div class="filter-control-wrap">
+                                <input type="date" id="pharmacyDateInput" class="form-control tabular-nums">
+                                <button type="button" class="filter-clear-btn" aria-label="Xóa lọc ngày">
+                                    <i class="fas fa-times" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div class="state-box d-none" id="pharmacyLoadingState">
+                    <div class="spinner-border text-primary mb-2" role="status" aria-hidden="true"></div>
+                    <div class="fw-semibold text-primary">Đang tải danh sách đơn thuốc tại quầy dược...</div>
+                </div>
+
+                <!-- Error State -->
+                <div class="state-box is-error d-none" id="pharmacyErrorState" role="alert">
+                    <div class="state-box-icon"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></div>
+                    <h6 class="fw-bold mb-1">Không thể tải hàng đợi phát thuốc</h6>
+                    <p class="text-secondary small mb-3" id="pharmacyErrorMessage">Đã xảy ra lỗi khi kết nối máy chủ.</p>
+                    <button type="button" class="btn btn-pharmacy-primary btn-sm" id="btnRetryPharmacy">
+                        <i class="fas fa-redo me-1" aria-hidden="true"></i>Thử lại
+                    </button>
+                </div>
+
+                <!-- Empty State -->
+                <div class="state-box d-none" id="pharmacyEmptyState">
+                    <div class="state-box-icon"><i class="fas fa-pills" aria-hidden="true"></i></div>
+                    <h6 class="fw-bold mb-1" id="pharmacyEmptyTitle">Không có đơn thuốc chờ phát</h6>
+                    <p class="text-secondary small mb-0" id="pharmacyEmptyDesc">Hiện chưa có đơn thuốc nào cần xử lý ở bộ lọc này.</p>
+                </div>
+
+                <!-- Data Table -->
+                <div class="table-responsive d-none" id="pharmacyTableWrapper">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Mã đơn</th>
+                                <th>Bệnh nhân</th>
+                                <th>Bác sĩ & Chẩn đoán</th>
+                                <th>Tiến độ phát</th>
+                                <th>Cảnh báo kho</th>
+                                <th>Trạng thái</th>
+                                <th class="text-end">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pharmacyTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Phát Thuốc / Chi Tiết Đơn -->
+    <div class="modal fade" id="dispenseModal" tabindex="-1" aria-labelledby="dispenseModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header pharmacy-header">
+                    <h5 class="modal-title" id="dispenseModalTitle">
+                        <i class="fas fa-prescription-bottle-alt me-2" aria-hidden="true"></i>Chi tiết đơn & Phát thuốc
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="patient-summary-box" id="dispensePatientSummary"></div>
+
+                    <div class="alert alert-danger d-none" id="dispenseGeneralError" role="alert"></div>
+                    <div class="alert alert-warning d-none" id="dispenseStockWarningBanner" role="status"></div>
+
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                        <h6 class="fw-bold mb-0">
+                            <i class="fas fa-capsules text-primary me-2" aria-hidden="true"></i>Danh sách thuốc trong đơn
+                        </h6>
+                        <div class="d-flex gap-2" id="dispenseQuickFillGroup">
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="btnFillMaxAvailable">
+                                <i class="fas fa-magic me-1" aria-hidden="true"></i>Điền tối đa theo tồn kho
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" id="btnResetDispenseQty">
+                                <i class="fas fa-eraser me-1" aria-hidden="true"></i>Đặt về 0
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive border rounded mb-3">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Thuốc & Liều dùng</th>
+                                    <th class="text-center">Kê</th>
+                                    <th class="text-center">Đã phát</th>
+                                    <th class="text-center">Còn lại</th>
+                                    <th class="text-center">Tồn kho</th>
+                                    <th class="text-end">Phát lần này</th>
+                                    <th class="text-end">Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dispenseItemsBody"></tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <td colspan="5" class="text-end fw-semibold">Tổng phát đợt này:</td>
+                                    <td class="text-end fw-bold tabular-nums" id="dispenseRoundQtyTotal">0</td>
+                                    <td class="text-end fw-bold text-primary tabular-nums" id="dispenseRoundMoneyTotal">0 đ</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <div id="dispenseInputFieldsSection">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-7">
+                                <label class="form-label fw-semibold" for="inputHuongDanSuDung">
+                                    <i class="fas fa-notes-medical text-primary me-1" aria-hidden="true"></i>Hướng dẫn sử dụng thuốc cho bệnh nhân
+                                </label>
+                                <textarea class="form-control" id="inputHuongDanSuDung" rows="3" placeholder="Ghi chú cách uống, thời điểm dùng trước/sau ăn..."></textarea>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label fw-semibold" for="inputGhiChuPhat">Ghi chú phiếu phát (nội bộ)</label>
+                                <textarea class="form-control" id="inputGhiChuPhat" rows="3" placeholder="Ví dụ: Phát trước 50% do chờ nhập kho..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="dispenseHistorySection" class="mt-3 pt-3 border-top d-none">
+                        <h6 class="fw-bold mb-2">
+                            <i class="fas fa-history text-secondary me-2" aria-hidden="true"></i>Lịch sử phiếu phát thuốc
+                        </h6>
+                        <div id="dispenseHistoryList"></div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between flex-wrap gap-2">
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Đóng</button>
+                        <button type="button" class="btn btn-outline-secondary" id="btnOpenPrintFromModal">
+                            <i class="fas fa-print me-1" aria-hidden="true"></i>In hướng dẫn dùng thuốc
+                        </button>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2" id="dispenseModalActionButtons">
+                        <button type="button" class="btn btn-outline-danger d-none" id="btnOpenCancelFromModal">
+                            <i class="fas fa-ban me-1" aria-hidden="true"></i>Hủy đơn
+                        </button>
+                        <button type="button" class="btn btn-pharmacy-success" id="btnSubmitDispense">
+                            <i class="fas fa-check-double me-1" aria-hidden="true"></i>Xác nhận phát thuốc
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Xác Nhận Phát Thuốc -->
+    <div class="modal fade" id="confirmDispenseModal" tabindex="-1" aria-labelledby="confirmDispenseTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header pharmacy-header">
+                    <h5 class="modal-title" id="confirmDispenseTitle">
+                        <i class="fas fa-shield-alt me-2" aria-hidden="true"></i>Xác nhận xuất kho & phát thuốc
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body" id="confirmDispenseBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Kiểm tra lại</button>
+                    <button type="button" class="btn btn-pharmacy-success" id="btnConfirmDispenseExecute">
+                        <i class="fas fa-check me-1" aria-hidden="true"></i>Đồng ý phát thuốc
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Hủy Đơn Thuốc -->
+    <div class="modal fade" id="cancelRxModal" tabindex="-1" aria-labelledby="cancelRxModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="cancelRxModalTitle">
+                        <i class="fas fa-ban me-2" aria-hidden="true"></i>Xác nhận hủy phát đơn thuốc
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="small text-secondary mb-2" id="cancelRxSummaryText"></p>
+                    <div class="alert alert-danger d-none" id="cancelRxErrorBox" role="alert"></div>
+                    <label class="form-label fw-semibold" for="inputCancelReason">
+                        Lý do hủy đơn <span class="text-danger">*</span>
+                    </label>
+                    <textarea class="form-control" id="inputCancelReason" rows="3" placeholder="Ví dụ: Bệnh nhân từ chối nhận thuốc tại quầy, chuyển sang mua ngoài..."></textarea>
+                    <div class="form-text">Chỉ cho phép hủy đơn ở trạng thái Chờ phát và chưa phát lần nào.</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Quay lại</button>
+                    <button type="button" class="btn btn-danger" id="btnConfirmCancelRx">
+                        <i class="fas fa-ban me-1" aria-hidden="true"></i>Xác nhận hủy đơn
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal In Hướng Dẫn Sử Dụng Thuốc -->
+    <div class="modal fade" id="printGuideModal" tabindex="-1" aria-labelledby="printGuideModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header pharmacy-header no-print">
+                    <h5 class="modal-title" id="printGuideModalTitle">
+                        <i class="fas fa-print me-2" aria-hidden="true"></i>Phiếu hướng dẫn sử dụng thuốc
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="print-guide-paper" id="printGuideContent"></div>
+                </div>
+                <div class="modal-footer no-print">
+                    <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-pharmacy-primary" id="btnExecutePrintGuide">
+                        <i class="fas fa-print me-1" aria-hidden="true"></i>In hướng dẫn (Ctrl+P)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/api-config.js"></script>
+    <script src="assets/js/config-nhanvien.js"></script>
+    <script src="assets/js/admin-summary.js"></script>
+    <script src="assets/js/sidebar-nhanvien.js"></script>
+    <script src="assets/js/phat-thuoc.js"></script>
+</body>
+
+</html>

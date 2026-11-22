@@ -57,17 +57,21 @@ function normalizePrescriptionItems(array $medicines): array {
     return $normalized;
 }
 
-function syncPrescriptionForRecord(mysqli $conn, int $maLichKham, string $chanDoan, string $loiDanBacSi, array $medicines): void
+function syncPrescriptionForRecord(mysqli $conn, int $maLichKham, string $chanDoan, string $loiDanBacSi, array $medicines, bool $isDraftSave): void
 {
     $normalizedMedicines = normalizePrescriptionItems($medicines);
 
-    $stmt = $conn->prepare("SELECT maDonThuoc FROM donthuoc WHERE maLichKham = ?");
+    $stmt = $conn->prepare("SELECT maDonThuoc, trangThaiPhat FROM donthuoc WHERE maLichKham = ? FOR UPDATE");
     $stmt->bind_param("i", $maLichKham);
     $stmt->execute();
     $existingPrescriptionIds = [];
     $prescriptionResult = $stmt->get_result();
 
     while ($prescriptionRow = $prescriptionResult->fetch_assoc()) {
+        $existingStatus = (string)($prescriptionRow['trangThaiPhat'] ?? 'Đã kê');
+        if (in_array($existingStatus, ['Đã phát một phần', 'Đã phát đủ'], true)) {
+            throw new Exception('Đơn thuốc của lượt khám này đã được dược sĩ phát thuốc, không thể ghi đè.');
+        }
         $existingPrescriptionIds[] = (int)$prescriptionRow['maDonThuoc'];
     }
     $stmt->close();
@@ -92,11 +96,15 @@ function syncPrescriptionForRecord(mysqli $conn, int $maLichKham, string $chanDo
         return;
     }
 
+    // Khi bác sĩ hoàn tất hồ sơ có thuốc -> đưa đơn vào hàng đợi dược ('Chờ phát'),
+    // không trừ tồn kho tại đây (việc trừ tồn thực hiện nguyên tử khi dược sĩ phát thuốc).
+    $trangThaiPhat = (!$isDraftSave && !empty($normalizedMedicines)) ? 'Chờ phát' : 'Đã kê';
+
     $stmt = $conn->prepare("
-        INSERT INTO donthuoc (maLichKham, chuanDoan, loiDanBacSi, ngayKeDon, tongTienThuoc)
-        VALUES (?, ?, ?, NOW(), 0)
+        INSERT INTO donthuoc (maLichKham, chuanDoan, loiDanBacSi, ngayKeDon, tongTienThuoc, trangThaiPhat)
+        VALUES (?, ?, ?, NOW(), 0, ?)
     ");
-    $stmt->bind_param("iss", $maLichKham, $chanDoan, $loiDanBacSi);
+    $stmt->bind_param("isss", $maLichKham, $chanDoan, $loiDanBacSi, $trangThaiPhat);
     if (!$stmt->execute()) {
         throw new Exception('Không thể tạo toa thuốc: ' . $stmt->error);
     }
@@ -259,17 +267,7 @@ try {
     }
 
     if (!empty($record['maLichKham'])) {
-        $lowStockWarnings = applyPrescriptionStockDelta(
-            $conn,
-            (int)$record['maLichKham'],
-            $maHoSo,
-            $existingPrescriptionItems,
-            $normalizedMedicines,
-            $wasCompleted,
-            !$isDraftSave
-        );
-
-        syncPrescriptionForRecord($conn, (int)$record['maLichKham'], $chanDoan, $loiDanBacSi, $normalizedMedicines);
+        syncPrescriptionForRecord($conn, (int)$record['maLichKham'], $chanDoan, $loiDanBacSi, $normalizedMedicines, $isDraftSave);
 
         if (!$isDraftSave) {
             $stmt = $conn->prepare("UPDATE lichkham SET trangThai = 'Hoàn thành' WHERE maLichKham = ? AND maBacSi = ? AND trangThai <> 'Hủy'");

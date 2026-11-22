@@ -85,7 +85,7 @@ Bệnh nhân xem hồ sơ, đơn và kết quả đã được duyệt
 
 ### Phase 3: Prescription, dispensing, and payment
 
-- [ ] Task 8: Tách kê đơn khỏi giảm tồn kho và xây trang phát thuốc.
+- [x] Task 8: Tách kê đơn khỏi giảm tồn kho và xây trang phát thuốc.
 - [ ] Task 9: Hoàn thiện thu ngân/hóa đơn cho phí dịch vụ và thuốc.
 - [ ] Task 10: Mở rộng hồ sơ bệnh nhân, thông báo và báo cáo/audit.
 
