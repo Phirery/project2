@@ -3,7 +3,7 @@ require_once '../../config/cors.php';
 require_once '../../config/db.php';
 require_once '../../config/session.php';
 
-require_role('nhanvien');
+require_permission('reception.checkin');
 
 /**
  * Danh sách lịch khám "Đã đặt" hôm nay nhưng CHƯA check-in (mọi bác sĩ),

@@ -3,7 +3,7 @@ require_once '../../config/cors.php';
 require_once '../../config/db.php';
 require_once '../../config/session.php';
 
-require_role('nhanvien');
+require_permission('reception.checkin');
 
 /**
  * Tạo hồ sơ bệnh nhân mới khi check-in trực tiếp (walk-in, Case A - chưa có tài khoản).

@@ -64,12 +64,12 @@ Bệnh nhân xem hồ sơ, đơn và kết quả đã được duyệt
 
 - [x] Task 1: Chốt state machine và danh mục dịch vụ cận lâm sàng.
 - [x] Task 2: Bổ sung migration cho quyền nhân viên, chỉ định/kết quả, hàng đợi dịch vụ và phát thuốc.
-- [ ] Task 3: Xây helper phân quyền nhân viên và điều hướng/sidebar theo quyền.
+- [x] Task 3: Xây helper phân quyền nhân viên và điều hướng/sidebar theo quyền.
 
 ### Checkpoint: Foundation
 
-- [ ] Migration chạy được trên DB trống và DB đang có dữ liệu mẫu.
-- [ ] Tài khoản của mỗi vai trò chỉ gọi được API được cấp quyền.
+- [x] Migration chạy được trên DB trống và DB đang có dữ liệu mẫu.
+- [x] Tài khoản của mỗi vai trò chỉ gọi được API được cấp quyền.
 
 ### Phase 2: Complete clinical loop
 

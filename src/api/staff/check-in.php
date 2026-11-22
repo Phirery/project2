@@ -3,7 +3,7 @@ require_once '../../config/cors.php';
 require_once '../../config/db.php';
 require_once '../../config/session.php';
 
-require_role('nhanvien');
+require_permission('reception.checkin');
 
 /**
  * Check-in 1 lịch khám (đã tồn tại trong `lichkham`, dù đặt online hay vừa tạo walk-in)

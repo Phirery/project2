@@ -96,7 +96,18 @@ function require_role($roles) {
         echo json_encode([
             'success' => false,
             'message' => 'Bạn không có quyền thực hiện hành động này.'
-        ]);
+        ], JSON_UNESCAPED_UNICODE);
         exit;
     }
+}
+
+/**
+ * Kiểm tra permission chi tiết của nhân viên (RBAC).
+ *
+ * @param string|string[] $requiredPermissions
+ */
+function require_permission($requiredPermissions, bool $requireAll = false): array
+{
+    require_once __DIR__ . '/../includes/staff-permission.php';
+    return require_staff_permission($requiredPermissions, $requireAll);
 }

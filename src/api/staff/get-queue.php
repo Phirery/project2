@@ -3,7 +3,7 @@ require_once '../../config/cors.php';
 require_once '../../config/db.php';
 require_once '../../config/session.php';
 
-require_role('nhanvien');
+require_permission('reception.checkin');
 
 $maBacSi = trim($_GET['maBacSi'] ?? '');
 $today = date('Y-m-d');

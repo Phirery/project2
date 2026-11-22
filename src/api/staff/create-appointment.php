@@ -5,7 +5,7 @@ require_once '../../config/session.php';
 require_once '../../includes/mail-events.php';
 require_once '../../includes/schedule-management.php';
 
-require_role('nhanvien');
+require_permission('reception.checkin');
 
 /**
  * Tạo lịch khám cho bệnh nhân đến trực tiếp (walk-in, Case A/B) với 1 slot còn trống

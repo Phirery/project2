@@ -43,13 +43,13 @@
 **Description:** Tạo helper kiểm tra permission phía server, API lấy quyền hiện tại, seed các nhóm tiếp nhận, điều dưỡng, xét nghiệm, chẩn đoán hình ảnh, nội soi, dược sĩ, thu ngân và `nhanvien_tong_hop_demo`; render sidebar theo quyền.
 
 **Acceptance criteria:**
-- [ ] Mỗi endpoint mới trả 403 khi thiếu permission, kể cả khi người dùng tự mở URL/trực tiếp gọi API.
-- [ ] Nhân viên tổng hợp demo truy cập được các màn tác nghiệp nhưng không được quản trị hệ thống.
-- [ ] Menu chỉ hiển thị module được phép và có trạng thái active nhất quán.
+- [x] Mỗi endpoint mới trả 403 khi thiếu permission, kể cả khi người dùng tự mở URL/trực tiếp gọi API.
+- [x] Nhân viên tổng hợp demo truy cập được các màn tác nghiệp nhưng không được quản trị hệ thống.
+- [x] Menu chỉ hiển thị module được phép và có trạng thái active nhất quán.
 
 **Verification:**
-- [ ] Đăng nhập test bằng ít nhất dược sĩ, KTV xét nghiệm và nhân viên demo.
-- [ ] Test thủ công các API bị từ chối/cấp phép.
+- [x] Đăng nhập test bằng ít nhất dược sĩ, KTV xét nghiệm và nhân viên demo.
+- [x] Test thủ công các API bị từ chối/cấp phép.
 
 **Dependencies:** Task 2
 
@@ -59,8 +59,8 @@
 
 ## Checkpoint: Foundation
 
-- [ ] Migration, seed và RBAC hoạt động trên local.
-- [ ] Không có API mới chỉ dựa vào ẩn nút để bảo vệ quyền.
+- [x] Migration, seed và RBAC hoạt động trên local.
+- [x] Không có API mới chỉ dựa vào ẩn nút để bảo vệ quyền.
 
 ## Task 4: Trang điều dưỡng và sàng lọc trước khám
 

@@ -14,14 +14,28 @@ const API_BASE_AUTH = window.API_ENDPOINTS?.auth || `${FALLBACK_API_ROOT}/auth`;
 // Component Paths (relative to staff pages)
 const COMPONENT_PATH = 'components/';
 
-// Staff Info Storage
+// Staff Info & RBAC Storage
 let STAFF_INFO = {
     id: null,
+    maNhanVien: null,
     tenDangNhap: 'Nhân viên',
     tenNhanVien: 'Nhân viên',
     loaiNhanVien: null,
-    vaiTro: 'nhanvien'
+    vaiTro: 'nhanvien',
+    isDemo: false,
+    roles: [],
+    permissions: [],
+    modules: []
 };
+
+function staffHasPermission(requiredPermission) {
+    if (!requiredPermission) return true;
+    const perms = Array.isArray(STAFF_INFO.permissions) ? STAFF_INFO.permissions : [];
+    if (Array.isArray(requiredPermission)) {
+        return requiredPermission.some((p) => perms.includes(p));
+    }
+    return perms.includes(requiredPermission);
+}
 
 function formatDateTime(dateString) {
     if (!dateString) return 'N/A';

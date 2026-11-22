@@ -4,48 +4,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Dashboard - Nhân Viên</title>
+    <title>Dashboard Nhân Viên - Eden Health</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link id="sidebar-nhanvien-css" rel="stylesheet" href="assets/css/sidebar-nhanvien.css">
+    <link rel="stylesheet" href="assets/css/admin-summary.css">
     <style>
-        .placeholder-panel {
-            background: white;
-            border-radius: 15px;
-            padding: 60px 30px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            text-align: center;
+        .section-title {
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--primary-blue);
+            display: inline-block;
         }
 
-        .placeholder-icon {
-            width: 90px;
-            height: 90px;
-            margin: 0 auto 24px;
-            border-radius: 50%;
+        .staff-hero-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 20px;
+        }
+
+        .staff-role-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .role-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            background: #CFE2FF;
+            color: #084298;
+        }
+
+        .role-pill.is-demo {
+            background: #FFF3CD;
+            color: #856404;
+        }
+
+        .perm-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            background: #F1F5F9;
+            color: #334155;
+            border: 1px solid var(--border-color);
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 18px;
+        }
+
+        .module-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .module-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-blue);
+        }
+
+        .module-card-head {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+
+        .module-icon-box {
+            width: 46px;
+            height: 46px;
+            border-radius: 10px;
+            background: var(--primary-blue-light);
+            color: var(--primary-blue-dark);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.4rem;
-            color: white;
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+            font-size: 1.2rem;
+            flex-shrink: 0;
         }
 
-        .placeholder-title {
-            font-size: 1.6rem;
+        .module-group-tag {
+            font-size: 0.74rem;
             font-weight: 700;
-            color: #333;
-            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
         }
 
-        .placeholder-desc {
-            color: #666;
-            font-size: 0.95rem;
-            max-width: 520px;
-            margin: 0 auto;
-            line-height: 1.6;
+        .module-card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .module-card-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+            margin-bottom: 16px;
+        }
+
+        .module-card-metric {
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            background: var(--light-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 14px;
+        }
+
+        .state-box {
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 40px 24px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .state-box-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin: 0 auto 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            background: #F1F5F9;
+            color: #94A3B8;
+        }
+
+        .state-box.is-error .state-box-icon {
+            background: #F8D7DA;
+            color: #721C24;
+        }
+
+        .btn-clinical-primary {
+            background: var(--primary-blue);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 9px 16px;
+        }
+
+        .btn-clinical-primary:hover {
+            background: var(--primary-blue-dark);
+            color: #FFFFFF;
         }
     </style>
 </head>
@@ -54,20 +196,69 @@
     <div id="sidebar-placeholder"></div>
 
     <div id="page-content" style="display:none;">
-        <h3 class="section-title" style="font-size:1.8rem;font-weight:700;color:#333;margin-bottom:25px;padding-bottom:10px;border-bottom:3px solid var(--primary-blue);display:inline-block;">
-            Dashboard Nhân Viên
-        </h3>
-
-        <div class="placeholder-panel">
-            <div class="placeholder-icon">
-                <i class="fas fa-id-badge"></i>
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+            <div>
+                <h3 class="section-title">Cổng tác nghiệp nhân viên</h3>
+                <p class="text-secondary mb-0 mt-1">Các khu vực làm việc được hiển thị theo nhóm quyền phân công của bạn.</p>
             </div>
-            <div class="placeholder-title">Khu vực dành cho nhân viên</div>
-            <p class="placeholder-desc">
-                Trang dashboard cho vai trò nhân viên đang được xây dựng. Đây là bước khởi tạo đầu tiên
-                cho hệ thống tài khoản nhân viên — các chức năng nghiệp vụ cụ thể (check-in bệnh nhân,
-                xét nghiệm, X-quang, nội soi, phát thuốc...) sẽ được bổ sung ở các bước tiếp theo.
-            </p>
+            <button type="button" class="btn btn-outline-primary btn-sm" id="btnRefreshDashboard">
+                <i class="fas fa-sync-alt me-1"></i>Làm mới số liệu
+            </button>
+        </div>
+
+        <!-- Loading State -->
+        <div class="state-box" id="dashboardLoadingState">
+            <div class="spinner-border text-primary mb-3" role="status" aria-hidden="true"></div>
+            <div class="fw-semibold text-primary">Đang tải thông tin phân quyền và số liệu trong ngày...</div>
+        </div>
+
+        <!-- Error State -->
+        <div class="state-box is-error d-none" id="dashboardErrorState" role="alert">
+            <div class="state-box-icon"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></div>
+            <h5 class="fw-bold mb-2">Không thể tải dữ liệu cổng nhân viên</h5>
+            <p class="text-secondary mb-3" id="dashboardErrorMessage">Vui lòng kiểm tra phiên đăng nhập hoặc thử tải lại.</p>
+            <button type="button" class="btn btn-clinical-primary" id="btnRetryDashboard">
+                <i class="fas fa-redo me-1"></i>Thử lại
+            </button>
+        </div>
+
+        <!-- Empty State -->
+        <div class="state-box d-none" id="dashboardEmptyState">
+            <div class="state-box-icon"><i class="fas fa-user-lock" aria-hidden="true"></i></div>
+            <h5 class="fw-bold mb-2">Tài khoản chưa được gán nhóm quyền tác nghiệp</h5>
+            <p class="text-secondary mb-0">Vui lòng liên hệ quản trị viên để cấp nhóm quyền chuyên môn (Tiếp nhận, Điều dưỡng, CLS, Dược sĩ hoặc Thu ngân).</p>
+        </div>
+
+        <!-- Real Data State -->
+        <div class="d-none" id="dashboardDataState">
+            <section class="staff-hero-card" aria-label="Thông tin nhân viên và quyền hạn">
+                <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+                    <div>
+                        <div class="text-secondary small fw-semibold text-uppercase">Xin chào nhân viên</div>
+                        <h4 class="fw-bold mb-1 mt-1" id="dashStaffName">—</h4>
+                        <div class="text-secondary small tabular-nums">
+                            Mã NV: <strong id="dashStaffCode">—</strong> · Ngày làm việc: <strong id="dashTodayLabel">—</strong>
+                        </div>
+                    </div>
+                    <div class="text-md-end">
+                        <span class="badge bg-light text-dark border px-3 py-2">
+                            <i class="fas fa-shield-alt text-primary me-1"></i>Phân quyền RBAC
+                        </span>
+                    </div>
+                </div>
+                <div class="staff-role-badges" id="dashRoleBadges"></div>
+                <div class="staff-role-badges mt-2" id="dashPermissionBadges"></div>
+            </section>
+
+            <section class="summary-bar d-none" id="dashSummaryBar" aria-label="Tổng quan nhanh trong ngày"></section>
+
+            <section aria-label="Khu vực tác nghiệp được cấp quyền">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0"><i class="fas fa-th-large text-primary me-2"></i>Chức năng được phép truy cập</h5>
+                    <span class="text-secondary small tabular-nums" id="dashModuleCountLabel"></span>
+                </div>
+                <div class="module-grid" id="dashModuleGrid"></div>
+            </section>
         </div>
     </div>
 
@@ -75,6 +266,7 @@
     <script src="assets/js/api-config.js"></script>
     <script src="assets/js/config-nhanvien.js"></script>
     <script src="assets/js/sidebar-nhanvien.js"></script>
+    <script src="assets/js/dashboard-nhanvien.js"></script>
 </body>
 
 </html>
