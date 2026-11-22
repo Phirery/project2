@@ -63,7 +63,7 @@ Bệnh nhân xem hồ sơ, đơn và kết quả đã được duyệt
 ### Phase 1: Contract, migration, and authorization
 
 - [x] Task 1: Chốt state machine và danh mục dịch vụ cận lâm sàng.
-- [ ] Task 2: Bổ sung migration cho quyền nhân viên, chỉ định/kết quả, hàng đợi dịch vụ và phát thuốc.
+- [x] Task 2: Bổ sung migration cho quyền nhân viên, chỉ định/kết quả, hàng đợi dịch vụ và phát thuốc.
 - [ ] Task 3: Xây helper phân quyền nhân viên và điều hướng/sidebar theo quyền.
 
 ### Checkpoint: Foundation

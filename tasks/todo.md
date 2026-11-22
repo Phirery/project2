@@ -24,13 +24,13 @@
 **Description:** Bổ sung migration có thể chạy lặp an toàn cho nhóm quyền nhân viên, gán quyền, danh mục dịch vụ, chỉ định/chi tiết/kết quả/lịch sử/hàng đợi và phiếu phát thuốc. Thêm index, FK và audit fields.
 
 **Acceptance criteria:**
-- [ ] Không đổi ENUM `nguoidung.vaiTro` để tạo từng loại chuyên môn; các chuyên môn là nhóm quyền của `nhanvien`.
-- [ ] Một chỉ định liên kết được hồ sơ, bệnh nhân, bác sĩ chỉ định, dịch vụ, kết quả và người xử lý.
-- [ ] Một lần phát thuốc lưu được chi tiết, số lượng thực phát, dược sĩ và thời điểm.
+- [x] Không đổi ENUM `nguoidung.vaiTro` để tạo từng loại chuyên môn; các chuyên môn là nhóm quyền của `nhanvien`.
+- [x] Một chỉ định liên kết được hồ sơ, bệnh nhân, bác sĩ chỉ định, dịch vụ, kết quả và người xử lý.
+- [x] Một lần phát thuốc lưu được chi tiết, số lượng thực phát, dược sĩ và thời điểm.
 
 **Verification:**
-- [ ] Chạy migration mới trên DB sạch và DB mẫu không lỗi.
-- [ ] Kiểm tra EXPLAIN cho truy vấn hàng đợi theo trạng thái/ngày/nhóm dịch vụ.
+- [x] Chạy migration mới trên DB sạch và DB mẫu không lỗi.
+- [x] Kiểm tra EXPLAIN cho truy vấn hàng đợi theo trạng thái/ngày/nhóm dịch vụ.
 
 **Dependencies:** Task 1
 
