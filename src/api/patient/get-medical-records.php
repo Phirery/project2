@@ -2,6 +2,7 @@
 require_once '../../config/cors.php';
 require_once '../../config/db.php';
 require_once '../../config/session.php';
+require_once '../../includes/billing-helper.php';
 
 require_role('benhnhan');
 
@@ -368,9 +369,25 @@ function attachPrescriptionData($conn, $records, $latest)
 
     $prescriptionMap = fetchPrescriptionMap($conn, $appointmentIds);
     $paraclinicalMap = fetchApprovedParaclinicalMap($conn, $recordIds);
+    $billingMap = [];
+    foreach ($appointmentIds as $lkId) {
+        $summary = billing_build_encounter_summary($conn, (int)$lkId);
+        if ($summary) {
+            $billingMap[(int)$lkId] = [
+                'maLichKham' => $summary['maLichKham'],
+                'billingStatus' => $summary['billingStatus'],
+                'totals' => $summary['totals'],
+                'groups' => $summary['groups'],
+                'items' => $summary['items'],
+                'invoices' => $summary['invoices'],
+            ];
+        }
+    }
 
     foreach ($records as &$record) {
         $record['donThuoc'] = $prescriptionMap[(int)$record['maLichKham']] ?? [
+            'maDonThuoc' => null,
+            'trangThaiPhat' => null,
             'chuanDoan' => '',
             'loiDanBacSi' => '',
             'ngayKeDon' => null,
@@ -378,11 +395,14 @@ function attachPrescriptionData($conn, $records, $latest)
             'thuoc' => []
         ];
         $record['canLamSang'] = $paraclinicalMap[(string)$record['maHoSo']] ?? [];
+        $record['hoaDon'] = $billingMap[(int)$record['maLichKham']] ?? null;
     }
     unset($record);
 
     if ($latest) {
         $latest['donThuoc'] = $prescriptionMap[(int)$latest['maLichKham']] ?? [
+            'maDonThuoc' => null,
+            'trangThaiPhat' => null,
             'chuanDoan' => '',
             'loiDanBacSi' => '',
             'ngayKeDon' => null,
@@ -390,6 +410,7 @@ function attachPrescriptionData($conn, $records, $latest)
             'thuoc' => []
         ];
         $latest['canLamSang'] = $paraclinicalMap[(string)$latest['maHoSo']] ?? [];
+        $latest['hoaDon'] = $billingMap[(int)$latest['maLichKham']] ?? null;
     }
 
     return [$records, $latest];

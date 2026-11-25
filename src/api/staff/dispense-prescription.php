@@ -5,6 +5,7 @@ require_once '../../config/session.php';
 require_once '../../includes/api-helper.php';
 require_once '../../includes/staff-permission.php';
 require_once '../../includes/medicine-stock.php';
+require_once '../../includes/medical-record-events.php';
 
 api_require_method('POST');
 $rbac = require_staff_permission('pharmacy.dispense');
@@ -46,6 +47,18 @@ try {
     );
 
     $conn->commit();
+
+    if (empty($result['idempotentReplay'])) {
+        try {
+            notifyMedicineDispensed(
+                $conn,
+                $maDonThuoc,
+                (string)$result['trangThaiPhat'],
+                (string)($result['voucher']['maPhieuCode'] ?? '')
+            );
+        } catch (Throwable $ignored) {
+        }
+    }
 
     $msg = !empty($result['idempotentReplay'])
         ? 'Yêu cầu phát thuốc này đã được xử lý trước đó (không trừ kho lại).'

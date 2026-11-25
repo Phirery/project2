@@ -7,6 +7,7 @@ require_once '../../includes/staff-permission.php';
 require_once '../../includes/billing-helper.php';
 require_once '../../includes/vnpay.php';
 require_once '../../includes/mail-events.php';
+require_once '../../includes/medical-record-events.php';
 
 api_require_method('POST');
 $rbac = require_staff_permission('billing.collect');
@@ -300,6 +301,10 @@ try {
             sendPaymentStatusEmail($conn, $createdInvoiceId, 'Đã thanh toán', '');
         } catch (Throwable $mailErr) {
             error_log('Cashier payment email error: ' . $mailErr->getMessage());
+        }
+        try {
+            notifyInvoicePaid($conn, $createdInvoiceId, $totalAmount, 'TienMat');
+        } catch (Throwable $ignored) {
         }
     }
 

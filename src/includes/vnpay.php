@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/app-env.php';
+require_once __DIR__ . '/medical-record-events.php';
 
 function vnpay_get_config(): array
 {
@@ -374,6 +375,11 @@ function vnpay_process_callback(mysqli $conn, array $request): array
             $updateAppointment->close();
 
             $conn->commit();
+
+            try {
+                notifyInvoicePaid($conn, $maHoaDon, (float)($invoice['soTien'] ?? 0), 'VNPAY');
+            } catch (Throwable $ignored) {
+            }
 
             return [
                 'ok' => true,

@@ -90,7 +90,10 @@ src/
 ---
 
 ## ⚡ Key Workflows & API Paradigms
-- **API Payloads:** Strictly `application/json` for requests & responses.
+- **API Style:** Action-based RPC endpoints (`src/api/<role>/<kebab-case-action>.php`). Keep this consistent for new features (do not mix a separate REST router).
+- **New API Standard (`src/includes/api-helper.php`):** All new endpoints should include `includes/api-helper.php` to enforce HTTP methods (`api_require_method`), validate JSON payloads (`api_json_input`, `api_validate_required`), return proper HTTP status codes (`api_success`, `api_error`), and avoid leaking DB/SQL details in production (`api_server_error`).
+- **Naming & Structure:** Use English `kebab-case` filenames (e.g. `create-prescription.php`, `get-queue.php`), avoid duplicating existing endpoints, and place shared business logic in `src/includes/`.
+- **API Payloads:** Strictly `application/json` for requests & responses (`{ success, message, data }`).
 - **State Management:** Session-based PHP authentication (`config/session.php`).
 - **AI Recommendation Flow:**
   1. Patient enters description of symptoms.

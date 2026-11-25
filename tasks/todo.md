@@ -186,13 +186,13 @@
 **Description:** Bổ sung hiển thị chỉ định/kết quả đã duyệt, trạng thái phát thuốc và hóa đơn cho bệnh nhân; thêm thông báo theo mốc chính, báo cáo vận hành và màn audit cho quản trị.
 
 **Acceptance criteria:**
-- [ ] Bệnh nhân chỉ xem được dữ liệu của mình và kết quả đã duyệt.
-- [ ] Có báo cáo tối thiểu theo ngày: số lượt CLS, thời gian chờ, số đơn phát, thuốc sắp hết.
-- [ ] Mọi trạng thái quan trọng có thể truy tới người và thời điểm thao tác.
+- [x] Bệnh nhân chỉ xem được dữ liệu của mình và kết quả đã duyệt.
+- [x] Có báo cáo tối thiểu theo ngày: số lượt CLS, thời gian chờ, số đơn phát, thuốc sắp hết.
+- [x] Mọi trạng thái quan trọng có thể truy tới người và thời điểm thao tác.
 
 **Verification:**
-- [ ] Test phân quyền API bệnh nhân bằng ID khác.
-- [ ] Xuất báo cáo thử và đối chiếu với dữ liệu nghiệp vụ.
+- [x] Test phân quyền API bệnh nhân bằng ID khác.
+- [x] Xuất báo cáo thử và đối chiếu với dữ liệu nghiệp vụ.
 
 **Dependencies:** Tasks 6-9
 
@@ -202,5 +202,5 @@
 
 ## Checkpoint: Ready for demo
 
-- [ ] Demo 5 tài khoản: tiếp nhận, bác sĩ, KTV xét nghiệm, dược sĩ, thu ngân/nhân viên tổng hợp.
-- [ ] Không có lỗi cấp quyền, trừ tồn hoặc thanh toán trùng trong các kịch bản chính.
+- [x] Demo 5 tài khoản: tiếp nhận, bác sĩ, KTV xét nghiệm, dược sĩ, thu ngân/nhân viên tổng hợp.
+- [x] Không có lỗi cấp quyền, trừ tồn hoặc thanh toán trùng trong các kịch bản chính.

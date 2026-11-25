@@ -87,12 +87,12 @@ Bệnh nhân xem hồ sơ, đơn và kết quả đã được duyệt
 
 - [x] Task 8: Tách kê đơn khỏi giảm tồn kho và xây trang phát thuốc.
 - [x] Task 9: Hoàn thiện thu ngân/hóa đơn cho phí dịch vụ và thuốc.
-- [ ] Task 10: Mở rộng hồ sơ bệnh nhân, thông báo và báo cáo/audit.
+- [x] Task 10: Mở rộng hồ sơ bệnh nhân, thông báo và báo cáo/audit.
 
 ### Checkpoint: Ready for demo
 
-- [ ] Chạy được kịch bản demo đa vai trò từ check-in đến nhận thuốc/thanh toán.
-- [ ] Tồn kho, hóa đơn và lịch sử thao tác khớp sau các ca phát một phần, hủy và thử lại request.
+- [x] Chạy được kịch bản demo đa vai trò từ check-in đến nhận thuốc/thanh toán.
+- [x] Tồn kho, hóa đơn và lịch sử thao tác khớp sau các ca phát một phần, hủy và thử lại request.
 
 ## Risks and mitigations
 

@@ -712,16 +712,22 @@
                     <div class="prescription-panel">
                         <div class="prescription-head">
                             <h5><i class="fas fa-pills"></i>Đơn thuốc</h5>
-                            <span class="prescription-total">${formatCurrency(donThuoc.tongTienThuoc || 0)}</span>
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                ${donThuoc.trangThaiPhat ? dispensingStatusBadge(donThuoc.trangThaiPhat) : ''}
+                                <span class="prescription-total">${formatCurrency(donThuoc.tongTienThuoc || 0)}</span>
+                            </div>
                         </div>
                         ${donThuoc.loiDanBacSi ? `<p class="prescription-note"><strong>Lời dặn:</strong> ${formatText(donThuoc.loiDanBacSi)}</p>` : ''}
                         ${thuocList.length ? `
                             <ul class="medicine-list">
                                 ${thuocList.map(item => `
                                     <li class="medicine-item">
-                                        <div class="name">${escapeHtml(item.tenThuoc)}</div>
+                                        <div class="d-flex justify-content-between align-items-center gap-2">
+                                            <div class="name">${escapeHtml(item.tenThuoc)}</div>
+                                            <span class="badge bg-light text-dark border tabular-nums">Đã phát: ${escapeHtml(item.soLuongDaPhat ?? 0)} / ${escapeHtml(item.soLuong)} ${escapeHtml(item.donViTinh || '')}</span>
+                                        </div>
                                         <div class="meta">
-                                            <span><i class="fas fa-boxes me-1"></i>${escapeHtml(item.soLuong)} ${escapeHtml(item.donViTinh || '')}</span>
+                                            <span><i class="fas fa-boxes me-1"></i>Kê: ${escapeHtml(item.soLuong)} ${escapeHtml(item.donViTinh || '')}</span>
                                             ${item.lieuDung ? `<span><i class="fas fa-prescription-bottle-alt me-1"></i>${escapeHtml(item.lieuDung)}</span>` : ''}
                                         </div>
                                     </li>
@@ -730,6 +736,14 @@
                         ` : `
                             <p class="medicine-empty">Chưa có đơn thuốc cho lần khám này.</p>
                         `}
+                    </div>
+                </div>
+                <div class="row g-3 mt-2">
+                    <div class="col-lg-6">
+                        ${renderApprovedClsHtml(record.canLamSang, true)}
+                    </div>
+                    <div class="col-lg-6">
+                        ${renderPatientBillingHtml(record.hoaDon, true)}
                     </div>
                 </div>
             `;
@@ -927,9 +941,10 @@
                 <div class="modal-section">
                     <h6><i class="fas fa-pills"></i> Đơn thuốc</h6>
                     <div class="content">
-                        <div class="d-flex flex-wrap gap-3 mb-3">
+                        <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
                             <span><strong>Số thuốc:</strong> ${thuocList.length}</span>
-                            <span><strong>Tổng tiền:</strong> ${formatCurrency(donThuoc.tongTienThuoc || 0)}</span>
+                            <span><strong>Tổng tiền kê:</strong> ${formatCurrency(donThuoc.tongTienThuoc || 0)}</span>
+                            ${donThuoc.trangThaiPhat ? `<span><strong>Trạng thái phát:</strong> ${dispensingStatusBadge(donThuoc.trangThaiPhat)}</span>` : ''}
                         </div>
                         ${donThuoc.loiDanBacSi ? `<p class="mb-3"><strong>Lời dặn bác sĩ:</strong><br>${formatText(donThuoc.loiDanBacSi)}</p>` : ''}
                         ${thuocList.length ? `
@@ -938,7 +953,8 @@
                                     <thead class="table-light">
                                         <tr>
                                             <th>Tên thuốc</th>
-                                            <th>Số lượng</th>
+                                            <th>Số lượng kê</th>
+                                            <th>Đã phát</th>
                                             <th>Liều dùng</th>
                                         </tr>
                                     </thead>
@@ -947,6 +963,7 @@
                                             <tr>
                                                 <td>${escapeHtml(item.tenThuoc)}</td>
                                                 <td>${escapeHtml(item.soLuong)} ${escapeHtml(item.donViTinh || '')}</td>
+                                                <td><strong>${escapeHtml(item.soLuongDaPhat ?? 0)}</strong> / ${escapeHtml(item.soLuong)}</td>
                                                 <td>${escapeHtml(item.lieuDung || '-')}</td>
                                             </tr>
                                         `).join('')}
@@ -955,6 +972,16 @@
                             </div>
                         ` : '<p class="mb-0">Chưa có dữ liệu đơn thuốc.</p>'}
                     </div>
+                </div>
+
+                <div class="modal-section">
+                    <h6><i class="fas fa-microscope"></i> Kết quả cận lâm sàng đã duyệt</h6>
+                    <div class="content">${renderApprovedClsHtml(record.canLamSang, false)}</div>
+                </div>
+
+                <div class="modal-section">
+                    <h6><i class="fas fa-file-invoice-dollar"></i> Hóa đơn &amp; Chi phí khám chữa bệnh</h6>
+                    <div class="content">${renderPatientBillingHtml(record.hoaDon, false)}</div>
                 </div>
 
                 ${record.ghiChu ? `
@@ -989,6 +1016,119 @@
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#39;');
+        }
+
+        function dispensingStatusBadge(status) {
+            const map = {
+                'Chờ phát': 'bg-warning text-dark',
+                'Đã phát một phần': 'bg-info text-dark',
+                'Đã phát đủ': 'bg-success text-white',
+                'Hủy': 'bg-danger text-white',
+                'Đã kê': 'bg-secondary text-white'
+            };
+            const cls = map[status] || 'bg-light text-dark border';
+            return `<span class="badge ${cls}">${escapeHtml(status || '—')}</span>`;
+        }
+
+        function billingStatusBadgePatient(status) {
+            const map = {
+                'Đã thanh toán đủ': 'bg-success text-white',
+                'Thanh toán một phần': 'bg-info text-dark',
+                'Chưa thanh toán': 'bg-warning text-dark'
+            };
+            const cls = map[status] || 'bg-secondary text-white';
+            return `<span class="badge ${cls}">${escapeHtml(status || 'Chưa phát sinh')}</span>`;
+        }
+
+        function renderApprovedClsHtml(clsList, withPanelWrapper) {
+            const list = Array.isArray(clsList) ? clsList : [];
+            const inner = list.length ? list.map((cls) => {
+                const chiSo = Array.isArray(cls.chiSoKetQua) ? cls.chiSoKetQua : (cls.chiSoKetQua && typeof cls.chiSoKetQua === 'object'
+                    ? Object.entries(cls.chiSoKetQua).map(([k, v]) => `${k}: ${v}`)
+                    : []);
+                const attachments = Array.isArray(cls.tepDinhKem) ? cls.tepDinhKem : [];
+                return `
+                    <div class="p-2 mb-2 bg-white border rounded small">
+                        <div class="d-flex justify-content-between align-items-center gap-2 mb-1">
+                            <strong>${escapeHtml(cls.tenDichVu)}</strong>
+                            <span class="badge bg-primary">${escapeHtml(cls.tenNhom || cls.nhomDichVu)}</span>
+                        </div>
+                        ${cls.ketLuan ? `<div><strong>Kết luận:</strong> ${formatText(cls.ketLuan)}</div>` : ''}
+                        ${cls.nhanXet ? `<div class="text-secondary"><strong>Nhận xét:</strong> ${formatText(cls.nhanXet)}</div>` : ''}
+                        ${cls.deNghi ? `<div class="text-secondary"><strong>Đề nghị:</strong> ${formatText(cls.deNghi)}</div>` : ''}
+                        ${chiSo.length ? `<div class="mt-1 d-flex flex-wrap gap-1">${chiSo.map(c => `<span class="badge bg-light text-dark border">${escapeHtml(typeof c === 'object' ? JSON.stringify(c) : c)}</span>`).join('')}</div>` : ''}
+                        ${attachments.length ? `<div class="mt-1">${attachments.map((att, i) => {
+                            const url = typeof att === 'string' ? att : (att?.url || '');
+                            const name = typeof att === 'string' ? `Tệp đính kèm #${i + 1}` : (att?.name || `Tệp #${i + 1}`);
+                            return url && /^(https?:|\/|assets\/|uploads\/)/i.test(url)
+                                ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm py-0 px-2 me-1"><i class="fas fa-paperclip me-1"></i>${escapeHtml(name)}</a>`
+                                : '';
+                        }).join('')}</div>` : ''}
+                        <div class="text-muted mt-1" style="font-size:0.78rem;">
+                            BS duyệt: ${escapeHtml(cls.tenBacSiDuyet || '—')} ${cls.thoiGianDuyet ? `• ${escapeHtml(cls.thoiGianDuyet)}` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('') : '<p class="text-secondary small mb-0">Không có kết quả cận lâm sàng đã duyệt cho hồ sơ này.</p>';
+
+            if (!withPanelWrapper) return inner;
+            return `
+                <div class="prescription-panel">
+                    <div class="prescription-head">
+                        <h5><i class="fas fa-microscope"></i>Cận lâm sàng đã duyệt</h5>
+                        <span class="prescription-total">${list.length} kết quả</span>
+                    </div>
+                    ${inner}
+                </div>
+            `;
+        }
+
+        function renderPatientBillingHtml(hoaDon, withPanelWrapper) {
+            if (!hoaDon) {
+                const emptyHtml = '<p class="text-secondary small mb-0">Chưa có dữ liệu hóa đơn cho lượt khám này.</p>';
+                return withPanelWrapper
+                    ? `<div class="prescription-panel"><div class="prescription-head"><h5><i class="fas fa-file-invoice-dollar"></i>Hóa đơn &amp; Thanh toán</h5></div>${emptyHtml}</div>`
+                    : emptyHtml;
+            }
+            const t = hoaDon.totals || {};
+            const g = hoaDon.groups || {};
+            const invs = Array.isArray(hoaDon.invoices) ? hoaDon.invoices : [];
+            const inner = `
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2 small">
+                    <div>Trạng thái: ${billingStatusBadgePatient(hoaDon.billingStatus)}</div>
+                    <div>
+                        <span class="me-2">Tổng: <strong>${formatCurrency(t.tongCong || 0)}</strong></span>
+                        <span class="me-2 text-success">Đã thu: <strong>${formatCurrency(t.daThanhToan || 0)}</strong></span>
+                        <span class="${Number(t.conPhaiThu || 0) > 0 ? 'text-danger fw-bold' : 'text-secondary'}">Còn lại: ${formatCurrency(t.conPhaiThu || 0)}</span>
+                    </div>
+                </div>
+                <div class="row g-2 small mb-2">
+                    <div class="col-4"><div class="p-2 bg-white border rounded">Khám: <strong>${formatCurrency(g.kham?.total || 0)}</strong></div></div>
+                    <div class="col-4"><div class="p-2 bg-white border rounded">CLS: <strong>${formatCurrency(g.cls?.total || 0)}</strong></div></div>
+                    <div class="col-4"><div class="p-2 bg-white border rounded">Thuốc phát: <strong>${formatCurrency(g.thuoc?.total || 0)}</strong></div></div>
+                </div>
+                ${invs.length ? `
+                    <div class="small">
+                        ${invs.map(inv => `
+                            <div class="d-flex justify-content-between border-top py-1">
+                                <span>HĐ #${escapeHtml(inv.maHoaDon)} (${escapeHtml(inv.phuongThuc)}) — ${escapeHtml(inv.trangThai)}</span>
+                                <strong>${formatCurrency(inv.soTien)}</strong>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+            `;
+
+            if (!withPanelWrapper) return inner;
+            return `
+                <div class="prescription-panel">
+                    <div class="prescription-head">
+                        <h5><i class="fas fa-file-invoice-dollar"></i>Hóa đơn &amp; Thanh toán</h5>
+                        ${billingStatusBadgePatient(hoaDon.billingStatus)}
+                    </div>
+                    ${inner}
+                </div>
+            `;
         }
 
         function formatText(value) {

@@ -460,6 +460,109 @@
             </div>
         </div>
 
+        <!-- Báo cáo vận hành & Nhật ký Audit (Task 10) -->
+        <div class="table-container mt-4" id="operationalReportSection">
+            <div class="table-header d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div>
+                    <h5 class="chart-title mb-1">Báo cáo vận hành theo ngày &amp; Nhật ký Audit</h5>
+                    <div class="small text-secondary">Số lượt CLS, thời gian chờ trung bình, số phiếu phát thuốc, cảnh báo tồn kho và truy vết thao tác.</div>
+                </div>
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <input type="date" id="opDateFrom" class="form-control form-control-sm" style="width:auto;" aria-label="Từ ngày báo cáo vận hành">
+                    <span class="text-secondary small">đến</span>
+                    <input type="date" id="opDateTo" class="form-control form-control-sm" style="width:auto;" aria-label="Đến ngày báo cáo vận hành">
+                    <button type="button" class="btn btn-primary btn-sm" id="btnLoadOperationalReport">
+                        <i class="fas fa-sync-alt me-1" aria-hidden="true"></i>Tải báo cáo
+                    </button>
+                    <button type="button" class="btn btn-success btn-sm" id="btnExportOperationalCsv">
+                        <i class="fas fa-file-csv me-1" aria-hidden="true"></i>Xuất CSV vận hành
+                    </button>
+                </div>
+            </div>
+
+            <div class="row g-3 my-2" id="opSummaryCards">
+                <div class="col-md-3 col-sm-6">
+                    <div class="p-3 border rounded bg-light">
+                        <div class="small text-secondary fw-semibold">Tổng lượt CLS</div>
+                        <div class="fs-5 fw-bold text-primary" id="opTotalCls">0</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="p-3 border rounded bg-light">
+                        <div class="small text-secondary fw-semibold">Chờ khám / CLS TB</div>
+                        <div class="fs-5 fw-bold text-dark" id="opAvgWait">—</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="p-3 border rounded bg-light">
+                        <div class="small text-secondary fw-semibold">Phiếu phát thuốc</div>
+                        <div class="fs-5 fw-bold text-success" id="opTotalDispensed">0</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="p-3 border rounded bg-light">
+                        <div class="small text-secondary fw-semibold">Thuốc chạm ngưỡng tồn</div>
+                        <div class="fs-5 fw-bold text-danger" id="opLowStockCount">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="opReportState" class="small text-secondary py-2"></div>
+
+            <h6 class="fw-bold mt-3 mb-2">1. Chỉ số vận hành theo ngày</h6>
+            <div class="table-responsive mb-4">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Ngày</th>
+                            <th class="text-center">Check-in</th>
+                            <th class="text-center">Chờ khám TB</th>
+                            <th class="text-center">Lượt CLS</th>
+                            <th class="text-center">Chờ CLS TB</th>
+                            <th class="text-center">Phiếu phát thuốc</th>
+                            <th class="text-end">Doanh thu thu ngân</th>
+                        </tr>
+                    </thead>
+                    <tbody id="opDailyTableBody"></tbody>
+                </table>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-5">
+                    <h6 class="fw-bold mb-2">2. Thuốc sắp hết / chạm ngưỡng cảnh báo</h6>
+                    <div class="table-responsive">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Thuốc</th>
+                                    <th class="text-center">Tồn / Ngưỡng</th>
+                                    <th>HSD</th>
+                                </tr>
+                            </thead>
+                            <tbody id="opLowStockBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <h6 class="fw-bold mb-2">3. Nhật ký Audit thao tác gần nhất</h6>
+                    <div class="table-responsive" style="max-height:360px;overflow:auto;">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Thời gian</th>
+                                    <th>Phân hệ</th>
+                                    <th>Trạng thái</th>
+                                    <th>Người thao tác</th>
+                                    <th>Chi tiết</th>
+                                </tr>
+                            </thead>
+                            <tbody id="opAuditTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
@@ -473,7 +576,11 @@
         let statsData = null;
 
         document.addEventListener('DOMContentLoaded', function () {
+            initOperationalDateDefaults();
             loadStatistics();
+            loadOperationalReport();
+            document.getElementById('btnLoadOperationalReport')?.addEventListener('click', loadOperationalReport);
+            document.getElementById('btnExportOperationalCsv')?.addEventListener('click', exportOperationalCsv);
             document.getElementById('dateFrom').addEventListener('change', handleCustomDateFilterChange);
             document.getElementById('dateTo').addEventListener('change', handleCustomDateFilterChange);
             document.getElementById('dateFrom').addEventListener('input', handleCustomDateFilterChange);
@@ -853,6 +960,105 @@
 
         function scrollToSection(id) {
             document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function opEscape(val) {
+            return String(val ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function initOperationalDateDefaults() {
+            const toEl = document.getElementById('opDateTo');
+            const fromEl = document.getElementById('opDateFrom');
+            if (!toEl || !fromEl) return;
+            const now = new Date();
+            const from = new Date(now.getTime() - 6 * 86400000);
+            const toIso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            toEl.value = toIso(now);
+            fromEl.value = toIso(from);
+        }
+
+        async function loadOperationalReport() {
+            const fromVal = document.getElementById('opDateFrom')?.value || '';
+            const toVal = document.getElementById('opDateTo')?.value || '';
+            const stateEl = document.getElementById('opReportState');
+            if (fromVal && toVal && fromVal > toVal) {
+                showAlert('error', 'Ngày bắt đầu báo cáo vận hành phải nhỏ hơn hoặc bằng ngày kết thúc.');
+                return;
+            }
+
+            if (stateEl) stateEl.textContent = 'Đang tải báo cáo vận hành...';
+            try {
+                const qs = new URLSearchParams();
+                if (fromVal) qs.set('dateFrom', fromVal);
+                if (toVal) qs.set('dateTo', toVal);
+                const res = await fetch(`${API_BASE_ADMIN}/operational-report.php?${qs.toString()}`, {
+                    credentials: 'include'
+                });
+                const payload = await res.json();
+                if (!res.ok || !payload.success || !payload.data) {
+                    throw new Error(payload.message || 'Không thể tải báo cáo vận hành.');
+                }
+
+                const data = payload.data;
+                const s = data.summary || {};
+                document.getElementById('opTotalCls').textContent = String(s.totalCLS ?? 0);
+                const waitK = s.avgWaitKhamPhut !== null && s.avgWaitKhamPhut !== undefined ? `${s.avgWaitKhamPhut}p` : '—';
+                const waitC = s.avgWaitClsPhut !== null && s.avgWaitClsPhut !== undefined ? `${s.avgWaitClsPhut}p` : '—';
+                document.getElementById('opAvgWait').textContent = `${waitK} / ${waitC}`;
+                document.getElementById('opTotalDispensed').textContent = String(s.totalDispensed ?? 0);
+                document.getElementById('opLowStockCount').textContent = String(s.lowStockCount ?? 0);
+
+                const dailyBody = document.getElementById('opDailyTableBody');
+                dailyBody.innerHTML = (data.dailyMetrics || []).map((d) => `
+                    <tr>
+                        <td><strong>${opEscape(d.ngay)}</strong></td>
+                        <td class="text-center">${d.soLuotCheckIn}</td>
+                        <td class="text-center">${d.thoiGianChoKhamPhut !== null ? `${d.thoiGianChoKhamPhut} phút` : '—'}</td>
+                        <td class="text-center">${d.soLuotCLS}</td>
+                        <td class="text-center">${d.thoiGianChoClsPhut !== null ? `${d.thoiGianChoClsPhut} phút` : '—'}</td>
+                        <td class="text-center">${d.soDonPhat}</td>
+                        <td class="text-end fw-semibold">${Math.round(Number(d.doanhThuThuNgan || 0)).toLocaleString('vi-VN')}đ</td>
+                    </tr>
+                `).join('') || '<tr><td colspan="7" class="text-center text-secondary">Chưa có dữ liệu</td></tr>';
+
+                const lowBody = document.getElementById('opLowStockBody');
+                lowBody.innerHTML = (data.lowStockMedicines || []).map((m) => `
+                    <tr>
+                        <td><strong>${opEscape(m.tenThuoc)}</strong><br><small class="text-secondary">${opEscape(m.donViTinh || '')}</small></td>
+                        <td class="text-center"><span class="badge bg-danger">${m.soLuongTon}</span> / ${m.nguongCanhBao}</td>
+                        <td>${opEscape(m.hanSuDung || '—')}</td>
+                    </tr>
+                `).join('') || '<tr><td colspan="3" class="text-center text-success">Không có thuốc chạm ngưỡng tồn</td></tr>';
+
+                const auditBody = document.getElementById('opAuditTableBody');
+                auditBody.innerHTML = (data.auditTrail || []).map((a) => `
+                    <tr>
+                        <td class="small">${opEscape(a.thoiGian)}</td>
+                        <td><span class="badge bg-light text-dark border">${opEscape(a.phanHe)}</span></td>
+                        <td class="small fw-semibold">${opEscape(a.trangThai)}</td>
+                        <td class="small">${opEscape(a.nguoiThaoTac)}</td>
+                        <td class="small text-secondary">${opEscape(a.maDoiTuong)} — ${opEscape(a.chiTiet)}</td>
+                    </tr>
+                `).join('') || '<tr><td colspan="5" class="text-center text-secondary">Chưa có nhật ký</td></tr>';
+
+                if (stateEl) stateEl.textContent = '';
+            } catch (err) {
+                if (stateEl) stateEl.textContent = err.message || 'Lỗi tải báo cáo vận hành.';
+            }
+        }
+
+        function exportOperationalCsv() {
+            const fromVal = document.getElementById('opDateFrom')?.value || '';
+            const toVal = document.getElementById('opDateTo')?.value || '';
+            const qs = new URLSearchParams();
+            if (fromVal) qs.set('dateFrom', fromVal);
+            if (toVal) qs.set('dateTo', toVal);
+            window.location.href = `${API_BASE_ADMIN}/export-operational-csv.php?${qs.toString()}`;
         }
     </script>
 </body>

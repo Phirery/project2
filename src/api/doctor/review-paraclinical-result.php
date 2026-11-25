@@ -4,6 +4,7 @@ require_once '../../config/db.php';
 require_once '../../config/session.php';
 require_once '../../includes/api-helper.php';
 require_once '../../includes/clinical-orders.php';
+require_once '../../includes/medical-record-events.php';
 
 api_require_method('POST');
 require_role('bacsi');
@@ -175,6 +176,13 @@ try {
 
     $conn->commit();
     $transactionStarted = false;
+
+    if ($action === 'approve') {
+        try {
+            notifyParaclinicalApproved($conn, $maChiTietChiDinh);
+        } catch (Throwable $ignored) {
+        }
+    }
 
     api_success([
         'maChiTietChiDinh' => $maChiTietChiDinh,
